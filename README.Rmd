@@ -1,0 +1,38 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# ncdfCF
+
+<!-- badges: start -->
+
+[![Lifecycle: Experimental](https://img.shields.io/badge/Lifecycle-Experimental-red.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+<!-- badges: end -->
+
+The ncdfCF package provides an easy to use interface to NetCDF resources in R, 
+either in local files or remotely on a THREDDS server.
+
+It is built on the RNetCDF package which provides a basic interface to the
+NetCDF library, but which lacks an intuitive user experience. Package ncdfCF on
+the other hand provides a high-level interface using functions and methods that
+are familiar to the R user.
+
+## Installation
+
+You can install the development version of ncdfCF from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("pvanlaake/ncdfCF")
+```
