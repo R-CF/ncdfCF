@@ -7,6 +7,10 @@
 
 [![Lifecycle:
 Experimental](https://img.shields.io/badge/Lifecycle-Experimental-red.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+[![License: GPL
+v3](https://img.shields.io/badge/License-MIT-blue.svg)](https://mit-license.org)
+[![Last
+commit](https://img.shields.io/github/last-commit/pvanlaake/ncdfCF)](https://github.com/pvanlaake/ncdfCF/commits/main)
 <!-- badges: end -->
 
 The ncdfCF package provides an easy to use interface to NetCDF resources
