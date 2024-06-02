@@ -215,6 +215,8 @@ setMethod("[", "ncdfVariable", function(x, ..., drop = FALSE) {
 #' can be specified in any order. If values for the range per dimension fall
 #' outside of the extent of the dimension, the range is clipped to the extent of
 #' the dimension.
+#' @param rightmost.closed Single logical value to indicate if the upper
+#' boundary of range in each the dimension should be included.
 #' @param ... Ignored.
 #'
 #' @returns An array with dimnames and other attributes set, or `NULL`.
@@ -233,16 +235,16 @@ setMethod("[", "ncdfVariable", function(x, ..., drop = FALSE) {
 #'                               T = c("2024-03-01", "2024-04-01")))
 #' dim(x)
 #' dimnames(x)
-setMethod("subset", "ncdfVariable", function(x, subset, ...) {
+setMethod("subset", "ncdfVariable", function(x, subset, rightmost.closed = FALSE, ...) {
   num_dims <- length(x@dims)
   if (!num_dims)
     stop("Cannot subset a scalar variable")
 
   dim_names <- dimnames(x)
-  axis_order <- sapply(x@dims, axis)
+  axes <- sapply(x@dims, axis)
 
   sub_names <- names(subset)
-  bad <- sub_names[!(sub_names %in% c(dim_names, axis_order))]
+  bad <- sub_names[!(sub_names %in% c(dim_names, axes))]
   if (length(bad))
     stop("Argument `subset` contains elements not corresponding to a dimension:", paste(bad, collapse = ", "))
 
@@ -251,14 +253,18 @@ setMethod("subset", "ncdfVariable", function(x, subset, ...) {
   dvals <- list()
   for (d in 1:num_dims) {
     if(!is.null(rng <- subset[[dim_names[d]]]) ||
-       !is.null(rng <- subset[[axis_order[d]]])) {
-      idx <- indexOf(rng, x@dims[[d]])
+       !is.null(rng <- subset[[axes[d]]])) {
+      idx <- indexOf(rng, x@dims[[d]], method = "linear")
       idx <- range(idx)
-      if (all(idx == 0) || all(idx == .Machine$integer.max)) return(NULL)
+      if (all(idx == 0) || all(idx > length(x@dims[[d]]))) return(NULL)
       if (idx[1L] == 0) idx[1L] <- 1
       if (idx[2L] == .Machine$integer.max) idx[2L] <- length(x@dims[[d]])
+      idx[1L] <- ceiling(idx[1L])
+      if (!rightmost.closed)
+        idx[2L] <- ceiling(idx[2L] - 1)  # exclude upper boundary
+      idx <- as.integer(idx)
       start[d] <- idx[1L]
-      count[d] <- idx[2L] - idx[1L] + 1
+      count[d] <- idx[2L] - idx[1L] + 1L
       dvals[[d]] <- dimnames(x@dims[[d]])[seq(idx[1L], idx[2L])]
     } else
       dvals[[d]] <- dimnames(x@dims[[d]])

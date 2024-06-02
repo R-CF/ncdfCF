@@ -157,10 +157,11 @@ setMethod("axis", "ncdfDimension", function (x) x@axis)
                           length = as.integer(dmeta$length), unlim = dmeta$unlim,
                           var_id = -1L))
 
-    # Dimension values
-    vals <- as.vector(RNetCDF::var.get.nc(h, dmeta$name))
+    # Dimension values, get rid of any spurious "precision"
+    vals <- round(as.vector(RNetCDF::var.get.nc(h, dmeta$name)), 5)
 
     # If no attributes, then nothing more to do
+    # FIXME: Dimension of type NC_CHAR or NC_STRING
     if (!dvar$natts)
       return(methods::new("ncdfDimensionNumeric", id = as.integer(dmeta$id),
                           name = dmeta$name, resource = dataset@resource,

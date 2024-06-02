@@ -4,22 +4,32 @@
 \alias{indexOf,numeric,ncdfDimensionNumeric-method}
 \title{Find indices in the dimension domain}
 \usage{
-\S4method{indexOf}{numeric,ncdfDimensionNumeric}(x, y, method = "constant")
+\S4method{indexOf}{numeric,ncdfDimensionNumeric}(x, y, method = "linear")
 }
 \arguments{
 \item{x}{Vector of numeric values to find dimension indices for.}
 
 \item{y}{An \code{ncdfDimensionNumeric} instance.}
 
-\item{method}{Single value of "constant" or "linear". If \code{"constant"}, return
-the index value for each match. If \code{"linear"}, return the index value with
-any fractional value.}
+\item{method}{Single value of "constant" or "linear".}
 }
 \value{
-Numeric vector of the same length as \code{x}.
+Numeric vector of the same length as \code{x}. If \code{method = "constant"},
+return the index value for each match. If \code{method = "linear"}, return the
+index value with any fractional value. Values of \code{x} outside of the range
+of the values in \code{y} are returned as \code{0} and \code{.Machine$integer.max},
+respectively.
 }
 \description{
-Find indices in the dimension domain
+Given a vector of numerical values \code{x}, find their indices in the values of
+dimension \code{y}. With \code{method = "constant"} this returns the index of the value
+lower than the supplied values in \code{x}. With \code{method = "linear"} the return
+value includes any fractional part.
+}
+\details{
+If bounds are set on the dimension, the indices are taken from those bounds.
+Returned indices may fall in between bounds if the latter are not contiguous,
+with the exception of the extreme values in \code{x}.
 }
 \examples{
 fn <- system.file("extdata",

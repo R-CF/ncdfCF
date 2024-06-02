@@ -100,18 +100,29 @@ setMethod("dimnames", "ncdfDimensionNumeric", function (x) x@values)
 #' lon <- ds[["lon"]]
 #' has_bounds(lon)
 setMethod("has_bounds", "ncdfDimensionNumeric", function(x) {
-  length(x@bounds)
+  length(x@bounds) > 0L
 })
 
 #' Find indices in the dimension domain
 #'
+#' Given a vector of numerical values `x`, find their indices in the values of
+#' dimension `y`. With `method = "constant"` this returns the index of the value
+#' lower than the supplied values in `x`. With `method = "linear"` the return
+#' value includes any fractional part.
+#'
+#' If bounds are set on the dimension, the indices are taken from those bounds.
+#' Returned indices may fall in between bounds if the latter are not contiguous,
+#' with the exception of the extreme values in `x`.
+#'
 #' @param x Vector of numeric values to find dimension indices for.
 #' @param y An `ncdfDimensionNumeric` instance.
-#' @param method Single value of "constant" or "linear". If `"constant"`, return
-#'   the index value for each match. If `"linear"`, return the index value with
-#'   any fractional value.
+#' @param method Single value of "constant" or "linear".
 #'
-#' @returns Numeric vector of the same length as `x`.
+#' @returns Numeric vector of the same length as `x`. If `method = "constant"`,
+#'   return the index value for each match. If `method = "linear"`, return the
+#'   index value with any fractional value. Values of `x` outside of the range
+#'   of the values in `y` are returned as `0` and `.Machine$integer.max`,
+#'   respectively.
 #' @export
 #' @examples
 #' fn <- system.file("extdata",
@@ -121,16 +132,8 @@ setMethod("has_bounds", "ncdfDimensionNumeric", function(x) {
 #' lon <- ds[["lon"]]
 #' indexOf(42:45, lon)
 #' indexOf(42:45, lon, "linear")
-setMethod("indexOf", c("numeric", "ncdfDimensionNumeric"), function (x, y, method = "constant") {
-  if (!length(y@bounds))
-    intv <- stats::approx(y@values, 1L:y@length, x, method = method,
-                          yleft = 0L, yright = .Machine$integer.max)$y
-  else {
-    intv <- findInterval(x, y@bounds[1L, ])
-    intv[intv >= y@length] <- .Machine$integer.max
-    valid <- intv
-    valid[which(!valid %in% 1L:y@length)] <- NA_real_
-    intv[which(x >= y@bounds[2L, valid])] <- NA_real_ # in case bounds are not contiguous
-  }
-  intv
+setMethod("indexOf", c("numeric", "ncdfDimensionNumeric"), function (x, y, method = "linear") {
+  if (length(y@bounds)) vals <- c(y@bounds[1L, 1L], y@bounds[2L, ])
+  else vals <- y@values
+  stats::approx(vals, 1L:length(vals), x, method = method, yleft = 0L, yright = .Machine$integer.max)$y
 })

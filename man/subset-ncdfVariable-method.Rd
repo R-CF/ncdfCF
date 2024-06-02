@@ -4,7 +4,7 @@
 \alias{subset,ncdfVariable-method}
 \title{Extract a subset of values from a variable}
 \usage{
-\S4method{subset}{ncdfVariable}(x, subset, ...)
+\S4method{subset}{ncdfVariable}(x, subset, rightmost.closed = FALSE, ...)
 }
 \arguments{
 \item{x}{The \code{ncdfVariable} from which to extract a subset of values.}
@@ -19,6 +19,9 @@ be specified by name. Axis values and dimension names are case-sensitive and
 can be specified in any order. If values for the range per dimension fall
 outside of the extent of the dimension, the range is clipped to the extent of
 the dimension.}
+
+\item{rightmost.closed}{Single logical value to indicate if the upper
+boundary of range in each the dimension should be included.}
 
 \item{...}{Ignored.}
 }
