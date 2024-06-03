@@ -11,6 +11,15 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color,
+      x)
+  } else x
+}
 ```
 
 # ncdfCF
@@ -21,29 +30,13 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 The `ncdfCF` package provides an easy to use interface to NetCDF resources in R, 
-either in local files or remotely on a THREDDS server.
-
-It is built on the `RNetCDF` package which provides a basic interface to the
-NetCDF library, but which lacks an intuitive user experience - effectively it is
-a transliteration of the `netcdf` library API into R and some tweaks to adjust
-to the R environment (e.g. data types and internal representation). Package 
-`ncdf4` does one better by performing the tedious task of reading the structural
-metadata from the resource that is needed for a basic understanding of the 
-contents, such as dimension and variable details, but the essential library API 
-concept remains with functions that directly map to the `netcdf` library 
-functions. One would really need to understand the NetCDF data model and 
-implementation details to effectively use these packages. (For instance, most 
-data describing a dimension is stored as a variable! So to read the `dimnames()` 
-of a dimension you'd have to call `var.get.nc()` or `ncvar_get()`.) Neither 
-package loads the attributes of the dimensions, variables and the dataset 
-("global" variables), which is essential to *understand* what the dimensions and 
-variables represent.
-
-Package `ncdfCF` provides a high-level interface using functions and methods 
-that are familiar to the R user. It reads the structural metadata and also the
-attributes upon opening the resource. In the process, the `ncdfCF` package also 
-applies CF Metadata Conventions to interpret the data. This currently applies 
-to:
+either in local files or remotely on a THREDDS server. It is built on the 
+`RNetCDF` package which, like package `ncdf4`, provides a basic interface to the 
+`netcdf` library, but which lacks an intuitive user interface. Package `ncdfCF` 
+provides a high-level interface using functions and methods that are familiar to 
+the R user. It reads the structural metadata and also the attributes upon 
+opening the resource. In the process, the `ncdfCF` package also applies CF 
+Metadata Conventions to interpret the data. This currently applies to:
 
  * The **axis designation**. The three mechanisms to identify the axis each 
  dimension represents are applied until an axis is determined.
@@ -64,7 +57,7 @@ library(ncdfCF)
 fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 
 # Open the file, all metadata is read
-ds <- ncdfDataset(fn)
+ds <- open_ncdf(fn)
 
 # Easy access in understandable format to all the details
 ds
@@ -86,52 +79,45 @@ attribute(ds[["pev"]], "long_name")
 
 ##### Extracting data
 
-One of the perpetual headaches of users of NetCDF files is to extract the data.
-If you want to get all the data for a variable then neither `RNetCDF` nor 
-`ncdf4` are particularly troublesome:
+There are two ways to read data for a variable from the resource:
 
-``` r
-library(ncdf4)
-nc <- nc_open(fn)
-vars <- names(nc$vars)
-d <- ncvar_get(nc, vars[[1]])
+ * **`[]`:** The usual R array operator. This uses index values into the
+ dimensions and requires you to know the order in which the dimensions are 
+ specified for the variable. With a bit of tinkering and some helper functions
+ in `ncdfCF` this is still very easy to do.
+ * **`subset()`:** The `subset()` method lets you specify what you want to
+ extract from each dimension in real-world coordinates and timestamps, in 
+ whichever order.
+ 
+```{r extract}
+# Extract a timeseries for a specific location
+ts <- t2m[5, 4, ]
+str(ts)
+
+# Extract the full spatial extent for one time step
+ts <- t2m[, , 12]
+str(ts)
 ```
 
-But what if you are interested in only a small area or a month of data while the 
-resource has global data spanning multiple years? In both `RNetCDF` and `ncdf4`
-packages you'd have to work out how your real-world boundaries translate to 
-indices into the variable array of interest and then populate `start` and 
-`count` arguments to pass on to `var.get.nc()` or `ncvar_get()`. Many R users
-default to simply reading the entire array and then extracting the area of
-interest using standard R tools. That is wasteful at best (lots of I/O, RAM 
-usage, CPU cycles) and practically impossible with some larger NetCDF resources 
-that have variables upwards of 1GB in size.
+Note that the results contain degenerate dimensions (of length 1). This by 
+design because it allows attributes to be attached in a consistent manner.
 
-Enter `ncdfCF`. With `ncdfCF` you have two options to extract data for a 
-variable:
+```{r subset}
+# Extract a specific region, full time dimension
+ts <- subset(t2m, list(X = 29:30, Y = -1:-2))
+str(ts)
 
- * **`[]`**: Using R's standard extraction operator `[` you work directly with
- the index values into the array dimensions: `d <- t2m[3:5, 1:4, 1:10]`. You can
- leave out dimensions to extract everything from that dimension (but you have to
- indicate the position, just like in regular arrays). So to get the first 5 
- "time" slices from `t2m`: `d <- t2m[, , 1:5]`. Not specifying anything gets you 
- the whole array: `d <- t2m[]`. This works for any number of dimensions, you 
- simply have to adjust the number of positions that you specify. You still need 
- to know the indices into
- the arrays but `ncdfCF` has some helper functions to get you those.
- * **`subset()`**: The `subset()` method is more flexible than `[]` because it
- requires less knowledge of how the data in the variable is structured,
- particularly the order of the dimensions. While many NetCDF resources "behave" in
- their dimension order, there is no guarantee. With `subset()` you supply a 
- list with items for each dimension (by axis or dimension name, in any order)
- and each item containing a vector of real-world coordinates to extract. As an 
- example, to extract values of a variable `x` for Australia for the year 2020 you call
- `subset(x, list(X = 112:154, Y = -9:-44, T = c("2020-01-01", "2021-01-01")))`.
+# Extract specific time slices for a specific region
+# Note that the dimensions are specified out of order and using alternative
+# specifications: only the extreme values are used.
+ts <- subset(t2m, list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
+                       X = c(29.6, 28.8),
+                       Y = seq(-2, -1, by = 0.05)))
+str(ts)
+```
 
-Both approaches lend themselves well to the `apply()` family of functions for
-processing. Importantly, these functions are to access data from the NetCDF 
-resource so you can tweak the size of your request to the capacity of the 
-computer, without exhausting RAM.
+Both of these methods will read data from the NetCDF resource, but only as much
+as is requested.
 
 ## Development plan
 
@@ -156,10 +142,10 @@ Development plans for the near future focus on supporting the below features:
 
 ## Installation
 
-**CAUTION:** Package `ncdfCF` is still in the early phases of development.
-While extensively tested on multiple well-structured datasets, errors may still
-occur, particularly in datasets that do not adhere to the CF Metadata 
-Conventions.
+**`r colorize("CAUTION:", "red")`** Package `ncdfCF` is still in the early 
+phases of development. While extensively tested on multiple well-structured 
+datasets, errors may still occur, particularly in datasets that do not adhere to 
+the CF Metadata Conventions.
 
 Package `ncdfCF` has not yet been submitted to CRAN.
 

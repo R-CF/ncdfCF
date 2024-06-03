@@ -27,3 +27,7 @@ Collate:
     'ncdfDimensionNumeric.R'
     'ncdfDimensionTime.R'
     'utils.R'
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
