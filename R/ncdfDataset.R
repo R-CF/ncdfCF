@@ -50,11 +50,12 @@ setClass("ncdfDataset",
 #' fn <- system.file("extdata",
 #'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
 #'   package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #' ds
-ncdfDataset <- function(resource, keep_open = FALSE) {
+open_ncdf <- function(resource, keep_open = FALSE) {
   res <- ncdfResource(resource)
-  if (!methods::is(res, "ncdfResource")) return(res)
+  if (inherits(res, "try-error"))
+    stop(as.character(x))
 
   self <- methods::new("ncdfDataset", name = resource, resource = res, keep_open = keep_open)
 

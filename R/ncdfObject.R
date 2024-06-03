@@ -122,7 +122,7 @@ setGeneric("show_attributes", function(object) standardGeneric("show_attributes"
 setMethod("show_attributes", "ncdfObject", function(object) {
   if (nrow(object@attributes)) {
     cat("\nAttributes:\n")
-    print(.slim.data.frame(object@attributes, 50), right = FALSE, row.names = FALSE)
+    print(.slim.data.frame(object@attributes, 40), right = FALSE, row.names = FALSE)
   }
 })
 
