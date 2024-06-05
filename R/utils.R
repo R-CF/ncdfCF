@@ -6,7 +6,6 @@
 #' width - 3, they are truncated and then '...' added.
 #'
 #' @returns data.frame with slim columns
-#' @export
 #' @noRd
 .slim.data.frame <- function(df, width) {
   maxw <- width - 3
@@ -20,4 +19,8 @@
   }))
   names(out) <- names(df)
   out
+}
+
+ignore_unused_imports <- function() {
+  stringr::word
 }

@@ -43,6 +43,9 @@ library(ncdfCF)
 #> The following object is masked from 'package:graphics':
 #> 
 #>     axis
+```
+
+``` r
 
 # Get any NetCDF file
 fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
@@ -72,6 +75,9 @@ ds
 #>  1  Conventions NC_CHAR   6    CF-1.6                                  
 #>  2  history     NC_CHAR 482    Tue May 28 18:39:12 2024: cdo seldate...
 #>  3  CDO         NC_CHAR  64    Climate Data Operators version 2.4.1 ...
+```
+
+``` r
 
 # Variables can be accessed through standard list-type extraction syntax
 t2m <- ds[["t2m"]]
@@ -92,6 +98,9 @@ t2m
 #>  3  scale_factor  NC_DOUBLE  1     0.00045127252204996
 #>  4  _FillValue    NC_SHORT   1     -32767             
 #>  5  missing_value NC_SHORT   1     -32767
+```
+
+``` r
 
 # Same with dimensions, but now without first putting the object in a variable
 ds[["longitude"]]
@@ -107,15 +116,24 @@ ds[["longitude"]]
 #>  1  long_name     NC_CHAR  9     longitude   
 #>  2  units         NC_CHAR 12     degrees_east
 #>  3  axis          NC_CHAR  1     X
+```
+
+``` r
 
 # Regular base R operations simplify life further
 dimnames(ds[["pev"]]) # A variable: list of dimension names
 #>   longitude    latitude        time 
 #> "longitude"  "latitude"      "time"
+```
+
+``` r
 dimnames(ds[["longitude"]]) # A dimension: vector of dimension element values
 #>  [1] 28.0 28.1 28.2 28.3 28.4 28.5 28.6 28.7 28.8 28.9 29.0 29.1 29.2 29.3 29.4
 #> [16] 29.5 29.6 29.7 29.8 29.9 30.0 30.1 30.2 30.3 30.4 30.5 30.6 30.7 30.8 30.9
 #> [31] 31.0
+```
+
+``` r
 
 # Access attributes
 attribute(ds[["pev"]], "long_name")
@@ -145,6 +163,28 @@ str(ts)
 #>   ..$ : chr [1:24] "2016-01-01 00:00:00" "2016-01-01 01:00:00" "2016-01-01 02:00:00" "2016-01-01 03:00:00" ...
 #>  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"
 #>   ..- attr(*, "names")= chr [1:3] "longitude" "latitude" "time"
+#>  - attr(*, "time")=List of 1
+#>   ..$ time:Formal class 'CFtime' [package "CFtime"] with 4 slots
+#>   .. .. ..@ datum     :Formal class 'CFdatum' [package "CFtime"] with 5 slots
+#>   .. .. .. .. ..@ definition: chr "hours since 1900-01-01 00:00:00.0"
+#>   .. .. .. .. ..@ unit      : int 3
+#>   .. .. .. .. ..@ origin    :'data.frame':   1 obs. of  8 variables:
+#>   .. .. .. .. .. ..$ year  : int 1900
+#>   .. .. .. .. .. ..$ month : num 1
+#>   .. .. .. .. .. ..$ day   : num 1
+#>   .. .. .. .. .. ..$ hour  : num 0
+#>   .. .. .. .. .. ..$ minute: num 0
+#>   .. .. .. .. .. ..$ second: num 0
+#>   .. .. .. .. .. ..$ tz    : chr "+0000"
+#>   .. .. .. .. .. ..$ offset: num 0
+#>   .. .. .. .. ..@ calendar  : chr "gregorian"
+#>   .. .. .. .. ..@ cal_id    : int 1
+#>   .. .. ..@ resolution: num 1
+#>   .. .. ..@ offsets   : num [1:24] 1016832 1016833 1016834 1016835 1016836 ...
+#>   .. .. ..@ bounds    : logi FALSE
+```
+
+``` r
 
 # Extract the full spatial extent for one time step
 ts <- t2m[, , 12]
@@ -156,6 +196,25 @@ str(ts)
 #>   ..$ : chr "2016-01-01 11:00:00"
 #>  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"
 #>   ..- attr(*, "names")= chr [1:3] "longitude" "latitude" "time"
+#>  - attr(*, "time")=List of 1
+#>   ..$ time:Formal class 'CFtime' [package "CFtime"] with 4 slots
+#>   .. .. ..@ datum     :Formal class 'CFdatum' [package "CFtime"] with 5 slots
+#>   .. .. .. .. ..@ definition: chr "hours since 1900-01-01 00:00:00.0"
+#>   .. .. .. .. ..@ unit      : int 3
+#>   .. .. .. .. ..@ origin    :'data.frame':   1 obs. of  8 variables:
+#>   .. .. .. .. .. ..$ year  : int 1900
+#>   .. .. .. .. .. ..$ month : num 1
+#>   .. .. .. .. .. ..$ day   : num 1
+#>   .. .. .. .. .. ..$ hour  : num 0
+#>   .. .. .. .. .. ..$ minute: num 0
+#>   .. .. .. .. .. ..$ second: num 0
+#>   .. .. .. .. .. ..$ tz    : chr "+0000"
+#>   .. .. .. .. .. ..$ offset: num 0
+#>   .. .. .. .. ..@ calendar  : chr "gregorian"
+#>   .. .. .. .. ..@ cal_id    : int 1
+#>   .. .. ..@ resolution: num NA
+#>   .. .. ..@ offsets   : num 1016843
+#>   .. .. ..@ bounds    : logi FALSE
 ```
 
 Note that the results contain degenerate dimensions (of length 1). This
@@ -173,6 +232,28 @@ str(ts)
 #>   ..$ : chr [1:24] "2016-01-01 00:00:00" "2016-01-01 01:00:00" "2016-01-01 02:00:00" "2016-01-01 03:00:00" ...
 #>  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"
 #>   ..- attr(*, "names")= chr [1:3] "longitude" "latitude" "time"
+#>  - attr(*, "time")=List of 1
+#>   ..$ time:Formal class 'CFtime' [package "CFtime"] with 4 slots
+#>   .. .. ..@ datum     :Formal class 'CFdatum' [package "CFtime"] with 5 slots
+#>   .. .. .. .. ..@ definition: chr "hours since 1900-01-01 00:00:00.0"
+#>   .. .. .. .. ..@ unit      : int 3
+#>   .. .. .. .. ..@ origin    :'data.frame':   1 obs. of  8 variables:
+#>   .. .. .. .. .. ..$ year  : int 1900
+#>   .. .. .. .. .. ..$ month : num 1
+#>   .. .. .. .. .. ..$ day   : num 1
+#>   .. .. .. .. .. ..$ hour  : num 0
+#>   .. .. .. .. .. ..$ minute: num 0
+#>   .. .. .. .. .. ..$ second: num 0
+#>   .. .. .. .. .. ..$ tz    : chr "+0000"
+#>   .. .. .. .. .. ..$ offset: num 0
+#>   .. .. .. .. ..@ calendar  : chr "gregorian"
+#>   .. .. .. .. ..@ cal_id    : int 1
+#>   .. .. ..@ resolution: num 1
+#>   .. .. ..@ offsets   : num [1:24] 1016832 1016833 1016834 1016835 1016836 ...
+#>   .. .. ..@ bounds    : logi FALSE
+```
+
+``` r
 
 # Extract specific time slices for a specific region
 # Note that the dimensions are specified out of order and using alternative
@@ -188,6 +269,25 @@ str(ts)
 #>   ..$ : chr [1:6] "2016-01-01 09:00:00" "2016-01-01 10:00:00" "2016-01-01 11:00:00" "2016-01-01 12:00:00" ...
 #>  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"
 #>   ..- attr(*, "names")= chr [1:3] "longitude" "latitude" "time"
+#>  - attr(*, "time")=List of 1
+#>   ..$ time:Formal class 'CFtime' [package "CFtime"] with 4 slots
+#>   .. .. ..@ datum     :Formal class 'CFdatum' [package "CFtime"] with 5 slots
+#>   .. .. .. .. ..@ definition: chr "hours since 1900-01-01 00:00:00.0"
+#>   .. .. .. .. ..@ unit      : int 3
+#>   .. .. .. .. ..@ origin    :'data.frame':   1 obs. of  8 variables:
+#>   .. .. .. .. .. ..$ year  : int 1900
+#>   .. .. .. .. .. ..$ month : num 1
+#>   .. .. .. .. .. ..$ day   : num 1
+#>   .. .. .. .. .. ..$ hour  : num 0
+#>   .. .. .. .. .. ..$ minute: num 0
+#>   .. .. .. .. .. ..$ second: num 0
+#>   .. .. .. .. .. ..$ tz    : chr "+0000"
+#>   .. .. .. .. .. ..$ offset: num 0
+#>   .. .. .. .. ..@ calendar  : chr "gregorian"
+#>   .. .. .. .. ..@ cal_id    : int 1
+#>   .. .. ..@ resolution: num 6
+#>   .. .. ..@ offsets   : num [1:2] 1016841 1016847
+#>   .. .. ..@ bounds    : logi FALSE
 ```
 
 Both of these methods will read data from the NetCDF resource, but only

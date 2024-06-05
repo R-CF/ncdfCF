@@ -117,7 +117,7 @@ str(ts)
 ```
 
 Both of these methods will read data from the NetCDF resource, but only as much
-as is requested.
+as is requested. 
 
 ## Development plan
 

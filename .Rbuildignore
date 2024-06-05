@@ -3,3 +3,4 @@
 ^README\.Rmd$
 ^\.DS_Store$
 ^LICENSE\.md$
+^cran-comments\.md$
