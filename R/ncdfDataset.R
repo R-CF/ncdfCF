@@ -55,7 +55,7 @@ setClass("ncdfDataset",
 open_ncdf <- function(resource, keep_open = FALSE) {
   res <- ncdfResource(resource)
   if (inherits(res, "try-error"))
-    stop(as.character(x))
+    stop(as.character(res))
 
   self <- methods::new("ncdfDataset", name = resource, resource = res, keep_open = keep_open)
 
@@ -116,7 +116,7 @@ setMethod("brief", "ncdfDataset", function(object) {
 #' fn <- system.file("extdata",
 #'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
 #'   package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #' names(ds)
 setMethod("names", "ncdfDataset", function(x) as.vector(sapply(x@vars, name)))
 
@@ -145,7 +145,7 @@ setMethod("dim", "ncdfDataset", function(x) {
 #'
 #' @examples
 #' fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #' v1 <- names(ds)[1]
 #' var <- ds[[v1]]
 #' var

@@ -16,9 +16,9 @@ RoxygenNote: 7.3.1
 Imports: 
     CFtime,
     methods,
-    rlang,
     RNetCDF
 Collate: 
+    'ncdfCF-package.R'
     'ncdfResource.R'
     'ncdfObject.R'
     'ncdfDimension.R'

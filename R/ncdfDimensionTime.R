@@ -84,7 +84,7 @@ setMethod("dimnames", "ncdfDimensionTime", function (x) CFtime::format(x@values)
 #' fn <- system.file("extdata",
 #'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
 #'                   package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #' time <- ds[["time"]]
 #' has_bounds(time)
 setMethod("has_bounds", "ncdfDimensionTime", function(x) {
@@ -108,7 +108,7 @@ setMethod("has_bounds", "ncdfDimensionTime", function(x) {
 #' fn <- system.file("extdata",
 #'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
 #'                   package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #' time <- ds[["time"]]
 #' indexOf(c("2024-03-01", "2024-03-02"), time)
 setMethod("indexOf", c("ANY", "ncdfDimensionTime"), function (x, y, method = "constant") {
@@ -129,7 +129,7 @@ setMethod("indexOf", c("ANY", "ncdfDimensionTime"), function (x, y, method = "co
 #' fn <- system.file("extdata",
 #'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
 #'                   package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #' time(ds[["time"]])
 setMethod("time", "ncdfDimensionTime", function(x) {
   x@values

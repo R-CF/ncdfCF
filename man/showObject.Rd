@@ -65,7 +65,7 @@ access.
 }
 \examples{
 fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
-ds <- ncdfDataset(fn)
+ds <- open_ncdf(fn)
 
 # ncdfDataset, show
 ds

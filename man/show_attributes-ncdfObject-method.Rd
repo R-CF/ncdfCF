@@ -19,6 +19,6 @@ Print the attributes of the object to the console
 fn <- system.file("extdata",
                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
                   package = "ncdfCF")
-ds <- ncdfDataset(fn)
+ds <- open_ncdf(fn)
 show_attributes(ds[["pr"]])
 }

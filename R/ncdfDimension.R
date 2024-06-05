@@ -84,7 +84,7 @@ setMethod("shard", "ncdfDimension", function (object) {
 #' fn <- system.file("extdata",
 #'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
 #'   package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #'
 #' # ncdfDataset
 #' dimnames(ds)
@@ -112,7 +112,7 @@ NULL
 #' fn <- system.file("extdata",
 #'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
 #'                   package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #' time <- ds[["time"]]
 #' length(time)
 setMethod("length", "ncdfDimension", function (x) x@length)
@@ -127,10 +127,28 @@ setMethod("length", "ncdfDimension", function (x) x@length)
 #' fn <- system.file("extdata",
 #'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
 #'                   package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #' time <- ds[["time"]]
 #' axis(time)
 setMethod("axis", "ncdfDimension", function (x) x@axis)
+
+#' Get the full time specification of the dimension
+#'
+#' This method returns `NULL`. Class `ncdfDimensionTime` implements this method
+#' more usefully.
+#'
+#' @param x A `ncdfDimension` instance.
+#'
+#' @returns `NULL`
+#' @export
+#'
+#' @examples
+#' fn <- system.file("extdata",
+#'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
+#'                   package = "ncdfCF")
+#' ds <- open_ncdf(fn)
+#' time(ds[["lon"]])
+setMethod("time", "ncdfDimension", function(x) NULL)
 
 #' Read a dimension from a resource
 #'

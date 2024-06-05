@@ -2,6 +2,7 @@
 % Please edit documentation in R/ncdfVariable.R
 \name{[,ncdfVariable-method}
 \alias{[,ncdfVariable-method}
+\alias{bracket_select}
 \title{Extract data for a variable}
 \usage{
 \S4method{[}{ncdfVariable}(x, i, j, ..., drop = TRUE)
@@ -48,7 +49,7 @@ method.
 fn <- system.file("extdata",
   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
   package = "ncdfCF")
-ds <- ncdfDataset(fn)
+ds <- open_ncdf(fn)
 pr <- ds[["pr"]]
 
 # How are the dimensions organized?

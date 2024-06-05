@@ -21,7 +21,7 @@ dataset by name.
 }
 \examples{
 fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
-ds <- ncdfDataset(fn)
+ds <- open_ncdf(fn)
 v1 <- names(ds)[1]
 var <- ds[[v1]]
 var

@@ -52,7 +52,7 @@ setClass("ncdfObject",
 #'   character string with a few identifying details of `object`.
 #' @examples
 #' fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #'
 #' # ncdfDataset, show
 #' ds
@@ -117,7 +117,7 @@ setGeneric("show_attributes", function(object) standardGeneric("show_attributes"
 #' fn <- system.file("extdata",
 #'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
 #'                   package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #' show_attributes(ds[["pr"]])
 setMethod("show_attributes", "ncdfObject", function(object) {
   if (nrow(object@attributes)) {
@@ -136,7 +136,7 @@ setMethod("show_attributes", "ncdfObject", function(object) {
 #' fn <- system.file("extdata",
 #'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
 #'                   package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #' id(ds[["lon"]])
 setMethod("id", "ncdfObject", function(object) object@id)
 
@@ -150,7 +150,7 @@ setMethod("id", "ncdfObject", function(object) object@id)
 #' fn <- system.file("extdata",
 #'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
 #'                   package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #' name(ds[["lon"]])
 setMethod("name", "ncdfObject", function(object) object@name)
 
@@ -169,7 +169,7 @@ setMethod("name", "ncdfObject", function(object) object@name)
 #' fn <- system.file("extdata",
 #'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
 #'                   package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #' lon <- ds[["lon"]]
 #' attribute(lon, "standard_name")
 setMethod("attribute", "ncdfObject", function(object, att) {

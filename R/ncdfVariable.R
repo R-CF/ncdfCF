@@ -60,7 +60,7 @@ setMethod("shard", "ncdfVariable", function(object) {
 #' fn <- system.file("extdata",
 #'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
 #'   package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #'
 #' # ncdfDataset
 #' dim(ds)
@@ -113,11 +113,12 @@ setMethod("dimnames", "ncdfVariable", function(x) sapply(x@dims, name))
 #'
 #' @returns An array with dimnames and other attributes set.
 #' @export
+#' @aliases bracket_select
 #' @examples
 #' fn <- system.file("extdata",
 #'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
 #'   package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #' pr <- ds[["pr"]]
 #'
 #' # How are the dimensions organized?
@@ -133,38 +134,46 @@ setMethod("dimnames", "ncdfVariable", function(x) sapply(x@dims, name))
 #'
 setMethod("[", "ncdfVariable", function(x, ..., drop = FALSE) {
   numdims <- length(x@dims)
+  t <- vector("list", numdims)
   sc <- sys.call()
   if (numdims == 0L && length(sc) == 3L) { # Variable is a scalar value
     start <- 1L
     count <- NA_integer_
   } else {
     sc <- sc[-(1L:2L)] # drop [ and x
-    if ((length(sc) == 1L) && (rlang::is_missing(sc[[1L]]))) { # [] specified, read whole array
+    if ((length(sc) == 1L) && (identical(sc[[1L]], quote(expr = )))) { # [] specified, read whole array
       start <- rep(1L, numdims)
       count <- rep(NA_integer_, numdims)
       dnames <- lapply(x@dims, dimnames)
+      t <- lapply(x@dims, time)
     } else if (length(sc) != numdims) {
       stop("Indices specified are not equal to the number of dimensions of the variable")
     } else {
       start <- vector("integer", numdims)
       count <- vector("integer", numdims)
-      dnames <- list()
+      dnames <- vector("list", numdims)
       for (d in seq_along(sc)) {
-        if (rlang::is_missing(sc[[d]])) {
+        if (identical(sc[[d]], quote(expr = ))) {
           start[d] <- 1L
           count[d] <- NA_integer_
           dnames[[d]] <- dimnames(x@dims[[d]])
+          t[[d]] <- time(x@dims[[d]])
         } else {
           v <- eval(sc[[d]])
           ex <- range(v)
           start[d] <- ex[1L]
           count[d] <- ex[2L] - ex[1L] + 1L
           dnames[[d]] <- dimnames(x@dims[[d]])[seq(ex[1], ex[2])]
+          if (!is.null(time(x@dims[[d]]))) {
+            idx <- indexOf(ex[1L]:ex[2L], time(x@dims[[d]]))
+            t[[d]] <- attr(idx, "CFtime")
+          }
         }
       }
     }
   }
-  .read_data(x, start, count, dnames)
+  names(t) <- dimnames(x)
+  .read_data(x, start, count, dnames, t[lengths(t) > 0L])
 })
 
 #' Extract a subset of values from a variable
@@ -226,7 +235,7 @@ setMethod("[", "ncdfVariable", function(x, ..., drop = FALSE) {
 #' fn <- system.file("extdata",
 #'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
 #'   package = "ncdfCF")
-#' ds <- ncdfDataset(fn)
+#' ds <- open_ncdf(fn)
 #' pr <- ds[["pr"]]
 #'
 #' # Precipitation data for March for a small area
@@ -248,6 +257,8 @@ setMethod("subset", "ncdfVariable", function(x, subset, rightmost.closed = FALSE
   if (length(bad))
     stop("Argument `subset` contains elements not corresponding to a dimension:", paste(bad, collapse = ", "))
 
+  t <- vector("list", num_dims)
+
   start <- rep(1L, num_dims)
   count <- rep(NA_integer_, num_dims)
   dvals <- list()
@@ -255,6 +266,7 @@ setMethod("subset", "ncdfVariable", function(x, subset, rightmost.closed = FALSE
     if(!is.null(rng <- subset[[dim_names[d]]]) ||
        !is.null(rng <- subset[[axes[d]]])) {
       idx <- indexOf(rng, x@dims[[d]], method = "linear")
+      t[[d]] <- attr(idx, "CFtime")
       idx <- range(idx)
       if (all(idx == 0) || all(idx > length(x@dims[[d]]))) return(NULL)
       if (idx[1L] == 0) idx[1L] <- 1
@@ -266,11 +278,14 @@ setMethod("subset", "ncdfVariable", function(x, subset, rightmost.closed = FALSE
       start[d] <- idx[1L]
       count[d] <- idx[2L] - idx[1L] + 1L
       dvals[[d]] <- dimnames(x@dims[[d]])[seq(idx[1L], idx[2L])]
-    } else
+    } else {
       dvals[[d]] <- dimnames(x@dims[[d]])
+      t[[d]] <- time(x@dims[[d]])
+    }
   }
 
-  .read_data(x, start, count, dvals)
+  names(t) <- dimnames(x)
+  .read_data(x, start, count, dvals, t[lengths(t) > 0L])
 })
 
 #' Read the metadata of a variable
@@ -345,10 +360,11 @@ setMethod("subset", "ncdfVariable", function(x, subset, rightmost.closed = FALSE
 #' @param x The variable
 #' @param start,count RNetCDF start and count vectors
 #' @param dim_names Dimnames to assign
+#' @param time New CFtime for any time dimensions
 #'
 #' @returns The array with attributes set
 #' @noRd
-.read_data <- function(x, start, count, dim_names) {
+.read_data <- function(x, start, count, dim_names, time) {
   h <- open(x@resource)
   on.exit(close(x@resource))
   data <- RNetCDF::var.get.nc(h, x@name, start, count, collapse = FALSE, unpack = TRUE)
@@ -357,6 +373,8 @@ setMethod("subset", "ncdfVariable", function(x, subset, rightmost.closed = FALSE
   if (length(x@dims) && length(dim(data)) == length(dim_names)) { # dimensions may have been dropped automatically, e.g. NC_CHAR to character string
     dimnames(data) <- dim_names
     attr(data, "axis") <- sapply(x@dims, axis)
+    if (length(time))
+      attr(data, "time") <- time
   }
 
   data
