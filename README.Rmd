@@ -44,6 +44,7 @@ Metadata Conventions to interpret the data. This currently applies to:
  Using the `CFtime` package these offsets can be turned into intelligible dates
  and times, for all 9 defined calendars.
  * **Bounds** information. When present, bounds are read and used in analyses.
+ * **Discrete dimensions** with character labels.
 
 ##### Basic usage
 

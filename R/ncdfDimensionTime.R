@@ -91,26 +91,9 @@ setMethod("has_bounds", "ncdfDimensionTime", function(x) {
   !is.null(CFtime::bounds(x@values))
 })
 
-#' Find dimension indices in the time domain
-#'
-#' @param x Vector of character timestamps, `POSIXct` or `Date` values to find
-#' indices for.
-#' @param y An `ncdfDimensionTime` instance.
-#' @param method Single value of "constant" or "linear". If `"constant"` or when
-#'   bounds are set on argument `y`, return the index value for each match. If
-#'   `"linear"`, return the index value with any fractional value.
-#'
-#' @returns Numeric vector of the same length as `x`, or `NULL` if the range of
-#' values in `x` is fully outside the valid range of `y`.
+#' @rdname indexOf
 #' @importMethodsFrom CFtime indexOf
 #' @export
-#' @examples
-#' fn <- system.file("extdata",
-#'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
-#'                   package = "ncdfCF")
-#' ds <- open_ncdf(fn)
-#' time <- ds[["time"]]
-#' indexOf(c("2024-03-01", "2024-03-02"), time)
 setMethod("indexOf", c("ANY", "ncdfDimensionTime"), function (x, y, method = "constant") {
   indexOf(x, y@values, method)
 })

@@ -3,26 +3,14 @@
 \docType{class}
 \name{ncdfDimensionNumeric-class}
 \alias{ncdfDimensionNumeric-class}
-\title{Dimension object}
+\title{Numeric dimension class}
 \description{
-The 'dimension' is one of the key building blocks of a data set in an netCDF
-resource.
+This class describes numeric dimensions in an NetCDF resource.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{var_id}}{The ID of the dimension variable if read from file.}
-
-\item{\code{var_type}}{The type of the dimension variable if read from file.}
-
-\item{\code{length}}{The number of elements in the dimension.}
-
-\item{\code{unlim}}{Flag to indicate whether this dimension is unlimited, e.g. can be
-extended beyond the current 'length'.}
-
-\item{\code{values}}{The values of the positions along the dimension. For ordinary
-dimensions these are numeric values but there are other possibilities. For
-instance, any "time" dimension will have an instance of S4 class 'CFtime'.}
+\item{\code{values}}{The values of the positions along the dimension.}
 
 \item{\code{bounds}}{The bounds of the dimension values, if any.}
 }}

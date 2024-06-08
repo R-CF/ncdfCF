@@ -26,9 +26,11 @@ Collate:
     'ncdfDimension.R'
     'ncdfVariable.R'
     'ncdfDataset.R'
+    'ncdfDimensionCharacter.R'
     'ncdfDimensionNumeric.R'
     'ncdfDimensionTime.R'
     'utils.R'
+    'zzz.R'
 Suggests: 
     knitr,
     rmarkdown

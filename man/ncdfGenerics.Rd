@@ -29,6 +29,10 @@ of descendant classes.}
 
 \item{att}{Name of the attribute to look up.}
 }
+\value{
+Various. Please see the documentation of the methods in descendant
+classes.
+}
 \description{
 These are generic method definitions with implementations in descendant
 classes. Please see the help topics for the descendant classes.

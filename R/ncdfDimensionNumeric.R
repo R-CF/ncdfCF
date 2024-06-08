@@ -1,19 +1,11 @@
 #' @include ncdfDimension.R
 NULL
 
-#' Dimension object
+#' Numeric dimension class
 #'
-#' The 'dimension' is one of the key building blocks of a data set in an netCDF
-#' resource.
+#' This class describes numeric dimensions in an NetCDF resource.
 #'
-#' @slot var_id The ID of the dimension variable if read from file.
-#' @slot var_type The type of the dimension variable if read from file.
-#' @slot length The number of elements in the dimension.
-#' @slot unlim Flag to indicate whether this dimension is unlimited, e.g. can be
-#' extended beyond the current 'length'.
-#' @slot values The values of the positions along the dimension. For ordinary
-#' dimensions these are numeric values but there are other possibilities. For
-#' instance, any "time" dimension will have an instance of S4 class 'CFtime'.
+#' @slot values The values of the positions along the dimension.
 #' @slot bounds The bounds of the dimension values, if any.
 setClass("ncdfDimensionNumeric",
   contains = "ncdfDimension",
@@ -37,8 +29,7 @@ setMethod("show", "ncdfDimensionNumeric", function (object) {
 
   len <- length(object@values)
   unlim <- if (object@unlim) "(unlimited)" else ""
-  rng <- if (length(object@values))
-           paste0(range(object@values), collapse = " ... ")
+  rng <- if (len) paste0(range(object@values), collapse = " ... ")
          else "(no values)"
   units <- attribute(object, "units")
   if (!length(units)) units <- ""
@@ -103,36 +94,9 @@ setMethod("has_bounds", "ncdfDimensionNumeric", function(x) {
   length(x@bounds) > 0L
 })
 
-#' Find indices in the dimension domain
-#'
-#' Given a vector of numerical values `x`, find their indices in the values of
-#' dimension `y`. With `method = "constant"` this returns the index of the value
-#' lower than the supplied values in `x`. With `method = "linear"` the return
-#' value includes any fractional part.
-#'
-#' If bounds are set on the dimension, the indices are taken from those bounds.
-#' Returned indices may fall in between bounds if the latter are not contiguous,
-#' with the exception of the extreme values in `x`.
-#'
-#' @param x Vector of numeric values to find dimension indices for.
-#' @param y An `ncdfDimensionNumeric` instance.
-#' @param method Single value of "constant" or "linear".
-#'
-#' @returns Numeric vector of the same length as `x`. If `method = "constant"`,
-#'   return the index value for each match. If `method = "linear"`, return the
-#'   index value with any fractional value. Values of `x` outside of the range
-#'   of the values in `y` are returned as `0` and `.Machine$integer.max`,
-#'   respectively.
+#' @rdname indexOf
 #' @export
-#' @examples
-#' fn <- system.file("extdata",
-#'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
-#'                   package = "ncdfCF")
-#' ds <- open_ncdf(fn)
-#' lon <- ds[["lon"]]
-#' indexOf(42:45, lon)
-#' indexOf(42:45, lon, "linear")
-setMethod("indexOf", c("numeric", "ncdfDimensionNumeric"), function (x, y, method = "linear") {
+setMethod("indexOf", c("numeric", "ncdfDimensionNumeric"), function (x, y, method = "constant") {
   if (length(y@bounds)) vals <- c(y@bounds[1L, 1L], y@bounds[2L, ])
   else vals <- y@values
   stats::approx(vals, 1L:length(vals), x, method = method, yleft = 0L, yright = .Machine$integer.max)$y

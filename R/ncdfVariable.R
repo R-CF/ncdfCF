@@ -157,7 +157,8 @@ setMethod("[", "ncdfVariable", function(x, ..., drop = FALSE) {
           start[d] <- 1L
           count[d] <- NA_integer_
           dnames[[d]] <- dimnames(x@dims[[d]])
-          t[[d]] <- time(x@dims[[d]])
+          tm <- time(x@dims[[d]])         # Direct assignment of NULL in last
+          if (!is.null(tm)) t[[d]] <- tm  # dimension drops t[[last]]
         } else {
           v <- eval(sc[[d]])
           ex <- range(v)
@@ -165,7 +166,7 @@ setMethod("[", "ncdfVariable", function(x, ..., drop = FALSE) {
           count[d] <- ex[2L] - ex[1L] + 1L
           dnames[[d]] <- dimnames(x@dims[[d]])[seq(ex[1], ex[2])]
           if (!is.null(time(x@dims[[d]]))) {
-            idx <- indexOf(ex[1L]:ex[2L], time(x@dims[[d]]))
+            idx <- indexOf(ex[1L]:ex[2L], time(x@dims[[d]]), "constant")
             t[[d]] <- attr(idx, "CFtime")
           }
         }

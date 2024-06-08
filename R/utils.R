@@ -7,7 +7,7 @@
 #'
 #' @returns data.frame with slim columns
 #' @noRd
-.slim.data.frame <- function(df, width) {
+.slim.data.frame <- function(df, width = globals$df_column_width) {
   maxw <- width - 3
   out <- as.data.frame(lapply(df, function(c) {
     if (is.list(c)) c <- sapply(c, paste0, collapse = ", ")

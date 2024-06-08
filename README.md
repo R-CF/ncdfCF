@@ -30,6 +30,7 @@ Metadata Conventions to interpret the data. This currently applies to:
   intelligible dates and times, for all 9 defined calendars.
 - **Bounds** information. When present, bounds are read and used in
   analyses.
+- **Discrete dimensions** with character labels.
 
 ##### Basic usage
 
@@ -55,7 +56,7 @@ ds <- open_ncdf(fn)
 
 # Easy access in understandable format to all the details
 ds
-#> Dataset   : /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
+#> Dataset   : /private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/Rtmp4NMDYW/temp_libpath133b9482f742d/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
 #> 
 #> Variables :
 #>  id name long_name             units dimensions               

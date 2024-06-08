@@ -13,8 +13,13 @@ axis(x)
 \arguments{
 \item{x}{The \code{ncdfCF} dimension that the method operates on.}
 }
+\value{
+\code{has_bounds()} returns a logical to indicate if bounds have been set
+on the dimension. \code{axis()} returns a character to indicate which of axes "X",
+"Y", "Z", or "T" is associated with the dimension, if any.
+}
 \description{
 These are generic method definitions with implementations in descendant
-classes. See \code{ncdfDimensionNumeric} and \code{ncdfDimensionTime} help topics for
-details.
+classes. See \code{ncdfDimensionNumeric}, \code{ncdfDimensionCharacter} and
+\code{ncdfDimensionTime} help topics for details.
 }

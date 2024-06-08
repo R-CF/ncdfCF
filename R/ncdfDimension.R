@@ -34,10 +34,13 @@ setClass("ncdfDimension",
 #' Generics for `ncdfCF` dimensions
 #'
 #' These are generic method definitions with implementations in descendant
-#' classes. See `ncdfDimensionNumeric` and `ncdfDimensionTime` help topics for
-#' details.
+#' classes. See `ncdfDimensionNumeric`, `ncdfDimensionCharacter` and
+#' `ncdfDimensionTime` help topics for details.
 #'
 #' @param x The `ncdfCF` dimension that the method operates on.
+#' @returns `has_bounds()` returns a logical to indicate if bounds have been set
+#' on the dimension. `axis()` returns a character to indicate which of axes "X",
+#' "Y", "Z", or "T" is associated with the dimension, if any.
 #'
 #' @name ncdfDimensionGenerics
 NULL
@@ -72,6 +75,8 @@ setMethod("shard", "ncdfDimension", function (object) {
 #' markedly from the `base::dimnames()` functionality.
 #' * `ncdfDimensionNumeric`: The values of the elements along the dimension as a
 #' numeric vector.
+#' * `ncdfDimensionCharacter`: The values of the elements along the dimension as
+#' a character vector.
 #' * `ncdfDimensionTime`: The values of the elements along the dimension as a
 #' character vector containing timestamps in ISO8601 format. This could be dates
 #' or date-times if time information is available in the dimension.
@@ -150,6 +155,44 @@ setMethod("axis", "ncdfDimension", function (x) x@axis)
 #' time(ds[["lon"]])
 setMethod("time", "ncdfDimension", function(x) NULL)
 
+#' @name indexOf
+#' @title Find indices in the dimension domain
+#'
+#' @description
+#' Given a vector of numerical, timestamp or categorical values `x`, find their
+#' indices in the values of dimension `y`. With `method = "constant"` this
+#' returns the index of the value lower than the supplied values in `x`. With
+#' `method = "linear"` the return value includes any fractional part.
+#'
+#' If bounds are set on the numerical or time dimension, the indices are taken
+#' from those bounds. Returned indices may fall in between bounds if the latter
+#' are not contiguous, with the exception of the extreme values in `x`.
+#'
+#' @param x Vector of numeric, timestamp or categorial values to find dimension
+#' indices for. The timestamps can be either character, POSIXct or Date vectors.
+#' The type of the vector has to correspond to the type of `y`.
+#' @param y An instance of `ncdfDimensionNumeric`, `ncdfDimensionTime` or
+#' `ncdfDimensionCharacter`.
+#' @param method Single value of "constant" or "linear".
+#'
+#' @returns Numeric vector of the same length as `x`. If `method = "constant"`,
+#'   return the index value for each match. If `method = "linear"`, return the
+#'   index value with any fractional value. Values of `x` outside of the range
+#'   of the values in `y` are returned as `0` and `.Machine$integer.max`,
+#'   respectively.
+#' @examples
+#' fn <- system.file("extdata",
+#'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
+#'                   package = "ncdfCF")
+#' ds <- open_ncdf(fn)
+#' lon <- ds[["lon"]]
+#' indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1), lon)
+#' indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1), lon, "linear")
+#'
+#' time <- ds[["time"]]
+#' indexOf(c("2024-03-01", "2024-03-02"), time)
+NULL
+
 #' Read a dimension from a resource
 #'
 #' Depending on the type of the dimension, either an `ncdfDimensionNumeric` is
@@ -166,25 +209,32 @@ setMethod("time", "ncdfDimension", function(x) NULL)
 .readDimension <- function (dataset, h, did) {
   err <- try({
     dmeta <- RNetCDF::dim.inq.nc(h, did)
-
+browser(expr = dmeta$name == "string26")
     # Get some dimension variable metadata
     dvar <- try(RNetCDF::var.inq.nc(h, dmeta$name), silent = TRUE)
     if (inherits(dvar, "try-error"))
+      # FIXME: Need more intelligent choice here - scalar dimension, char to string in NetCDF classic?
       return(methods::new("ncdfDimensionNumeric", id = as.integer(dmeta$id),
                           name = dmeta$name, resource = dataset@resource,
                           length = as.integer(dmeta$length), unlim = dmeta$unlim,
                           var_id = -1L))
 
-    # Dimension values, get rid of any spurious "precision"
-    vals <- round(as.vector(RNetCDF::var.get.nc(h, dmeta$name)), 5)
+    # Dimension values
+    vals <- as.vector(RNetCDF::var.get.nc(h, dmeta$name))
 
     # If no attributes, then nothing more to do
     # FIXME: Dimension of type NC_CHAR or NC_STRING
     if (!dvar$natts)
-      return(methods::new("ncdfDimensionNumeric", id = as.integer(dmeta$id),
-                          name = dmeta$name, resource = dataset@resource,
-                          length = as.integer(dmeta$length), unlim = dmeta$unlim,
-                          var_id = dvar$id, var_type = dvar$type, values = vals))
+      if (dvar$type %in% c("NC_CHAR", "NC_STRING"))
+        return(methods::new("ncdfDimensionCharacter", id = as.integer(dmeta$id),
+                            name = dmeta$name, resource = dataset@resource,
+                            length = as.integer(dmeta$length), unlim = dmeta$unlim,
+                            var_id = dvar$id, var_type = dvar$type, values = vals))
+      else
+        return(methods::new("ncdfDimensionNumeric", id = as.integer(dmeta$id),
+                            name = dmeta$name, resource = dataset@resource,
+                            length = as.integer(dmeta$length), unlim = dmeta$unlim,
+                            var_id = dvar$id, var_type = dvar$type, values = round(vals, 5)))
 
     # Get the attributes and interpret the type of dimension
     atts <- do.call(rbind, lapply(0L:(dvar$natts - 1L), function (a) as.data.frame(RNetCDF::att.inq.nc(h, dmeta$name, a))))
@@ -209,36 +259,44 @@ setMethod("time", "ncdfDimension", function(x) NULL)
     # Create the dimension
     if (methods::is(cf, "CFtime")) {
       if (!is.null(bnds)) CFtime::bounds(cf) <- bnds
-      dim <- methods::new("ncdfDimensionTime", id = as.integer(dmeta$id),
+      return(methods::new("ncdfDimensionTime", id = as.integer(dmeta$id),
                           name = dmeta$name, resource = dataset@resource,
                           length = as.integer(dmeta$length), unlim = dmeta$unlim,
                           var_id = dvar$id, var_type = dvar$type,
-                          attributes = atts, values = cf, axis = "T")
+                          attributes = atts, values = cf, axis = "T"))
+    }
+
+    if (dvar$type %in% c("NC_CHAR", "NC_STRING")) {
+      dim <- (methods::new("ncdfDimensionCharacter", id = as.integer(dmeta$id),
+                          name = dmeta$name, resource = dataset@resource,
+                          length = as.integer(dmeta$length), unlim = dmeta$unlim,
+                          var_id = dvar$id, var_type = dvar$type,
+                          attributes = atts, values = vals))
     } else {
       dim <- methods::new("ncdfDimensionNumeric", id = as.integer(dmeta$id),
                           name = dmeta$name, resource = dataset@resource,
                           length = as.integer(dmeta$length), unlim = dmeta$unlim,
                           var_id = dvar$id, var_type = dvar$type,
-                          attributes = atts, values = vals)
+                          attributes = atts, values = round(vals, 5))
       if (!is.null(bnds)) dim@bounds <- bnds
+    }
 
-      # Axis
-      axis <- attribute(dim, "axis")
-      if (length(axis)) dim@axis <- axis
-      else {
-        if (length(units)) {
-          if (grepl("^degree(s?)(_?)(east|E)$", units)) dim@axis <- "X"
-          else if (grepl("^degree(s?)(_?)(north|N)$", units)) dim@axis <- "Y"
-        }
+    # Axis
+    axis <- attribute(dim, "axis")
+    if (length(axis)) dim@axis <- axis
+    else {
+      if (length(units)) {
+        if (grepl("^degree(s?)(_?)(east|E)$", units)) dim@axis <- "X"
+        else if (grepl("^degree(s?)(_?)(north|N)$", units)) dim@axis <- "Y"
       }
-      if (dim@axis == "") {
-        # Last option: standard_name
-        # Only X and Y as Z too broad to automatically interpret, needs operator knowledge
-        standard <- attribute(dim, "standard_name")
-        if (length(standard)) {
-          if (standard == "longitude") dim@axis <- "X"
-          else if (standard == "latitude") dim@axis <- "Y"
-        }
+    }
+    if (dim@axis == "") {
+      # Last option: standard_name
+      # Only X and Y as Z too broad to automatically interpret, needs operator knowledge
+      standard <- attribute(dim, "standard_name")
+      if (length(standard)) {
+        if (standard == "longitude") dim@axis <- "X"
+        else if (standard == "latitude") dim@axis <- "Y"
       }
     }
   }, silent = TRUE)

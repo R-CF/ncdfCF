@@ -36,9 +36,9 @@ setClass("ncdfObject",
 #' * Method `show()` will provide many details of the object over multiple
 #'   lines printed to the console. This includes all attributes so it could be a
 #'   substantive amount of information.
-#' * Method `brief()` returns some details of the object in a 1-row `data.frame` for further
-#'   processing, such as combining details from all variables of a dataset into
-#'   a single table.
+#' * Method `brief()` returns some details of the object in a 1-row `data.frame`
+#'   for further processing, such as combining details from all variables of a
+#'   dataset into a single table.
 #' * Method `shard()` returns a very short character string with some identifying
 #'   properties of the object, typically only useful when combined with shards
 #'   of other object to provide a succinct overview of the dataset. This method
@@ -78,6 +78,8 @@ NULL
 #' @param object The `ncdfCF` object that the method operates on. This includes
 #' datasets, variables, dimensions, and possible others including instances
 #' of descendant classes.
+#' @returns Various. Please see the documentation of the methods in descendant
+#' classes.
 #'
 #' @name ncdfGenerics
 NULL
