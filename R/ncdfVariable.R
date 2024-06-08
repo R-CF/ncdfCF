@@ -285,7 +285,7 @@ setMethod("subset", "ncdfVariable", function(x, subset, rightmost.closed = FALSE
     }
   }
 
-  names(t) <- dimnames(x)
+  if (length(t)) names(t) <- dimnames(x)
   .read_data(x, start, count, dvals, t[lengths(t) > 0L])
 })
 
