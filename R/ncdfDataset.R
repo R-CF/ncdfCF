@@ -31,6 +31,32 @@ setClass("ncdfDataset",
   )
 )
 
+#' @name objects_by_standard_name
+#' @title Get objects by standard_name
+#'
+#' @description
+#' Several conventions define standard vocabularies for physical properties. The
+#' standard names from those vocabularies are usually stored as the
+#' "standard_name" attribute with variables or dimensions. This methods
+#' retrieves all variables or dimensions that list the specified "standard_name"
+#' in its attributes.
+#'
+#' @param x The `ncdfDataset` to query for the "standard_name" attribute.
+#' @param standard_name A character string to search for in variables and
+#' dimensions.
+#'
+#' @returns A character vector of variable or dimension names.
+#' @export
+#'
+#' @examples
+#' fn <- system.file("extdata",
+#'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
+#'   package = "ncdfCF")
+#' ds <- open_ncdf(fn)
+#' objects_by_standard_name(ds, "precipitation_flux")
+setGeneric("objects_by_standard_name", function(x, standard_name)
+  standardGeneric("objects_by_standard_name"), signature = "x")
+
 #' Read a NetCDF resource
 #'
 #' @param resource The name of the NetCDF resource to open, either a local file
@@ -128,6 +154,14 @@ setMethod("dimnames", "ncdfDataset", function(x) as.vector(sapply(x@dims, name))
 #' @export
 setMethod("dim", "ncdfDataset", function(x) {
   .dimension_sizes(x)
+})
+
+#' @rdname objects_by_standard_name
+#' @export
+setMethod("objects_by_standard_name", "ncdfDataset", function(x, standard_name) {
+  nm <- c(sapply(x@vars, attribute, "standard_name"),
+          sapply(x@dims, attribute, "standard_name"))
+  names(nm[which(nm == standard_name)])
 })
 
 #' @title Get a variable object or a dimension object from a dataset
