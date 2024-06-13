@@ -2,6 +2,9 @@
 
 # ncdfCF 0.1.1
 
+* `objects_by_standard_name()` will list objects in the NetCDF resource that
+have a "standard_name" attribute.
+
 # ncdfCF 0.1.0
 
 * Initial CRAN submission. This is a WORK IN PROGRESS and the package is not

@@ -7,10 +7,15 @@
 
 [![Lifecycle:
 Experimental](https://img.shields.io/badge/Lifecycle-Experimental-red.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+[![CRAN
+Status](https://www.r-pkg.org/badges/version/ncdfCF)](https://cran.r-project.org/package=ncdfCF)
+[![CRAN
+Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ncdfCF)](https://cran.r-project.org/package=ncdfCF)
 [![License: GPL
 v3](https://img.shields.io/badge/License-MIT-blue.svg)](https://mit-license.org)
 [![Last
 commit](https://img.shields.io/github/last-commit/pvanlaake/ncdfCF)](https://github.com/pvanlaake/ncdfCF/commits/main)
+[![R-CMD-check](https://github.com/pvanlaake/ncdfCF/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pvanlaake/ncdfCF/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The `ncdfCF` package provides an easy to use interface to NetCDF
@@ -56,7 +61,7 @@ ds <- open_ncdf(fn)
 
 # Easy access in understandable format to all the details
 ds
-#> Dataset   : /private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/Rtmp4NMDYW/temp_libpath133b9482f742d/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
+#> Dataset   : /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
 #> 
 #> Variables :
 #>  id name long_name             units dimensions               

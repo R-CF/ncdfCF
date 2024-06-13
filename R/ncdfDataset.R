@@ -42,10 +42,13 @@ setClass("ncdfDataset",
 #' in its attributes.
 #'
 #' @param x The `ncdfDataset` to query for the "standard_name" attribute.
-#' @param standard_name A character string to search for in variables and
-#' dimensions.
+#' @param standard_name Optional, a character string to search for a specific
+#' "standard_name" value in variables and dimensions.
 #'
-#' @returns A character vector of variable or dimension names.
+#' @returns If argument `standard_name` is provided, a character vector of
+#' variable or dimension names. If argument `standard_name` is missing or an
+#' empty string, a named list with all "standard_name" attribute values in the
+#' the NetCDF resource; each list item is named for the variable or dimension.
 #' @export
 #'
 #' @examples
@@ -107,7 +110,7 @@ setMethod("show", "ncdfDataset", function(object) {
     vars <- as.data.frame(vars[lengths(vars) > 0L])
     if (nrow(vars)) {
       if (nrow(vars) == 1L) cat("\nVariable  :\n") else cat("\nVariables :\n")
-      print(.slim.data.frame(vars, 50), right = FALSE, row.names = FALSE)
+      print(.slim.data.frame(vars, 50L), right = FALSE, row.names = FALSE)
     }
 
     dims <- do.call(rbind, lapply(object@dims, brief))
@@ -115,7 +118,7 @@ setMethod("show", "ncdfDataset", function(object) {
     dims <- as.data.frame(dims[lengths(dims) > 0L])
     if (nrow(dims)) {
       if (nrow(dims) == 1L) cat("\nDimension :\n") else cat("\nDimensions:\n")
-      print(.slim.data.frame(dims, 50), right = FALSE, row.names = FALSE)
+      print(.slim.data.frame(dims, 50L), right = FALSE, row.names = FALSE)
     }
 
     show_attributes(object)
@@ -161,7 +164,10 @@ setMethod("dim", "ncdfDataset", function(x) {
 setMethod("objects_by_standard_name", "ncdfDataset", function(x, standard_name) {
   nm <- c(sapply(x@vars, attribute, "standard_name"),
           sapply(x@dims, attribute, "standard_name"))
-  names(nm[which(nm == standard_name)])
+  if (missing(standard_name) || nchar(standard_name) == 0L)
+    nm[lengths(nm) > 0L]
+  else
+    names(nm[which(nm == standard_name)])
 })
 
 #' @title Get a variable object or a dimension object from a dataset

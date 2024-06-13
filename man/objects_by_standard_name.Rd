@@ -12,11 +12,14 @@ objects_by_standard_name(x, standard_name)
 \arguments{
 \item{x}{The \code{ncdfDataset} to query for the "standard_name" attribute.}
 
-\item{standard_name}{A character string to search for in variables and
-dimensions.}
+\item{standard_name}{Optional, a character string to search for a specific
+"standard_name" value in variables and dimensions.}
 }
 \value{
-A character vector of variable or dimension names.
+If argument \code{standard_name} is provided, a character vector of
+variable or dimension names. If argument \code{standard_name} is missing or an
+empty string, a named list with all "standard_name" attribute values in the
+the NetCDF resource; each list item is named for the variable or dimension.
 }
 \description{
 Several conventions define standard vocabularies for physical properties. The
