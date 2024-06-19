@@ -4,7 +4,7 @@
 \alias{show_attributes,ncdfObject-method}
 \title{Print the attributes of the object to the console}
 \usage{
-\S4method{show_attributes}{ncdfObject}(object)
+\S4method{show_attributes}{ncdfObject}(object, ...)
 }
 \arguments{
 \item{object}{\code{ncdfObject} whose attributes to print.}

@@ -20,7 +20,7 @@ name(object)
 
 attribute(object, att)
 
-show_attributes(object)
+show_attributes(object, ...)
 }
 \arguments{
 \item{object}{The \code{ncdfCF} object that the method operates on. This includes
@@ -28,6 +28,8 @@ datasets, variables, dimensions, and possible others including instances
 of descendant classes.}
 
 \item{att}{Name of the attribute to look up.}
+
+\item{...}{Passed on to underlying functions.}
 }
 \value{
 Various. Please see the documentation of the methods in descendant

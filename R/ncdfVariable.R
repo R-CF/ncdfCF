@@ -21,7 +21,8 @@ setMethod("show", "ncdfVariable", function (object) {
   dims <- lapply(dims, function(c) if (all(c == "")) NULL else c)
   dims <- as.data.frame(dims[lengths(dims) > 0L])
   if (nrow(dims) == 1L) cat("Dimension :\n") else cat("Dimensions:\n")
-  if (nrow(dims) == 0L) cat("(none)\n") else print(dims, row.names = FALSE)
+  if (nrow(dims) == 0L) cat("(none)\n")
+  else print(.slim.data.frame(dims), right = FALSE, row.names = FALSE)
 
   show_attributes(object)
 })

@@ -78,6 +78,7 @@ NULL
 #' @param object The `ncdfCF` object that the method operates on. This includes
 #' datasets, variables, dimensions, and possible others including instances
 #' of descendant classes.
+#' @param ... Passed on to underlying functions.
 #' @returns Various. Please see the documentation of the methods in descendant
 #' classes.
 #'
@@ -107,7 +108,7 @@ setGeneric("attribute", function(object, att) standardGeneric("attribute"), sign
 
 #' @rdname ncdfGenerics
 #' @export
-setGeneric("show_attributes", function(object) standardGeneric("show_attributes"), signature = "object")
+setGeneric("show_attributes", function(object, ...) standardGeneric("show_attributes"), signature = "object")
 
 #' Print the attributes of the object to the console
 #'
@@ -121,10 +122,10 @@ setGeneric("show_attributes", function(object) standardGeneric("show_attributes"
 #'                   package = "ncdfCF")
 #' ds <- open_ncdf(fn)
 #' show_attributes(ds[["pr"]])
-setMethod("show_attributes", "ncdfObject", function(object) {
+setMethod("show_attributes", "ncdfObject", function(object, ...) {
   if (nrow(object@attributes)) {
     cat("\nAttributes:\n")
-    print(.slim.data.frame(object@attributes, 40), right = FALSE, row.names = FALSE)
+    print(.slim.data.frame(object@attributes, ...), right = FALSE, row.names = FALSE)
   }
 })
 

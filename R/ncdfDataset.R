@@ -110,7 +110,7 @@ setMethod("show", "ncdfDataset", function(object) {
     vars <- as.data.frame(vars[lengths(vars) > 0L])
     if (nrow(vars)) {
       if (nrow(vars) == 1L) cat("\nVariable  :\n") else cat("\nVariables :\n")
-      print(.slim.data.frame(vars, 50L), right = FALSE, row.names = FALSE)
+      print(.slim.data.frame(vars), right = FALSE, row.names = FALSE)
     }
 
     dims <- do.call(rbind, lapply(object@dims, brief))
@@ -118,7 +118,7 @@ setMethod("show", "ncdfDataset", function(object) {
     dims <- as.data.frame(dims[lengths(dims) > 0L])
     if (nrow(dims)) {
       if (nrow(dims) == 1L) cat("\nDimension :\n") else cat("\nDimensions:\n")
-      print(.slim.data.frame(dims, 50L), right = FALSE, row.names = FALSE)
+      print(.slim.data.frame(dims), right = FALSE, row.names = FALSE)
     }
 
     show_attributes(object)
