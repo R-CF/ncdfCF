@@ -209,7 +209,7 @@ NULL
 .readDimension <- function (dataset, h, did) {
   err <- try({
     dmeta <- RNetCDF::dim.inq.nc(h, did)
-browser(expr = dmeta$name == "string26")
+
     # Get some dimension variable metadata
     dvar <- try(RNetCDF::var.inq.nc(h, dmeta$name), silent = TRUE)
     if (inherits(dvar, "try-error"))
@@ -267,11 +267,11 @@ browser(expr = dmeta$name == "string26")
     }
 
     if (dvar$type %in% c("NC_CHAR", "NC_STRING")) {
-      dim <- (methods::new("ncdfDimensionCharacter", id = as.integer(dmeta$id),
+      dim <- methods::new("ncdfDimensionCharacter", id = as.integer(dmeta$id),
                           name = dmeta$name, resource = dataset@resource,
                           length = as.integer(dmeta$length), unlim = dmeta$unlim,
                           var_id = dvar$id, var_type = dvar$type,
-                          attributes = atts, values = vals))
+                          attributes = atts, values = vals)
     } else {
       dim <- methods::new("ncdfDimensionNumeric", id = as.integer(dmeta$id),
                           name = dmeta$name, resource = dataset@resource,

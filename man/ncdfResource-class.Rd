@@ -5,9 +5,9 @@
 \alias{ncdfResource-class}
 \title{Low-level access to the RNetCDF package}
 \description{
-This class, of which there will be 1 instance in the package, shared by all
+This class, of which there will be 1 instance per NetCDF resource, shared by all
 \code{ncdfObject}s, provides low-level access to the \code{RNetCDF} package, mainly to
-provide a valid handle with which to access the underlying netCDF resource.
+provide a valid handle with which to access the underlying NetCDF resource.
 }
 \section{Slots}{
 

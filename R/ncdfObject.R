@@ -113,6 +113,7 @@ setGeneric("show_attributes", function(object, ...) standardGeneric("show_attrib
 #' Print the attributes of the object to the console
 #'
 #' @param object `ncdfObject` whose attributes to print.
+#' @param ... Passed on to underlying functions.
 #'
 #' @returns Nothing.
 #' @export

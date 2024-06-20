@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{object}{\code{ncdfObject} whose attributes to print.}
+
+\item{...}{Passed on to underlying functions.}
 }
 \value{
 Nothing.
