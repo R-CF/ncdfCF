@@ -52,8 +52,9 @@ setMethod("brief", "ncdfDimensionNumeric", function (object) {
   unlim <- if (object@unlim) "U" else ""
 
   nv <- length(object@values)
-  if (!nv) { # it happens...
-    dims <- "(no values)"
+  if (!nv) { # dimension for discrete axis without a coordinate variable: index values
+    dims <- if (object@length == 1L) "[1: 1]"
+            else paste0("[", object@length, ": 1 ... ", object@length, "]")
     bnds <- ""
   } else {
     if (nv == 1L)
