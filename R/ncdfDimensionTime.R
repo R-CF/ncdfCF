@@ -54,10 +54,10 @@ setMethod("brief", "ncdfDimensionTime", function (object) {
     dims <- "(no values)"
     bnds <- ""
   } else {
-    if (nv == 1L) dims <- paste0("[1: ", CFtime::format(object@values), "]")
+    if (nv == 1L) dims <- paste0("[", CFtime::format(object@values), "]")
     else {
       rng <- range(object@values, format = "", bounds = FALSE)
-      dims <- sprintf("[%d: %s ... %s]", nv, rng[1L], rng[2L])
+      dims <- sprintf("[%s ... %s]", rng[1L], rng[2L])
     }
     if (has_bounds(object)) {
       bndrng <- range(object@values, format = "", bounds = TRUE)
@@ -66,7 +66,7 @@ setMethod("brief", "ncdfDimensionTime", function (object) {
   }
 
   data.frame(id = object@id, axis = object@axis, name = object@name, long_name = longname,
-             dims = dims, unlim = unlim, bounds = bnds)
+             length = nv, values = dims, unlim = unlim, bounds = bnds)
 })
 
 #' @rdname ncdfDimnames

@@ -16,7 +16,5 @@ This is a virtual class that is the ancestor of other ncdfCF classes. Slots
 \item{\code{name}}{Name of the netCDF object.}
 
 \item{\code{attributes}}{A data.frame holding all attributes of the object.}
-
-\item{\code{resource}}{\code{ncdfResource} instance to access the netCDF resource.}
 }}
 

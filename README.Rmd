@@ -45,7 +45,7 @@ Metadata Conventions to interpret the data. This currently applies to:
  Using the `CFtime` package these offsets can be turned into intelligible dates
  and times, for all 9 defined calendars.
  * **Bounds** information. When present, bounds are read and used in analyses.
- * **Discrete dimensions** with character labels.
+ * **Discrete dimensions**, optionally with character labels.
 
 ##### Basic usage
 
@@ -63,6 +63,10 @@ ds <- open_ncdf(fn)
 
 # Easy access in understandable format to all the details
 ds
+
+# ...or very brief details
+names(ds)
+dimnames(ds)
 
 # Variables can be accessed through standard list-type extraction syntax
 t2m <- ds[["t2m"]]
@@ -124,21 +128,20 @@ as is requested.
 ## Development plan
 
 Package `ncdfCF` is in the early phases of development. It supports reading of 
-dimensions, variables, attributes and data from NetCDF resources in "classic" and
-"NetCDF4" formats. From the CF Metadata Conventions it supports identification
-of dimension axes, interpretation of the "time" dimension, and reading of 
-"bounds" information.
+groups, variables, dimensions, user-defined data types, attributes and data from 
+NetCDF resources in "classic" and "netcdf4" formats. From the CF Metadata 
+Conventions it supports identification of dimension axes, interpretation of the 
+"time" dimension, and reading of "bounds" information.
 
 Development plans for the near future focus on supporting the below features:
 
 ##### NetCDF
 
  * Support for writing.
- * Support for "group" information in "NetCDF4" formatted resources.
 
 ##### CF Metadata Conventions
 
- * Full support for discrete or categorical dimensions.
+ * Full support for discrete sampling geometries.
  * Interface to "standard_name" libraries and other "defined vocabularies".
  * Compliance with CMIP5 / CMIP6 requirements.
 
@@ -149,11 +152,15 @@ phases of development. While extensively tested on multiple well-structured
 datasets, errors may still occur, particularly in datasets that do not adhere to 
 the CF Metadata Conventions.
 
-Package `ncdfCF` has not yet been submitted to CRAN.
+Installation from CRAN of the latest release:
+
+```
+install.packages("ncdfCF")
+```
 
 You can install the development version of `ncdfCF` from [GitHub](https://github.com/) with:
 
-``` r
+```
 # install.packages("devtools")
 devtools::install_github("pvanlaake/ncdfCF")
 ```

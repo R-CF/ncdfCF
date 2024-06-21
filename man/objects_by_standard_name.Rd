@@ -24,7 +24,7 @@ the NetCDF resource; each list item is named for the variable or dimension.
 \description{
 Several conventions define standard vocabularies for physical properties. The
 standard names from those vocabularies are usually stored as the
-"standard_name" attribute with variables or dimensions. This methods
+"standard_name" attribute with variables or dimensions. This method
 retrieves all variables or dimensions that list the specified "standard_name"
 in its attributes.
 }

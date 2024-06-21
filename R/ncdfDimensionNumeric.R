@@ -29,8 +29,7 @@ setMethod("show", "ncdfDimensionNumeric", function (object) {
 
   len <- length(object@values)
   unlim <- if (object@unlim) "(unlimited)" else ""
-  rng <- if (len) paste0(range(object@values), collapse = " ... ")
-         else "(no values)"
+  rng <- paste0(range(object@values), collapse = " ... ")
   units <- attribute(object, "units")
   if (!length(units)) units <- ""
   if (length(object@bounds)) {
@@ -52,25 +51,19 @@ setMethod("brief", "ncdfDimensionNumeric", function (object) {
   unlim <- if (object@unlim) "U" else ""
 
   nv <- length(object@values)
-  if (!nv) { # dimension for discrete axis without a coordinate variable: index values
-    dims <- if (object@length == 1L) "[1: 1]"
-            else paste0("[", object@length, ": 1 ... ", object@length, "]")
-    bnds <- ""
-  } else {
-    if (nv == 1L)
-      dims <- sprintf("[1: %s]", gsub(" ", "", formatC(object@values[1L], digits = 8L)))
-    else {
-      vals <- trimws(formatC(c(object@values[1], object@values[nv]), digits = 8L))
-      dims <- sprintf("[%d: %s ... %s]", nv, vals[1L], vals[2L])
-    }
-    if (length(object@bounds)) {
-      vals <- trimws(formatC(c(object@bounds[1L, 1L], object@bounds[2L, nv]), digits = 8L))
-      bnds <- sprintf("[%s ... %s]", vals[1L], vals[2L])
-    } else bnds <- ""
+  if (nv == 1L)
+    dims <- sprintf("[%s]", gsub(" ", "", formatC(object@values[1L], digits = 8L)))
+  else {
+    vals <- trimws(formatC(c(object@values[1], object@values[nv]), digits = 8L))
+    dims <- sprintf("[%s ... %s]", vals[1L], vals[2L])
   }
+  if (length(object@bounds)) {
+    vals <- trimws(formatC(c(object@bounds[1L, 1L], object@bounds[2L, nv]), digits = 8L))
+    bnds <- sprintf("[%s ... %s]", vals[1L], vals[2L])
+  } else bnds <- ""
 
   data.frame(id = object@id, axis = object@axis, name = object@name, long_name = longname,
-             dims = dims, unlim = unlim, bounds = bnds)
+             length = nv, values = dims, unlim = unlim, bounds = bnds)
 })
 
 #' @rdname ncdfDimnames

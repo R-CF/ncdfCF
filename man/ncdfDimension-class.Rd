@@ -14,9 +14,11 @@ dimensions.
 \section{Slots}{
 
 \describe{
+\item{\code{grp}}{The \code{ncdfGroup} that this dimension belongs to.}
+
 \item{\code{var_id}}{The ID of the dimension variable if read from file.}
 
-\item{\code{var_type}}{The type of the dimension variable if read from file.}
+\item{\code{var_type}}{The type of the dimension variable on file.}
 
 \item{\code{length}}{The number of elements in the dimension.}
 

@@ -46,10 +46,10 @@ setMethod("brief", "ncdfDimensionCharacter", function (object) {
 
   nv <- length(object@values)
   dims <- if (!nv) "(no values)"
-          else dims <- sprintf("[%d: %s]", nv, paste0(object@values, collapse = ", "))
+          else dims <- sprintf("[%s]", paste0(object@values, collapse = ", "))
 
   data.frame(id = object@id, axis = object@axis, name = object@name, long_name = longname,
-             dims = dims, unlim = unlim, bounds = "")
+             length = nv, values = dims, unlim = unlim, bounds = "")
 })
 
 #' @rdname ncdfDimnames

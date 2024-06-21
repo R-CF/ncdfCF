@@ -4,7 +4,7 @@
 \alias{dimlength}
 \alias{dim,ncdfVariable-method}
 \alias{dim,ncdfDataset-method}
-\title{Lengths of dimensions of the data set or variable}
+\title{Lengths of dimensions of the dataset or variable}
 \usage{
 \S4method{dim}{ncdfVariable}(x)
 

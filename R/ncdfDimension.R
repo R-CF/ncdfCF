@@ -9,8 +9,9 @@ NULL
 #' numeric dimension values, and `ncdfDimensionTime` for "time"
 #' dimensions.
 #'
+#' @slot grp The `ncdfGroup` that this dimension belongs to.
 #' @slot var_id The ID of the dimension variable if read from file.
-#' @slot var_type The type of the dimension variable if read from file.
+#' @slot var_type The type of the dimension variable on file.
 #' @slot length The number of elements in the dimension.
 #' @slot unlim Flag to indicate whether this dimension is unlimited, e.g. can be
 #' extended beyond the current 'length'.
@@ -18,6 +19,7 @@ NULL
 setClass("ncdfDimension",
   contains = c("VIRTUAL", "ncdfObject"),
   slots = c(
+    grp        = "ncdfObject",
     var_id     = "integer",
     var_type   = "character",
     length     = "integer",
@@ -199,40 +201,38 @@ NULL
 #' returned, for numerical dimensions, or a `ncdfDimensionTime` for "time"
 #' dimensions.
 #'
-#' @param dataset The `ncdfDataset` that this dimension belongs to
-#' @param h Handle to the netCDF resource
-#' @param did Dimension ID value
+#' @param grp The `ncdfGroup` that this dimension belongs to.
+#' @param did Dimension ID value within the group.
 #'
 #' @returns Either a `ncdfDimension` instance of the appropriate subclass, or an
 #' error.
 #' @noRd
-.readDimension <- function (dataset, h, did) {
+.readDimension <- function (grp, did) {
   err <- try({
+    h <- handle(grp)
     dmeta <- RNetCDF::dim.inq.nc(h, did)
 
     # Get some dimension variable metadata
     dvar <- try(RNetCDF::var.inq.nc(h, dmeta$name), silent = TRUE)
     if (inherits(dvar, "try-error"))
-      # FIXME: Need more intelligent choice here - scalar dimension, char to string in NetCDF classic?
-      return(methods::new("ncdfDimensionNumeric", id = as.integer(dmeta$id),
-                          name = dmeta$name, resource = dataset@resource,
+      return(methods::new("ncdfDimensionDiscrete", id = as.integer(dmeta$id),
+                          name = dmeta$name, grp = grp,
                           length = as.integer(dmeta$length), unlim = dmeta$unlim,
-                          var_id = -1L))
+                          var_id = -1L, var_type = "NC_INT"))
 
     # Dimension values
     vals <- as.vector(RNetCDF::var.get.nc(h, dmeta$name))
 
     # If no attributes, then nothing more to do
-    # FIXME: Dimension of type NC_CHAR or NC_STRING
     if (!dvar$natts)
       if (dvar$type %in% c("NC_CHAR", "NC_STRING"))
         return(methods::new("ncdfDimensionCharacter", id = as.integer(dmeta$id),
-                            name = dmeta$name, resource = dataset@resource,
+                            name = dmeta$name, grp = grp,
                             length = as.integer(dmeta$length), unlim = dmeta$unlim,
                             var_id = dvar$id, var_type = dvar$type, values = vals))
       else
         return(methods::new("ncdfDimensionNumeric", id = as.integer(dmeta$id),
-                            name = dmeta$name, resource = dataset@resource,
+                            name = dmeta$name, grp = grp,
                             length = as.integer(dmeta$length), unlim = dmeta$unlim,
                             var_id = dvar$id, var_type = dvar$type, values = round(vals, 5)))
 
@@ -260,7 +260,7 @@ NULL
     if (methods::is(cf, "CFtime")) {
       if (!is.null(bnds)) CFtime::bounds(cf) <- bnds
       return(methods::new("ncdfDimensionTime", id = as.integer(dmeta$id),
-                          name = dmeta$name, resource = dataset@resource,
+                          name = dmeta$name, grp = grp,
                           length = as.integer(dmeta$length), unlim = dmeta$unlim,
                           var_id = dvar$id, var_type = dvar$type,
                           attributes = atts, values = cf, axis = "T"))
@@ -268,13 +268,13 @@ NULL
 
     if (dvar$type %in% c("NC_CHAR", "NC_STRING")) {
       dim <- methods::new("ncdfDimensionCharacter", id = as.integer(dmeta$id),
-                          name = dmeta$name, resource = dataset@resource,
+                          name = dmeta$name, grp = grp,
                           length = as.integer(dmeta$length), unlim = dmeta$unlim,
                           var_id = dvar$id, var_type = dvar$type,
                           attributes = atts, values = vals)
     } else {
       dim <- methods::new("ncdfDimensionNumeric", id = as.integer(dmeta$id),
-                          name = dmeta$name, resource = dataset@resource,
+                          name = dmeta$name, grp = grp,
                           length = as.integer(dmeta$length), unlim = dmeta$unlim,
                           var_id = dvar$id, var_type = dvar$type,
                           attributes = atts, values = round(vals, 5))

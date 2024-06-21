@@ -9,14 +9,12 @@ NULL
 #' @slot id Identifier of the netCDF object.
 #' @slot name Name of the netCDF object.
 #' @slot attributes A data.frame holding all attributes of the object.
-#' @slot resource `ncdfResource` instance to access the netCDF resource.
 setClass("ncdfObject",
   contains = "VIRTUAL",
   slots = c(
     id         = "integer",
     name       = "character",
-    attributes = "data.frame",
-    resource   = "ncdfResource"
+    attributes = "data.frame"
   ),
   prototype = list(
     id         = -1L,

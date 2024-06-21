@@ -15,9 +15,9 @@ This class represents a single NetCDF resource.
 \item{\code{keep_open}}{Logical flag to indicate if the resource should remain open
 for data access after the initial read of metadata.}
 
-\item{\code{vars}}{A list with the variables in the resource.}
-
-\item{\code{dims}}{A list holding all the dimension data.}
+\item{\code{root}}{The root group of this dataset. This contains all variables,
+dimensions and attributes in the "classic" NetCDF model, the "netcdf4" model
+may have subgroups.}
 
 \item{\code{format}}{A character string with the format of the NetCDF resource.}
 

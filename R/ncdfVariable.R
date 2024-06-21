@@ -3,11 +3,17 @@ NULL
 
 #' The ncdfVariable class
 #'
+#' @slot group `ncdfGroup` that this variable belongs to.
+#' @slot var_id The ID of the variable if read from file.
+#' @slot var_type The type of the variable on file.
 #' @slot dims `ncdfDimension`. Vector of dimensions of this variable.
 setClass("ncdfVariable",
   contains = "ncdfObject",
   slots    = c(
-    dims       = "list" # of ncdfDimension
+    group      = "ncdfObject",
+    var_id     = "integer",
+    var_type   = "character",
+    dims       = "list"        # of ncdfDimension
   ))
 
 #' @rdname showObject
@@ -15,7 +21,7 @@ setClass("ncdfVariable",
 setMethod("show", "ncdfVariable", function (object) {
   props <- .varProperties(object)
   cat(paste0("Variable: [", object@id, "] ", object@name))
-  if (props[1L] == "") cat("\n\n") else cat(paste0(" | ", props[1L], "\n\n"))
+  if (nchar(props$longname) == 0L) cat("\n\n") else cat(paste0(" | ", props$longname, "\n\n"))
 
   dims <- do.call(rbind, lapply(object@dims, brief))
   dims <- lapply(dims, function(c) if (all(c == "")) NULL else c)
@@ -31,8 +37,9 @@ setMethod("show", "ncdfVariable", function (object) {
 #' @export
 setMethod("brief", "ncdfVariable", function (object) {
   props <- .varProperties(object)
-  data.frame(id = object@id, name = object@name, long_name = props[1L],
-             units = props[2L], dimensions = paste(dimnames(object), collapse = ", "))
+  data.frame(id = object@id, name = object@name, long_name = props$longname,
+             units = props$unit, data_type = object@var_type,
+             dimensions = paste(dimnames(object), collapse = ", "))
 })
 
 #' @rdname showObject
@@ -41,13 +48,13 @@ setMethod("shard", "ncdfVariable", function(object) {
   props <- .varProperties(object)
 
   s <- paste0("[", object@id, ": ", object@name)
-  if (nchar(props[1L]) > 0) s <- paste0(s, " (", props[1L], ")")
-  if (nchar(props[2L]) > 0) s <- paste0(s, " (", props[2L], ")")
+  if (nchar(props$longname)) s <- paste0(s, " (", props$longname, ")")
+  if (nchar(props$unit)) s <- paste0(s, " (", props$unit, ")")
   paste0(s, "]")
 })
 
 #' @name dimlength
-#' @title Lengths of dimensions of the data set or variable
+#' @title Lengths of dimensions of the dataset or variable
 #'
 #' @description
 #' With this method the lengths of all dimensions of a dataset or a variable are
@@ -72,9 +79,7 @@ NULL
 
 #' @rdname dimlength
 #' @export
-setMethod("dim", "ncdfVariable", function(x) {
-  .dimension_sizes(x)
-})
+setMethod("dim", "ncdfVariable", function(x) sapply(x@dims, length))
 
 #' @rdname ncdfDimnames
 #' @export
@@ -114,7 +119,8 @@ setMethod("dimnames", "ncdfVariable", function(x) sapply(x@dims, name))
 #'
 #' @returns An array with dimnames and other attributes set.
 #' @export
-#' @aliases bracket_select
+#' @aliases [,ncdfVariable-method
+#' @docType methods
 #' @examples
 #' fn <- system.file("extdata",
 #'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
@@ -132,7 +138,6 @@ setMethod("dimnames", "ncdfVariable", function(x) sapply(x@dims, name))
 #' # Summer precipitation over the full spatial extent
 #' summer <- pr[, , 173:263]
 #' str(summer)
-#'
 setMethod("[", "ncdfVariable", function(x, ..., drop = FALSE) {
   numdims <- length(x@dims)
   t <- vector("list", numdims)
@@ -292,24 +297,27 @@ setMethod("subset", "ncdfVariable", function(x, subset, rightmost.closed = FALSE
 
 #' Read the metadata of a variable
 #'
-#' @param dataset An `ncdfDataset` instance that contains this variable
-#' @param h Handle to the netCDF resource
+#' Dimensions must have been set before calling this function.
+#'
+#' @param grp An `ncdfGroup` instance that contains this variable
 #' @param vid Variable ID value
 #'
 #' @returns `ncdfVariable` instance, or error
 #' @noRd
-.readVariable <- function(dataset, h, vid) {
+.readVariable <- function(grp, vid) {
   err <- try({
+    h <- handle(grp)
+
     # Names of dimensions and their bounds
-    dims <- dataset@dims
+    dims <- grp@dims
     objnames <- c(sapply(seq_along(dims), function (i) dims[[i]]@name),
                   sapply(dims, attribute, "bounds"))
 
     vmeta <- RNetCDF::var.inq.nc(h, vid)
     if (vmeta$name %in% objnames) return (NULL)
 
-    var <- methods::new("ncdfVariable", id = as.integer(vmeta$id), name = vmeta$name,
-                        resource = dataset@resource)
+    var <- methods::new("ncdfVariable", id = as.integer(vmeta$id), name = vmeta$name, group = grp,
+                        var_id = vmeta$id, var_type = vmeta$type)
 
     # Link to the dimensions of the variable
     if (vmeta$ndims > 0L)
@@ -326,20 +334,10 @@ setMethod("subset", "ncdfVariable", function(x, subset, rightmost.closed = FALSE
   if (inherits(err, "try-error")) err else var
 }
 
-#' Get the lengths of dimensions
-#'
-#' @param object A dataset or a variable
-#'
-#' @returns Named vector of dimension lengths
-#' @noRd
-.dimension_sizes <- function (object) {
-  sapply(object@dims, length)
-}
-
-#' Return some properties of the variable as a character vector
+#' Return some properties of the variable as a list
 #'
 #' @param var Single `ncdfVariable` instance.
-#' @returns A character vector with the long name and unit values of the variable.
+#' @returns A list with the long name and unit values of the variable.
 #'
 #' @noRd
 .varProperties <- function(var) {
@@ -354,7 +352,7 @@ setMethod("subset", "ncdfVariable", function(x, subset, rightmost.closed = FALSE
     if (!length(longname)) longname <- ""
   }
   if (longname == var@name) longname <- ""
-  c(longname, unit)
+  list(longname = longname, unit = unit)
 }
 
 #' Read the data for a variable
@@ -367,9 +365,8 @@ setMethod("subset", "ncdfVariable", function(x, subset, rightmost.closed = FALSE
 #' @returns The array with attributes set
 #' @noRd
 .read_data <- function(x, start, count, dim_names, time) {
-  h <- open(x@resource)
-  on.exit(close(x@resource))
-  data <- RNetCDF::var.get.nc(h, x@name, start, count, collapse = FALSE, unpack = TRUE)
+  h <- handle(x@group)
+  data <- RNetCDF::var.get.nc(h, x@name, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
 
   # Apply dimension data and other attributes
   if (length(x@dims) && length(dim(data)) == length(dim_names)) { # dimensions may have been dropped automatically, e.g. NC_CHAR to character string

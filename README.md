@@ -35,7 +35,7 @@ Metadata Conventions to interpret the data. This currently applies to:
   intelligible dates and times, for all 9 defined calendars.
 - **Bounds** information. When present, bounds are read and used in
   analyses.
-- **Discrete dimensions** with character labels.
+- **Discrete dimensions**, optionally with character labels.
 
 ##### Basic usage
 
@@ -64,23 +64,40 @@ ds
 #> Dataset   : /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
 #> 
 #> Variables :
-#>  id name long_name             units dimensions               
-#>  3  t2m  2 metre temperature   K     longitude, latitude, time
-#>  4  pev  Potential evaporation m     longitude, latitude, time
-#>  5  tp   Total precipitation   m     longitude, latitude, time
+#>  id name long_name             units data_type dimensions               
+#>  3  t2m  2 metre temperature   K     NC_SHORT  longitude, latitude, time
+#>  4  pev  Potential evaporation m     NC_SHORT  longitude, latitude, time
+#>  5  tp   Total precipitation   m     NC_SHORT  longitude, latitude, time
 #> 
 #> Dimensions:
-#>  id axis name      dims                                              unlim
-#>  1  X    longitude [31: 28 ... 31]                                        
-#>  2  Y    latitude  [21: -1 ... -3]                                        
-#>  0  T    time      [24: 2016-01-01 00:00:00 ... 2016-01-01 23:00:00] U    
+#>  id axis name      length values                                        unlim
+#>  1  X    longitude 31     [28 ... 31]                                        
+#>  2  Y    latitude  21     [-1 ... -3]                                        
+#>  0  T    time      24     [2016-01-01 00:00:00 ... 2016-01-01 23:00:00] U    
 #> 
 #> Attributes:
-#>  id name        type    length value                                   
-#>  0  CDI         NC_CHAR  64    Climate Data Interface version 2.4.1 ...
-#>  1  Conventions NC_CHAR   6    CF-1.6                                  
-#>  2  history     NC_CHAR 482    Tue May 28 18:39:12 2024: cdo seldate...
-#>  3  CDO         NC_CHAR  64    Climate Data Operators version 2.4.1 ...
+#>  id name        type    length
+#>  0  CDI         NC_CHAR  64   
+#>  1  Conventions NC_CHAR   6   
+#>  2  history     NC_CHAR 482   
+#>  3  CDO         NC_CHAR  64   
+#>  value                                             
+#>  Climate Data Interface version 2.4.1 (https://m...
+#>  CF-1.6                                            
+#>  Tue May 28 18:39:12 2024: cdo seldate,2016-01-0...
+#>  Climate Data Operators version 2.4.1 (https://m...
+```
+
+``` r
+
+# ...or very brief details
+names(ds)
+#> [1] "t2m" "pev" "tp"
+```
+
+``` r
+dimnames(ds)
+#> [1] "longitude" "latitude"  "time"
 ```
 
 ``` r
@@ -91,10 +108,10 @@ t2m
 #> Variable: [3] t2m | 2 metre temperature
 #> 
 #> Dimensions:
-#>  id axis      name                                              dims unlim
-#>   1    X longitude                                   [31: 28 ... 31]      
-#>   2    Y  latitude                                   [21: -1 ... -3]      
-#>   0    T      time [24: 2016-01-01 00:00:00 ... 2016-01-01 23:00:00]     U
+#>  id axis name      length values                                        unlim
+#>  1  X    longitude 31     [28 ... 31]                                        
+#>  2  Y    latitude  21     [-1 ... -3]                                        
+#>  0  T    time      24     [2016-01-01 00:00:00 ... 2016-01-01 23:00:00] U    
 #> 
 #> Attributes:
 #>  id name          type      length value              
@@ -239,7 +256,7 @@ str(ts)
 #>  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"
 #>   ..- attr(*, "names")= chr [1:3] "longitude" "latitude" "time"
 #>  - attr(*, "time")=List of 1
-#>   ..$ time:Formal class 'CFtime' [package "CFtime"] with 4 slots
+#>   ..$ :Formal class 'CFtime' [package "CFtime"] with 4 slots
 #>   .. .. ..@ datum     :Formal class 'CFdatum' [package "CFtime"] with 5 slots
 #>   .. .. .. .. ..@ definition: chr "hours since 1900-01-01 00:00:00.0"
 #>   .. .. .. .. ..@ unit      : int 3
@@ -276,7 +293,7 @@ str(ts)
 #>  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"
 #>   ..- attr(*, "names")= chr [1:3] "longitude" "latitude" "time"
 #>  - attr(*, "time")=List of 1
-#>   ..$ time:Formal class 'CFtime' [package "CFtime"] with 4 slots
+#>   ..$ :Formal class 'CFtime' [package "CFtime"] with 4 slots
 #>   .. .. ..@ datum     :Formal class 'CFdatum' [package "CFtime"] with 5 slots
 #>   .. .. .. .. ..@ definition: chr "hours since 1900-01-01 00:00:00.0"
 #>   .. .. .. .. ..@ unit      : int 3
@@ -302,10 +319,11 @@ as much as is requested.
 ## Development plan
 
 Package `ncdfCF` is in the early phases of development. It supports
-reading of dimensions, variables, attributes and data from NetCDF
-resources in “classic” and “NetCDF4” formats. From the CF Metadata
-Conventions it supports identification of dimension axes, interpretation
-of the “time” dimension, and reading of “bounds” information.
+reading of groups, variables, dimensions, user-defined data types,
+attributes and data from NetCDF resources in “classic” and “netcdf4”
+formats. From the CF Metadata Conventions it supports identification of
+dimension axes, interpretation of the “time” dimension, and reading of
+“bounds” information.
 
 Development plans for the near future focus on supporting the below
 features:
@@ -313,11 +331,10 @@ features:
 ##### NetCDF
 
 - Support for writing.
-- Support for “group” information in “NetCDF4” formatted resources.
 
 ##### CF Metadata Conventions
 
-- Full support for discrete or categorical dimensions.
+- Full support for discrete sampling geometries.
 - Interface to “standard_name” libraries and other “defined
   vocabularies”.
 - Compliance with CMIP5 / CMIP6 requirements.
@@ -329,12 +346,12 @@ in the early phases of development. While extensively tested on multiple
 well-structured datasets, errors may still occur, particularly in
 datasets that do not adhere to the CF Metadata Conventions.
 
-Package `ncdfCF` has not yet been submitted to CRAN.
+Installation from CRAN of the latest release:
+
+    install.packages("ncdfCF")
 
 You can install the development version of `ncdfCF` from
 [GitHub](https://github.com/) with:
 
-``` r
-# install.packages("devtools")
-devtools::install_github("pvanlaake/ncdfCF")
-```
+    # install.packages("devtools")
+    devtools::install_github("pvanlaake/ncdfCF")

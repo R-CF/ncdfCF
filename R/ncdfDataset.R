@@ -1,4 +1,4 @@
-#' @include ncdfVariable.R
+#' @include ncdfGroup.R
 NULL
 
 #' ncdfDataset class
@@ -8,8 +8,9 @@ NULL
 #' @slot resource The `ncdfResource` instance that handles the NetCDF file.
 #' @slot keep_open Logical flag to indicate if the resource should remain open
 #' for data access after the initial read of metadata.
-#' @slot vars A list with the variables in the resource.
-#' @slot dims A list holding all the dimension data.
+#' @slot root The root group of this dataset. This contains all variables,
+#' dimensions and attributes in the "classic" NetCDF model, the "netcdf4" model
+#' may have subgroups.
 #' @slot format A character string with the format of the NetCDF resource.
 #' @slot has_error logical. Flag to indicate if there was an error opening the resource.
 setClass("ncdfDataset",
@@ -17,17 +18,14 @@ setClass("ncdfDataset",
   slots = c(
     resource   = "ncdfResource",
     keep_open  = "logical",
-    vars       = "list", # of ncdfVariable
-    dims       = "list", # of ncdfDimension
+    root       = "ncdfGroup",
     format     = "character",
     has_error  = "logical"
   ),
   prototype = c(
     keep_open  = FALSE,
     format     = "",
-    has_error  = FALSE,
-    vars       = list(),
-    dims       = list()
+    has_error  = FALSE
   )
 )
 
@@ -37,7 +35,7 @@ setClass("ncdfDataset",
 #' @description
 #' Several conventions define standard vocabularies for physical properties. The
 #' standard names from those vocabularies are usually stored as the
-#' "standard_name" attribute with variables or dimensions. This methods
+#' "standard_name" attribute with variables or dimensions. This method
 #' retrieves all variables or dimensions that list the specified "standard_name"
 #' in its attributes.
 #'
@@ -104,35 +102,19 @@ setMethod("show", "ncdfDataset", function(object) {
   cat("Dataset   :", object@name, "\n")
   if (object@has_error)
     cat("An error occurred during opening of the dataset\n")
-  else {
-    vars <- do.call(rbind, lapply(object@vars, brief))
-    vars <- lapply(vars, function(c) if (all(c == "")) NULL else c)
-    vars <- as.data.frame(vars[lengths(vars) > 0L])
-    if (nrow(vars)) {
-      if (nrow(vars) == 1L) cat("\nVariable  :\n") else cat("\nVariables :\n")
-      print(.slim.data.frame(vars), right = FALSE, row.names = FALSE)
-    }
-
-    dims <- do.call(rbind, lapply(object@dims, brief))
-    dims <- lapply(dims, function(c) if (all(c == "")) NULL else c)
-    dims <- as.data.frame(dims[lengths(dims) > 0L])
-    if (nrow(dims)) {
-      if (nrow(dims) == 1L) cat("\nDimension :\n") else cat("\nDimensions:\n")
-      print(.slim.data.frame(dims), right = FALSE, row.names = FALSE)
-    }
-
-    show_attributes(object)
-  }
+  else print(object@root)
 })
 
 #' @rdname showObject
 #' @export
 setMethod("brief", "ncdfDataset", function(object) {
-  status <- if (object@has_error) "Error   :" else "Dataset:"
-  cat(status, object@name, "\n")
-  if (!object@has_error)
-    cat("  Variables  :", paste(lapply(object@vars, ncdfCF::shard)),
-        "\n  Dimensions :", paste(lapply(object@dims, ncdfCF::shard)), "\n")
+  if (object@has_error)
+    cat("Error  :", object@name, "\n")
+  else {
+    cat("Dataset:", object@name, "\n")
+    cat("  Variables  :", paste(lapply(.collect_vars(object), ncdfCF::shard)),
+        "\n  Dimensions :", paste(lapply(.collect_dims(object), ncdfCF::shard)), "\n")
+  }
 })
 
 #' Variable names of an `ncdfDataset` instance
@@ -147,32 +129,29 @@ setMethod("brief", "ncdfDataset", function(object) {
 #'   package = "ncdfCF")
 #' ds <- open_ncdf(fn)
 #' names(ds)
-setMethod("names", "ncdfDataset", function(x) as.vector(sapply(x@vars, name)))
+setMethod("names", "ncdfDataset", function(x) as.vector(sapply(.collect_vars(x), name)))
 
 #' @rdname ncdfDimnames
 #' @export
-setMethod("dimnames", "ncdfDataset", function(x) as.vector(sapply(x@dims, name)))
+setMethod("dimnames", "ncdfDataset", function(x) as.vector(sapply(.collect_dims(x), name)))
 
 #' @rdname dimlength
 #' @export
-setMethod("dim", "ncdfDataset", function(x) {
-  .dimension_sizes(x)
-})
+setMethod("dim", "ncdfDataset", function(x) sapply(.collect_dims(x), length))
 
 #' @rdname objects_by_standard_name
 #' @export
 setMethod("objects_by_standard_name", "ncdfDataset", function(x, standard_name) {
-  nm <- c(sapply(x@vars, attribute, "standard_name"),
-          sapply(x@dims, attribute, "standard_name"))
+  nm <- c(sapply(.collect_vars(x), attribute, "standard_name"),
+          sapply(.collect_dims(x), attribute, "standard_name"))
   if (missing(standard_name) || nchar(standard_name) == 0L)
     nm[lengths(nm) > 0L]
   else
     names(nm[which(nm == standard_name)])
 })
 
-#' @title Get a variable object or a dimension object from a dataset
+#' Get a variable object or a dimension object from a dataset
 #'
-#' @description
 #' This method can be used to retrieve a variable or a dimension from the
 #' dataset by name.
 #'
@@ -183,6 +162,8 @@ setMethod("objects_by_standard_name", "ncdfDataset", function(x, standard_name) 
 #' class, or `NULL` if the name is not found.
 #' @export
 #'
+#' @aliases [[,ncdfDataset-method
+#' @docType methods
 #' @examples
 #' fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 #' ds <- open_ncdf(fn)
@@ -190,9 +171,15 @@ setMethod("objects_by_standard_name", "ncdfDataset", function(x, standard_name) 
 #' var <- ds[[v1]]
 #' var
 setMethod("[[", "ncdfDataset", function(x, i) {
-  if (i %in% names(x)) x@vars[[i]]
-  else if (i %in% dimnames(x)) x@dims[[i]]
-  else NULL
+  vars <- .collect_vars(x)
+  idx <- which(names(vars) == i)
+  if (length(idx)) return(vars[[idx]])
+
+  dims <- .collect_dims(x)
+  idx <- which(names(dims) == i)
+  if (length(idx)) return(dims[[idx]])
+
+  NULL
 })
 
 #' Open a NetCDF dataset
@@ -206,40 +193,35 @@ setMethod("[[", "ncdfDataset", function(x, i) {
 .open_dataset <- function(dataset) {
   err <- try({
     h <- open(dataset@resource)
-
-    # Global information
     g <- RNetCDF::file.inq.nc(h)
     dataset@format <- g$format
 
-    # Dimensions
-    if (g$ndims) {
-      dims <- lapply(0L:(g$ndims - 1L), function (d) .readDimension(dataset, h, d))
-      names(dims) <- sapply(dims, name)
-      dataset@dims <- dims
-    }
-
-    # Variables
-    if (g$nvars) {
-      vars <- lapply(0L:(g$nvars - 1L), function (v) .readVariable(dataset, h, v))
-      vars <- vars[!sapply(vars,is.null)]
-      names(vars) <- sapply(vars, name)
-      dataset@vars <- vars
-    }
-
-    # Global attributes
-    if (g$ngatts) {
-      atts <- do.call(rbind, lapply(0L:(g$ngatts - 1L), function (a) as.data.frame(RNetCDF::att.inq.nc(h, "NC_GLOBAL", a))))
-      atts$value <- sapply(0L:(g$ngatts - 1L), function (a) RNetCDF::att.get.nc(h, "NC_GLOBAL", a))
-      dataset@attributes <- atts
-    } else dataset@attributes <- data.frame()
-
-    # Drop unused dimensions, usually just the bounds dimension(s)
-    if (g$ndims && g$nvars)
-      dataset@dims <- dims[unique(unlist((lapply(vars, function(v) sapply(v@dims, name)))))]
+    # Read all groups recursively
+    dataset@root <- .readGroup(dataset, h)
 
     if (!dataset@keep_open) close(dataset@resource)
   }, silent = TRUE)
   if (inherits(err, "try-error"))
     err
   else invisible(dataset)
+}
+
+#' Get a list of all variables in the dataset
+#'
+#' @param x The `ncdfDataset` instance
+#'
+#' @returns A list of `ncdfVariable`s.
+#' @noRd
+.collect_vars <- function(x) {
+  .collect_group_vars(x@root)
+}
+
+#' Get a list of all dimensions in the dataset
+#'
+#' @param x The `ncdfDataset` instance
+#'
+#' @returns A list of `ncdfDimension`s.
+#' @noRd
+.collect_dims <- function(x) {
+  .collect_group_dims(x@root)
 }
