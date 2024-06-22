@@ -4,20 +4,23 @@
 \alias{attribute,ncdfObject-method}
 \title{Get an attribute value}
 \usage{
-\S4method{attribute}{ncdfObject}(object, att)
+\S4method{attribute}{ncdfObject}(object, att, field = "value")
 }
 \arguments{
 \item{object}{A \code{ncdfObject} instance.}
 
 \item{att}{Attribute to find in $name column.}
+
+\item{field}{The field to extract, either "value" (default), "type" or
+"length".}
 }
 \value{
-Value of the $value column or \code{character(0)} when not found.
+Value of the \code{field} column or \code{character(0)} when not found.
 }
 \description{
-Extract the value of a named attribute of the ncdfCF object. When found, the
-value will have the type of the attribute and it may be of type list if the
-attribute has multiple values.
+Extract the value of the field of a named attribute of the ncdfCF object.
+When found, the value may be of type list if the attribute has multiple
+values.
 }
 \examples{
 fn <- system.file("extdata",

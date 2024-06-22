@@ -328,6 +328,10 @@ setMethod("subset", "ncdfVariable", function(x, subset, rightmost.closed = FALSE
       atts <- do.call(rbind, lapply(0L:(vmeta$natts - 1L), function (a) as.data.frame(RNetCDF::att.inq.nc(h, vmeta$name, a))))
       atts$value <- sapply(0L:(vmeta$natts - 1L), function (a) RNetCDF::att.get.nc(h, vmeta$name, a))
       var@attributes <- atts
+
+      # Update var_type if packed
+      sf <- attribute(var, "scale_factor", "type")
+      if (length(sf) > 0L) var@var_type <- sf
     }
   }, silent = TRUE)
 

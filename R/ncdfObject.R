@@ -101,8 +101,9 @@ setGeneric("name", function(object) standardGeneric("name"), signature = "object
 
 #' @rdname ncdfGenerics
 #' @param att Name of the attribute to look up.
+#' @param field One of "type", "length" or "value" (default)
 #' @export
-setGeneric("attribute", function(object, att) standardGeneric("attribute"), signature = "object")
+setGeneric("attribute", function(object, att, field = "value") standardGeneric("attribute"), signature = "object")
 
 #' @rdname ncdfGenerics
 #' @export
@@ -158,14 +159,16 @@ setMethod("name", "ncdfObject", function(object) object@name)
 
 #' Get an attribute value
 #'
-#' Extract the value of a named attribute of the ncdfCF object. When found, the
-#' value will have the type of the attribute and it may be of type list if the
-#' attribute has multiple values.
+#' Extract the value of the field of a named attribute of the ncdfCF object.
+#' When found, the value may be of type list if the attribute has multiple
+#' values.
 #'
 #' @param object A `ncdfObject` instance.
 #' @param att Attribute to find in $name column.
+#' @param field The field to extract, either "value" (default), "type" or
+#' "length".
 #'
-#' @returns Value of the $value column or `character(0)` when not found.
+#' @returns Value of the `field` column or `character(0)` when not found.
 #' @export
 #' @examples
 #' fn <- system.file("extdata",
@@ -174,10 +177,10 @@ setMethod("name", "ncdfObject", function(object) object@name)
 #' ds <- open_ncdf(fn)
 #' lon <- ds[["lon"]]
 #' attribute(lon, "standard_name")
-setMethod("attribute", "ncdfObject", function(object, att) {
+setMethod("attribute", "ncdfObject", function(object, att, field = "value") {
   atts <- object@attributes
   if (!nrow(atts)) return(character(0L))
-  val <- atts[which(atts$name == att), ]$value
+  val <- atts[which(atts$name == att), field]
   if (is.list(val)) {
     val <- paste0(val, collapse = ", ")
     if (val == "") val <- character(0L)

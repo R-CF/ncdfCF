@@ -18,7 +18,7 @@ id(object)
 
 name(object)
 
-attribute(object, att)
+attribute(object, att, field = "value")
 
 show_attributes(object, ...)
 }
@@ -28,6 +28,8 @@ datasets, variables, dimensions, and possible others including instances
 of descendant classes.}
 
 \item{att}{Name of the attribute to look up.}
+
+\item{field}{One of "type", "length" or "value" (default)}
 
 \item{...}{Passed on to underlying functions.}
 }
