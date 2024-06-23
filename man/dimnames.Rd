@@ -2,8 +2,8 @@
 % Please edit documentation in R/ncdfDimension.R, R/ncdfVariable.R,
 %   R/ncdfDataset.R, R/ncdfDimensionCharacter.R, R/ncdfDimensionDiscrete.R,
 %   R/ncdfDimensionNumeric.R, R/ncdfDimensionTime.R
-\name{ncdfDimnames}
-\alias{ncdfDimnames}
+\name{dimnames}
+\alias{dimnames}
 \alias{dimnames,ncdfVariable-method}
 \alias{dimnames,ncdfDataset-method}
 \alias{dimnames,ncdfDimensionCharacter-method}
@@ -26,7 +26,7 @@
 }
 \arguments{
 \item{x}{An \code{ncdfObject} whose dimension names to retrieve. This could be
-\code{ncdfDataset}, \code{ncdfVariable}, \code{ncdfDimensionNumeric} or \code{ncdfDimensionTime}.}
+\code{ncdfDataset}, \code{ncdfVariable}, or a class descending from \code{ncdfDimension}.}
 }
 \value{
 A vector as described in the Description section.
@@ -45,6 +45,8 @@ a character vector.
 \item \code{ncdfDimensionTime}: The values of the elements along the dimension as a
 character vector containing timestamps in ISO8601 format. This could be dates
 or date-times if time information is available in the dimension.
+\item \code{ncdfDimensionDiscrete}: The index values of the dimension, from 1 to the
+length of the dimension.
 }
 }
 \examples{

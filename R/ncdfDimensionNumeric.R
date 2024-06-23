@@ -66,24 +66,12 @@ setMethod("brief", "ncdfDimensionNumeric", function (object) {
              length = nv, values = dims, unlim = unlim, bounds = bnds)
 })
 
-#' @rdname ncdfDimnames
+#' @rdname dimnames
 #' @export
 setMethod("dimnames", "ncdfDimensionNumeric", function (x) x@values)
 
-#' Does the dimension have 'bounds' set?
-#'
-#' @param x The `ncdfDimension` object to query.
-#'
-#' @returns Logical to flag if bounds have been set or not.
+#' @rdname has_bounds
 #' @export
-#'
-#' @examples
-#' fn <- system.file("extdata",
-#'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
-#'                   package = "ncdfCF")
-#' ds <- open_ncdf(fn)
-#' lon <- ds[["lon"]]
-#' has_bounds(lon)
 setMethod("has_bounds", "ncdfDimensionNumeric", function(x) {
   length(x@bounds) > 0L
 })

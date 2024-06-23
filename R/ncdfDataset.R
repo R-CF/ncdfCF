@@ -112,8 +112,9 @@ setMethod("brief", "ncdfDataset", function(object) {
     cat("Error  :", object@name, "\n")
   else {
     cat("Dataset:", object@name, "\n")
-    cat("  Variables  :", paste(lapply(.collect_vars(object), ncdfCF::shard)),
-        "\n  Dimensions :", paste(lapply(.collect_dims(object), ncdfCF::shard)), "\n")
+    cat("  Variables  :", paste(lapply(.collect_vars(object@root), ncdfCF::shard)),
+        "\n  Dimensions :", paste(lapply(.collect_dims(object@root), ncdfCF::shard)),
+        "\n      Groups :", paste(lapply(.collect_groups(object@root), ncdfCF::shard)), "\n")
   }
 })
 
@@ -129,34 +130,34 @@ setMethod("brief", "ncdfDataset", function(object) {
 #'   package = "ncdfCF")
 #' ds <- open_ncdf(fn)
 #' names(ds)
-setMethod("names", "ncdfDataset", function(x) as.vector(sapply(.collect_vars(x), name)))
+setMethod("names", "ncdfDataset", function(x) as.vector(sapply(.collect_vars(x@root), name)))
 
-#' @rdname ncdfDimnames
+#' @rdname dimnames
 #' @export
-setMethod("dimnames", "ncdfDataset", function(x) as.vector(sapply(.collect_dims(x), name)))
+setMethod("dimnames", "ncdfDataset", function(x) as.vector(sapply(.collect_dims(x@root), name)))
 
 #' @rdname dimlength
 #' @export
-setMethod("dim", "ncdfDataset", function(x) sapply(.collect_dims(x), length))
+setMethod("dim", "ncdfDataset", function(x) sapply(.collect_dims(x@root), length))
 
 #' @rdname objects_by_standard_name
 #' @export
 setMethod("objects_by_standard_name", "ncdfDataset", function(x, standard_name) {
-  nm <- c(sapply(.collect_vars(x), attribute, "standard_name"),
-          sapply(.collect_dims(x), attribute, "standard_name"))
+  nm <- c(sapply(.collect_vars(x@root), attribute, "standard_name"),
+          sapply(.collect_dims(x@root), attribute, "standard_name"))
   if (missing(standard_name) || nchar(standard_name) == 0L)
     nm[lengths(nm) > 0L]
   else
     names(nm[which(nm == standard_name)])
 })
 
-#' Get a variable object or a dimension object from a dataset
+#' Get a group, variable or dimension object from a dataset
 #'
-#' This method can be used to retrieve a variable or a dimension from the
+#' This method can be used to retrieve a group, variable or dimension from the
 #' dataset by name.
 #'
-#' @param x An `ncdfDataset` to extract a variable or a dimension from.
-#' @param i The name of a variable or dimension in `x`.
+#' @param x An `ncdfDataset` to extract a group, variable or a dimension from.
+#' @param i The name of a group, variable or dimension in `x`.
 #'
 #' @returns An instance of `ncdfVariable` or an `ncdfDimension` descendant
 #' class, or `NULL` if the name is not found.
@@ -171,13 +172,18 @@ setMethod("objects_by_standard_name", "ncdfDataset", function(x, standard_name) 
 #' var <- ds[[v1]]
 #' var
 setMethod("[[", "ncdfDataset", function(x, i) {
-  vars <- .collect_vars(x)
+  vars <- .collect_vars(x@root)
   idx <- which(names(vars) == i)
   if (length(idx)) return(vars[[idx]])
 
-  dims <- .collect_dims(x)
+  dims <- .collect_dims(x@root)
   idx <- which(names(dims) == i)
   if (length(idx)) return(dims[[idx]])
+
+  groups <- .collect_groups(x@root)
+  nm <- lapply(groups, function(g) g@name)
+  idx <- which(nm == i)
+  if (length(idx)) return(groups[[idx]])
 
   NULL
 })
@@ -206,22 +212,3 @@ setMethod("[[", "ncdfDataset", function(x, i) {
   else invisible(dataset)
 }
 
-#' Get a list of all variables in the dataset
-#'
-#' @param x The `ncdfDataset` instance
-#'
-#' @returns A list of `ncdfVariable`s.
-#' @noRd
-.collect_vars <- function(x) {
-  .collect_group_vars(x@root)
-}
-
-#' Get a list of all dimensions in the dataset
-#'
-#' @param x The `ncdfDataset` instance
-#'
-#' @returns A list of `ncdfDimension`s.
-#' @noRd
-.collect_dims <- function(x) {
-  .collect_group_dims(x@root)
-}

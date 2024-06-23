@@ -81,7 +81,7 @@ NULL
 #' @export
 setMethod("dim", "ncdfVariable", function(x) sapply(x@dims, length))
 
-#' @rdname ncdfDimnames
+#' @rdname dimnames
 #' @export
 setMethod("dimnames", "ncdfVariable", function(x) sapply(x@dims, name))
 

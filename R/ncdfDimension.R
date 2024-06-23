@@ -33,28 +33,6 @@ setClass("ncdfDimension",
   )
 )
 
-#' Generics for `ncdfCF` dimensions
-#'
-#' These are generic method definitions with implementations in descendant
-#' classes. See `ncdfDimensionNumeric`, `ncdfDimensionCharacter` and
-#' `ncdfDimensionTime` help topics for details.
-#'
-#' @param x The `ncdfCF` dimension that the method operates on.
-#' @returns `has_bounds()` returns a logical to indicate if bounds have been set
-#' on the dimension. `axis()` returns a character to indicate which of axes "X",
-#' "Y", "Z", or "T" is associated with the dimension, if any.
-#'
-#' @name ncdfDimensionGenerics
-NULL
-
-#' @rdname ncdfDimensionGenerics
-#' @export
-setGeneric("has_bounds", function(x) standardGeneric("has_bounds"), signature = "x")
-
-#' @rdname ncdfDimensionGenerics
-#' @export
-setGeneric("axis", function(x) standardGeneric("axis"), signature = "x")
-
 #' @rdname showObject
 #' @export
 setMethod("shard", "ncdfDimension", function (object) {
@@ -67,7 +45,7 @@ setMethod("shard", "ncdfDimension", function (object) {
   paste0(s, ')]')
 })
 
-#' @name ncdfDimnames
+#' @name dimnames
 #' @title Dimnames of an `ncdfObject` instance
 #'
 #' @description Retrieve the dimension names of an `ncdfCF` object. The return
@@ -82,9 +60,11 @@ setMethod("shard", "ncdfDimension", function (object) {
 #' * `ncdfDimensionTime`: The values of the elements along the dimension as a
 #' character vector containing timestamps in ISO8601 format. This could be dates
 #' or date-times if time information is available in the dimension.
+#' * `ncdfDimensionDiscrete`: The index values of the dimension, from 1 to the
+#' length of the dimension.
 #'
 #' @param x An `ncdfObject` whose dimension names to retrieve. This could be
-#' `ncdfDataset`, `ncdfVariable`, `ncdfDimensionNumeric` or `ncdfDimensionTime`.
+#' `ncdfDataset`, `ncdfVariable`, or a class descending from `ncdfDimension`.
 #'
 #' @returns A vector as described in the Description section.
 #' @examples
@@ -124,11 +104,15 @@ NULL
 #' length(time)
 setMethod("length", "ncdfDimension", function (x) x@length)
 
-#' Dimension axis
+#' Retrieve the axis of a dimension
 #'
-#' @param x The `ncdfDimension` to get the axis for.
+#' This method retrieves the axis of the dimension.
 #'
-#' @returns One of `X, Y, Z, T` or `NA_character_` when not known.
+#' @param x The `ncdfDimension` to query.
+#'
+#' @returns A character to indicate which of axes "X", "Y", "Z", or "T" is
+#'   associated with the dimension, or `NA` if no axis is assigned to the
+#'   dimension.
 #' @export
 #' @examples
 #' fn <- system.file("extdata",
@@ -137,7 +121,32 @@ setMethod("length", "ncdfDimension", function (x) x@length)
 #' ds <- open_ncdf(fn)
 #' time <- ds[["time"]]
 #' axis(time)
+setGeneric("axis", function(x) standardGeneric("axis"), signature = "x")
+
+#' @rdname axis
+#' @export
 setMethod("axis", "ncdfDimension", function (x) x@axis)
+
+#' Does the dimension have bounds?
+#'
+#' This method indicates if the dimension has bounds set.
+#'
+#' @param x An instance of an `ncdfDimension` descendant class.
+#'
+#' @returns `TRUE` if bounds are set, `FALSE` otherwise
+#' @export
+#' @examples
+#' fn <- system.file("extdata",
+#'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
+#'                   package = "ncdfCF")
+#' ds <- open_ncdf(fn)
+#' time <- ds[["time"]]
+#' has_bounds(time)
+setGeneric("has_bounds", function(x) standardGeneric("has_bounds"), signature = "x")
+
+#' @rdname has_bounds
+#' @export
+setMethod("has_bounds", "ncdfDimension", function(x) FALSE)
 
 #' Get the full time specification of the dimension
 #'

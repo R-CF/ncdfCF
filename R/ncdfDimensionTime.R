@@ -69,24 +69,12 @@ setMethod("brief", "ncdfDimensionTime", function (object) {
              length = nv, values = dims, unlim = unlim, bounds = bnds)
 })
 
-#' @rdname ncdfDimnames
+#' @rdname dimnames
 #' @export
 setMethod("dimnames", "ncdfDimensionTime", function (x) CFtime::format(x@values))
 
-#' Does the "time" dimension have 'bounds' set?
-#'
-#' @param x The `ncdfDimensionTime` object to query.
-#'
-#' @returns Logical to flag if bounds have been set or not.
+#' @rdname has_bounds
 #' @export
-#'
-#' @examples
-#' fn <- system.file("extdata",
-#'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
-#'                   package = "ncdfCF")
-#' ds <- open_ncdf(fn)
-#' time <- ds[["time"]]
-#' has_bounds(time)
 setMethod("has_bounds", "ncdfDimensionTime", function(x) {
   !is.null(CFtime::bounds(x@values))
 })

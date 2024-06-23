@@ -67,9 +67,34 @@ setMethod("show", "ncdfGroup", function(object) {
     })
   }
 
-  show_attributes(object)
+  if(length(object@subgroups)) {
+    grps <- do.call(rbind, lapply(object@subgroups, brief))
+    if (nrow(grps)) {
+      if (nrow(grps) == 1L) cat("\nGroup     :\n") else cat("\nGroups    :\n")
+      print(.slim.data.frame(grps), right = FALSE, row.names = FALSE)
+    }
+  }
 
-  if(length(object@subgroups)) lapply(object@subgroups, print)
+  show_attributes(object)
+})
+
+#' @rdname showObject
+#' @export
+setMethod("brief", "ncdfGroup", function (object) {
+  d <- data.frame(id = object@id, name = object@name, vars = length(object@vars),
+                  dims = length(object@dims), UDTs = length(object@udts),
+                  atts = nrow(object@attributes))
+  if(length(object@subgroups)) {
+    sub <- do.call(rbind, lapply(object@subgroups, brief))
+    d <- rbind(d, sub)
+  }
+  d
+})
+
+#' @rdname showObject
+#' @export
+setMethod("shard", "ncdfGroup", function (object) {
+  paste0("[", object@name, "]")
 })
 
 #' Get the handle for a NetCDF group
@@ -91,14 +116,25 @@ setMethod("handle", "ncdfGroup", function(x) {
   x@handle
 })
 
+#' Get a list of all groups and its subgroups
+#'
+#' @param x The `ncdfGroup` instance.
+#'
+#' @returns A list of `ncdfGroup`s.
+#' @noRd
+.collect_groups <- function(x) {
+  sub_groups <- lapply(x@subgroups, .collect_groups)
+  c(x, sub_groups, recursive = TRUE)
+}
+
 #' Get a list of all variables in the group and its subgroups
 #'
 #' @param x The `ncdfGroup` instance.
 #'
 #' @returns A list of `ncdfVariable`s.
 #' @noRd
-.collect_group_vars <- function(x) {
-  sub_vars <- lapply(x@subgroups, .collect_group_vars)
+.collect_vars <- function(x) {
+  sub_vars <- lapply(x@subgroups, .collect_vars)
   c(x@vars, sub_vars, recursive = TRUE)
 }
 
@@ -108,8 +144,8 @@ setMethod("handle", "ncdfGroup", function(x) {
 #'
 #' @returns A list of `ncdfDimension`s.
 #' @noRd
-.collect_group_dims <- function(x) {
-  sub_dims <- lapply(x@subgroups, .collect_group_dims)
+.collect_dims <- function(x) {
+  sub_dims <- lapply(x@subgroups, .collect_dims)
   c(x@dims, sub_dims, recursive = TRUE)
 }
 

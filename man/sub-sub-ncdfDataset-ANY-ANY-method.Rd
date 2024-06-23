@@ -4,21 +4,21 @@
 \name{[[,ncdfDataset,ANY,ANY-method}
 \alias{[[,ncdfDataset,ANY,ANY-method}
 \alias{[[,ncdfDataset-method}
-\title{Get a variable object or a dimension object from a dataset}
+\title{Get a group, variable or dimension object from a dataset}
 \usage{
 \S4method{[[}{ncdfDataset,ANY,ANY}(x, i)
 }
 \arguments{
-\item{x}{An \code{ncdfDataset} to extract a variable or a dimension from.}
+\item{x}{An \code{ncdfDataset} to extract a group, variable or a dimension from.}
 
-\item{i}{The name of a variable or dimension in \code{x}.}
+\item{i}{The name of a group, variable or dimension in \code{x}.}
 }
 \value{
 An instance of \code{ncdfVariable} or an \code{ncdfDimension} descendant
 class, or \code{NULL} if the name is not found.
 }
 \description{
-This method can be used to retrieve a variable or a dimension from the
+This method can be used to retrieve a group, variable or dimension from the
 dataset by name.
 }
 \examples{

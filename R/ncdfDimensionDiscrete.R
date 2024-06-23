@@ -41,7 +41,7 @@ setMethod("brief", "ncdfDimensionDiscrete", function (object) {
              length = object@length, values = dims, unlim = unlim, bounds = "")
 })
 
-#' @rdname ncdfDimnames
+#' @rdname dimnames
 #' @export
 setMethod("dimnames", "ncdfDimensionDiscrete", function(x) seq(x@length))
 

@@ -10,6 +10,8 @@
 \alias{brief,ncdfVariable-method}
 \alias{shard,ncdfVariable-method}
 \alias{show,ncdfGroup-method}
+\alias{brief,ncdfGroup-method}
+\alias{shard,ncdfGroup-method}
 \alias{show,ncdfDataset-method}
 \alias{brief,ncdfDataset-method}
 \alias{show,ncdfDimensionCharacter-method}
@@ -31,6 +33,10 @@
 \S4method{shard}{ncdfVariable}(object)
 
 \S4method{show}{ncdfGroup}(object)
+
+\S4method{brief}{ncdfGroup}(object)
+
+\S4method{shard}{ncdfGroup}(object)
 
 \S4method{show}{ncdfDataset}(object)
 

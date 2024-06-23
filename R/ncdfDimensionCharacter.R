@@ -52,7 +52,7 @@ setMethod("brief", "ncdfDimensionCharacter", function (object) {
              length = nv, values = dims, unlim = unlim, bounds = "")
 })
 
-#' @rdname ncdfDimnames
+#' @rdname dimnames
 #' @export
 setMethod("dimnames", "ncdfDimensionCharacter", function (x) x@values)
 
