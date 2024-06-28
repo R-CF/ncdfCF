@@ -68,6 +68,37 @@ setClass("ncdfObject",
 #' shard(lon)
 NULL
 
+#' @rdname showObject
+#' @export
+setGeneric("shard", function(object) standardGeneric("shard"), signature = "object")
+
+#' @rdname showObject
+#' @export
+setGeneric("brief", function(object) standardGeneric("brief"), signature = "object")
+
+#' `str` for `ncdfCF` objects
+#'
+#' `ncdfObject`s have references back to their parent objects, specifically
+#' `ncdfDataset` and `ncdfGroup`. These circular references lead to very bulky
+#' displays of the structure of the object being examined when using the base R
+#' version of `str()`. This package-specific version puts a short-circuit for
+#' parent references, making the display more manageable, including in the
+#' Environment pane of RStudio when in an interactive session.
+#'
+#' @param object The `ncdfObject` that the method operates on. This includes
+#' datasets, variables, dimensions, and possible others including instances
+#' of descendant classes.
+#' @param ... Ignored.
+#' @returns Character vector that describes the structure of the object.
+#'
+#' @name str
+#' @export
+#' @examples
+#' fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
+#' ds <- open_ncdf(fn)
+#' str(ds)
+setGeneric("str", function(object, ...) standardGeneric("str"), signature = "object")
+
 #' Generics for `ncdfCF` objects
 #'
 #' These are generic method definitions with implementations in descendant
@@ -82,14 +113,6 @@ NULL
 #'
 #' @name ncdfGenerics
 NULL
-
-#' @rdname ncdfGenerics
-#' @export
-setGeneric("shard", function(object) standardGeneric("shard"), signature = "object")
-
-#' @rdname ncdfGenerics
-#' @export
-setGeneric("brief", function(object) standardGeneric("brief"), signature = "object")
 
 #' @rdname ncdfGenerics
 #' @export
@@ -187,3 +210,16 @@ setMethod("attribute", "ncdfObject", function(object, att, field = "value") {
   }
   val
 })
+
+#' `str()` object attributes
+#' @noRd
+str_attributes <- function(object, ...) {
+  natts <- length(object@attributes)
+  if (!natts) cat("  ..@ attributes: data.frame()\n")
+  else {
+    atts <- trimws(utils::capture.output(str(object@attributes)))
+    cat("  ..@ attributes: ", atts[1L], "\n")
+    atts <- atts[-1L]
+    invisible(lapply(atts, function (a) cat(paste0("  .. ..", a, "\n"))))
+  }
+}

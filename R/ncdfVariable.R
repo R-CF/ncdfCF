@@ -21,7 +21,7 @@ setClass("ncdfVariable",
 setMethod("show", "ncdfVariable", function (object) {
   props <- .varProperties(object)
   cat(paste0("Variable: [", object@id, "] ", object@name))
-  if (nchar(props$longname) == 0L) cat("\n\n") else cat(paste0(" | ", props$longname, "\n\n"))
+  if (nzchar(props$longname)) cat(paste0(" | ", props$longname, "\n\n")) else cat("\n\n")
 
   dims <- do.call(rbind, lapply(object@dims, brief))
   dims <- lapply(dims, function(c) if (all(c == "")) NULL else c)
@@ -48,9 +48,34 @@ setMethod("shard", "ncdfVariable", function(object) {
   props <- .varProperties(object)
 
   s <- paste0("[", object@id, ": ", object@name)
-  if (nchar(props$longname)) s <- paste0(s, " (", props$longname, ")")
-  if (nchar(props$unit)) s <- paste0(s, " (", props$unit, ")")
+  if (nzchar(props$longname)) s <- paste0(s, " (", props$longname, ")")
+  if (nzchar(props$unit)) s <- paste0(s, " (", props$unit, ")")
   paste0(s, "]")
+})
+
+#' @rdname str
+#' @export
+setMethod("str", "ncdfVariable", function(object, ...) {
+  cat(object@name, ": Formal class 'ncdfVariable' [package \"ncdfCF\"] with 7 slots\n")
+  cat("  ..@ id        : "); str(object@id)
+  cat("  ..@ name      : "); str(object@name)
+  cat("  ..@ var_id    : "); str(object@var_id)
+  cat("  ..@ var_type  : "); str(object@var_type)
+
+  nd <- length(object@dims)
+  if (!nd) cat("  ..@ dims      : list()\n")
+  else {
+    cat("  ..@ dims      : List of", nd, "\n")
+    lapply(object@dims, function(d) {
+      axis <- d@axis
+      if (!nzchar(axis)) axis <- "-"
+      cat(paste0("  .. ..$ ", axis, ": ", d@name, " <", class(d), ": ", d@id, ">\n"))
+    })
+  }
+
+  cat(paste0("  ..@ group     : <", class(object@group), ": ", object@group@id, ">\n"))
+
+  str_attributes(object)
 })
 
 #' @name dimlength

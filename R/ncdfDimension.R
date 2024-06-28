@@ -41,7 +41,7 @@ setMethod("shard", "ncdfDimension", function (object) {
   props <- paste0(object@axis, unlim, bnds)
 
   s <- paste0("[", object@id, ": ", object@name, " (", object@length)
-  if (nchar(props)) s <- paste0(s, "-", props)
+  if (nzchar(props)) s <- paste0(s, "-", props)
   paste0(s, ')]')
 })
 
@@ -311,4 +311,16 @@ NULL
   }, silent = TRUE)
 
   if (inherits(err, "try-error")) err else dim
+}
+
+#' Bare bones shared dimension details
+#' @noRd
+str_dimension <- function(object, ...) {
+  cat("  ..@ id        :"); str(object@id)
+  cat("  ..@ name      :"); str(object@name)
+  cat("  ..@ var_id    :"); str(object@var_id)
+  cat("  ..@ var_type  :"); str(object@var_type)
+  cat("  ..@ length    :"); str(object@length)
+  cat("  ..@ unlim     :"); str(object@unlim)
+  cat("  ..@ axis      :"); str(object@axis)
 }

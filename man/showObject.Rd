@@ -5,6 +5,8 @@
 %   R/ncdfDimensionNumeric.R, R/ncdfDimensionTime.R
 \name{showObject}
 \alias{showObject}
+\alias{shard}
+\alias{brief}
 \alias{shard,ncdfDimension-method}
 \alias{show,ncdfVariable-method}
 \alias{brief,ncdfVariable-method}
@@ -24,6 +26,10 @@
 \alias{brief,ncdfDimensionTime-method}
 \title{Summary of object details}
 \usage{
+shard(object)
+
+brief(object)
+
 \S4method{shard}{ncdfDimension}(object)
 
 \S4method{show}{ncdfVariable}(object)

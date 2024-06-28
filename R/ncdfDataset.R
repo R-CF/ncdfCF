@@ -3,15 +3,15 @@ NULL
 
 #' ncdfDataset class
 #'
-#' This class represents a single NetCDF resource.
+#' This class represents a single netCDF resource.
 #'
-#' @slot resource The `ncdfResource` instance that handles the NetCDF file.
+#' @slot resource The `ncdfResource` instance that handles the netCDF resource.
 #' @slot keep_open Logical flag to indicate if the resource should remain open
 #' for data access after the initial read of metadata.
 #' @slot root The root group of this dataset. This contains all variables,
-#' dimensions and attributes in the "classic" NetCDF model, the "netcdf4" model
+#' dimensions and attributes in the "classic" netCDF model, the "netcdf4" model
 #' may have subgroups.
-#' @slot format A character string with the format of the NetCDF resource.
+#' @slot format A character string with the format of the netCDF resource.
 #' @slot has_error logical. Flag to indicate if there was an error opening the resource.
 setClass("ncdfDataset",
   contains = "ncdfObject",
@@ -46,7 +46,7 @@ setClass("ncdfDataset",
 #' @returns If argument `standard_name` is provided, a character vector of
 #' variable or dimension names. If argument `standard_name` is missing or an
 #' empty string, a named list with all "standard_name" attribute values in the
-#' the NetCDF resource; each list item is named for the variable or dimension.
+#' the netCDF resource; each list item is named for the variable or dimension.
 #' @export
 #'
 #' @examples
@@ -58,11 +58,11 @@ setClass("ncdfDataset",
 setGeneric("objects_by_standard_name", function(x, standard_name)
   standardGeneric("objects_by_standard_name"), signature = "x")
 
-#' Read a NetCDF resource
+#' Read a netCDF resource
 #'
-#' @param resource The name of the NetCDF resource to open, either a local file
+#' @param resource The name of the netCDF resource to open, either a local file
 #'   name or a remote URI.
-#' @param keep_open Logical flag to indicate if the NetCDF resource has to
+#' @param keep_open Logical flag to indicate if the netCDF resource has to
 #'   remain open after reading the metadata. This should be enabled typically
 #'   only for programmatic access or when a remote resource has an expensive
 #'   access protocol (i.e. 2FA). The resource has to be explicitly closed with
@@ -84,7 +84,9 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   if (inherits(res, "try-error"))
     stop(as.character(res))
 
-  self <- methods::new("ncdfDataset", name = resource, resource = res, keep_open = keep_open)
+  self <- methods::new("ncdfDataset",
+                       name = regmatches(resource, regexec("([^/]*)\\.nc$", resource))[[1L]][2L],
+                       resource = res, keep_open = keep_open)
 
   ds <- .open_dataset(self)
   if (inherits(ds, "try-error"))
@@ -100,6 +102,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 #' @export
 setMethod("show", "ncdfDataset", function(object) {
   cat("Dataset   :", object@name, "\n")
+  cat("Format    :", object@format, "\n")
   if (object@has_error)
     cat("An error occurred during opening of the dataset\n")
   else print(object@root)
@@ -116,6 +119,31 @@ setMethod("brief", "ncdfDataset", function(object) {
         "\n  Dimensions :", paste(lapply(.collect_dims(object@root), ncdfCF::shard)),
         "\n      Groups :", paste(lapply(.collect_groups(object@root), ncdfCF::shard)), "\n")
   }
+})
+
+#' @rdname str
+#' @export
+setMethod("str", "ncdfDataset", function(object, ...) {
+  cat("Formal class 'ncdfDataset' [package \"ncdfCF\"] with 8 slots\n")
+  cat("  ..@ id        :"); str(object@id)
+  cat("  ..@ name      :"); str(object@name)
+  cat("  ..@ format    :"); str(object@format)
+
+  res <- trimws(utils::capture.output(str(object@resource)))
+  cat("  ..@ resource  :", res[1L], "\n")
+  res <- res[-1L]
+  invisible(lapply(res, function(r) cat("  .. ..", r, "\n")))
+
+  cat("  ..@ keep_open :"); str(object@keep_open)
+  cat("  ..@ has_error :"); str(object@has_error)
+
+  str_attributes(object)
+
+  # Groups
+  root <- trimws(utils::capture.output(str(object@root)))
+  cat("  ..@ root      :", root[1L], "\n")
+  root <- root[-1L]
+  invisible(lapply(root, function(g) cat("  .. ..", g, "\n")))
 })
 
 #' Variable names of an `ncdfDataset` instance
@@ -145,11 +173,13 @@ setMethod("dim", "ncdfDataset", function(x) sapply(.collect_dims(x@root), length
 setMethod("objects_by_standard_name", "ncdfDataset", function(x, standard_name) {
   nm <- c(sapply(.collect_vars(x@root), attribute, "standard_name"),
           sapply(.collect_dims(x@root), attribute, "standard_name"))
-  if (missing(standard_name) || nchar(standard_name) == 0L)
+  if (missing(standard_name) || !nzchar(standard_name))
     nm[lengths(nm) > 0L]
   else
     names(nm[which(nm == standard_name)])
 })
+
+# FIXME: Must process names with group info prepended
 
 #' Get a group, variable or dimension object from a dataset
 #'
@@ -188,7 +218,7 @@ setMethod("[[", "ncdfDataset", function(x, i) {
   NULL
 })
 
-#' Open a NetCDF dataset
+#' Open the dataset from a netCDF resource
 #'
 #' Variable, dimension and attribute information are read.
 #'

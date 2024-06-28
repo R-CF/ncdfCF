@@ -3,11 +3,11 @@ NULL
 
 #' Group class
 #'
-#' This class represents a group in a NetCDF resource. This applies equally to
+#' This class represents a group in a netCDF resource. This applies equally to
 #' the "classic" data model, which will have only a root group. Resources in the
 #' "netcdf4" format can have multiple, hierarchical groups.
 #'
-#' @slot resource The `ncdfResource` instance that handles the NetCDF file.
+#' @slot resource The `ncdfResource` instance that handles the netCDF resource.
 #' @slot handle The RNetCDF handle to the group.
 #' @slot parent The parent group of this group.
 #' @slot subgroups The subgroups of this group, if any.
@@ -97,16 +97,82 @@ setMethod("shard", "ncdfGroup", function (object) {
   paste0("[", object@name, "]")
 })
 
-#' Get the handle for a NetCDF group
+#' @rdname str
+#' @export
+setMethod("str", "ncdfGroup", function(object, ...) {
+  cat(object@name, ": Formal class 'ncdfGroup' [package \"ncdfCF\"] with 10 slots\n")
+  cat("  ..@ id        :"); str(object@id)
+  cat("  ..@ name      :"); str(object@name)
+  cat("  ..@ resource  : reference to <ncdfDataset@resource>\n")
+
+  h <- trimws(utils::capture.output(str(object@handle)))
+  cat("  ..@ handle    :", h[1], "\n")
+  cat(paste0("  .. ..", h[2], "\n"))
+
+  cat(paste0("  ..@ parent    : <", class(object@parent), ": ", object@parent@id, ">\n"))
+
+  nd <- length(object@dims)
+  if (!nd) cat("  ..@ dims      : list()\n")
+  else {
+    cat("  ..@ dims      : List of", nd, "\n")
+    lapply(object@dims, function(d) {
+      strd <- trimws(utils::capture.output(str(d)))
+      cat("  .. ..$", strd[1L], "\n")
+      strd <- strd[-1L]
+      invisible(lapply(strd, function (z) cat(paste0("  .. .. .. ", z, "\n"))))
+    })
+  }
+
+  nv <- length(object@vars)
+  if (!nv) cat("  ..@ vars      : list()\n")
+  else {
+    cat("  ..@ vars      : List of", nv, "\n")
+    lapply(object@vars, function(v) {
+      strv <- trimws(utils::capture.output(str(v)))
+      cat("  .. ..$", strv[1L], "\n")
+      strv <- strv[-1L]
+      invisible(lapply(strv, function (z) cat(paste0("  .. .. .. ", z, "\n"))))
+    })
+  }
+
+  nu <- length(object@udts)
+  if (!nu) cat("  ..@ udts      : list()\n")
+  else {
+    cat("  ..@ udts      : List of", nu, "\n")
+    lapply(object@udts, function(u) {
+      stru <- trimws(utils::capture.output(str(u)))
+      cat("  .. ..$", stru[1L], "\n")
+      stru <- stru[-1L]
+      invisible(lapply(stru, function (z) cat(paste0("  .. .. .. ", z, "\n"))))
+    })
+  }
+
+  str_attributes(object)
+
+  # subgroups
+  nsg <- length(object@subgroups)
+  if (!nsg) cat("  ..@ subgroups : list()\n")
+  else {
+    cat("  ..@ subgroups : List of", nsg, "\n")
+    invisible(lapply(object@subgroups, function(sg) {
+      strsg <- trimws(utils::capture.output(str(sg)))
+      cat("  .. ..$", strsg[1], "\n")
+      strsg <- strsg[-1L]
+      invisible(lapply(strsg, function(g) cat("  .. .. ..", g, "\n")))
+    }))
+  }
+})
+
+#' Get the handle for a netCDF group
 #'
-#' Get the handle for a group in a NetCDF resource. The resource will be opened
+#' Get the handle for a group in a netCDF resource. The resource will be opened
 #' when the handle is returned.
 #'
 #' @param x `ncdfGroup` instance whose handle to retrieve. This can be a handle
 #' to the resource itself if the group is the root of the dataset, or to any
 #' group contained in the resource.
 #'
-#' @returns A handle to read or write to an opened NetCDF resource.
+#' @returns A handle to read or write to an opened netCDF resource.
 #' @noRd
 setGeneric("handle", function(x) standardGeneric("handle"), signature = "x")
 
@@ -149,12 +215,12 @@ setMethod("handle", "ncdfGroup", function(x) {
   c(x@dims, sub_dims, recursive = TRUE)
 }
 
-#' Read a group from a NetCDF dataset
+#' Read a group from a netCDF dataset
 #'
-#' Variable, dimension and attribute information are read.
+#' Variable, dimension, UDT and attribute information are read.
 #'
 #' @param parent The parent `ncdfDataset` or `ncdfGroup` of this group.
-#' @param h The handle to the group in the NetCDF resource to read.
+#' @param h The handle to the group in the netCDF resource to read.
 #'
 #' @returns Either the `ncdfGroup` instance invisibly or a try-error instance.
 #' @noRd

@@ -3,7 +3,7 @@ NULL
 
 #' Numeric dimension class
 #'
-#' This class describes numeric dimensions in an NetCDF resource.
+#' This class describes numeric dimensions in a netCDF resource.
 #'
 #' @slot values The values of the positions along the dimension.
 #' @slot bounds The bounds of the dimension values, if any.
@@ -64,6 +64,28 @@ setMethod("brief", "ncdfDimensionNumeric", function (object) {
 
   data.frame(id = object@id, axis = object@axis, name = object@name, long_name = longname,
              length = nv, values = dims, unlim = unlim, bounds = bnds)
+})
+
+#' @rdname str
+#' @export
+setMethod("str", "ncdfDimensionNumeric", function(object, ...) {
+  cat(object@name, ": Formal class 'ncdfDimensionNumeric' [package \"ncdfCF\"] with 10 slots\n")
+  str_dimension(object)
+
+  vals <- object@values
+  nv <- length(vals)
+  if (!nv)
+    cat("  ..@ values    : num[0 (1d)]\n")
+  else if (nv < 5L)
+    cat(paste0("  ..@ values    : num [1:", nv, "] ",
+               paste(vals, collapse = ", "), "\n"))
+  else
+    cat(paste0("  ..@ values    : num ", vals[1L], ", ", vals[2L], ", ..., ",
+               vals[nv - 1L], ", ", vals[nv], "\n"))
+
+  cat("  ..@ bounds    :"); str(object@bounds);
+
+  str_attributes(object)
 })
 
 #' @rdname dimnames

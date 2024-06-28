@@ -18,7 +18,7 @@ commit](https://img.shields.io/github/last-commit/pvanlaake/ncdfCF)](https://git
 [![R-CMD-check](https://github.com/pvanlaake/ncdfCF/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pvanlaake/ncdfCF/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The `ncdfCF` package provides an easy to use interface to NetCDF
+The `ncdfCF` package provides an easy to use interface to netCDF
 resources in R, either in local files or remotely on a THREDDS server.
 It is built on the `RNetCDF` package which, like package `ncdf4`,
 provides a basic interface to the `netcdf` library, but which lacks an
@@ -39,7 +39,7 @@ Metadata Conventions to interpret the data. This currently applies to:
 
 ##### Basic usage
 
-Opening and inspecting the contents of a NetCDF resource is very
+Opening and inspecting the contents of a netCDF resource is very
 straightforward:
 
 ``` r
@@ -53,7 +53,7 @@ library(ncdfCF)
 
 ``` r
 
-# Get any NetCDF file
+# Get any netCDF file
 fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 
 # Open the file, all metadata is read
@@ -313,14 +313,14 @@ str(ts)
 #>   .. .. ..@ bounds    : logi FALSE
 ```
 
-Both of these methods will read data from the NetCDF resource, but only
+Both of these methods will read data from the netCDF resource, but only
 as much as is requested.
 
 ## Development plan
 
 Package `ncdfCF` is in the early phases of development. It supports
 reading of groups, variables, dimensions, user-defined data types,
-attributes and data from NetCDF resources in “classic” and “netcdf4”
+attributes and data from netCDF resources in “classic” and “netcdf4”
 formats. From the CF Metadata Conventions it supports identification of
 dimension axes, interpretation of the “time” dimension, and reading of
 “bounds” information.
@@ -328,7 +328,7 @@ dimension axes, interpretation of the “time” dimension, and reading of
 Development plans for the near future focus on supporting the below
 features:
 
-##### NetCDF
+##### netCDF
 
 - Support for writing.
 

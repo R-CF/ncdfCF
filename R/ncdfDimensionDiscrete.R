@@ -3,7 +3,7 @@ NULL
 
 #' Discrete dimension class
 #'
-#' This class describes discrete dimensions in an NetCDF resource. A discrete
+#' This class describes discrete dimensions in a netCDF resource. A discrete
 #' dimension has no values. The indices along the dimension run from 1 to the
 #' length of the dimension.
 #'
@@ -39,6 +39,14 @@ setMethod("brief", "ncdfDimensionDiscrete", function (object) {
           else paste0("[1 ... ", object@length, "]")
   data.frame(id = object@id, axis = object@axis, name = object@name, long_name = longname,
              length = object@length, values = dims, unlim = unlim, bounds = "")
+})
+
+#' @rdname str
+#' @export
+setMethod("str", "ncdfDimensionDiscrete", function(object, ...) {
+  cat(object@name, ": Formal class 'ncdfDimensionDiscrete' [package \"ncdfCF\"] with 8 slots\n")
+  str_dimension(object)
+  str_attributes(object)
 })
 
 #' @rdname dimnames

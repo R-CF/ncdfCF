@@ -3,7 +3,7 @@ NULL
 
 #' Character dimension class
 #'
-#' This class describes character dimensions in an NetCDF resource. Character
+#' This class describes character dimensions in a netCDF resource. Character
 #' dimensions are discrete by default.
 #'
 #' @slot values The values of the positions along the dimension.
@@ -50,6 +50,24 @@ setMethod("brief", "ncdfDimensionCharacter", function (object) {
 
   data.frame(id = object@id, axis = object@axis, name = object@name, long_name = longname,
              length = nv, values = dims, unlim = unlim, bounds = "")
+})
+
+#' @rdname str
+#' @export
+setMethod("str", "ncdfDimensionCharacter", function(object, ...) {
+  cat(object@name, ": Formal class 'ncdfDimensionCharacter' [package \"ncdfCF\"] with 9 slots\n")
+  str_dimension(object)
+  vals <- object@values
+  nv <- length(vals)
+  if (!nv)
+    cat("  ..@ values    : character(0)\n")
+  else if (nv < 5L)
+    cat(paste0("  ..@ values    : chr [1:", nv, "] ",
+               paste(vals, collapse = ", "), "\n"))
+  else
+    cat(paste0("  ..@ values    : chr ", vals[1L], ", ", vals[2L], ", ..., ",
+                                     vals[nv - 1L], ", ", vals[nv], "\n"))
+  str_attributes(object)
 })
 
 #' @rdname dimnames

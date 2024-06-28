@@ -69,6 +69,24 @@ setMethod("brief", "ncdfDimensionTime", function (object) {
              length = nv, values = dims, unlim = unlim, bounds = bnds)
 })
 
+#' @rdname str
+#' @export
+setMethod("str", "ncdfDimensionTime", function(object, ...) {
+  cat(object@name, ": Formal class 'ncdfDimensionTime' [package \"ncdfCF\"] with 9 slots\n")
+  str_dimension(object)
+
+  nt <- length(object@values)
+  if (!nt) cat("  ..@ values    : list()\n")
+  else {
+    vals <- trimws(utils::capture.output(str(object@values)))
+    cat("  ..@ values    :", vals[1L], "\n")
+    vals <- vals[-1L]
+    invisible(lapply(vals, function (z) cat(paste0("  .. .. ", z, "\n"))))
+  }
+
+  str_attributes(object)
+})
+
 #' @rdname dimnames
 #' @export
 setMethod("dimnames", "ncdfDimensionTime", function (x) CFtime::format(x@values))

@@ -2,18 +2,12 @@
 % Please edit documentation in R/ncdfObject.R
 \name{ncdfGenerics}
 \alias{ncdfGenerics}
-\alias{shard}
-\alias{brief}
 \alias{id}
 \alias{name}
 \alias{attribute}
 \alias{show_attributes}
 \title{Generics for \code{ncdfCF} objects}
 \usage{
-shard(object)
-
-brief(object)
-
 id(object)
 
 name(object)
