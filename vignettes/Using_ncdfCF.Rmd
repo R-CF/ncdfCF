@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## What is NetCDF
+## What is netCDF
 
 *"NetCDF (Network Common Data Form) is a set of software libraries and 
 machine-independent data formats that support the creation, access, and sharing 
@@ -42,22 +42,22 @@ This comes in two flavours:
  dimensions (or axes) of the variables, but also more general items like the
  owners or producers of the data and the production history.
  
-Both types of metadata are necessary to "understand" the NetCDF resource.
+Both types of metadata are necessary to "understand" the netCDF resource.
 
 ### Conventions
 
 The descriptive metadata are not defined by the `netcdf` library. To ensure 
 interoperability, [several "conventions"](https://www.unidata.ucar.edu/software/netcdf/conventions.html) 
-have been developed over the years such that users of NetCDF data can correctly 
+have been developed over the years such that users of netCDF data can correctly 
 interpret what data developers have put in the resource. The most important of 
 the conventions is the [CF Metadata Conventions](https://cfconventions.org). 
-These conventions define a large number of standards that help interpret NetCDF 
+These conventions define a large number of standards that help interpret netCDF 
 resources.
 
 Other common conventions are related to climate prediction data, such as CMIP-5
 and CMIP-6.
 
-## Using NetCDF resources in R
+## Using netCDF resources in R
 
 ### Basic access
 
@@ -66,14 +66,14 @@ and maintains the `netcdf` library. It provides an interface to the `netcdf`
 library that stays very close to the API of the library. As a result, it lacks 
 an intuitive user experience and workflow that R users would be familiar with. 
 
-Package `ncdf4`, the most widely used package to access NetCDF resources, does 
+Package `ncdf4`, the most widely used package to access netCDF resources, does 
 one better by performing the tedious task of reading the structural metadata 
 from the resource that is needed for a basic understanding of the contents, such 
 as dimension and variable details, but the library API concept remains with 
 functions that directly map to the `netcdf` library functions.
 
 One would really 
-need to understand the NetCDF data model and implementation details to 
+need to understand the netCDF data model and implementation details to 
 effectively use these packages. For instance, most data describing a dimension 
 is stored as a variable. So to read the `dimnames()` of a dimension you'd have 
 to call `var.get.nc()` or `ncvar_get()`. Neither package loads the attributes 
@@ -86,7 +86,7 @@ While both packages are very good at what they do, it is clearly not enough.
 
 Several packages have been developed to address some of these issues and make
 access to the data easier. Unfortunately, none of these packages provide a 
-comprehensive *R-style* solution to accessing and interpreting NetCDF resources 
+comprehensive *R-style* solution to accessing and interpreting netCDF resources 
 in an intuitive way.
 
 ### ncdfCF
@@ -108,13 +108,13 @@ to:
 
 ## Basic usage
 
-Opening and inspecting the contents of a NetCDF resource is very 
+Opening and inspecting the contents of a netCDF resource is very 
 straightforward:
 
 ```{r basic_example}
 suppressPackageStartupMessages(library(ncdfCF))
 
-# Get a NetCDF file, here hourly data for 2016-01-01 over Rwanda
+# Get a netCDF file, here hourly data for 2016-01-01 over Rwanda
 fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 
 # Open the file, all metadata is read
@@ -141,7 +141,7 @@ attribute(ds[["pev"]], "long_name")
 
 ## Extracting data
 
-One of the perpetual headaches of users of NetCDF files is to extract the data.
+One of the perpetual headaches of users of netCDF files is to extract the data.
 If you want to get all the data for a variable then neither `RNetCDF` nor 
 `ncdf4` are particularly troublesome:
 
@@ -163,7 +163,7 @@ dimension) or nigh-on impossible when non-standard calendars are used for the
 dimension. Many R users default to simply reading the entire array and then 
 extracting the area of interest using standard R tools. That is wasteful at best 
 (lots of I/O, RAM usage, CPU cycles) and practically impossible with some larger 
-NetCDF resources that have variables upwards of 1GB in size.
+netCDF resources that have variables upwards of 1GB in size.
 
 Enter `ncdfCF`. With `ncdfCF` you have two options to extract data for a 
 variable:
@@ -179,7 +179,7 @@ variable:
  `d <- t2m[]`. 
  * **`subset()`**: The `subset()` method is more flexible than `[]` because it
  requires less knowledge of how the data in the variable is structured,
- particularly the order of the dimensions. While many NetCDF resources "behave" in
+ particularly the order of the dimensions. While many netCDF resources "behave" in
  their dimension order, there is no guarantee. With `subset()` you supply a 
  list with items for each dimension (by axis or dimension name, in any order)
  and each item containing a vector of real-world coordinates to extract. As an 
@@ -221,10 +221,10 @@ ts <- subset(t2m, list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
 dimnames(ts)
 ```
 
-These methods will read data from the NetCDF resource, but only as much as is 
+These methods will read data from the netCDF resource, but only as much as is 
 requested.
 
 Both approaches lend themselves well to the `apply()` family of functions for
-processing. Importantly, these functions are to access data from the NetCDF 
+processing. Importantly, these functions are to access data from the netCDF 
 resource so you can tweak the size of your request to the capacity of the 
 computer, without exhausting RAM.

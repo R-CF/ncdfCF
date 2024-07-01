@@ -1,9 +1,9 @@
 #' ncdfCF: Easy Access to NetCDF Files and Interpreting with CF Metadata Conventions
 #'
-#' Support for accessing and interpreting NetCDF datasets in a familiar R style.
+#' Support for accessing and interpreting netCDF datasets in a familiar R style.
 #' Built on top of the [`RNetCDF` package](https://cran.r-project.org/package=RNetCDF),
 #' built and maintained by the developers of the `netcdf` library, package
-#' `ncdfCF` provides high-level access to NetCDF resources. Resources are matched
+#' `ncdfCF` provides high-level access to netCDF resources. Resources are matched
 #' against the
 #' [Climate and Forecast (CF) Metadata Conventions](https://cfconventions.org/)
 #' for climate and forecasting data. The CF Metadata Conventions is widely used
@@ -13,12 +13,12 @@
 #' package currently supports axis determination, time interpretation with all
 #' 9 defined calendars, and use of bounds data.
 #'
-#' Properties of the NetCDF resource objects are easily examined using common
+#' Properties of the netCDF resource objects are easily examined using common
 #' R commands. Access to the data in the variables can be had using similarly
 #' known patterns.
 #'
 #' **Open, inquire**
-#' * [open_ncdf()]: Open a NetCDF resource, either in a local file system or on
+#' * [open_ncdf()]: Open a netCDF resource, either in a local file system or on
 #' a THREDDS server. Note that resources are automatically closed.
 #' * [show()], [brief()], and [shard()]: Print (increasingly more compact)
 #' information to the console for a dataset, variable, or dimension.

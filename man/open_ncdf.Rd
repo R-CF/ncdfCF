@@ -2,15 +2,15 @@
 % Please edit documentation in R/ncdfDataset.R
 \name{open_ncdf}
 \alias{open_ncdf}
-\title{Read a NetCDF resource}
+\title{Read a netCDF resource}
 \usage{
 open_ncdf(resource, keep_open = FALSE)
 }
 \arguments{
-\item{resource}{The name of the NetCDF resource to open, either a local file
+\item{resource}{The name of the netCDF resource to open, either a local file
 name or a remote URI.}
 
-\item{keep_open}{Logical flag to indicate if the NetCDF resource has to
+\item{keep_open}{Logical flag to indicate if the netCDF resource has to
 remain open after reading the metadata. This should be enabled typically
 only for programmatic access or when a remote resource has an expensive
 access protocol (i.e. 2FA). The resource has to be explicitly closed with
@@ -23,7 +23,7 @@ An \code{ncdfDataset} instance, or an error if the resource was not found
 or errored upon reading.
 }
 \description{
-Read a NetCDF resource
+Read a netCDF resource
 }
 \examples{
 fn <- system.file("extdata",

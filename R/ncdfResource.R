@@ -1,11 +1,11 @@
 #' Low-level access to the RNetCDF package
 #'
-#' This class, of which there will be 1 instance per NetCDF resource, shared by all
+#' This class, of which there will be 1 instance per netCDF resource, shared by all
 #' `ncdfObject`s, provides low-level access to the `RNetCDF` package, mainly to
-#' provide a valid handle with which to access the underlying NetCDF resource.
+#' provide a valid handle with which to access the underlying netCDF resource.
 #'
-#' @slot uri character.
-#' @slot handle ANY.
+#' @slot uri character. The location of the netCDF resource.
+#' @slot handle ANY. The RNetCDF handle to the resource when opened.
 setClass("ncdfResource",
   slots = c(
     uri     = "character",
@@ -14,7 +14,7 @@ setClass("ncdfResource",
 
 #' Create an ncdfResource instance
 #'
-#' This function will create an `ncdfResource` instance with the underlying NetCDF
+#' This function will create an `ncdfResource` instance with the underlying netCDF
 #' resource opened.
 #'
 #' @param uri The URI of the resource

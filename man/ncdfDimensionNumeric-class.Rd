@@ -5,7 +5,7 @@
 \alias{ncdfDimensionNumeric-class}
 \title{Numeric dimension class}
 \description{
-This class describes numeric dimensions in an NetCDF resource.
+This class describes numeric dimensions in a netCDF resource.
 }
 \section{Slots}{
 

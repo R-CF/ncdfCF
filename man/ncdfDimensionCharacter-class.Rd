@@ -5,7 +5,7 @@
 \alias{ncdfDimensionCharacter-class}
 \title{Character dimension class}
 \description{
-This class describes character dimensions in an NetCDF resource. Character
+This class describes character dimensions in a netCDF resource. Character
 dimensions are discrete by default.
 }
 \section{Slots}{

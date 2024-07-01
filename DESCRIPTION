@@ -3,7 +3,7 @@ Type: Package
 Title: Easy Access to NetCDF Files with CF Metadata Conventions
 Version: 0.1.1.9000
 Authors@R: person("Patrick", "Van Laake", , "patrick@vanlaake.net", role = c("aut", "cre", "cph"))
-Description: Network Common Data Form (NetCDF) files are widely used for 
+Description: Network Common Data Form (netCDF) files are widely used for 
     scientific data. Library-level access in R is provided through packages 
     'RNetCDF' and 'ncdf4'. Package 'ncdfCF' is built on top of 'RNetCDF' and 
     makes the data and its attributes available as a set of S4 classes that are 
@@ -13,7 +13,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Imports: 
     CFtime,
     methods,

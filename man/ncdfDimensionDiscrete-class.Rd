@@ -5,7 +5,7 @@
 \alias{ncdfDimensionDiscrete-class}
 \title{Discrete dimension class}
 \description{
-This class describes discrete dimensions in an NetCDF resource. A discrete
+This class describes discrete dimensions in a netCDF resource. A discrete
 dimension has no values. The indices along the dimension run from 1 to the
 length of the dimension.
 }
