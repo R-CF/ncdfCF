@@ -7,7 +7,7 @@
 #'
 #' @returns data.frame with slim columns
 #' @noRd
-.slim.data.frame <- function(df, width = globals$df_column_width) {
+.slim.data.frame <- function(df, width = 50) {
   maxw <- width - 3
   out <- as.data.frame(lapply(df, function(c) {
     if (is.list(c)) c <- sapply(c, paste0, collapse = ", ")
@@ -21,6 +21,14 @@
   out
 }
 
-ignore_unused_imports <- function() {
-  stringr::word
+.cache_dir <- function() {
+  if (as.integer(R.version$major) >= 4)
+    tools::R_user_dir("ncdfCF", "cache")
+  else {
+    if (nzchar(p <- Sys.getenv("R_USER_CACHE_DIR"))) p
+    else if (nzchar(p <- Sys.getenv("XDG_CACHE_HOME"))) p
+    else if (.Platform$OS.type == "windows") file.path(Sys.getenv("LOCALAPPDATA"), "R", "cache")
+    else if (Sys.info()["sysname"] == "Darwin") file.path(normalizePath("~"), "Library", "Caches", "org.R-project.R")
+    else file.path(normalizePath("~"), ".cache")
+  }
 }

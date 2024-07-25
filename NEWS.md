@@ -1,15 +1,16 @@
 # ncdfCF (development version)
 
-* NetCDF groups and user-defined data types are now supported.
+* NetCDF groups are now supported, including traversing group hierarchies with
+absolute or relative paths.
 * Information on
 the structure of UDTs can now be examined. This is effectively only supported
 for the "compound" sub-type, for scalar values only.
-* Better support for discrete axis dimensions, with a separate S4 class.
+* Better support for discrete axis dimensions, with a separate class.
 * Data is read into the most compact form possible. This saves a significant 
 amount of memory when large integer variables are read as they would remain
 integers rather than the default numeric type.
-* Improvements in printing object details. `str()` redefined as an S4 method for
-relevant classes to avoid circular descriptions.
+* Improvements in printing object details.
+* Code refactored to R6.
 * GHA enabled
 
 # ncdfCF 0.1.1

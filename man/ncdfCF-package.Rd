@@ -12,14 +12,17 @@ built and maintained by the developers of the \code{netcdf} library, package
 \code{ncdfCF} provides high-level access to netCDF resources. Resources are matched
 against the
 \href{https://cfconventions.org/}{Climate and Forecast (CF) Metadata Conventions}
-for climate and forecasting data. The CF Metadata Conventions is widely used
-for distributing files with climate observations or projections, including
-the Coupled Model Intercomparison Project (CMIP) data used by climate change
-scientists and the Intergovernmental Panel on Climate Change (IPCC). This
-package currently supports axis determination, time interpretation with all
-9 defined calendars, and use of bounds data.
+for climate and forecasting data, current version 1.11. The CF Metadata
+Conventions is widely used for distributing files with climate observations
+or projections, including the Coupled Model Intercomparison Project (CMIP)
+data used by climate change scientists and the Intergovernmental Panel on
+Climate Change (IPCC).
 }
 \details{
+This package currently supports group traversal with scoping rules, axis
+determination, time interpretation with all 9 defined calendars, use of
+bounds data, and search for and use of standard names.
+
 Properties of the netCDF resource objects are easily examined using common
 R commands. Access to the data in the variables can be had using similarly
 known patterns.
@@ -28,16 +31,15 @@ known patterns.
 \itemize{
 \item \code{\link[=open_ncdf]{open_ncdf()}}: Open a netCDF resource, either in a local file system or on
 a THREDDS server. Note that resources are automatically closed.
-\item \code{\link[=show]{show()}}, \code{\link[=brief]{brief()}}, and \code{\link[=shard]{shard()}}: Print (increasingly more compact)
-information to the console for a dataset, variable, or dimension.
-\item \code{\link[=dimnames]{dimnames()}}: Vector of names of the dimensions in the dataset or variable,
-or a vector of coordinate values for a dimension.
-\item \code{\link[=dim]{dim()}}, \code{\link[=length]{length()}}: Vector of the dimension lengths for a dataset or
-variable, or the length of a single dimension.
-\item \code{\link[=axis]{axis()}}: The axis of the dimension.
-\item \code{\link[=has_bounds]{has_bounds()}}: Does the dimension have bounds set?
+\item \code{\link[=show]{show()}}, \code{brief()}, and \code{shard()}: Print (increasingly more compact)
+information to the console for a data set, variable, or axis.
+\item \code{\link[=dimnames]{dimnames()}}: Vector of names of the axes in the data set or variable,
+or a vector of coordinate values for an axis.
+\item \code{\link[=dim]{dim()}}, \code{\link[=length]{length()}}: Vector of the dimension lengths for a data set or
+variable, or the length of a single axis
+\item \code{\link[=axis]{axis()}}: The orientation of an axis.
 \item \code{\link[=time]{time()}}: Return the \href{https://cran.r-project.org/web//packages//CFtime/index.html}{CFtime}
-instance of the dimension, or \code{NULL} if not a time dimension.
+instance of the axis, or \code{NULL} if not a time axis
 }
 
 \strong{Filtering and selection}
@@ -45,8 +47,8 @@ instance of the dimension, or \code{NULL} if not a time dimension.
 \item [\verb{[]}][bracket_select]: Select the entire variable or a part thereof
 using index values.
 \item \code{\link[=subset]{subset()}}: Select a subset from a variable by specifying extents in
-real-world coordinates for the dimensions.
-\item \code{\link[=indexOf]{indexOf()}}: Index values into the dimension from real-world coordinates,
+real-world coordinates for the axes.
+\item \code{\link[=indexOf]{indexOf()}}: Index values into the axis from real-world coordinates,
 possibly with fractional part for interpolation.
 }
 }
