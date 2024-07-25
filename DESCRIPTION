@@ -18,7 +18,8 @@ Imports:
     CFtime,
     methods,
     R6,
-    RNetCDF
+    RNetCDF,
+    stringr
 Collate: 
     'CFAxis.R'
     'CFAxisCharacter.R'

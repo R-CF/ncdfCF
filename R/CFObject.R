@@ -3,18 +3,56 @@
 #' @include NCObject.R
 NULL
 
+#' CF base object
+#'
+#' @description This class is a basic ancestor to all classes that represent CF
+#'   objects, specifically data variables and axes. More useful classes use this
+#'   class as ancestor.
+#'
+#' @details The fields in this class are common among all CF objects.
+#'
+#' @docType class
+#'
+#' @name CFObject
+#' @format An \code{\link{R6Class}} generator object.
+NULL
+
 CFObject <- R6::R6Class("CFObject",
   public = list(
+    #' @field NCvar The [NCVariable] instance that this CF object represents.
     NCvar = NCObject,
 
+    #' Create a basic CF object
+    #'
+    #' Create a new CF object instance from a variable in a netCDF resource.
+    #' This method is called upon opening a netCDF resource.
+    #'
+    #' @param nc_var The [NCVariable] instance upon which this CF object is
+    #'   based.
+    #' @returns A basic CF object.
     initialize = function(nc_var) {
       self$NCvar <- nc_var
     },
 
+    #' Attributes of a CF object
+    #'
+    #' This method returns CF object attributes.
+    #'
+    #' @param att Vector of character strings of attributes to return.
+    #' @param field The field of the `data.frame` to return values from. This
+    #' must be "value" (default), "type" or "length".
+    #' @returns A vector of values from the `data.frame`, named with the `att`
+    #' value.
     attribute = function(att, field = "value") {
       self$NCvar$attribute(att, field)
     },
 
+    #' Print the attributes of the CF object
+    #'
+    #' This function prints the attributes of the CF object to the console,
+    #'
+    #' @param width The maximum width of each column in the `data.frame` when
+    #' printed to the console.
     print_attributes = function(width = 50) {
       if (nrow(self$NCvar$attributes)) {
         cat("\nAttributes:\n")
@@ -24,16 +62,19 @@ CFObject <- R6::R6Class("CFObject",
   ),
 
   active = list(
+    #' @field id The identifier of the CF object.
     id = function(value) {
       if (missing(value))
         self$NCvar$id
     },
 
+    #' @field name The name of the CF object.
     name = function(value) {
       if (missing(value))
         self$NCvar$name
     },
 
+    #' @field attributes A `data.frame` with the attributes of the CF object.
     attributes = function(value) {
       if (missing(value))
         self$NCvar$attributes

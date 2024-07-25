@@ -1,11 +1,46 @@
+#' CF axis object
+#'
+#' @description This class is a basic ancestor to all classes that represent CF
+#'   axes. More useful classes use this class as ancestor.
+#'
+#' @details The fields in this class are common among all CF axis objects.
+#'
+#' @docType class
+#'
+#' @name CFObject
+#' @format An \code{\link{R6Class}} generator object.
+NULL
+
+#' @export
 CFAxis <- R6::R6Class("CFAxis",
   inherit = CFObject,
   public = list(
+    #' @field group The [NCGroup] that this axis is located in.
     group       = NULL,
+
+    #' @field NCdim The [NCDimension] that stores the netCDF dimension details.
     NCdim       = NULL,
+
+    #' @field orientation A character "X", "Y", "Z" or "T" to indicate the
+    #' orientation of the axis, or an empty string if not known.
     orientation = "",
+
+    #' @field bounds The boundary values of this axis, if set.
     bounds      = NULL,
 
+    #' Create a basic CF axis object
+    #'
+    #' Create a new CF axis instance from a dimension and a variable in a netCDF
+    #' resource. This method is called upon opening a netCDF resource by the
+    #' `initialize()` method of a descendant class suitable for the type of
+    #' axis.
+    #'
+    #' @param grp The [NCGroup] that this axis is located in.
+    #' @param nc_var The [NCVariable] instance upon which this CF axis is
+    #'   based.
+    #' @param nc_dim The [NCDimension] instance upon which this CF axis is
+    #'   based.
+    #' @returns A basic CF object.
     initialize = function(grp, nc_var, nc_dim) {
       super$initialize(nc_var)
       self$group <- grp
@@ -14,6 +49,10 @@ CFAxis <- R6::R6Class("CFAxis",
       nc_var$CF <- self
     },
 
+    #' @description Summary of the axis
+    #'
+    #' Prints a summary of the axis to the console. This method is typically
+    #' called by the `print()` method of descendant classes.
     print = function() {
       cat("<Axis> [", self$dimid, "] ", self$name, "\n", sep = "")
       if (self$group$name != "/")
@@ -28,6 +67,9 @@ CFAxis <- R6::R6Class("CFAxis",
       cat("Axis     :", self$orientation, "\n")
     },
 
+    #' @description Some details of the axis
+    #'
+    #' @returns A 1-row `data.frame` with some details of the axis.
     brief = function() {
       longname <- self$attribute("long_name")
       if (!length(longname) || longname == self$name) longname <- ""
@@ -37,25 +79,74 @@ CFAxis <- R6::R6Class("CFAxis",
                  length = self$NCdim$length, values = "", unlim = unlim, bounds = "")
     },
 
+    #' @description Very concise information on the axis
+    #'
+    #' The information returned by this function is very concise and most useful
+    #' when combined with similar information from other axes.
+    #'
+    #' @returns Character string with very basic axis information.
     shard = function() {
       self$NCdim$shard()
     },
 
+    #' @description Return the `CFtime` instance that represents time
+    #'
+    #' This method is only useful for `CFAxisTime` instances.
+    #'
+    #' @returns `NULL`
     time = function() {
       NULL
     },
 
+    #' @name indexOf
+    #' @title Find indices in the axis domain
+    #'
+    #' @description Given a vector of numerical, timestamp or categorical values
+    #' `x`, find their indices in the values of the axis. With
+    #' `method = "constant"` this returns the index of the value lower than the
+    #' supplied values in `x`. With `method = "linear"` the return value
+    #' includes any fractional part.
+    #'
+    #' If bounds are set on the numerical or time axis, the indices are taken
+    #' from those bounds. Returned indices may fall in between bounds if the
+    #' latter are not contiguous, with the exception of the extreme values in
+    #' `x`.
+    #'
+    #' @param x Vector of numeric, timestamp or categorial values to find axis
+    #'   indices for. The timestamps can be either character, POSIXct or Date
+    #'   vectors. The type of the vector has to correspond to the type of the
+    #'   axis.
+    #' @param method Single character value of "constant" or "linear".
+    #'
+    #' @returns Numeric vector of the same length as `x`. If `method = "constant"`,
+    #'   return the index value for each match. If `method = "linear"`, return
+    #'   the index value with any fractional value. Values of `x` outside of the
+    #'   range of the values in the axis are returned as `0` and `.Machine$integer.max`,
+    #'    respectively.
+    #' @examples
+    #' fn <- system.file("extdata",
+    #'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
+    #'                   package = "ncdfCF")
+    #' ds <- open_ncdf(fn)
+    #' lon <- ds[["lon"]]
+    #' lon$indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1))
+    #' lon$indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1), "linear")
+    #'
+    #' time <- ds[["time"]]
+    #' time$indexOf(c("2024-03-01", "2024-03-02"))
     indexOf = function(x, method = "constant") {
       stop("`indexOf()` must be implemented by descendant CFAxis class.")
     }
   ),
 
   active = list(
+    #' @field dimid The netCDF dimension id of this axis.
     dimid = function(value) {
       if (missing(value))
         self$NCdim$id
     },
 
+    #' @field length The declared length of this axis.
     length = function(value) {
       if (missing(value))
         self$NCdim$length
@@ -82,40 +173,3 @@ CFAxis <- R6::R6Class("CFAxis",
 dim.CFAxis <- function(x) {
   x$length
 }
-
-#' @name indexOf
-#' @title Find indices in the axis domain
-#'
-#' @description
-#' Given a vector of numerical, timestamp or categorical values `x`, find their
-#' indices in the values of axis `y`. With `method = "constant"` this
-#' returns the index of the value lower than the supplied values in `x`. With
-#' `method = "linear"` the return value includes any fractional part.
-#'
-#' If bounds are set on the numerical or time axis, the indices are taken
-#' from those bounds. Returned indices may fall in between bounds if the latter
-#' are not contiguous, with the exception of the extreme values in `x`.
-#'
-#' @param x Vector of numeric, timestamp or categorial values to find axis
-#' indices for. The timestamps can be either character, POSIXct or Date vectors.
-#' The type of the vector has to correspond to the type of `y`.
-#' @param y An instance of `CFAxisNumeric`, `CFAxisTime` or `CFAxisCharacter`.
-#' @param method Single character value of "constant" or "linear".
-#'
-#' @returns Numeric vector of the same length as `x`. If `method = "constant"`,
-#'   return the index value for each match. If `method = "linear"`, return the
-#'   index value with any fractional value. Values of `x` outside of the range
-#'   of the values in `y` are returned as `0` and `.Machine$integer.max`,
-#'   respectively.
-#' @examples
-#' fn <- system.file("extdata",
-#'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
-#'                   package = "ncdfCF")
-#' ds <- open_ncdf(fn)
-#' lon <- ds[["lon"]]
-#' lon$indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1))
-#' lon$indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1), "linear")
-#'
-#' time <- ds[["time"]]
-#' time$indexOf(c("2024-03-01", "2024-03-02"))
-NULL

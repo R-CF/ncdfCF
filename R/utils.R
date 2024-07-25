@@ -32,3 +32,7 @@
     else file.path(normalizePath("~"), ".cache")
   }
 }
+
+unused_imports <- function() {
+  stringr::word
+}

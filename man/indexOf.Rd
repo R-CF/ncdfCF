@@ -2,34 +2,34 @@
 % Please edit documentation in R/CFAxis.R
 \name{indexOf}
 \alias{indexOf}
+\alias{CFAxis}
 \title{Find indices in the axis domain}
-\arguments{
-\item{x}{Vector of numeric, timestamp or categorial values to find axis
-indices for. The timestamps can be either character, POSIXct or Date vectors.
-The type of the vector has to correspond to the type of \code{y}.}
-
-\item{y}{An instance of \code{CFAxisNumeric}, \code{CFAxisTime} or \code{CFAxisCharacter}.}
-
-\item{method}{Single character value of "constant" or "linear".}
-}
 \value{
+A basic CF object.
+
+A 1-row \code{data.frame} with some details of the axis.
+
+Character string with very basic axis information.
+
+\code{NULL}
+
 Numeric vector of the same length as \code{x}. If \code{method = "constant"},
-return the index value for each match. If \code{method = "linear"}, return the
-index value with any fractional value. Values of \code{x} outside of the range
-of the values in \code{y} are returned as \code{0} and \code{.Machine$integer.max},
+return the index value for each match. If \code{method = "linear"}, return
+the index value with any fractional value. Values of \code{x} outside of the
+range of the values in the axis are returned as \code{0} and \code{.Machine$integer.max},
 respectively.
 }
 \description{
-Given a vector of numerical, timestamp or categorical values \code{x}, find their
-indices in the values of axis \code{y}. With \code{method = "constant"} this
-returns the index of the value lower than the supplied values in \code{x}. With
-\code{method = "linear"} the return value includes any fractional part.
+Find indices in the axis domain
 
-If bounds are set on the numerical or time axis, the indices are taken
-from those bounds. Returned indices may fall in between bounds if the latter
-are not contiguous, with the exception of the extreme values in \code{x}.
+Find indices in the axis domain
 }
 \examples{
+
+## ------------------------------------------------
+## Method `CFAxis$indexOf`
+## ------------------------------------------------
+
 fn <- system.file("extdata",
                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
                   package = "ncdfCF")
@@ -40,4 +40,192 @@ lon$indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1), "linear")
 
 time <- ds[["time"]]
 time$indexOf(c("2024-03-01", "2024-03-02"))
+}
+\section{Super class}{
+\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFAxis}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{group}}{The \link{NCGroup} that this axis is located in.}
+
+\item{\code{NCdim}}{The \link{NCDimension} that stores the netCDF dimension details.}
+
+\item{\code{orientation}}{A character "X", "Y", "Z" or "T" to indicate the
+orientation of the axis, or an empty string if not known.}
+
+\item{\code{bounds}}{The boundary values of this axis, if set.
+Create a basic CF axis object
+
+Create a new CF axis instance from a dimension and a variable in a netCDF
+resource. This method is called upon opening a netCDF resource by the
+\code{initialize()} method of a descendant class suitable for the type of
+axis.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{dimid}}{The netCDF dimension id of this axis.}
+
+\item{\code{length}}{The declared length of this axis.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-CFAxis-new}{\code{CFAxis$new()}}
+\item \href{#method-CFAxis-print}{\code{CFAxis$print()}}
+\item \href{#method-CFAxis-brief}{\code{CFAxis$brief()}}
+\item \href{#method-CFAxis-shard}{\code{CFAxis$shard()}}
+\item \href{#method-CFAxis-time}{\code{CFAxis$time()}}
+\item \href{#method-CFAxis-indexOf}{\code{CFAxis$indexOf()}}
+\item \href{#method-CFAxis-clone}{\code{CFAxis$clone()}}
+}
+}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
+</ul>
+</details>
+}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-new"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-new}{}}}
+\subsection{Method \code{new()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$new(grp, nc_var, nc_dim)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{grp}}{The \link{NCGroup} that this axis is located in.}
+
+\item{\code{nc_var}}{The \link{NCVariable} instance upon which this CF axis is
+based.}
+
+\item{\code{nc_dim}}{The \link{NCDimension} instance upon which this CF axis is
+based.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-print"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-print}{}}}
+\subsection{Method \code{print()}}{
+Summary of the axis
+
+Prints a summary of the axis to the console. This method is typically
+called by the \code{print()} method of descendant classes.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$print()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-brief"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-brief}{}}}
+\subsection{Method \code{brief()}}{
+Some details of the axis
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$brief()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-shard"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-shard}{}}}
+\subsection{Method \code{shard()}}{
+Very concise information on the axis
+
+The information returned by this function is very concise and most useful
+when combined with similar information from other axes.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$shard()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-time"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-time}{}}}
+\subsection{Method \code{time()}}{
+Return the \code{CFtime} instance that represents time
+
+This method is only useful for \code{CFAxisTime} instances.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$time()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-indexOf"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-indexOf}{}}}
+\subsection{Method \code{indexOf()}}{
+Given a vector of numerical, timestamp or categorical values
+\code{x}, find their indices in the values of the axis. With
+\code{method = "constant"} this returns the index of the value lower than the
+supplied values in \code{x}. With \code{method = "linear"} the return value
+includes any fractional part.
+
+If bounds are set on the numerical or time axis, the indices are taken
+from those bounds. Returned indices may fall in between bounds if the
+latter are not contiguous, with the exception of the extreme values in
+\code{x}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$indexOf(x, method = "constant")}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{x}}{Vector of numeric, timestamp or categorial values to find axis
+indices for. The timestamps can be either character, POSIXct or Date
+vectors. The type of the vector has to correspond to the type of the
+axis.}
+
+\item{\code{method}}{Single character value of "constant" or "linear".}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{fn <- system.file("extdata",
+                  "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
+                  package = "ncdfCF")
+ds <- open_ncdf(fn)
+lon <- ds[["lon"]]
+lon$indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1))
+lon$indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1), "linear")
+
+time <- ds[["time"]]
+time$indexOf(c("2024-03-01", "2024-03-02"))
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
 }
