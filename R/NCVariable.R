@@ -16,6 +16,12 @@ NULL
 
 NCVariable <- R6::R6Class("NCVariable",
   inherit = NCObject,
+  private = list(
+    # List of CF objects that reference this NCVariable. Typically there is just
+    # one reference but there could be more (e.g. terms for several parametric
+    # vertical axes).
+    CFobjects = list()
+  ),
   public = list(
     #' @field group NetCDF group where this variable is located.
     group   = NULL,
@@ -32,9 +38,6 @@ NCVariable <- R6::R6Class("NCVariable",
 
     #' @field netcdf4 Additional properties for a `netcdf4` resource.
     netcdf4 = NULL,
-
-    #' @field CF The CF object that uses this netCDF variable.
-    CF      = NULL, # The CFObject that uses this NCVariable
 
     #' Create a new netCDF variable
     #'
@@ -63,7 +66,28 @@ NCVariable <- R6::R6Class("NCVariable",
     #'
     #' @returns Character string with very basic variable information.
     shard = function() {
-      paste0("[", self$id, ": ", self$name, "]")
+      if (self$id > -1L) paste0("[", self$id, ": ", self$name, "]")
+      else NULL
+    }
+  ),
+  active = list(
+    #' @field CF List of CF objects that uses this netCDF variable.
+    CF = function(value) {
+      if (missing(value))
+        private$CFobjects
+      else {
+        private$CFobjects[[value$name]] <- value
+      }
+    },
+
+    #' @field fullname (read-only) Name of the NC variable including the group
+    #' path from the root group.
+    fullname = function(value) {
+      if (missing(value)) {
+        g <- self$group$fullname
+        if (g == "/") paste0("/", self$name)
+        else paste0(g, "/", self$name)
+      }
     }
   )
 )

@@ -36,6 +36,10 @@ Metadata Conventions to interpret the data. This currently applies to:
 - **Bounds** information. When present, bounds are read and used in
   analyses.
 - **Discrete dimensions**, optionally with character labels.
+- **Parametric vertical coordinates** are read, including variables
+  listed in the `formula_terms` attribute.
+- **Auxiliary coordinates** are identified and read. This applies to
+  both scalar axes and auxiliary longitude-latitude grids.
 
 ##### Basic usage
 
@@ -44,14 +48,6 @@ straightforward:
 
 ``` r
 library(ncdfCF)
-#> 
-#> Attaching package: 'ncdfCF'
-#> The following object is masked from 'package:graphics':
-#> 
-#>     axis
-```
-
-``` r
 
 # Get any netCDF file
 fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
@@ -61,19 +57,27 @@ ds <- open_ncdf(fn)
 
 # Easy access in understandable format to all the details
 ds
-#> Dataset   : /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
+#> <Dataset> ERA5land_Rwanda_20160101 
+#> Resource   : /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
+#> Format     : offset64 
+#> Conventions: CF-1.6 
+#> Keep open  : FALSE 
 #> 
-#> Variables :
-#>  id name long_name             units data_type dimensions               
-#>  3  t2m  2 metre temperature   K     NC_SHORT  longitude, latitude, time
-#>  4  pev  Potential evaporation m     NC_SHORT  longitude, latitude, time
-#>  5  tp   Total precipitation   m     NC_SHORT  longitude, latitude, time
+#> Variables:
+#>  name long_name             units data_type
+#>  t2m  2 metre temperature   K     NC_SHORT 
+#>  pev  Potential evaporation m     NC_SHORT 
+#>  tp   Total precipitation   m     NC_SHORT 
+#>  axes                                              
+#>  [1: longitude (31)], [2: latitude (21)], [0: ti...
+#>  [1: longitude (31)], [2: latitude (21)], [0: ti...
+#>  [1: longitude (31)], [2: latitude (21)], [0: ti...
 #> 
-#> Dimensions:
+#> Axes:
 #>  id axis name      length values                                        unlim
+#>  0  T    time      24     [2016-01-01 00:00:00 ... 2016-01-01 23:00:00] U    
 #>  1  X    longitude 31     [28 ... 31]                                        
 #>  2  Y    latitude  21     [-1 ... -3]                                        
-#>  0  T    time      24     [2016-01-01 00:00:00 ... 2016-01-01 23:00:00] U    
 #> 
 #> Attributes:
 #>  id name        type    length
@@ -97,7 +101,7 @@ names(ds)
 
 ``` r
 dimnames(ds)
-#> [1] "longitude" "latitude"  "time"
+#> [1] "time"      "longitude" "latitude"
 ```
 
 ``` r
@@ -105,9 +109,10 @@ dimnames(ds)
 # Variables can be accessed through standard list-type extraction syntax
 t2m <- ds[["t2m"]]
 t2m
-#> Variable: [3] t2m | 2 metre temperature
+#> <Variable> t2m 
+#> Long name: 2 metre temperature 
 #> 
-#> Dimensions:
+#> Axes:
 #>  id axis name      length values                                        unlim
 #>  1  X    longitude 31     [28 ... 31]                                        
 #>  2  Y    latitude  21     [-1 ... -3]                                        
@@ -127,11 +132,11 @@ t2m
 
 # Same with dimensions, but now without first putting the object in a variable
 ds[["longitude"]]
-#> Dimension: [1] longitude
+#> <Longitude axis> [1] longitude
+#> Length   : 31
 #> Axis     : X 
-#> Length   : 31  
-#> Range    : 28 ... 31 degrees_east 
-#> Bounds   : (not set) 
+#> Values   : 28, 28.1, 28.2 ... 30.8, 30.9, 31 degrees_east
+#> Bounds   : (not set)
 #> 
 #> Attributes:
 #>  id name          type    length value       
@@ -145,8 +150,7 @@ ds[["longitude"]]
 
 # Regular base R operations simplify life further
 dimnames(ds[["pev"]]) # A variable: list of dimension names
-#>   longitude    latitude        time 
-#> "longitude"  "latitude"      "time"
+#> [1] "longitude" "latitude"  "time"
 ```
 
 ``` r
@@ -159,8 +163,9 @@ dimnames(ds[["longitude"]]) # A dimension: vector of dimension element values
 ``` r
 
 # Access attributes
-attribute(ds[["pev"]], "long_name")
-#> [1] "Potential evaporation"
+ds[["pev"]]$attribute("long_name")
+#>               long_name 
+#> "Potential evaporation"
 ```
 
 ##### Extracting data
@@ -189,7 +194,8 @@ str(ts)
 #>  - attr(*, "time")=List of 1
 #>   ..$ time:Formal class 'CFtime' [package "CFtime"] with 4 slots
 #>   .. .. ..@ datum     :Formal class 'CFdatum' [package "CFtime"] with 5 slots
-#>   .. .. .. .. ..@ definition: chr "hours since 1900-01-01 00:00:00.0"
+#>   .. .. .. .. ..@ definition: Named chr "hours since 1900-01-01 00:00:00.0"
+#>   .. .. .. .. .. ..- attr(*, "names")= chr "units"
 #>   .. .. .. .. ..@ unit      : int 3
 #>   .. .. .. .. ..@ origin    :'data.frame':   1 obs. of  8 variables:
 #>   .. .. .. .. .. ..$ year  : int 1900
@@ -200,7 +206,8 @@ str(ts)
 #>   .. .. .. .. .. ..$ second: num 0
 #>   .. .. .. .. .. ..$ tz    : chr "+0000"
 #>   .. .. .. .. .. ..$ offset: num 0
-#>   .. .. .. .. ..@ calendar  : chr "gregorian"
+#>   .. .. .. .. ..@ calendar  : Named chr "gregorian"
+#>   .. .. .. .. .. ..- attr(*, "names")= chr "calendar"
 #>   .. .. .. .. ..@ cal_id    : int 1
 #>   .. .. ..@ resolution: num 1
 #>   .. .. ..@ offsets   : num [1:24] 1016832 1016833 1016834 1016835 1016836 ...
@@ -222,7 +229,8 @@ str(ts)
 #>  - attr(*, "time")=List of 1
 #>   ..$ time:Formal class 'CFtime' [package "CFtime"] with 4 slots
 #>   .. .. ..@ datum     :Formal class 'CFdatum' [package "CFtime"] with 5 slots
-#>   .. .. .. .. ..@ definition: chr "hours since 1900-01-01 00:00:00.0"
+#>   .. .. .. .. ..@ definition: Named chr "hours since 1900-01-01 00:00:00.0"
+#>   .. .. .. .. .. ..- attr(*, "names")= chr "units"
 #>   .. .. .. .. ..@ unit      : int 3
 #>   .. .. .. .. ..@ origin    :'data.frame':   1 obs. of  8 variables:
 #>   .. .. .. .. .. ..$ year  : int 1900
@@ -233,7 +241,8 @@ str(ts)
 #>   .. .. .. .. .. ..$ second: num 0
 #>   .. .. .. .. .. ..$ tz    : chr "+0000"
 #>   .. .. .. .. .. ..$ offset: num 0
-#>   .. .. .. .. ..@ calendar  : chr "gregorian"
+#>   .. .. .. .. ..@ calendar  : Named chr "gregorian"
+#>   .. .. .. .. .. ..- attr(*, "names")= chr "calendar"
 #>   .. .. .. .. ..@ cal_id    : int 1
 #>   .. .. ..@ resolution: num NA
 #>   .. .. ..@ offsets   : num 1016843
@@ -246,7 +255,7 @@ manner.
 
 ``` r
 # Extract a specific region, full time dimension
-ts <- subset(t2m, list(X = 29:30, Y = -1:-2))
+ts <- t2m$subset(list(X = 29:30, Y = -1:-2))
 str(ts)
 #>  num [1:10, 1:10, 1:24] 290 291 291 292 293 ...
 #>  - attr(*, "dimnames")=List of 3
@@ -258,7 +267,8 @@ str(ts)
 #>  - attr(*, "time")=List of 1
 #>   ..$ :Formal class 'CFtime' [package "CFtime"] with 4 slots
 #>   .. .. ..@ datum     :Formal class 'CFdatum' [package "CFtime"] with 5 slots
-#>   .. .. .. .. ..@ definition: chr "hours since 1900-01-01 00:00:00.0"
+#>   .. .. .. .. ..@ definition: Named chr "hours since 1900-01-01 00:00:00.0"
+#>   .. .. .. .. .. ..- attr(*, "names")= chr "units"
 #>   .. .. .. .. ..@ unit      : int 3
 #>   .. .. .. .. ..@ origin    :'data.frame':   1 obs. of  8 variables:
 #>   .. .. .. .. .. ..$ year  : int 1900
@@ -269,7 +279,8 @@ str(ts)
 #>   .. .. .. .. .. ..$ second: num 0
 #>   .. .. .. .. .. ..$ tz    : chr "+0000"
 #>   .. .. .. .. .. ..$ offset: num 0
-#>   .. .. .. .. ..@ calendar  : chr "gregorian"
+#>   .. .. .. .. ..@ calendar  : Named chr "gregorian"
+#>   .. .. .. .. .. ..- attr(*, "names")= chr "calendar"
 #>   .. .. .. .. ..@ cal_id    : int 1
 #>   .. .. ..@ resolution: num 1
 #>   .. .. ..@ offsets   : num [1:24] 1016832 1016833 1016834 1016835 1016836 ...
@@ -281,9 +292,9 @@ str(ts)
 # Extract specific time slices for a specific region
 # Note that the dimensions are specified out of order and using alternative
 # specifications: only the extreme values are used.
-ts <- subset(t2m, list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
-                       X = c(29.6, 28.8),
-                       Y = seq(-2, -1, by = 0.05)))
+ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
+                      X = c(29.6, 28.8),
+                      Y = seq(-2, -1, by = 0.05)))
 str(ts)
 #>  num [1:8, 1:10, 1:6] 297 296 296 298 299 ...
 #>  - attr(*, "dimnames")=List of 3
@@ -295,7 +306,8 @@ str(ts)
 #>  - attr(*, "time")=List of 1
 #>   ..$ :Formal class 'CFtime' [package "CFtime"] with 4 slots
 #>   .. .. ..@ datum     :Formal class 'CFdatum' [package "CFtime"] with 5 slots
-#>   .. .. .. .. ..@ definition: chr "hours since 1900-01-01 00:00:00.0"
+#>   .. .. .. .. ..@ definition: Named chr "hours since 1900-01-01 00:00:00.0"
+#>   .. .. .. .. .. ..- attr(*, "names")= chr "units"
 #>   .. .. .. .. ..@ unit      : int 3
 #>   .. .. .. .. ..@ origin    :'data.frame':   1 obs. of  8 variables:
 #>   .. .. .. .. .. ..$ year  : int 1900
@@ -306,7 +318,8 @@ str(ts)
 #>   .. .. .. .. .. ..$ second: num 0
 #>   .. .. .. .. .. ..$ tz    : chr "+0000"
 #>   .. .. .. .. .. ..$ offset: num 0
-#>   .. .. .. .. ..@ calendar  : chr "gregorian"
+#>   .. .. .. .. ..@ calendar  : Named chr "gregorian"
+#>   .. .. .. .. .. ..- attr(*, "names")= chr "calendar"
 #>   .. .. .. .. ..@ cal_id    : int 1
 #>   .. .. ..@ resolution: num 6
 #>   .. .. ..@ offsets   : num [1:2] 1016841 1016847
@@ -322,8 +335,9 @@ Package `ncdfCF` is in the early phases of development. It supports
 reading of groups, variables, dimensions, user-defined data types,
 attributes and data from netCDF resources in “classic” and “netcdf4”
 formats. From the CF Metadata Conventions it supports identification of
-dimension axes, interpretation of the “time” dimension, and reading of
-“bounds” information.
+dimension axes, interpretation of the “time” dimension, name resolution
+when using groups, reading of “bounds” information and parametric
+vertical coordinates.
 
 Development plans for the near future focus on supporting the below
 features:

@@ -99,7 +99,7 @@ This method returns netCDF object attributes.}
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{att}}{Vector of character strings of attributes to return.}
+\item{\code{att}}{Vector of attribute names whose values to return.}
 
 \item{\code{field}}{The field of the \code{data.frame} to return values from. This
 must be "value" (default), "type" or "length".}

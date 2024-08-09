@@ -1,4 +1,9 @@
-#' Read a netCDF resource
+#' Open a netCDF resource
+#'
+#' This function will read the metadata of a netCDF resource and interpret the
+#' netCDF dimensions, variables and attributes to generate the corresponding CF
+#' objects. The data for the CF variables is not read, please see [CFVariable]
+#' for methods to read the variable data.
 #'
 #' @param resource The name of the netCDF resource to open, either a local file
 #'   name or a remote URI.
@@ -6,7 +11,7 @@
 #'   remain open after reading the metadata. This should be enabled typically
 #'   only for programmatic access or when a remote resource has an expensive
 #'   access protocol (i.e. 2FA). The resource has to be explicitly closed with
-#'   `close()` after use. Note that when a dataset is opened with
+#'   `close()` after use. Note that when a data set is opened with
 #'   `keep_open = TRUE` the resource may still be closed by the operating system
 #'   or the remote server.
 #'
@@ -42,8 +47,24 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   # Identify axes: NUG coordinate variables
   axes <- .buildAxes(root, list())
 
+  # Mop up any non-CV dimensions - additional to CF Conventions
+  all_axis_dims <- sapply(axes, function(x) x$dimid)
+  all_axis_dims <- all_axis_dims[!is.na(all_axis_dims)]
+  all_var_dims <- unique(unlist(sapply(root$NCvars, function(v) v$dimids)))
+  all_var_dims <- all_var_dims[!is.na(all_var_dims)]
+  add_dims <- all_var_dims[!(all_var_dims %in% all_axis_dims)]
+  if (length(add_dims)) {
+    axes <- append(axes, .addBareDimensions(root, add_dims))
+    names(root$CFaxes) <- sapply(root$CFaxes, function(x) x$name)
+    names(root$NCvars) <- sapply(root$NCvars, function(v) v$name)
+  }
+
+  # Auxiliary CVs and scalar CVs
+  .makeCoordinates(root)
+
   # Identify variables
-  vars <- .buildVariables(root, axes)
+  if (length(axes) > 0L)
+    vars <- .buildVariables(root, axes)
 
   ds$root <- root
   ds
@@ -63,7 +84,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 .readGroup <- function(parent, h, parent_dims) {
   g <- RNetCDF::grp.inq.nc(h)
   grp <- NCGroup$new(id = as.integer(g$self), name = g$name, fullname = g$fullname,
-                     parent = parent, resource = parent$resource())
+                     parent = parent, resource = parent$resource)
 
   # Read all the raw NC variables in the group
   if (length(g$varids)) {
@@ -154,13 +175,17 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   axes
 }
 
-#' Create an `CFAxis` from an NC variable and dimension
-#'
-#' @param grp Group in which the NC variable is defined.
-#' @param var `NCVariable` instance to create the axis from.
-#' @param dim `NCDimension` associated with argument `var`.
-#'
-#' @returns An instance of `CFAxis`.
+# Create an `CFAxis` from an NC variable and dimension
+#
+# This method creates the various kinds of axes, with the exception of
+# [CFAxisVertical], which is passed off to `.makeAxisParametric` once a
+# parametric Z-axis is detected.
+#
+# @param grp Group in which the NC variable is defined.
+# @param var `NCVariable` instance to create the axis from.
+# @param dim `NCDimension` associated with argument `var`.
+#
+# @returns An instance of `CFAxis`.
 .makeAxis <- function(grp, var, dim) {
   h <- grp$handle
 
@@ -168,19 +193,24 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   vals <- try(as.vector(RNetCDF::var.get.nc(h, var$name)), silent = TRUE)
   if (inherits(vals, "try-error"))
     # No values so it's an identity axis
-    return(CFAxisDiscrete$new(grp, var, dim))
+    return(CFAxisDiscrete$new(grp, var, dim, ""))
+  if (is.numeric(vals)) vals <- round(vals, 5) # Drop spurious "precision"
 
   # Does `var` have attributes?
-  if (!nrow(var$attributes)) {
+  if (!nrow(var$attributes))
     # No attributes so nothing left to do
-    return(CFAxisNumeric$new(grp, var, dim, round(vals, 5)))
-  }
+    return(CFAxisNumeric$new(grp, var, dim, "", vals))
 
   # Get essential attributes
-  props <- var$attribute(c("standard_name", "units", "calendar", "axis",
-                           "bounds"))
+  props <- var$attribute(c("standard_name", "units", "calendar", "axis", "bounds"))
+  standard <- props["standard_name"]
+
+  # Z: standard_names and formula_terms for parametric vertical axis
+  if (!is.na(standard) && standard %in% Z_parametric_standard_names)
+    return(.makeParametricAxis(grp, var, dim, vals, standard))
 
   # Does the axis have bounds?
+  # FIXME: Bounds with more than 2 edges
   bounds <- props["bounds"]
   if (!is.na(bounds)) {
     NCbounds <- grp$find_by_name(bounds, "NC")
@@ -219,47 +249,208 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   }
   if (is.na(orient)) {
     # Last option: standard_name, only X and Y
-    standard <- props["standard_name"]
     if (!is.na(standard)) {
       if (standard == "longitude") orient <- "X"
       else if (standard == "latitude") orient <- "Y"
     }
   }
-
-  # Z: standard_names and formula_terms
-  if (is.na(orient) && !is.na(standard) &&
-      standard %in% c("atmosphere_ln_pressure_coordinate",
-                      "atmosphere_sigma_coordinate",
-                      "atmosphere_hybrid_sigma_pressure_coordinate",
-                      "atmosphere_hybrid_height_coordinate",
-                      "atmosphere_sleve_coordinate",
-                      "ocean_sigma_coordinate",
-                      "ocean_s_coordinate",
-                      "ocean_s_coordinate_g1",
-                      "ocean_s_coordinate_g2",
-                      "ocean_sigma_z_coordinate",
-                      "ocean_double_sigma_coordinate"))
-    orient <- "Z"
   if (is.na(orient)) orient <- "" # Fallback value if not set
 
-  axis <- CFAxisNumeric$new(grp, var, dim, round(vals, 5))
-  axis$orientation <- orient
+  axis <- if (orient == "X")
+    CFAxisLongitude$new(grp, var, dim, vals)
+  else if (orient == "Y")
+    CFAxisLatitude$new(grp, var, dim, vals)
+  else CFAxisNumeric$new(grp, var, dim, orient, vals)
   axis$bounds <- CFbounds
 
   axis
 }
 
+# Add bare dimensions to the list of axes
+#
+# There are data sets that do not include a CV for identity dimensions, where
+# ancillary CVs define the contents of the axis. This function creates a dummy
+# NCVariable and then builds a bare-bones discrete axis, in the group where the
+# dimension is defined.
+#
+# Argument `grp` is the current group to scan, `add_dims` is a vector of
+# dimension ids for which a discrete axis must be created because variables
+# refer to the dimension.
+.addBareDimensions <- function(grp, add_dims) {
+  if (length(grp$NCdims) > 0L) {
+    axes <- lapply(grp$NCdims, function(d) {
+      if (d$id %in% add_dims) {
+        v <- NCVariable$new(-2L, d$name, grp, "NC_INTEGER", 1L, d$id)
+        axis <- CFAxisDiscrete$new(grp, v, d, "")
+        v$CF <- axis
+        grp$NCvars <- append(grp$NCvars, v)
+        grp$CFaxes <- append(grp$CFaxes, axis)
+        add_dims <- add_dims[-which(add_dims == d$id)]
+        axis
+      }
+    })
+  } else axes <- list()
+
+  # Descend into subgroups
+  if (length(grp$subgroups) && length(add_dims)) {
+    ax <- lapply(grp$subgroups, function(g) .addBareDimensions(g, add_dims))
+    axes <- append(axes, unlist(ax))
+  }
+
+  axes
+}
+
+#' Make a parametric vertical axis
+#'
+#' This function is called when a parametric vertical axis is found during in
+#' function .makeAxis().
+#'
+#' @param grp The group where the axis is found.
+#' @param var The NC variable that defines the axis.
+#' @param dim The dimension associated with the axis.
+#' @param vals The parameter values of the axis.
+#' @param param_name The "standard_name" attribute that names the specific
+#' parametric form of the axis.
+#'
+#' @returns An instance of CFAxisVertical.
+#' @noRd
+.makeParametricAxis <- function(grp, var, dim, vals, param_name) {
+  Z <- CFAxisVertical$new(grp, var, dim, vals, param_name)
+
+  # Get the formula terms
+  ft <- var$attribute("formula_terms")
+  if (!is.na(ft)) {
+    ft <- trimws(strsplit(ft, " ")[[1L]], whitespace = ":")
+    dim(ft) <- c(2, length(ft) * 0.5)
+    rownames(ft) <- c("term", "variable")
+    ft <- as.data.frame(t(ft))
+    ft$NCvar <- lapply(ft$variable, function(v) {
+      ncvar <- grp$find_by_name(v, "NC")
+      if (!is.null(ncvar)) {
+        ncvar$CF <- Z
+        ncvar
+      }
+    })
+    Z$formula_terms <- ft
+  }
+  Z
+}
+
+#' Make CF constructs for "coordinates" references
+#'
+#' NC variables are scanned for a "coordinates" attribute (which must be a data
+#' variable, domain variable or geometry container variable). The NC variable
+#' referenced is converted into a scalar coordinate variable in the group where
+#' its NC variable is located, or into a long-lat auxiliary coordinate variable
+#' when both a longitude and latitude NC variable are found, in the group of the
+#' longitude NC variable.
+#'
+#' @param grp The group to scan.
+#'
+#' @returns. Nothing. CFAxisScalar and CFAuxiliaryLongLat instances are created
+#' in the groups where the NC variables are found. These will later be picked up
+#' when CFvariables are created.
+#' @noRd
+.makeCoordinates <- function(grp) {
+  if (length(grp$NCvars) > 0L) {
+    # Scan each unused NCVariable for the "coordinates" property and process.
+    # The NCVariable must have dimensional axes.
+    for (refid in seq_along(grp$NCvars)) {
+      v <- grp$NCvars[[refid]]
+      if (!length(v$CF) && length(vdimids <- v$dimids) &&
+          length(coords <- v$attribute("coordinates"))) {
+        coords <- strsplit(coords, " ", fixed = TRUE)[[1L]]
+        varLon <- varLat <- NA
+        for (cid in seq_along(coords)) {
+          aux <- grp$find_by_name(coords[cid], "NC")
+          if (!is.null(aux)) {
+            nd <- aux$ndims
+            if (nd == 0L) {
+              # No dimensions so create a scalar axis in the group of aux
+              val <- try(RNetCDF::var.get.nc(aux$group$handle, aux$name), silent = TRUE)
+              if (inherits(val, "try-error")) val <- NULL
+              aux$group$CFaxes[[aux$name]] <- CFAxisScalar$new(aux$group, aux, "", val)
+            } else {
+              if (!all(aux$dimids %in% vdimids) || nd > 2L)
+                warning("Unmatched `coordinates` value '", c, "' found in variable '", v$name, "'", call. = FALSE)
+              if (nd == 2L) {
+                # If the NCVariable aux has an attribute "units" with value
+                # "degrees_east" or "degrees_north" it is a longitude or latitude,
+                # respectively. Record the fact and move on.
+                units <- aux$attribute("units")
+                if (!is.na(units)) {
+                  if (grepl("^degree(s?)(_?)(east|E)$", units)) varLon <- aux
+                  else if (grepl("^degree(s?)(_?)(north|N)$", units)) varLat <- aux
+                }
+              }
+            }
+          }
+        }
+
+        # Make a CFAuxiliaryLongLat if we have found a varLon and a varLat and
+        # they have identical dimensions, in the varLon group.
+        if ((inherits(varLon, "NCVariable") && inherits(varLat, "NCVariable")) &&
+            identical(varLon$dimids, varLat$dimids)) {
+          varLon$group$addAuxiliaryLongLat(varLon, varLat)
+        }
+      }
+    }
+  }
+
+  # Descend into subgroups
+  if (length(grp$subgroups))
+    lapply(grp$subgroups, function(g) .makeCoordinates(g))
+}
+
+#' Build CF variables from unused dimensional NC variables
+#'
+#' NC variables with dimensions that do not have their `CF` property set will be
+#' made into a CFVariable. This method is invoked recursively to travel through
+#' all groups of the netCDF resource.
+#'
+#' @param grp The current group to scan for unused NC variables.
+#' @param axes List of available CF axes to use with the CF variables.
+#' @returns List of created CF variables.
+#' @noRd
 .buildVariables <- function(grp, axes) {
   if (length(grp$NCvars) > 0L) {
     # Create variable for each unused NCVariable with dimensions
     vars <- lapply(grp$NCvars, function(v) {
-      if (is.null(v$CF) && v$ndims > 0L) {
-        xids <- sapply(axes, function(x) x$dimid)
+      if (!length(v$CF) && v$ndims > 0L) {
+        xids <- lapply(axes, function(x) x$dimid)
         ax <- vector("list", v$ndims)
-        for (x in 1:v$ndims)
-          ax[[x]] <- axes[[ which(v$dimids[x] == xids) ]]
+        for (x in 1:v$ndims) {
+          ndx <- which(sapply(xids, function(e) v$dimids[x] %in% e))
+          ax[[x]] <- axes[[ndx]]
+        }
         names(ax) <- sapply(ax, function(x) x$name)
-        CFVariable$new(grp, v, ax)
+        var <- CFVariable$new(grp, v, ax)
+
+        # Add references to any "coordinates" of the variable
+        varLon <- varLat <- NULL
+        if (length(coords <- v$attribute("coordinates"))) {
+          coords <- strsplit(coords, " ", fixed = TRUE)[[1L]]
+          for (cid in seq_along(coords)) {
+            aux <- grp$find_by_name(coords[cid], "CF")
+            if (!is.null(aux) && inherits(aux, "CFAxisScalar"))
+              var$axes[[aux$name]] <- aux
+            else {
+              aux <- grp$find_by_name(coords[cid], "NC")
+              units <- aux$attribute("units")
+              if (!is.na(units)) {
+                if (grepl("^degree(s?)(_?)(east|E)$", units)) varLon <- aux
+                else if (grepl("^degree(s?)(_?)(north|N)$", units)) varLat <- aux
+              }
+            }
+          }
+
+          if (inherits(varLon, "NCVariable") && inherits(varLat, "NCVariable")) {
+            ll <- varLon$group$find_by_name(paste(varLon$name, varLat$name, sep = "_"), "CF")
+            var$longLatGrid <- ll
+          }
+        }
+
+        var
       }
     })
     vars <- vars[lengths(vars) > 0L]

@@ -3,8 +3,8 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
  public = list(
    values     = NULL,
 
-   initialize = function(grp, nc_var, nc_dim, values) {
-     super$initialize(grp, nc_var, nc_dim)
+   initialize = function(grp, nc_var, nc_dim, orientation, values) {
+     super$initialize(grp, nc_var, nc_dim, orientation)
      self$values <- values
    },
 
@@ -17,6 +17,13 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
 
    indexOf = function(x, method = "constant") {
      match(x, self$values)
+   }
+ ),
+ active = list(
+   #' @field friendlyClassName (read-only) A nice description of the class.
+   friendlyClassName = function(value) {
+     if (missing(value))
+       "Character axis"
    }
  )
 )

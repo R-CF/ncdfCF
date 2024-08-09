@@ -29,5 +29,12 @@ CFBounds <- R6::R6Class("CFBounds",
         c(self$values[1L, 1L], self$values[2L, d])
       }
     }
+  ),
+  active = list(
+    #' @field friendlyClassName (read-only) A nice description of the class.
+    friendlyClassName = function(value) {
+      if (missing(value))
+        "Bounds object"
+    }
   )
 )

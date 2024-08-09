@@ -37,13 +37,21 @@ properties are thus made accessible.
 \item{\code{dimids}}{Vector of dimension identifiers that this variable uses. These
 are the so-called "NUG coordinate variables".}
 
-\item{\code{netcdf4}}{Additional properties for a \code{netcdf4} resource.}
-
-\item{\code{CF}}{The CF object that uses this netCDF variable.
+\item{\code{netcdf4}}{Additional properties for a \code{netcdf4} resource.
 Create a new netCDF variable
 
 This class should not be instantiated directly, they are created
 automatically when opening a netCDF resource.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{CF}}{(read-only) List of CF objects that uses this netCDF variable.}
+
+\item{\code{fullname}}{(read-only) Name of the NC variable including the group
+path from the root group.}
 }
 \if{html}{\out{</div>}}
 }

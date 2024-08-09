@@ -1,11 +1,23 @@
 # ncdfCF (development version)
 
-* NetCDF groups are now supported, including traversing group hierarchies with
-absolute or relative paths.
-* Information on
-the structure of UDTs can now be examined. This is effectively only supported
-for the "compound" sub-type, for scalar values only.
-* Better support for discrete axis dimensions, with a separate class.
+* NetCDF groups are now fully supported, including traversing group hierarchies 
+with absolute or relative paths.
+* All axis types are identified correctly. This includes:
+  * Regular coordinate axes (a.k.a. NUG coordinate variables).
+  * Discrete axes, even when no coordinate variable is present - an extension to 
+  the CF conventions.
+  * Parametric vertical axes, but values are not yet computed.
+  * Scalar axes, linked to variables through the "coordinates" attribute of the 
+  latter.
+  * Auxiliary longitude-latitude grids, the horizontal component of the grid of
+  a variable that was not defined as a Cartesian product of latitude and 
+  longitude, again using the "coordinates" attribute of the variable. Regridding
+  is not yet supported but at the top of the TODO list.
+  * The four axes that *"receive special treatment"* by the Conventions each 
+  have a separate class to deal with their specific nature: CFAxisLongitude,
+  CFAxisLatitude, CFAxisVertical, and CFAxisTime.
+* Information on UDTs is captured in a separate class. This is effectively only 
+supported for the "compound" sub-type, for scalar values only.
 * Data is read into the most compact form possible. This saves a significant 
 amount of memory when large integer variables are read as they would remain
 integers rather than the default numeric type.

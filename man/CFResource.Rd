@@ -36,6 +36,8 @@ call this directly.}
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
+\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+
 \item{\code{handle}}{The handle to the netCDF resource.}
 
 \item{\code{uri}}{The URI of the netCDF resource, either a local filename or the

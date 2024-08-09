@@ -1,11 +1,24 @@
+#' Numeric CF axis object
+#'
+#' @description This class represents a numeric axis. Its values are numeric.
+#' This class is used for axes with numeric values but without further
+#' knowledge of their nature. More specific classes descend from this class.
+#'
+#' @docType class
+#'
+#' @name CFAxisNumeric
+#' @format An [R6Class] generator object.
+NULL
+
+#' @export
 CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
   inherit = CFAxis,
   public = list(
+    #' @field values The values of the axis, usually a numeric vector.
     values     = NULL,
-    bounds     = NULL,
 
-    initialize = function(grp, nc_var, nc_dim, values) {
-      super$initialize(grp, nc_var, nc_dim)
+    initialize = function(grp, nc_var, nc_dim, orientation, values) {
+      super$initialize(grp, nc_var, nc_dim, orientation)
       self$values <- values
     },
 
@@ -15,7 +28,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       units <- self$attribute("units")
       if (!length(units)) units <- ""
       len <- length(self$values)
-      if (len < 6L) {
+      if (len < 7L) {
         vals <- trimws(formatC(self$values, digits = 8L))
         cat("Values   : ", paste(vals, collapse = ", "), " ", units, "\n", sep = "")
       } else {
@@ -60,6 +73,13 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       if (length(self$bounds)) vals <- c(self$bounds$values[1L, 1L], self$bounds$values[2L, ])
       else vals <- self$values
       stats::approx(vals, 1L:length(vals), x, method = method, yleft = 0L, yright = .Machine$integer.max)$y
+    }
+  ),
+  active = list(
+    #' @field friendlyClassName (read-only) A nice description of the class.
+    friendlyClassName = function(value) {
+      if (missing(value))
+        "Generic numeric axis"
     }
   )
 )

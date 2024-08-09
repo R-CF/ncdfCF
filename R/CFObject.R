@@ -20,7 +20,7 @@ NULL
 CFObject <- R6::R6Class("CFObject",
   public = list(
     #' @field NCvar The [NCVariable] instance that this CF object represents.
-    NCvar = NCObject,
+    NCvar = NULL,
 
     #' Create a basic CF object
     #'
@@ -62,19 +62,25 @@ CFObject <- R6::R6Class("CFObject",
   ),
 
   active = list(
-    #' @field id The identifier of the CF object.
+    #' @field friendlyClassName (read-only) A nice description of the class.
+    friendlyClassName = function(value) {
+      if (missing(value))
+        "Generic CF object"
+    },
+
+    #' @field id (read-only) The identifier of the CF object.
     id = function(value) {
       if (missing(value))
         self$NCvar$id
     },
 
-    #' @field name The name of the CF object.
+    #' @field name (read-only) The name of the CF object.
     name = function(value) {
       if (missing(value))
         self$NCvar$name
     },
 
-    #' @field attributes A `data.frame` with the attributes of the CF object.
+    #' @field attributes (read-only) A `data.frame` with the attributes of the CF object.
     attributes = function(value) {
       if (missing(value))
         self$NCvar$attributes

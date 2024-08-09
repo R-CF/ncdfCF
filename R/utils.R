@@ -1,3 +1,10 @@
+# Standard names used for parametric Z axes
+Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
+  "atmosphere_sigma_coordinate", "atmosphere_hybrid_sigma_pressure_coordinate",
+  "atmosphere_hybrid_height_coordinate", "atmosphere_sleve_coordinate",
+  "ocean_sigma_coordinate", "ocean_s_coordinate", "ocean_s_coordinate_g1",
+  "ocean_s_coordinate_g2", "ocean_sigma_z_coordinate", "ocean_double_sigma_coordinate")
+
 #' Make a data.frame slimmer by shortening long strings. List elements are
 #' pasted together.
 #'

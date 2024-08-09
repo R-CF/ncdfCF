@@ -2,7 +2,7 @@
 % Please edit documentation in R/CFread.R
 \name{open_ncdf}
 \alias{open_ncdf}
-\title{Read a netCDF resource}
+\title{Open a netCDF resource}
 \usage{
 open_ncdf(resource, keep_open = FALSE)
 }
@@ -14,7 +14,7 @@ name or a remote URI.}
 remain open after reading the metadata. This should be enabled typically
 only for programmatic access or when a remote resource has an expensive
 access protocol (i.e. 2FA). The resource has to be explicitly closed with
-\code{close()} after use. Note that when a dataset is opened with
+\code{close()} after use. Note that when a data set is opened with
 \code{keep_open = TRUE} the resource may still be closed by the operating system
 or the remote server.}
 }
@@ -23,7 +23,10 @@ An \code{CFDataset} instance, or an error if the resource was not found
 or errored upon reading.
 }
 \description{
-Read a netCDF resource
+This function will read the metadata of a netCDF resource and interpret the
+netCDF dimensions, variables and attributes to generate the corresponding CF
+objects. The data for the CF variables is not read, please see \link{CFVariable}
+for methods to read the variable data.
 }
 \examples{
 fn <- system.file("extdata",

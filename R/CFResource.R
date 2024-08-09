@@ -84,6 +84,12 @@ CFResource <- R6::R6Class("CFResource",
     }
   ),
   active = list(
+    #' @field friendlyClassName (read-only) A nice description of the class.
+    friendlyClassName = function(value) {
+      if (missing(value))
+        "NetCDF resource connection details"
+    },
+
     #' @field handle The handle to the netCDF resource.
     handle = function(value) {
       if (nzchar(self$error))

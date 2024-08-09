@@ -8,9 +8,8 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     values     = NULL,
 
     initialize = function(grp, nc_var, nc_dim, values) {
-      super$initialize(grp, nc_var, nc_dim)
+      super$initialize(grp, nc_var, nc_dim, "T")
       self$values <- values
-      self$orientation <- "T"
     },
 
     print = function() {
@@ -58,7 +57,15 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     },
 
     indexOf = function(x, method = "constant") {
+      # FIXME: Make this a slice instead of an indexOf to get proper CFtime instance back
       indexOf(x, self$values, method)
+    }
+  ),
+  active = list(
+    #' @field friendlyClassName (read-only) A nice description of the class.
+    friendlyClassName = function(value) {
+      if (missing(value))
+        "Time axis"
     }
   )
 )

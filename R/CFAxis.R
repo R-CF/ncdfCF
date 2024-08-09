@@ -7,7 +7,7 @@
 #'
 #' @docType class
 #'
-#' @name CFObject
+#' @name CFAxis
 #' @format An \code{\link{R6Class}} generator object.
 NULL
 
@@ -19,10 +19,11 @@ CFAxis <- R6::R6Class("CFAxis",
     group       = NULL,
 
     #' @field NCdim The [NCDimension] that stores the netCDF dimension details.
+    #' This is `NULL` for [CFAxisScalar] instances.
     NCdim       = NULL,
 
     #' @field orientation A character "X", "Y", "Z" or "T" to indicate the
-    #' orientation of the axis, or an empty string if not known.
+    #' orientation of the axis, or an empty string if not known or different.
     orientation = "",
 
     #' @field bounds The boundary values of this axis, if set.
@@ -40,11 +41,14 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   based.
     #' @param nc_dim The [NCDimension] instance upon which this CF axis is
     #'   based.
+    #' @param orientation The orientation of the axis: "X", "Y", "Z" "T", or
+    #' "" when not known or relevant.
     #' @returns A basic CF object.
-    initialize = function(grp, nc_var, nc_dim) {
+    initialize = function(grp, nc_var, nc_dim, orientation) {
       super$initialize(nc_var)
       self$group <- grp
       self$NCdim <- nc_dim
+      self$orientation <- orientation
 
       nc_var$CF <- self
     },
@@ -54,7 +58,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #' Prints a summary of the axis to the console. This method is typically
     #' called by the `print()` method of descendant classes.
     print = function() {
-      cat("<Axis> [", self$dimid, "] ", self$name, "\n", sep = "")
+      cat("<", self$friendlyClassName, "> [", self$dimid, "] ", self$name, "\n", sep = "")
       if (self$group$name != "/")
         cat("Group    :", self$group$fullname, "\n")
 
@@ -98,7 +102,6 @@ CFAxis <- R6::R6Class("CFAxis",
       NULL
     },
 
-    #' @name indexOf
     #' @title Find indices in the axis domain
     #'
     #' @description Given a vector of numerical, timestamp or categorical values
@@ -140,6 +143,12 @@ CFAxis <- R6::R6Class("CFAxis",
   ),
 
   active = list(
+    #' @field friendlyClassName (read-only) A nice description of the class.
+    friendlyClassName = function(value) {
+      if (missing(value))
+        "Generic CF axis"
+    },
+
     #' @field dimid The netCDF dimension id of this axis.
     dimid = function(value) {
       if (missing(value))

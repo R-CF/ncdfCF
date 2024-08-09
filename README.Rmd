@@ -46,6 +46,10 @@ Metadata Conventions to interpret the data. This currently applies to:
  and times, for all 9 defined calendars.
  * **Bounds** information. When present, bounds are read and used in analyses.
  * **Discrete dimensions**, optionally with character labels.
+ * **Parametric vertical coordinates** are read, including variables listed in
+ the `formula_terms` attribute.
+ * **Auxiliary coordinates** are identified and read. This applies to both 
+ scalar axes and auxiliary longitude-latitude grids.
 
 ##### Basic usage
 
@@ -80,7 +84,7 @@ dimnames(ds[["pev"]]) # A variable: list of dimension names
 dimnames(ds[["longitude"]]) # A dimension: vector of dimension element values
 
 # Access attributes
-attribute(ds[["pev"]], "long_name")
+ds[["pev"]]$attribute("long_name")
 ```
 
 ##### Extracting data
@@ -110,15 +114,15 @@ design because it allows attributes to be attached in a consistent manner.
 
 ```{r subset}
 # Extract a specific region, full time dimension
-ts <- subset(t2m, list(X = 29:30, Y = -1:-2))
+ts <- t2m$subset(list(X = 29:30, Y = -1:-2))
 str(ts)
 
 # Extract specific time slices for a specific region
 # Note that the dimensions are specified out of order and using alternative
 # specifications: only the extreme values are used.
-ts <- subset(t2m, list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
-                       X = c(29.6, 28.8),
-                       Y = seq(-2, -1, by = 0.05)))
+ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
+                      X = c(29.6, 28.8),
+                      Y = seq(-2, -1, by = 0.05)))
 str(ts)
 ```
 
@@ -131,8 +135,8 @@ Package `ncdfCF` is in the early phases of development. It supports reading of
 groups, variables, dimensions, user-defined data types, attributes and data from 
 netCDF resources in "classic" and "netcdf4" formats. From the CF Metadata 
 Conventions it supports identification of dimension axes, interpretation of the 
-"time" dimension, name resolution when using groups, and reading of "bounds" 
-information.
+"time" dimension, name resolution when using groups, reading of "bounds" 
+information and parametric vertical coordinates.
 
 Development plans for the near future focus on supporting the below features:
 

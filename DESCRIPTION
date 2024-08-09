@@ -21,11 +21,16 @@ Imports:
     RNetCDF,
     stringr
 Collate: 
+    'CFAuxiliaryLongLat.R'
     'CFAxis.R'
     'CFAxisCharacter.R'
     'CFAxisDiscrete.R'
+    'CFAxisLatitude.R'
+    'CFAxisLongitude.R'
     'CFAxisNumeric.R'
+    'CFAxisScalar.R'
     'CFAxisTime.R'
+    'CFAxisVertical.R'
     'CFBounds.R'
     'CFDataset.R'
     'NCObject.R'
@@ -35,6 +40,7 @@ Collate:
     'CFread.R'
     'NCDimension.R'
     'NCGroup.R'
+    'NCUDT.R'
     'NCVariable.R'
     'ncdfCF-package.R'
     'utils.R'

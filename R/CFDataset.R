@@ -58,7 +58,7 @@ CFDataset <- R6::R6Class("CFDataset",
       cat("<Dataset>", self$name, "\n")
       cat("Resource   :", private$res$uri, "\n")
       cat("Format     :", private$format, "\n")
-      cat("Conventions:", self$root$conventions, "\n")
+      cat("Conventions:", self$conventions, "\n")
       cat("Keep open  :", self$keep_open, "\n")
 
       if (private$format == "netcdf4")
@@ -85,7 +85,7 @@ CFDataset <- R6::R6Class("CFDataset",
     },
 
     #' @description Print the group hierarchy to the console
-    groups = function() {
+    hierarchy = function() {
       cat("<NetCDF objects>", self$name, "\n")
       hier <- self$root$hierarchy(1L, 1L)
       cat(hier, sep = "")
@@ -123,16 +123,6 @@ CFDataset <- R6::R6Class("CFDataset",
         names(nm[which(nm == standard_name)])
     },
 
-    #' The connection details of the netCDF resource
-    #'
-    #' This method returns the connection settings of the netCDF resource. All
-    #' this information is read-only and has no utility for interactive use.
-    #'
-    #' @returns A [CFResource] instance.
-    resource = function() {
-      private$res
-    },
-
     #' Does the netCDF resource have subgroups
     #'
     #' Newer versions of the `netcdf` library, specifically `netcdf4`, can
@@ -151,11 +141,14 @@ CFDataset <- R6::R6Class("CFDataset",
     #'
     #' @param name The name of a CF data variable or axis, with an optional
     #'   absolute group path.
+    #' @param scope The scope to look for the name. Either "CF" (default) to
+    #' search for CF variables or axes, or "NC" to look for groups or NC
+    #' variables.
     #'
     #' @returns The object with the provided name. If the object is not found,
     #'   returns `NULL`.
-    find_by_name = function(name) {
-      self$root$find_by_name(name)
+    find_by_name = function(name, scope = "CF") {
+      self$root$find_by_name(name, scope)
     },
 
     #' List all the CF data variables in this netCDF resource
@@ -175,29 +168,44 @@ CFDataset <- R6::R6Class("CFDataset",
     #'
     #' @returns A list of `CFAxis` descendants.
     axes = function() {
-      vars <- self$root$variables()
-      if (!length(vars))
-        NULL
+      self$root$axes()
+    },
+
+    #' List all the attributes of a group
+    #'
+    #' This method returns a `data.frame` containing all the attributes of the
+    #' indicated `group`.
+    #'
+    #' @param group The name of the group whose attributes to return. If the
+    #' argument is missing, the global attributes will be returned.
+    #'
+    #' @returns A `data.frame` of attributes.
+    attributes = function(group) {
+      if (missing(group))
+        self$root$attributes
       else {
-        ax <- unlist(sapply(vars, function(v) v$axes))
-        names(ax) <- sapply(ax, function(x) x$name)
-        ax
+        grp <- self$root$find_by_name(group, "NC")
+        if (is.null(grp)) NULL
+        else grp$attributes
       }
     }
   ),
   active = list(
-    #' Conventions conformance
-    #'
-    #' Returns the conventions that this netCDF resource conforms to. This is a
-    #' string value that contains all the conventions that the netCDF resource
-    #' conforms to.
-    #'
-    #' @param value Ignored. Value is read-only.
-    #' @returns Character string with the conventions this netCDF resource
-    #'   conforms to.
+    #' @field friendlyClassName (read-only) A nice description of the class.
+    friendlyClassName = function(value) {
+      if (missing(value))
+        "Data set"
+    },
+
+    #' @field The connection details of the netCDF resource.
+    resource = function(value) {
+      private$res
+    },
+
+    #' @field Returns the conventions that this netCDF resource conforms to.
     conventions = function(value) {
       if (missing(value)) {
-        conv <- self$attribute("Conventions")
+        conv <- self$root$attribute("Conventions")
         if (!length(conv)) conv <- "(not indicated)"
         conv
       }
@@ -210,10 +218,13 @@ CFDataset <- R6::R6Class("CFDataset",
 #' @rdname dimnames
 #' @export
 names.CFDataset <- function(x) {
-  if (x$has_subgroups()) {
-    paste0("/", gsub(".", "/", names(x$variables()), fixed = TRUE))
-  } else
-    names(x$variables())
+  vars <- x$variables()
+  if (!length(vars))
+    NULL
+  else if (x$has_subgroups())
+    paste0("/", gsub(".", "/", names(vars), fixed = TRUE))
+  else
+    names(vars)
 }
 
 #' @export
@@ -226,6 +237,20 @@ dimnames.CFDataset <- function(x) {
     unique(paste0(ifelse(grps == "/", "/", paste0(grps, "/")), names(ax)))
   } else
     unique(names(ax))
+}
+
+#' @rdname dimnames
+#' @export
+groups <- function(x) {
+  UseMethod("groups")
+}
+
+#' @rdname dimnames
+#' @export
+groups.CFDataset <- function(x) {
+  nm <- x$root$fullnames()
+  names(nm) <- NULL
+  nm
 }
 
 #' Get a variable or axis object from a data set
@@ -255,5 +280,8 @@ dimnames.CFDataset <- function(x) {
 #' var <- ds[[v1]]
 #' var
 `[[.CFDataset` <- function(x, i) {
-  x$find_by_name(i)
+  obj <- x$find_by_name(i)
+  if (is.null(obj))
+    obj <- x$find_by_name(i, "NC")
+  obj
 }

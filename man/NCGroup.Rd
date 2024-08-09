@@ -47,5 +47,9 @@ different group. Also, objects that further describe the basic axis
 definition, such as its bounds, labels, ancillary data, may be located in a
 different group; all such elements can be accessed directly from the
 \link{CFAxis} instances that this list holds.}
+
+\item{\code{CFlonlat}}{List of longitude-latitude auxiliary variables. These hold
+longitude and latitude values for every grid point in the data variable that
+references them.}
 }}
 

@@ -18,10 +18,18 @@
 #' @format An \code{\link{R6Class}} generator object.
 NULL
 
+# A data variable has dimensions
+# Defining attributes: ancillary_variables, cell_methods, coordinate_interpolation,
+# coordinates, flag_masks, flag_meanings, flag_values, grid_mapping
+# Forbidden attributes: "dimensions", "geometry_type"
+
+
 #' @export
 CFVariable <- R6::R6Class("CFVariable",
   inherit = CFObject,
   private = list(
+    llgrid = NULL,
+
     .varProperties = function() {
       unit <- self$attribute("units")
       if (!length(unit)) unit <- ""
@@ -32,8 +40,8 @@ CFVariable <- R6::R6Class("CFVariable",
     }
   ),
   public = list(
-    group      = NULL,
-    axes       = list(),
+    group = NULL,
+    axes  = list(),
 
     #' @noRd
     initialize = function(grp, nc_var, axes) {
@@ -62,6 +70,9 @@ CFVariable <- R6::R6Class("CFVariable",
       axes <- as.data.frame(axes[lengths(axes) > 0L])
       print(.slim.data.frame(axes, 50L), right = FALSE, row.names = FALSE)
 
+      if (!is.null(private$llgrid))
+        cat(" Auxiliary longitude-latitude grid is present\n")
+
       self$print_attributes()
     },
 
@@ -74,6 +85,16 @@ CFVariable <- R6::R6Class("CFVariable",
       data.frame(group = self$group$fullname, name = self$name,
                  long_name = props$longname, units = props$unit,
                  data_type = self$NCvar$vtype, axes = paste(ax, collapse = ", "))
+    },
+
+    #' @description Very concise information on the variable
+    #'
+    #' The information returned by this function is very concise and most useful
+    #' when combined with similar information from other variables.
+    #'
+    #' @returns Character string with very basic variable information.
+    shard = function() {
+      self$NCvar$shard()
     },
 
     #' @description Extract data from the variable
@@ -191,6 +212,22 @@ CFVariable <- R6::R6Class("CFVariable",
       }
 
       .read_data(self, start, count, dvals, t[lengths(t) > 0L])
+    }
+  ),
+  active = list(
+    #' @field friendlyClassName (read-only) A nice description of the class.
+    friendlyClassName = function(value) {
+      if (missing(value))
+        "Variable"
+    },
+
+    #' @field longLatGrid The grid of longitude and latitude values of every
+    #' grid cell when the main variable grid has a different coordinate system.
+    longLatGrid = function(value) {
+      if (missing(value))
+        private$llgrid
+      else
+        private$llgrid <- value
     }
   )
 )
@@ -324,7 +361,7 @@ dimnames.CFVariable <- function(x) {
 #' @returns The array with attributes set
 #' @noRd
 .read_data <- function(x, start, count, dim_names, time) {
-  h <- x$group$handle
+  h <- x$NCvar$group$handle
   data <- RNetCDF::var.get.nc(h, x$name, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
 
   # Apply dimension data and other attributes

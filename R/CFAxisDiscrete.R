@@ -1,8 +1,8 @@
 CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
   inherit = CFAxis,
   public = list(
-    initialize = function(grp, nc_var, nc_dim) {
-      super$initialize(grp, nc_var, nc_dim)
+    initialize = function(grp, nc_var, nc_dim, orientation) {
+      super$initialize(grp, nc_var, nc_dim, orientation)
     },
 
     brief = function() {
@@ -16,6 +16,13 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
       x[x < 1] <- 0L
       x[x > self$length] <- .Machine$integer.max
       as.integer(x)
+    }
+  ),
+  active = list(
+    #' @field friendlyClassName (read-only) A nice description of the class.
+    friendlyClassName = function(value) {
+      if (missing(value))
+        "Discrete axis"
     }
   )
 )
