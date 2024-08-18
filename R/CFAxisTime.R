@@ -1,4 +1,5 @@
 #' @importMethodsFrom CFtime bounds range format indexOf
+#' @importFrom CFtime slab
 #' @importFrom CFtime unit
 NULL
 

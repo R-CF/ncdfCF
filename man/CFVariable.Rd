@@ -5,9 +5,6 @@
 \alias{CFVariable}
 \alias{CFVariable$subset}
 \title{CF data variable}
-\format{
-An \code{\link{R6Class}} generator object.
-}
 \value{
 An instance of this class.
 
@@ -28,23 +25,6 @@ the netCDF resource, as well as all the details that have been associated
 with the data variable, such as axis information, grid mapping parameters,
 etc.
 }
-\section{Auxiliary coordinate variables}{
-
-
-A special case exists for variables where the horizontal dimensions (X
-and Y) are not in longitude and latitude values but in some other
-coordinate system. In this case the netCDF resource may have so-called
-\emph{auxiliary coordinate variables} for longitude and latitude that are two
-grids with the same dimension as the horizontal axes of the data variable
-where each pixel gives the corresponding value for the longitude and
-latitude. If the variable has such \emph{auxiliary coordinate variables} then
-they will be used automatically if, and only if, the axes are labeled in
-argument \code{subset} as \code{X} and \code{Y}. The resolution of the grid that is
-produced by this method is automatically calculated. \strong{Note} that if you
-want to extract the data in the original grid, you should use the
-horizontal axis names in argument \code{subset}.
-}
-
 \examples{
 
 ## ------------------------------------------------
@@ -63,9 +43,6 @@ x <- pr$subset(subset = list(X = c(9, 11),
                              T = c("2024-03-01", "2024-04-01")))
 dim(x)
 dimnames(x)
-}
-\seealso{
-[\link{,CFVariable-method}
 }
 \section{Super class}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFVariable}
@@ -229,6 +206,21 @@ You could take the longitude-latitude values from \code{sf::st_bbox()} or
 extract data. Note that this works equally well for projected coordinate
 reference systems - the key is that the specification in argument \code{subset}
 uses the same domain of values as the respective axes in \code{x} use.
+\subsection{Auxiliary coordinate variables:}{
+
+A special case exists for variables where the horizontal dimensions (X
+and Y) are not in longitude and latitude values but in some other
+coordinate system. In this case the netCDF resource may have so-called
+\emph{auxiliary coordinate variables} for longitude and latitude that are two
+grids with the same dimension as the horizontal axes of the data variable
+where each pixel gives the corresponding value for the longitude and
+latitude. If the variable has such \emph{auxiliary coordinate variables} then
+they will be used automatically if, and only if, the axes are labeled in
+argument \code{subset} as \code{X} and \code{Y}. The resolution of the grid that is
+produced by this method is automatically calculated. \strong{Note} that if you
+want to extract the data in the original grid, you should use the
+horizontal axis names in argument \code{subset}.
+}
 }
 
 \subsection{Examples}{

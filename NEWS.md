@@ -16,8 +16,8 @@ with absolute or relative paths.
   * The four axes that *"receive special treatment"* by the Conventions each 
   have a separate class to deal with their specific nature: CFAxisLongitude,
   CFAxisLatitude, CFAxisVertical, and CFAxisTime.
-* Bounds are read and interpreted on all axes, including the auxiliary long-lat
-grids.
+* Bounds are read and interpreted on all axes except the vertical axis, 
+including the auxiliary long-lat grids.
 * Information on UDTs is captured in a separate class. This is effectively only 
 supported for the "compound" sub-type, for scalar values only.
 * Data is read into the most compact form possible. This saves a significant 

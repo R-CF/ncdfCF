@@ -31,7 +31,9 @@
 #'   [CFAuxiliaryLongLat] that hold longitude and latitude values for every grid
 #'   point in the data variable that references them.
 #' @docType class
-#'
+#' @name NCGroup
+NULL
+
 #' @export
 NCGroup <- R6::R6Class("NCGroup",
   inherit = NCObject,

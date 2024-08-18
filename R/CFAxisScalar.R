@@ -18,6 +18,11 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     #' @field value The value of the axis.
     value = NULL,
 
+    #' @description Create an instance of this class.
+    #' @param grp The group that contains the netCDF variable.
+    #' @param nc_var The netCDF variable that describes this instance.
+    #' @param orientation The orientation of this axis, or "" if not known.
+    #' @param value The value of this axis.
     initialize = function(grp, nc_var, orientation, value) {
       super$initialize(grp, nc_var, NULL, orientation)
       self$value <- value
@@ -47,6 +52,7 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
       self$print_attributes()
     },
 
+    #' @description Retrieve a 1-row data.frame with some information on this axis.
     brief = function() {
       longname <- self$attribute("long_name")
       if (!length(longname) || longname == self$name) longname <- ""

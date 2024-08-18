@@ -45,6 +45,9 @@ This method works with "bare" indices into the axes of the array. If
 you want to use domain values of the axes (e.g. longitude values or
 timestamps) to extract part of the variable array, use the \code{CFVariable$subset()}
 method.
+
+Scalar axes should not be included in the indexing as they do not represent a
+dimension into the data array.
 }
 \examples{
 fn <- system.file("extdata",

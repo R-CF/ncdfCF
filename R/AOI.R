@@ -5,11 +5,7 @@
 #' @details See [aoi()] for details.
 #'
 #' @docType class
-#' @name AOI
 #'
-#' @format An \code{\link{R6Class}} generator object.
-NULL
-
 #' @export
 AOI <- R6::R6Class("AOI",
   private = list(
@@ -199,7 +195,7 @@ AOI <- R6::R6Class("AOI",
 #'   in all copies made of the object.
 #'
 #' @export
-#'
+#' @name aoi_
 #' @examples
 #' aoi <- aoi(20, 60, -40, -20, 0.5)
 #' aoi

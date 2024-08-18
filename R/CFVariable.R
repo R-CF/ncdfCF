@@ -16,7 +16,6 @@
 #' @docType class
 #'
 #' @name CFVariable
-#' @format An \code{\link{R6Class}} generator object.
 NULL
 
 #' @export
@@ -175,7 +174,6 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @returns An array with as many dimensions as the data variable has axes.
     #' Attributes will be set on the array.
     #' @aliases CFVariable$subset
-    #' @seealso [[,CFVariable-method]
     #'
     #' @examples
     #' fn <- system.file("extdata",

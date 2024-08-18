@@ -42,9 +42,6 @@ ds <- open_ncdf(fn)
 lon <- ds[["lon"]]
 lon$indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1))
 lon$indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1), "linear")
-
-time <- ds[["time"]]
-time$indexOf(c("2024-03-01", "2024-03-02"))
 }
 \section{Super class}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFAxis}
@@ -213,9 +210,6 @@ ds <- open_ncdf(fn)
 lon <- ds[["lon"]]
 lon$indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1))
 lon$indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1), "linear")
-
-time <- ds[["time"]]
-time$indexOf(c("2024-03-01", "2024-03-02"))
 }
 \if{html}{\out{</div>}}
 

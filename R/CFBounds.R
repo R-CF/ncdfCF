@@ -1,11 +1,27 @@
+#' CF bounds variable
+#'
+#' @description This class represents the bounds of an axis or an auxiliary
+#' longitude-latitude grid.
+#'
+#' @details The class manages the bounds information for an axis (2 vertices per element) or
+#' an auxiliary longitude-latitude grid (4 vertices per element).
+#'
+#' @docType class
+#'
+#' @name CFAuxiliaryLongLat
+#' @export
 CFBounds <- R6::R6Class("CFBounds",
   inherit = CFObject,
   private = list(
     dims = NULL # The length of self$values in all dimensions
   ),
   public = list(
+    #' @field values A matrix with the bounds values.
     values = NULL,
 
+    #' @description Create an instance of this class.
+    #' @param nc_var The NC variable that describes this instance.
+    #' @param values A matrix with the bounds values.
     initialize = function(nc_var, values) {
       super$initialize(nc_var)
       self$values <- values
@@ -14,6 +30,7 @@ CFBounds <- R6::R6Class("CFBounds",
       nc_var$CF <- self
     },
 
+    #' @description Print a summary of the object to the console.
     print = function() {
       if (is.null(self$values))
         cat("Bounds   : (no values)\n")
@@ -31,6 +48,7 @@ CFBounds <- R6::R6Class("CFBounds",
       }
     },
 
+    #' @description Retrieve the lowest and highest value in the bounds.
     range = function() {
       if (is.null(self$values))
         NULL

@@ -13,3 +13,103 @@ any type. It is typically used as an auxiliary axis to record some parameter
 of interest such as the single time associated with a spatial grid with
 longitude, latitude and vertical axes.
 }
+\section{Super classes}{
+\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFAxis]{ncdfCF::CFAxis}} -> \code{CFAxisScalar}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{value}}{The value of the axis.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-CFAxisScalar-new}{\code{CFAxisScalar$new()}}
+\item \href{#method-CFAxisScalar-print}{\code{CFAxisScalar$print()}}
+\item \href{#method-CFAxisScalar-brief}{\code{CFAxisScalar$brief()}}
+\item \href{#method-CFAxisScalar-clone}{\code{CFAxisScalar$clone()}}
+}
+}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="indexOf"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-indexOf'><code>ncdfCF::CFAxis$indexOf()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="time"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-time'><code>ncdfCF::CFAxis$time()</code></a></span></li>
+</ul>
+</details>
+}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisScalar-new"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisScalar-new}{}}}
+\subsection{Method \code{new()}}{
+Create an instance of this class.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisScalar$new(grp, nc_var, orientation, value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{grp}}{The group that contains the netCDF variable.}
+
+\item{\code{nc_var}}{The netCDF variable that describes this instance.}
+
+\item{\code{orientation}}{The orientation of this axis, or "" if not known.}
+
+\item{\code{value}}{The value of this axis.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisScalar-print"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisScalar-print}{}}}
+\subsection{Method \code{print()}}{
+Summary of the scalar axis
+
+Prints a summary of the scalar axis to the console.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisScalar$print()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisScalar-brief"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisScalar-brief}{}}}
+\subsection{Method \code{brief()}}{
+Retrieve a 1-row data.frame with some information on this axis.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisScalar$brief()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisScalar-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisScalar-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisScalar$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

@@ -137,9 +137,6 @@ CFAxis <- R6::R6Class("CFAxis",
     #' lon <- ds[["lon"]]
     #' lon$indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1))
     #' lon$indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1), "linear")
-    #'
-    #' time <- ds[["time"]]
-    #' time$indexOf(c("2024-03-01", "2024-03-02"))
     indexOf = function(x, method = "constant") {
       stop("`indexOf()` must be implemented by descendant CFAxis class.")
     }
