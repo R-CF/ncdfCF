@@ -226,7 +226,7 @@ dimnames(ts)
 ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
                       X = c(29.6, 28.8),
                       Y = seq(-2, -1, by = 0.05)),
-                 rightmost.closed = TRUE)
+                 TRUE)
 dimnames(ts)
 ```
 
