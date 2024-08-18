@@ -148,7 +148,7 @@ when combined with similar information from other variables.
 \subsection{Method \code{subset()}}{
 Extract data from the variable
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$subset(subset, rightmost.closed = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$subset(subset, rightmost.closed = FALSE, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -167,6 +167,9 @@ the axis.}
 
 \item{\code{rightmost.closed}}{Single logical value to indicate if the upper
 boundary of range in each axis should be included.}
+
+\item{\code{...}}{Ignored. Included to avoid "unused argument" errors on
+argument \code{rightmost.closed}.}
 }
 \if{html}{\out{</div>}}
 }

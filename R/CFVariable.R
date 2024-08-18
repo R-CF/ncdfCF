@@ -170,6 +170,8 @@ CFVariable <- R6::R6Class("CFVariable",
     #' the axis.
     #' @param rightmost.closed Single logical value to indicate if the upper
     #' boundary of range in each axis should be included.
+    #' @param ... Ignored. Included to avoid "unused argument" errors on
+    #' argument `rightmost.closed`.
     #'
     #' @returns An array with as many dimensions as the data variable has axes.
     #' Attributes will be set on the array.
@@ -188,7 +190,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #'                              T = c("2024-03-01", "2024-04-01")))
     #' dim(x)
     #' dimnames(x)
-    subset = function(subset, rightmost.closed = FALSE) {
+    subset = function(subset, rightmost.closed = FALSE, ...) {
       num_axes <- length(self$axes)
       if (!num_axes)
         stop("Cannot subset a scalar variable")
