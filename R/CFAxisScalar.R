@@ -23,8 +23,19 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
       self$value <- value
     },
 
+    #' @description Summary of the scalar axis
+    #'
+    #' Prints a summary of the scalar axis to the console.
     print = function() {
-      super$print()
+      cat("<", self$friendlyClassName, "> ", self$name, "\n", sep = "")
+      if (self$group$name != "/")
+        cat("Group    :", self$group$fullname, "\n")
+
+      longname <- self$attribute("long_name")
+      if (length(longname) && longname != self$name)
+        cat("Long name:", longname, "\n")
+
+      cat("Axis     :", self$orientation, "\n")
 
       units <- self$attribute("units")
       if (!length(units)) units <- ""
@@ -37,22 +48,14 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     },
 
     brief = function() {
-      out <- super$brief()
-      dims <- paste0("[", self$value, "]\n")
-      if (is.null(self$bounds)) bnds <- ""
-      else {
-        rng <- self$bounds$range()
-        if (is.null(rng))
-          bnds <- ""
-        else {
-          vals <- trimws(formatC(rng, digits = 8L))
-          bnds <- sprintf("[%s ... %s]", vals[1L], vals[2L])
-        }
-      }
+      longname <- self$attribute("long_name")
+      if (!length(longname) || longname == self$name) longname <- ""
+      units <- self$attribute("units")
+      if (!length(units)) units <- ""
 
-      out$values <- dims
-      out$bounds <- bnds
-      out
+      data.frame(id = "", axis = self$orientation, group = self$group$fullname,
+                 name = self$name, long_name = longname, length = 1L,
+                 unlim = "", values = paste0("[", self$value, "]"), unit = units)
     }
   ),
   active = list(

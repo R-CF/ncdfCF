@@ -21,6 +21,7 @@ Imports:
     RNetCDF,
     stringr
 Collate: 
+    'AOI.R'
     'CFAuxiliaryLongLat.R'
     'CFAxis.R'
     'CFAxisCharacter.R'
@@ -32,6 +33,7 @@ Collate:
     'CFAxisTime.R'
     'CFAxisVertical.R'
     'CFBounds.R'
+    'CFData.R'
     'CFDataset.R'
     'NCObject.R'
     'CFObject.R'

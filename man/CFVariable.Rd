@@ -3,9 +3,20 @@
 \docType{class}
 \name{CFVariable}
 \alias{CFVariable}
+\alias{CFVariable$subset}
 \title{CF data variable}
 \format{
 An \code{\link{R6Class}} generator object.
+}
+\value{
+An instance of this class.
+
+A 1-row \code{data.frame} with some details of the data variable.
+
+Character string with very basic variable information.
+
+An array with as many dimensions as the data variable has axes.
+Attributes will be set on the array.
 }
 \description{
 This class represents a CF data variable, the object that
@@ -17,12 +28,244 @@ the netCDF resource, as well as all the details that have been associated
 with the data variable, such as axis information, grid mapping parameters,
 etc.
 }
-\section{Fields}{
+\section{Auxiliary coordinate variables}{
 
+
+A special case exists for variables where the horizontal dimensions (X
+and Y) are not in longitude and latitude values but in some other
+coordinate system. In this case the netCDF resource may have so-called
+\emph{auxiliary coordinate variables} for longitude and latitude that are two
+grids with the same dimension as the horizontal axes of the data variable
+where each pixel gives the corresponding value for the longitude and
+latitude. If the variable has such \emph{auxiliary coordinate variables} then
+they will be used automatically if, and only if, the axes are labeled in
+argument \code{subset} as \code{X} and \code{Y}. The resolution of the grid that is
+produced by this method is automatically calculated. \strong{Note} that if you
+want to extract the data in the original grid, you should use the
+horizontal axis names in argument \code{subset}.
+}
+
+\examples{
+
+## ------------------------------------------------
+## Method `CFVariable$subset`
+## ------------------------------------------------
+
+fn <- system.file("extdata",
+  "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
+  package = "ncdfCF")
+ds <- open_ncdf(fn)
+pr <- ds[["pr"]]
+
+# Precipitation data for March for a small area
+x <- pr$subset(subset = list(X = c(9, 11),
+                             Y = 42:45,
+                             T = c("2024-03-01", "2024-04-01")))
+dim(x)
+dimnames(x)
+}
+\seealso{
+[\link{,CFVariable-method}
+}
+\section{Super class}{
+\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFVariable}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
 \describe{
 \item{\code{group}}{The \link{NCGroup} that this variable is defined in.}
 
-\item{\code{axes}}{List of instances of classes descending from \link{CFAxis} that are
-the axes of the variable.}
-}}
+\item{\code{axes}}{List of instances of classes descending from \link{CFAxis} that
+are the axes of the variable.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
+\item{\code{gridLongLat}}{The grid of longitude and latitude values of every
+grid cell when the main variable grid has a different coordinate system.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-CFVariable-new}{\code{CFVariable$new()}}
+\item \href{#method-CFVariable-print}{\code{CFVariable$print()}}
+\item \href{#method-CFVariable-brief}{\code{CFVariable$brief()}}
+\item \href{#method-CFVariable-shard}{\code{CFVariable$shard()}}
+\item \href{#method-CFVariable-subset}{\code{CFVariable$subset()}}
+\item \href{#method-CFVariable-clone}{\code{CFVariable$clone()}}
+}
+}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
+</ul>
+</details>
+}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-new"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-new}{}}}
+\subsection{Method \code{new()}}{
+Create an instance of this class.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$new(grp, nc_var, axes)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{grp}}{The group that this CF variable lives in.}
+
+\item{\code{nc_var}}{The netCDF variable that defines this CF variable.}
+
+\item{\code{axes}}{List of \link{CFAxis} instances that describe the dimensions.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-print"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-print}{}}}
+\subsection{Method \code{print()}}{
+Summary of the data variable
+
+Prints a summary of the data variable to the console.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$print()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-brief"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-brief}{}}}
+\subsection{Method \code{brief()}}{
+Some details of the data variable
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$brief()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-shard"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-shard}{}}}
+\subsection{Method \code{shard()}}{
+Very concise information on the variable
+
+The information returned by this function is very concise and most useful
+when combined with similar information from other variables.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$shard()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-subset"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-subset}{}}}
+\subsection{Method \code{subset()}}{
+Extract data from the variable
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$subset(subset, rightmost.closed = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{subset}}{A list with the range to extract from each axis. The
+list should have elements for the axes to extract a subset from - if an
+axis is not present in the list the entire axis will be extracted
+from the array. List element names should be the axis designator \code{X}, \code{Y},
+\code{Z} or \code{T}, or the name of the axis - axes without an axis designator
+and any additional axes beyond the four standard ones can only
+be specified by name. Axis designators and names are case-sensitive and
+can be specified in any order. If values for the range per axis fall
+outside of the extent of the axis, the range is clipped to the extent of
+the axis.}
+
+\item{\code{rightmost.closed}}{Single logical value to indicate if the upper
+boundary of range in each axis should be included.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+The \code{subset()} method extracts a subset of values from the array of the
+variable, with the range along each axis to extract expressed in values
+of the domain of each axis.
+
+The range of values along each axis to be subset is expressed in values
+of the domain of the axis. Any axes for which no information is
+provided in the \code{subset} argument are extracted in whole. Values can be
+specified in a variety of ways that are specific to the nature of the
+axis. For numeric axes it should (resolve to) be a vector of real
+values. A range (e.g. \code{100:200}), a long vector (\verb{c(23, 46, 3, 45, 17}),
+a sequence (\verb{seq(from = 78, to = 100, by = 2}), all work. Note, however,
+that only a single range is generated from the vector so these examples
+resolve to \code{100:200}, \code{3:46}, and \code{78:100}, respectively. For time axes a
+vector of character timestamps, \code{POSIXct} or \code{Date} values must be
+specified. As with numeric values, only the two extreme values in the
+vector will be used.
+
+If the range of values for an axis in argument \code{subset} extend the valid
+range of the axis in \code{x}, the extracted slab will start at the beginning
+for smaller values and extend to the end for larger values. If the
+values envelope the valid range the entire axis will be extracted in
+the result. If the range of \code{subset} values for any axis are all either
+smaller or larger than the valid range of the axis in \code{x} then nothing
+is extracted and \code{NULL} is returned.
+
+As an example, to extract values of a variable for Australia for the year
+2020, where the first axis in \code{x} is the longitude, the second
+axis is the latitude, both in degrees, and the
+third (and final) axis is time, the values are extracted by
+\code{x$subset(list(X = c(112, 154), Y = c(-9, -44), T = c("2020-01-01", "2021-01-01")))}.
+You could take the longitude-latitude values from \code{sf::st_bbox()} or
+\code{terra::ext()} if you have specific spatial geometries for whom you want to
+extract data. Note that this works equally well for projected coordinate
+reference systems - the key is that the specification in argument \code{subset}
+uses the same domain of values as the respective axes in \code{x} use.
+}
+
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{fn <- system.file("extdata",
+  "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
+  package = "ncdfCF")
+ds <- open_ncdf(fn)
+pr <- ds[["pr"]]
+
+# Precipitation data for March for a small area
+x <- pr$subset(subset = list(X = c(9, 11),
+                             Y = 42:45,
+                             T = c("2024-03-01", "2024-04-01")))
+dim(x)
+dimnames(x)
+}
+\if{html}{\out{</div>}}
+
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

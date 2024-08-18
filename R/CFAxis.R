@@ -78,9 +78,12 @@ CFAxis <- R6::R6Class("CFAxis",
       longname <- self$attribute("long_name")
       if (!length(longname) || longname == self$name) longname <- ""
       unlim <- if (self$NCdim$unlim) "U" else ""
+      units <- self$attribute("units")
+      if (!length(units)) units <- ""
 
-      data.frame(id = self$dimid, axis = self$orientation, name = self$name, long_name = longname,
-                 length = self$NCdim$length, values = "", unlim = unlim, bounds = "")
+      data.frame(id = self$dimid, axis = self$orientation, group = self$group$fullname,
+                 name = self$name, long_name = longname, length = self$NCdim$length,
+                 unlim = unlim, values = "", unit = units)
     },
 
     #' @description Very concise information on the axis

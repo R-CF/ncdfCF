@@ -4,8 +4,8 @@
 \name{CFAuxiliaryLongLat}
 \alias{CFAuxiliaryLongLat}
 \title{CF auxiliary longitude-latitude variable}
-\format{
-An \code{\link{R6Class}} generator object.
+\value{
+A 2-row \code{data.frame} with some details of the grid components.
 }
 \description{
 This class represents the longitude and latitude variables that
@@ -18,4 +18,160 @@ latitude from the netCDF resource, as well as all the details that have been
 associated with both axes. Additionally, this class can generate the index
 to extract values on a long-lat grid of the associated X-Y grid data variable
 using a user-selectable extent and resolution.
+}
+\section{Super class}{
+\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFAuxiliaryLongLat}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{varLong}}{The \link{NCVariable} instance of the longitude values.}
+
+\item{\code{varLat}}{The \link{NCVariable} instance of the latitude values.}
+
+\item{\code{axisLong}}{The \link{CFAxis} instance of the longitude.}
+
+\item{\code{axisLat}}{The \link{CFAxis} instance of the latitude.}
+
+\item{\code{boundsLong}}{The \link{CFBounds} instance for the longitude values of the
+grid.}
+
+\item{\code{boundsLat}}{The \link{CFBounds} instance for the latitude values of the
+grid.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+
+\item{\code{name}}{(read-only) The name of the auxiliary lon-lat grid.}
+
+\item{\code{aoi}}{Set or retrieve the AOI for the long-lat grid.}
+
+\item{\code{lon}}{Retrieve the longitude grid.}
+
+\item{\code{lat}}{Retrieve the latitude grid.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-CFAuxiliaryLongLat-new}{\code{CFAuxiliaryLongLat$new()}}
+\item \href{#method-CFAuxiliaryLongLat-brief}{\code{CFAuxiliaryLongLat$brief()}}
+\item \href{#method-CFAuxiliaryLongLat-sample_index}{\code{CFAuxiliaryLongLat$sample_index()}}
+\item \href{#method-CFAuxiliaryLongLat-grid_index}{\code{CFAuxiliaryLongLat$grid_index()}}
+\item \href{#method-CFAuxiliaryLongLat-clear_cache}{\code{CFAuxiliaryLongLat$clear_cache()}}
+\item \href{#method-CFAuxiliaryLongLat-clone}{\code{CFAuxiliaryLongLat$clone()}}
+}
+}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
+</ul>
+</details>
+}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAuxiliaryLongLat-new"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAuxiliaryLongLat-new}{}}}
+\subsection{Method \code{new()}}{
+Creating a new instance
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$new(varLong, varLat, boundsLong, boundsLat)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{varLong, varLat}}{The NCVariables with the longitude and latitude
+grid values, respectively.}
+
+\item{\code{boundsLong, boundsLat}}{The bounds of the grid cells for the
+longitude and latitude, respectively, if set.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAuxiliaryLongLat-brief"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAuxiliaryLongLat-brief}{}}}
+\subsection{Method \code{brief()}}{
+Some details of the longitude-latitude grid
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$brief()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAuxiliaryLongLat-sample_index"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAuxiliaryLongLat-sample_index}{}}}
+\subsection{Method \code{sample_index()}}{
+Return the indexes into the X (longitude) and Y (latitude)
+axes of the original data grid of the points closest to the supplied
+longitudes and latitudes.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$sample_index(x, y)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{x, y}}{Vectors of longitude and latitude values in decimal
+degrees, respectively.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAuxiliaryLongLat-grid_index"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAuxiliaryLongLat-grid_index}{}}}
+\subsection{Method \code{grid_index()}}{
+Return the indices for the AOI into the data grid as an
+integer vector to index data values on the data grid for the AOI.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$grid_index()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAuxiliaryLongLat-clear_cache"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAuxiliaryLongLat-clear_cache}{}}}
+\subsection{Method \code{clear_cache()}}{
+Clears the cache of pre-computed grid index values if an AOI
+has been set.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$clear_cache(full = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{full}}{Logical (default = \code{FALSE}) that indicates if longitude and
+latitude grid arrays should be cleared as well to save space. These will
+then be re-read from file if a new AOI is set.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAuxiliaryLongLat-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAuxiliaryLongLat-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
 }

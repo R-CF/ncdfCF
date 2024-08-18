@@ -1,3 +1,8 @@
+# A data variable has dimensions
+# Defining attributes: ancillary_variables, cell_methods, coordinate_interpolation,
+# coordinates, flag_masks, flag_meanings, flag_values, grid_mapping
+# Forbidden attributes: "dimensions", "geometry_type"
+
 #' CF data variable
 #'
 #' @description This class represents a CF data variable, the object that
@@ -8,21 +13,11 @@
 #' with the data variable, such as axis information, grid mapping parameters,
 #' etc.
 #'
-#' @field group The [NCGroup] that this variable is defined in.
-#' @field axes List of instances of classes descending from [CFAxis] that are
-#'   the axes of the variable.
-#'
 #' @docType class
 #'
 #' @name CFVariable
 #' @format An \code{\link{R6Class}} generator object.
 NULL
-
-# A data variable has dimensions
-# Defining attributes: ancillary_variables, cell_methods, coordinate_interpolation,
-# coordinates, flag_masks, flag_meanings, flag_values, grid_mapping
-# Forbidden attributes: "dimensions", "geometry_type"
-
 
 #' @export
 CFVariable <- R6::R6Class("CFVariable",
@@ -40,10 +35,19 @@ CFVariable <- R6::R6Class("CFVariable",
     }
   ),
   public = list(
+    #' @field group The [NCGroup] that this variable is defined in.
     group = NULL,
+
+    #' @field axes List of instances of classes descending from [CFAxis] that
+    #'   are the axes of the variable.
     axes  = list(),
 
-    #' @noRd
+    #' @description Create an instance of this class.
+    #'
+    #' @param grp The group that this CF variable lives in.
+    #' @param nc_var The netCDF variable that defines this CF variable.
+    #' @param axes List of [CFAxis] instances that describe the dimensions.
+    #' @returns An instance of this class.
     initialize = function(grp, nc_var, axes) {
       super$initialize(nc_var)
       self$group <- grp
@@ -67,11 +71,15 @@ CFVariable <- R6::R6Class("CFVariable",
       cat("\nAxes:\n")
       axes <- do.call(rbind, lapply(self$axes, function(a) a$brief()))
       axes <- lapply(axes, function(c) if (all(c == "")) NULL else c)
+      if (all(axes$group == "/")) axes$group <- NULL
       axes <- as.data.frame(axes[lengths(axes) > 0L])
       print(.slim.data.frame(axes, 50L), right = FALSE, row.names = FALSE)
 
-      if (!is.null(private$llgrid))
-        cat(" Auxiliary longitude-latitude grid is present\n")
+      if (!is.null(private$llgrid)) {
+        cat("\nAuxiliary longitude-latitude grid:\n")
+        ll <- private$llgrid$brief()
+        print(.slim.data.frame(ll, 50L), right = FALSE, row.names = FALSE)
+      }
 
       self$print_attributes()
     },
@@ -81,7 +89,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @returns A 1-row `data.frame` with some details of the data variable.
     brief = function() {
       props <- private$.varProperties()
-      ax <- sapply(self$axes, function(x) x$shard())
+      ax <- sapply(self$axes, function(x) x$name)
       data.frame(group = self$group$fullname, name = self$name,
                  long_name = props$longname, units = props$unit,
                  data_type = self$NCvar$vtype, axes = paste(ax, collapse = ", "))
@@ -136,6 +144,21 @@ CFVariable <- R6::R6Class("CFVariable",
     #' reference systems - the key is that the specification in argument `subset`
     #' uses the same domain of values as the respective axes in `x` use.
     #'
+    #' ## Auxiliary coordinate variables:
+    #'
+    #' A special case exists for variables where the horizontal dimensions (X
+    #' and Y) are not in longitude and latitude values but in some other
+    #' coordinate system. In this case the netCDF resource may have so-called
+    #' *auxiliary coordinate variables* for longitude and latitude that are two
+    #' grids with the same dimension as the horizontal axes of the data variable
+    #' where each pixel gives the corresponding value for the longitude and
+    #' latitude. If the variable has such *auxiliary coordinate variables* then
+    #' they will be used automatically if, and only if, the axes are labeled in
+    #' argument `subset` as `X` and `Y`. The resolution of the grid that is
+    #' produced by this method is automatically calculated. **Note** that if you
+    #' want to extract the data in the original grid, you should use the
+    #' horizontal axis names in argument `subset`.
+    #'
     #' @param subset A list with the range to extract from each axis. The
     #' list should have elements for the axes to extract a subset from - if an
     #' axis is not present in the list the entire axis will be extracted
@@ -172,6 +195,8 @@ CFVariable <- R6::R6Class("CFVariable",
       if (!num_axes)
         stop("Cannot subset a scalar variable")
 
+      op <- if (rightmost.closed) `<=` else `<`
+
       axis_names <- names(self$axes)
       orientations <- sapply(self$axes, function(a) a$orientation)
 
@@ -191,16 +216,17 @@ CFVariable <- R6::R6Class("CFVariable",
         if(!is.null(rng <- subset[[ axis_names[ax] ]]) ||
            !is.null(rng <- subset[[ orientations[ax] ]])) {
           axl <- axis$length
-          idx <- axis$indexOf(rng, method = "linear")
-          t[[ax]] <- attr(idx, "CFtime")
-
-          idx <- range(idx)
-          if (all(idx == 0) || all(idx > axl)) return(NULL)
-          if (idx[1L] == 0) idx[1L] <- 1
-          if (idx[2L] == .Machine$integer.max) idx[2L] <- axl
-          idx[1L] <- ceiling(idx[1L])
-          if (!rightmost.closed)
-            idx[2L] <- ceiling(idx[2L] - 1)  # exclude upper boundary
+          if (inherits(axis, "CFAxisTime")) {
+            idx <- axis$indexOf(rng, method = "linear", rightmost.closed)
+            t[[ax]] <- attr(idx, "CFtime")
+            idx <- range(idx)
+          } else {
+            rng <- range(rng)
+            vals <- axis$values
+            idx <- range(which(vals >= rng[1L] & op(vals, rng[2L]), arr.ind = TRUE))
+            if (!rightmost.closed && isTRUE(all.equal(vals[idx[2L]], rng[2L])))
+              idx[2L] <- idx[2L] - 1
+          }
           idx <- as.integer(idx)
           start[ax] <- idx[1L]
           count[ax] <- idx[2L] - idx[1L] + 1L
@@ -221,9 +247,9 @@ CFVariable <- R6::R6Class("CFVariable",
         "Variable"
     },
 
-    #' @field longLatGrid The grid of longitude and latitude values of every
+    #' @field gridLongLat The grid of longitude and latitude values of every
     #' grid cell when the main variable grid has a different coordinate system.
-    longLatGrid = function(value) {
+    gridLongLat = function(value) {
       if (missing(value))
         private$llgrid
       else
@@ -268,6 +294,9 @@ dimnames.CFVariable <- function(x) {
 #' timestamps) to extract part of the variable array, use the `CFVariable$subset()`
 #' method.
 #'
+#' Scalar axes should not be included in the indexing as they do not represent a
+#' dimension into the data array.
+#'
 #' @param x An `CFVariable` instance to extract the data of.
 #' @param i,j,... Expressions, one for each axis of `x`, that select a
 #'   number of elements along each axis. If any expressions are missing,
@@ -300,9 +329,9 @@ dimnames.CFVariable <- function(x) {
 #' summer <- pr[, , 173:263]
 #' str(summer)
 "[.CFVariable" <- function(x, i, j, ..., drop = FALSE) {
-  numaxes <- length(x$axes)
+  numaxes <- sum(!sapply(x$axes, inherits, "CFAxisScalar"))
   t <- vector("list", numaxes)
-  names(t) <- dimnames(x)
+  names(t) <- dimnames(x)[1:numaxes]
 
   sc <- sys.call()
   if (numaxes == 0L && length(sc) == 3L) { # Variable is a scalar value

@@ -210,19 +210,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
     return(.makeParametricAxis(grp, var, dim, vals, standard))
 
   # Does the axis have bounds?
-  # FIXME: Bounds with more than 2 edges
-  bounds <- props["bounds"]
-  if (!is.na(bounds)) {
-    NCbounds <- grp$find_by_name(bounds, "NC")
-    if (!is.null(NCbounds)) {
-      CFbounds <- CFBounds$new(NCbounds)
-      bnds <- try(RNetCDF::var.get.nc(h, bounds), silent = TRUE)
-      if (!inherits(bnds, "try-error")) {
-        if (length(dim(bnds)) == 3L) bnds <- bnds[, , 1] # Sometimes there is a 3rd dimension...
-        CFbounds$values <- bnds
-      }
-    }
-  } else CFbounds <- NULL
+  CFbounds <- .readBounds(grp, props["bounds"])
 
   # See if we have a "units" attribute that makes time
   units <- props["units"]
@@ -332,6 +320,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
       }
     })
     Z$formula_terms <- ft
+    # FIXME: Z axis may have bounds
   }
   Z
 }
@@ -360,16 +349,23 @@ open_ncdf <- function(resource, keep_open = FALSE) {
       if (!length(v$CF) && length(vdimids <- v$dimids) &&
           length(coords <- v$attribute("coordinates"))) {
         coords <- strsplit(coords, " ", fixed = TRUE)[[1L]]
-        varLon <- varLat <- NA
+        varLon <- varLat <- bndsLon <- bndsLat <- NA
         for (cid in seq_along(coords)) {
           aux <- grp$find_by_name(coords[cid], "NC")
           if (!is.null(aux)) {
+            bounds <- aux$attribute("bounds")
+
+            # Create the auxiliary construct
             nd <- aux$ndims
             if (nd == 0L) {
               # No dimensions so create a scalar axis in the group of aux
-              val <- try(RNetCDF::var.get.nc(aux$group$handle, aux$name), silent = TRUE)
+              val <- try(RNetCDF::var.get.nc(grp$handle, aux$name), silent = TRUE)
               if (inherits(val, "try-error")) val <- NULL
-              aux$group$CFaxes[[aux$name]] <- CFAxisScalar$new(aux$group, aux, "", val)
+              orient <- aux$attribute("axis")
+              if (!length(orient)) orient <- ""
+              scalar <- CFAxisScalar$new(aux$group, aux, orient, val)
+              scalar$bounds <- .readBounds(aux$group, bounds)
+              aux$group$CFaxes[[aux$name]] <- scalar
             } else {
               if (!all(aux$dimids %in% vdimids) || nd > 2L)
                 warning("Unmatched `coordinates` value '", c, "' found in variable '", v$name, "'", call. = FALSE)
@@ -379,8 +375,13 @@ open_ncdf <- function(resource, keep_open = FALSE) {
                 # respectively. Record the fact and move on.
                 units <- aux$attribute("units")
                 if (!is.na(units)) {
-                  if (grepl("^degree(s?)(_?)(east|E)$", units)) varLon <- aux
-                  else if (grepl("^degree(s?)(_?)(north|N)$", units)) varLat <- aux
+                  if (grepl("^degree(s?)(_?)(east|E)$", units)) {
+                    varLon <- aux
+                    bndsLon <- .readBounds(aux$group, bounds)
+                  } else if (grepl("^degree(s?)(_?)(north|N)$", units)) {
+                    varLat <- aux
+                    bndsLat <- .readBounds(aux$group, bounds)
+                  }
                 }
               }
             }
@@ -391,7 +392,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
         # they have identical dimensions, in the varLon group.
         if ((inherits(varLon, "NCVariable") && inherits(varLat, "NCVariable")) &&
             identical(varLon$dimids, varLat$dimids)) {
-          varLon$group$addAuxiliaryLongLat(varLon, varLat)
+          varLon$group$addAuxiliaryLongLat(varLon, varLat, bndsLon, bndsLat)
         }
       }
     }
@@ -401,6 +402,21 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   if (length(grp$subgroups))
     lapply(grp$subgroups, function(g) .makeCoordinates(g))
 }
+
+# Utility function to read bounds values
+.readBounds <- function(grp, bounds) {
+  if (length(bounds) > 0L && is.na(bounds)) NULL
+  else {
+    NCbounds <- grp$find_by_name(bounds, "NC")
+    if (is.null(NCbounds)) NULL
+    else {
+      bnds <- try(RNetCDF::var.get.nc(grp$handle, bounds), silent = TRUE)
+      if (inherits(bnds, "try-error")) NULL
+      else CFBounds$new(NCbounds, bnds)
+    }
+  }
+}
+
 
 #' Build CF variables from unused dimensional NC variables
 #'
@@ -446,7 +462,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 
           if (inherits(varLon, "NCVariable") && inherits(varLat, "NCVariable")) {
             ll <- varLon$group$find_by_name(paste(varLon$name, varLat$name, sep = "_"), "CF")
-            var$longLatGrid <- ll
+            var$gridLongLat <- ll
           }
         }
 

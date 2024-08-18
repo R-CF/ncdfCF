@@ -48,7 +48,7 @@ automatically when opening a netCDF resource.}
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
-\item{\code{CF}}{(read-only) List of CF objects that uses this netCDF variable.}
+\item{\code{CF}}{List of CF objects that uses this netCDF variable.}
 
 \item{\code{fullname}}{(read-only) Name of the NC variable including the group
 path from the root group.}

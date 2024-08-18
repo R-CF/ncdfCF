@@ -11,11 +11,13 @@ with absolute or relative paths.
   latter.
   * Auxiliary longitude-latitude grids, the horizontal component of the grid of
   a variable that was not defined as a Cartesian product of latitude and 
-  longitude, again using the "coordinates" attribute of the variable. Regridding
-  is not yet supported but at the top of the TODO list.
+  longitude, again using the "coordinates" attribute of the variable. When
+  subsetting a data variable, resampling is automatically performed.
   * The four axes that *"receive special treatment"* by the Conventions each 
   have a separate class to deal with their specific nature: CFAxisLongitude,
   CFAxisLatitude, CFAxisVertical, and CFAxisTime.
+* Bounds are read and interpreted on all axes, including the auxiliary long-lat
+grids.
 * Information on UDTs is captured in a separate class. This is effectively only 
 supported for the "compound" sub-type, for scalar values only.
 * Data is read into the most compact form possible. This saves a significant 

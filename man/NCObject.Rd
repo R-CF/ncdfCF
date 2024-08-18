@@ -9,7 +9,7 @@ An \code{\link{R6Class}} generator object.
 }
 \value{
 A vector of values from the \code{data.frame}, named with the \code{att}
-value.
+value, or \code{character(0)} if the attribute is not found.
 }
 \description{
 This class is a basic ancestor to all classes that represent

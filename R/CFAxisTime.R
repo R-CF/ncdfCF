@@ -33,22 +33,16 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       time <- self$values
       nv <- length(time)
       if (!nv) { # it happens...
-        dims <- "(no values)"
-        bnds <- ""
+        vals <- "(no values)"
       } else {
-        if (nv == 1L) dims <- paste0("[", format(time), "]")
+        if (nv == 1L) vals <- paste0("[", format(time), "]")
         else {
           rng <- range(time, format = "", bounds = FALSE)
-          dims <- sprintf("[%s ... %s]", rng[1L], rng[2L])
+          vals <- sprintf("[%s ... %s]", rng[1L], rng[2L])
         }
-        if (!is.null(bounds(time))) {
-          bndrng <- range(time, format = "", bounds = TRUE)
-          bnds <- sprintf("[%s ... %s]", bndrng[1L], bndrng[2L])
-        } else bnds <- ""
       }
 
-      out$values <- dims
-      out$bounds <- bnds
+      out$values <- vals
       out
     },
 
@@ -56,9 +50,11 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       self$values
     },
 
-    indexOf = function(x, method = "constant") {
-      # FIXME: Make this a slice instead of an indexOf to get proper CFtime instance back
-      indexOf(x, self$values, method)
+    indexOf = function(x, method = "constant", rightmost.closed = FALSE) {
+      tf <- slab(self$values, x, rightmost.closed)
+      idx <- which(tf)
+      attr(idx, "CFtime") <- attr(tf, "CFtime")
+      idx
     }
   ),
   active = list(

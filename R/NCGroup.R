@@ -32,10 +32,6 @@
 #'   point in the data variable that references them.
 #' @docType class
 #'
-#' @name NCGroup
-#' @format An \code{\link{R6Class}} generator object.
-NULL
-
 #' @export
 NCGroup <- R6::R6Class("NCGroup",
   inherit = NCObject,
@@ -201,21 +197,21 @@ NCGroup <- R6::R6Class("NCGroup",
     #' to the group `CFaux` list, but only if the combination of `lon`, `lat`
     #' isn't already present.
     #'
-    #' @param lon An instance of [NCVariable] having a two-dimensional grid of
-    #' longitude values.
-    #' @param lat An instance of [NCVariable] having a two-dimensional grid of
-    #' latitude values.
+    #' @param lon,lat Instances of [NCVariable] having a two-dimensional grid of
+    #' longitude and latitude values, respectively.
+    #' @param bndsLong,bndsLat Instances of [CFBounds] with the 2D bounds of the
+    #' longitude and latitude grid values, respectively, or `NULL` when not set.
     #'
     #' @returns `self` invisibly.
-    addAuxiliaryLongLat = function(lon, lat) {
+    addAuxiliaryLongLat = function(lon, lat, bndsLong, bndsLat) {
       nm <- paste(lon$name, lat$name, sep = "_")
       if (!length(self$CFaux)) {
-        self$CFaux <- list(CFAuxiliaryLongLat$new(lon, lat))
+        self$CFaux <- list(CFAuxiliaryLongLat$new(lon, lat, bndsLong, bndsLat))
         names(self$CFaux) <- nm
       } else {
         known <- lapply(self$CFaux, function(a) c(a$varLong$id, a$varLat$id))
         if (!any(sapply(known, function(k) k[1L] == lon$id && k[2L] == lat$id)))
-          self$CFaux[[nm]] <- CFAuxiliaryLongLat$new(lon, lat)
+          self$CFaux[[nm]] <- CFAuxiliaryLongLat$new(lon, lat, bndsLong, bndsLat)
       }
       invisible(self)
     },

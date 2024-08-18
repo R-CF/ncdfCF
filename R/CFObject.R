@@ -89,7 +89,7 @@ CFObject <- R6::R6Class("CFObject",
 )
 
 #' @name dimnames
-#' @title Names or dimension values of an `CFObject` instance
+#' @title Names or dimension values of an CF object
 #'
 #' @description Retrieve the variable or dimension names of an `ncdfCF` object.
 #' The `names()` function gives the names of the variables in the data set,
@@ -100,13 +100,14 @@ CFObject <- R6::R6Class("CFObject",
 #' names of the axes of the data set or variable, prepended with the path to the
 #' group if the resource uses groups. Note that this differs markedly from the
 #' `base::dimnames()` functionality.
-#' * `CFAxisNumeric`: The values of the elements along the axis as a
-#' numeric vector.
-#' * `CFAxisCharacter`: The values of the elements along the axis as
-#' a character vector.
+#' * `CFAxisNumeric`, `CFAxisLongitude`, `CFAxisLatitude`, `CFAxisVertical`: The
+#' values of the elements along the axis as a numeric vector.
 #' * `CFAxisTime`: The values of the elements along the axis as a
 #' character vector containing timestamps in ISO8601 format. This could be dates
 #' or date-times if time information is available in the axis.
+#' * `CFAxisScalar`: The value of the scalar.
+#' * `CFAxisCharacter`: The values of the elements along the axis as
+#' a character vector.
 #' * `CFAxisDiscrete`: The index values of the axis, from 1 to the
 #' length of the axis.
 #'

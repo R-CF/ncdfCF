@@ -53,24 +53,14 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
         vals <- trimws(formatC(c(self$values[1L], self$values[nv]), digits = 8L))
         dims <- sprintf("[%s ... %s]", vals[1L], vals[2L])
       }
-      if (is.null(self$bounds)) bnds <- ""
-      else {
-        rng <- self$bounds$range()
-        if (is.null(rng))
-          bnds <- ""
-        else {
-          vals <- trimws(formatC(rng, digits = 8L))
-          bnds <- sprintf("[%s ... %s]", vals[1L], vals[2L])
-        }
-      }
 
       out$values <- dims
-      out$bounds <- bnds
       out
     },
 
-    indexOf = function(x, method = "constant") {
-      if (length(self$bounds)) vals <- c(self$bounds$values[1L, 1L], self$bounds$values[2L, ])
+    indexOf = function(x, method = "linear") {
+      if (length(self$bounds))
+        vals <- c(self$bounds$values[1L, 1L], self$bounds$values[2L, ])
       else vals <- self$values
       stats::approx(vals, 1L:length(vals), x, method = method, yleft = 0L, yright = .Machine$integer.max)$y
     }

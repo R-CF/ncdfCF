@@ -5,7 +5,7 @@
 \alias{groups}
 \alias{groups.CFDataset}
 \alias{dimnames}
-\title{Names or dimension values of an \code{CFObject} instance}
+\title{Names or dimension values of an CF object}
 \usage{
 \method{names}{CFDataset}(x)
 
@@ -31,13 +31,14 @@ of object:
 names of the axes of the data set or variable, prepended with the path to the
 group if the resource uses groups. Note that this differs markedly from the
 \code{base::dimnames()} functionality.
-\item \code{CFAxisNumeric}: The values of the elements along the axis as a
-numeric vector.
-\item \code{CFAxisCharacter}: The values of the elements along the axis as
-a character vector.
+\item \code{CFAxisNumeric}, \code{CFAxisLongitude}, \code{CFAxisLatitude}, \code{CFAxisVertical}: The
+values of the elements along the axis as a numeric vector.
 \item \code{CFAxisTime}: The values of the elements along the axis as a
 character vector containing timestamps in ISO8601 format. This could be dates
 or date-times if time information is available in the axis.
+\item \code{CFAxisScalar}: The value of the scalar.
+\item \code{CFAxisCharacter}: The values of the elements along the axis as
+a character vector.
 \item \code{CFAxisDiscrete}: The index values of the axis, from 1 to the
 length of the axis.
 }
