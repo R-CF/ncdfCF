@@ -1,3 +1,5 @@
+# Scalar axes MUST come after dimensional axes in the axis list of CFVariables
+
 #' Scalar CF axis object
 #'
 #' @description This class represents a scalar axis. Its single value can be of
@@ -24,7 +26,8 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     #' @param orientation The orientation of this axis, or "" if not known.
     #' @param value The value of this axis.
     initialize = function(grp, nc_var, orientation, value) {
-      super$initialize(grp, nc_var, NULL, orientation)
+      dim <- NCDimension$new(-1L, nc_var$name, 1L, FALSE)
+      super$initialize(grp, nc_var, dim, orientation)
       self$value <- value
     },
 
@@ -45,7 +48,7 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
       units <- self$attribute("units")
       if (!length(units)) units <- ""
       cat("Value    : ", self$value, " ", units, "\n", sep = "")
-      if (!is.null(self$bounds))
+      if (inherits(self$bounds, "CFBounds"))
         self$bounds$print()
       else cat("Bounds   : (not set)\n")
 

@@ -98,10 +98,28 @@ CFAxis <- R6::R6Class("CFAxis",
 
     #' @description Return the `CFtime` instance that represents time
     #'
-    #' This method is only useful for `CFAxisTime` instances.
+    #' This method is only useful for `CFAxisTime` instances. This stub is here
+    #' to make the call to this method succeed with no result for the other axis
+    #' descendants.
     #'
     #' @returns `NULL`
     time = function() {
+      NULL
+    },
+
+    #' @description Return an axis spanning a smaller dimension range
+    #'
+    #' This method is "virtual" in the sense that it does not do anything other
+    #' than return `NULL`. This stub is here to make the call to this method
+    #' succeed with no result for the other axis descendants that do not
+    #' implement this method.
+    #'
+    #' @param group The group to create the new axis in.
+    #' @param rng The range of values from this axis to include in the returned
+    #' axis.
+    #'
+    #' @returns `NULL`
+    sub_axis = function(group, rng) {
       NULL
     },
 

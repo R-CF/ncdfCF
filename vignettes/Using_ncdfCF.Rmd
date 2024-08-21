@@ -221,13 +221,6 @@ ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
                       X = c(29.6, 28.8),
                       Y = seq(-2, -1, by = 0.05)))
 dimnames(ts)
-  
-# Same extraction but now with the upper bound included.
-ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
-                      X = c(28.8, 29.6),
-                      Y = c(-2, -1)),
-                 rightmost.closed = TRUE)
-dimnames(ts)
 ```
 
 These methods will read data from the netCDF resource, but only as much as is 

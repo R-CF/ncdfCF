@@ -132,6 +132,10 @@ CFVariable <- R6::R6Class("CFVariable",
     #' smaller or larger than the valid range of the axis in `x` then nothing
     #' is extracted and `NULL` is returned.
     #'
+    #' The extracted data has the same dimensional structure as the data in the
+    #' variable, with degenerate dimensions dropped. The order of the axes in
+    #' argument `subset` does not reorder the axes in the result.
+    #'
     #' As an example, to extract values of a variable for Australia for the year
     #' 2020, where the first axis in `x` is the longitude, the second
     #' axis is the latitude, both in degrees, and the
@@ -173,8 +177,10 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @param ... Ignored. Included to avoid "unused argument" errors on
     #' argument `rightmost.closed`.
     #'
-    #' @returns An array with as many dimensions as the data variable has axes.
-    #' Attributes will be set on the array.
+    #' @returns An [CFData] instance, having an array with its axes and
+    #' attributes of the variable. Note that degenerate dimensions (having
+    #' `length(.) == 1`) are dropped from the array but the corresponding axis
+    #' is maintained in the result as a scalar axis.
     #' @aliases CFVariable$subset
     #'
     #' @examples
@@ -188,8 +194,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #' x <- pr$subset(subset = list(X = c(9, 11),
     #'                              Y = 42:45,
     #'                              T = c("2024-03-01", "2024-04-01")))
-    #' dim(x)
-    #' dimnames(x)
+    #' x
     subset = function(subset, rightmost.closed = FALSE, ...) {
       num_axes <- length(self$axes)
       if (!num_axes)
@@ -203,14 +208,14 @@ CFVariable <- R6::R6Class("CFVariable",
       sub_names <- names(subset)
       bad <- sub_names[!(sub_names %in% c(axis_names, orientations))]
       if (length(bad))
-        stop("Argument `subset` contains elements not corresponding to a dimension:", paste(bad, collapse = ", "))
-
-      t <- vector("list", num_axes)
-      names(t) <- axis_names
+        stop("Argument `subset` contains elements not corresponding to an axis:", paste(bad, collapse = ", "))
 
       start <- rep(1L, num_axes)
       count <- rep(NA_integer_, num_axes)
       dvals <- list()
+      out_axes_dim <- list()
+      out_axes_other <- list()
+      out_group <- MemoryGroup$new(-1L, "Memory_group", "/Memory_group", NULL)
       for (ax in 1:num_axes) {
         axis <- self$axes[[ax]]
         if(!is.null(rng <- subset[[ axis_names[ax] ]]) ||
@@ -218,7 +223,6 @@ CFVariable <- R6::R6Class("CFVariable",
           axl <- axis$length
           if (inherits(axis, "CFAxisTime")) {
             idx <- axis$indexOf(rng, method = "linear", rightmost.closed)
-            t[[ax]] <- attr(idx, "CFtime")
             idx <- range(idx)
           } else {
             rng <- range(rng)
@@ -231,13 +235,24 @@ CFVariable <- R6::R6Class("CFVariable",
           start[ax] <- idx[1L]
           count[ax] <- idx[2L] - idx[1L] + 1L
           dvals[[ax]] <- dimnames(axis)[seq(idx[1L], idx[2L])]
+          out_axis <- axis$sub_axis(out_group, idx)
         } else {
           dvals[[ax]] <- dimnames(axis)
-          t[[ax]] <- axis$time()
+          out_axis <- axis$clone()
+          out_axis$group <- out_group
         }
+
+        # Collect axes for result
+        if (inherits(out_axis, "CFAxisScalar"))
+          out_axes_other <- append(out_axes_other, out_axis)
+        else
+          out_axes_dim <- append(out_axes_dim, out_axis)
       }
 
-      .read_data(self, start, count, dvals, t[lengths(t) > 0L])
+      d <- RNetCDF::var.get.nc(self$NCvar$group$handle, self$name, start, count, collapse = TRUE, unpack = TRUE, fitnum = TRUE)
+      axes <- c(out_axes_dim, out_axes_other)
+      names(axes) <- sapply(axes, function(a) a$name)
+      CFData$new(self$name, out_group, d, axes, self$attributes)
     }
   ),
   active = list(
@@ -375,31 +390,15 @@ dimnames.CFVariable <- function(x) {
       }
     }
   }
-  .read_data(x, start, count, dnames, t[lengths(t) > 0L])
-}
-
-# Non-exported functions -------------------------------------------------------
-
-#' Read the data for the variable
-#'
-#' @param x CFVariable to read data for
-#' @param start,count RNetCDF start and count vectors
-#' @param dim_names Dimnames to assign
-#' @param time New CFtime for any time dimensions
-#'
-#' @returns The array with attributes set
-#' @noRd
-.read_data <- function(x, start, count, dim_names, time) {
-  h <- x$NCvar$group$handle
-  data <- RNetCDF::var.get.nc(h, x$name, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+  data <- RNetCDF::var.get.nc(x$NCvar$group$handle, x$name, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
 
   # Apply dimension data and other attributes
-  if (length(x$axes) && length(dim(data)) == length(dim_names)) { # dimensions may have been dropped automatically, e.g. NC_CHAR to character string
-    dimnames(data) <- dim_names
+  time <- t[lengths(t) > 0L]
+  if (length(x$axes) && length(dim(data)) == length(dnames)) { # dimensions may have been dropped automatically, e.g. NC_CHAR to character string
+    dimnames(data) <- dnames
     attr(data, "axis") <- sapply(x$axes, function(x) x$orientation)
     if (length(time))
       attr(data, "time") <- time
   }
-
   data
 }

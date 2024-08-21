@@ -178,6 +178,7 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
                              sprintf("[%5.3f ... %5.3f]", latRange[1], latRange[2]))
       }
 
+      out[["unit"]] <- c("degrees_east", "degrees_north")
       out
     },
 

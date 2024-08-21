@@ -16,6 +16,8 @@ Character string with very basic axis information.
 
 \code{NULL}
 
+\code{NULL}
+
 Numeric vector of the same length as \code{x}. If \code{method = "constant"},
 return the index value for each match. If \code{method = "linear"}, return
 the index value with any fractional value. Values of \code{x} outside of the
@@ -86,6 +88,7 @@ axis.}
 \item \href{#method-CFAxis-brief}{\code{CFAxis$brief()}}
 \item \href{#method-CFAxis-shard}{\code{CFAxis$shard()}}
 \item \href{#method-CFAxis-time}{\code{CFAxis$time()}}
+\item \href{#method-CFAxis-sub_axis}{\code{CFAxis$sub_axis()}}
 \item \href{#method-CFAxis-indexOf}{\code{CFAxis$indexOf()}}
 \item \href{#method-CFAxis-clone}{\code{CFAxis$clone()}}
 }
@@ -165,11 +168,38 @@ when combined with similar information from other axes.
 \subsection{Method \code{time()}}{
 Return the \code{CFtime} instance that represents time
 
-This method is only useful for \code{CFAxisTime} instances.
+This method is only useful for \code{CFAxisTime} instances. This stub is here
+to make the call to this method succeed with no result for the other axis
+descendants.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxis$time()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-sub_axis"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-sub_axis}{}}}
+\subsection{Method \code{sub_axis()}}{
+Return an axis spanning a smaller dimension range
+
+This method is "virtual" in the sense that it does not do anything other
+than return \code{NULL}. This stub is here to make the call to this method
+succeed with no result for the other axis descendants that do not
+implement this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$sub_axis(group, rng)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{group}}{The group to create the new axis in.}
+
+\item{\code{rng}}{The range of values from this axis to include in the returned
+axis.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-indexOf"></a>}}

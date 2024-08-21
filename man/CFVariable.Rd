@@ -12,8 +12,10 @@ A 1-row \code{data.frame} with some details of the data variable.
 
 Character string with very basic variable information.
 
-An array with as many dimensions as the data variable has axes.
-Attributes will be set on the array.
+An \link{CFData} instance, having an array with its axes and
+attributes of the variable. Note that degenerate dimensions (having
+\code{length(.) == 1}) are dropped from the array but the corresponding axis
+is maintained in the result as a scalar axis.
 }
 \description{
 This class represents a CF data variable, the object that
@@ -41,8 +43,7 @@ pr <- ds[["pr"]]
 x <- pr$subset(subset = list(X = c(9, 11),
                              Y = 42:45,
                              T = c("2024-03-01", "2024-04-01")))
-dim(x)
-dimnames(x)
+x
 }
 \section{Super class}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFVariable}
@@ -199,6 +200,10 @@ the result. If the range of \code{subset} values for any axis are all either
 smaller or larger than the valid range of the axis in \code{x} then nothing
 is extracted and \code{NULL} is returned.
 
+The extracted data has the same dimensional structure as the data in the
+variable, with degenerate dimensions dropped. The order of the axes in
+argument \code{subset} does not reorder the axes in the result.
+
 As an example, to extract values of a variable for Australia for the year
 2020, where the first axis in \code{x} is the longitude, the second
 axis is the latitude, both in degrees, and the
@@ -238,8 +243,7 @@ pr <- ds[["pr"]]
 x <- pr$subset(subset = list(X = c(9, 11),
                              Y = 42:45,
                              T = c("2024-03-01", "2024-04-01")))
-dim(x)
-dimnames(x)
+x
 }
 \if{html}{\out{</div>}}
 

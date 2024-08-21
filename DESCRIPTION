@@ -40,6 +40,7 @@ Collate:
     'CFResource.R'
     'CFVariable.R'
     'CFread.R'
+    'MemoryGroup.R'
     'NCDimension.R'
     'NCGroup.R'
     'NCUDT.R'

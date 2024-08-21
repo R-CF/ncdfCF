@@ -4,19 +4,16 @@
 \name{CFData}
 \alias{CFData}
 \title{Data extracted from a CF data variable}
-\format{
-An \link{R6Class} generator object.
-}
 \description{
 This class holds the data that is extracted from a \link{CFVariable},
 using the \code{subset()} class method. The instance of this class will
-additionally have the axes and other relevant information such as the unit of
-the data and the coordinate reference system.
+additionally have the axes and other relevant information such as its
+attributes (as well as those of the axes) and the coordinate reference system.
 
 The class has a number of utility functions to extract the data in specific
 formats:
 \itemize{
-\item \code{raw()}: The array of the data without any further processing. The axes are
+\item \code{raw()}: The data without any further processing. The axes are
 as they are stored in the netCDF resource; there is thus no guarantee as to
 how the data is organized in the array. Dimnames will be set.
 \item \code{array()}: An array of the data which is organized as a standard R array.
@@ -25,9 +22,104 @@ Dimnames will be set.
 metadata set. Package \code{stars} must be installed for this to work.
 \item \code{rast()}: The data is returned as a \code{SpatRaster} object, with all relevant
 metadata set. Package \code{terra} must be installed for this to work.
-\item \code{data.table}: The data is returned as a \code{data.table}, with the first
+\item \code{data.table()}: The data is returned as a \code{data.table}, with the first
 columns corresponding to the dimension values of the axes of the data,
 followed by a column "value". Package \code{data.table} must be installed for this
 to work.
+}
+
+In general, the metadata from the netCDF resource will be lost when exporting
+to a different format insofar as those metadata are not recognized by the
+different format.
+}
+\section{Super class}{
+\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFData}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{value}}{The data of this object. The structure of the data depends
+on the method that produced it. Typical structures are an array or a
+\code{data.table}.}
+
+\item{\code{axes}}{List of instances of classes descending from \link{CFAxis} that
+are the axes of the data object.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-CFData-new}{\code{CFData$new()}}
+\item \href{#method-CFData-raw}{\code{CFData$raw()}}
+\item \href{#method-CFData-clone}{\code{CFData$clone()}}
+}
+}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
+</ul>
+</details>
+}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFData-new"></a>}}
+\if{latex}{\out{\hypertarget{method-CFData-new}{}}}
+\subsection{Method \code{new()}}{
+Create an instance of this class.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFData$new(name, group, value, axes, attributes)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{The name of the object.}
+
+\item{\code{group}}{The group that this data should live in. This is usually an
+in-memory group, but it could be a regular group if the data is prepared
+for writing into a new netCDF file.}
+
+\item{\code{value}}{The data of this object. The structure of the data depends
+on the method that produced it.}
+
+\item{\code{axes}}{A \code{list} of \link{CFAxis} descendant instances that describe the
+axes of the argument \code{value}.}
+
+\item{\code{attributes}}{A \code{data.frame} with the attributes associated with the
+data in argument \code{value}.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFData-raw"></a>}}
+\if{latex}{\out{\hypertarget{method-CFData-raw}{}}}
+\subsection{Method \code{raw()}}{
+Retrieve the data in the object exactly as it was produced
+by the operation on \code{CFVariable}. This is usually an \code{array} with the
+contents along axes varying.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFData$raw()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFData-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-CFData-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFData$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
 }
 }

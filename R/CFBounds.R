@@ -37,10 +37,17 @@ CFBounds <- R6::R6Class("CFBounds",
       else {
         if (private$dims[1L] == 2L) {
           len <- dim(self$values)[2L]
-          vals <- trimws(formatC(c(self$values[1L, 1L:3L], self$values[1L, (len-2L):len],
-                                   self$values[2L, 1L:3L], self$values[2L, (len-2L):len]), digits = 8L))
-          cat("Bounds   : ", vals[1L], ", ", vals[2L], ", ", vals[3L], " ... ", vals[4L], ", ", vals[5L], ", ", vals[6L], "\n", sep = "")
-          cat("         : ", vals[7L], ", ", vals[8L], ", ", vals[9L], " ... ", vals[10L], ", ", vals[11L], ", ", vals[12L], "\n", sep = "")
+          if (len < 7L) {
+            from_vals <- trimws(formatC(self$values[1L, ], digits = 8L))
+            to_vals   <- trimws(formatC(self$values[2L, ], digits = 8L))
+            cat("Bounds   :", paste(from_vals, collapse = ", "), "\n")
+            cat("         :", paste(to_vals, collapse = ", "), "\n")
+          } else {
+            vals <- trimws(formatC(c(self$values[1L, 1L:3L], self$values[1L, (len-2L):len],
+                                     self$values[2L, 1L:3L], self$values[2L, (len-2L):len]), digits = 8L))
+            cat("Bounds   : ", vals[1L], ", ", vals[2L], ", ", vals[3L], " ... ", vals[4L], ", ", vals[5L], ", ", vals[6L], "\n", sep = "")
+            cat("         : ", vals[7L], ", ", vals[8L], ", ", vals[9L], " ... ", vals[10L], ", ", vals[11L], ", ", vals[12L], "\n", sep = "")
+          }
         } else {
           # FIXME
           cat("Bounds   : (can't print multi-dimensional bounds just yet...)\n")
@@ -59,6 +66,21 @@ CFBounds <- R6::R6Class("CFBounds",
           range(self$values)
         else c(0, 0) # FIXME
       }
+    },
+
+    #' @description Return bounds spanning a smaller dimension range.
+    #'
+    #'   This method returns bounds which spans the range of indices given by
+    #'   the `rng` argument.
+    #'
+    #' @param group The group to create the new bounds in.
+    #' @param rng The range of values from this bounds object to include in the returned
+    #'   object.
+    #'
+    #' @returns A `CFBounds` instance covering the indicated range of indices.
+    sub_bounds = function(group, rng) {
+      var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 2L, NULL)
+      CFBounds$new(var, self$values[, rng[1L]:rng[2L], drop = FALSE])
     }
   ),
   active = list(

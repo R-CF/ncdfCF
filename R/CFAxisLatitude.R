@@ -19,6 +19,31 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
 
     initialize = function(grp, nc_var, nc_dim, values) {
       super$initialize(grp, nc_var, nc_dim, "Y", values)
+    },
+
+    #' @description Return an axis spanning a smaller dimension range.
+    #'
+    #'   This method returns an axis which spans the range of indices given by
+    #'   the `rng` argument.
+    #'
+    #' @param group The group to create the new axis in.
+    #' @param rng The range of values from this axis to include in the returned
+    #'   axis.
+    #'
+    #' @returns A `CFAxisLatitude` covering the indicated range of indices. If
+    #'   the `rng` argument includes only a single value, an [CFAxisScalar]
+    #'   instance is returned with the value from this axis.
+    sub_axis = function(group, rng) {
+      var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
+      if (rng[1L] == rng[2L]) {
+        lat <- CFAxisScalar$new(group, var, "Y", self$values[rng[1L]])
+      } else {
+        dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
+        lat <- CFAxisLatitude$new(group, var, dim, self$values[rng[1L]:rng[2L]])
+      }
+      bnds <- self$bounds
+      if (inherits(bnds, "CFBounds")) lat$bounds <- bnds$sub_bounds(group, rng)
+      lat
     }
   ),
   active = list(

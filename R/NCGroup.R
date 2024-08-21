@@ -62,7 +62,7 @@ NCGroup <- R6::R6Class("NCGroup",
     #' Prints a summary of the group to the console.
     print = function(...) {
       if (self$name != "/") {
-        cat("<Group> [", self$id, "] ", self$name, "\n", sep = "")
+        cat("<", self$friendlyClassName, "> [", self$id, "] ", self$name, "\n", sep = "")
         cat("Path      :", self$fullname, "\n")
       }
       if (length(self$subgroups) > 0L)
@@ -265,6 +265,12 @@ NCGroup <- R6::R6Class("NCGroup",
     }
   ),
   active = list(
+    #' @field friendlyClassName (read-only) A nice description of the class.
+    friendlyClassName = function(value) {
+      if (missing(value))
+        "Group"
+    },
+
     #' @field handle Get the handle to the netCDF resource for the group
     handle = function(value) {
       if (missing(value))
