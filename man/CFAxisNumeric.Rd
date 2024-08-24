@@ -4,11 +4,139 @@
 \name{CFAxisNumeric}
 \alias{CFAxisNumeric}
 \title{Numeric CF axis object}
-\format{
-An \link{R6Class} generator object.
+\value{
+An integer vector giving the indices in \code{x} of valid values
+provided, or \code{integer(0)} if none of the \code{x} values are valid.
 }
 \description{
 This class represents a numeric axis. Its values are numeric.
 This class is used for axes with numeric values but without further
 knowledge of their nature. More specific classes descend from this class.
+}
+\section{Super classes}{
+\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFAxis]{ncdfCF::CFAxis}} -> \code{CFAxisNumeric}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{values}}{The values of the axis, usually a numeric vector.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-CFAxisNumeric-new}{\code{CFAxisNumeric$new()}}
+\item \href{#method-CFAxisNumeric-print}{\code{CFAxisNumeric$print()}}
+\item \href{#method-CFAxisNumeric-brief}{\code{CFAxisNumeric$brief()}}
+\item \href{#method-CFAxisNumeric-indexOf}{\code{CFAxisNumeric$indexOf()}}
+\item \href{#method-CFAxisNumeric-clone}{\code{CFAxisNumeric$clone()}}
+}
+}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="sub_axis"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-sub_axis'><code>ncdfCF::CFAxis$sub_axis()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="time"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-time'><code>ncdfCF::CFAxis$time()</code></a></span></li>
+</ul>
+</details>
+}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisNumeric-new"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisNumeric-new}{}}}
+\subsection{Method \code{new()}}{
+Create a new instance of this class.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$new(grp, nc_var, nc_dim, orientation, values)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{grp}}{The group that contains the netCDF variable.}
+
+\item{\code{nc_var}}{The netCDF variable that describes this instance.}
+
+\item{\code{nc_dim}}{The netCDF dimension that describes the dimensionality.}
+
+\item{\code{orientation}}{The orientation (\code{X}, \code{Y}, \code{Z}, or \code{T}) or \code{""} if
+different or unknown.}
+
+\item{\code{values}}{The dimension values of this axis.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisNumeric-print"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisNumeric-print}{}}}
+\subsection{Method \code{print()}}{
+Summary of the time axis
+
+Prints a summary of the time axis to the console.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$print()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisNumeric-brief"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisNumeric-brief}{}}}
+\subsection{Method \code{brief()}}{
+Retrieve a 1-row \code{data.frame} with some information on this axis.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$brief()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisNumeric-indexOf"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisNumeric-indexOf}{}}}
+\subsection{Method \code{indexOf()}}{
+Retrieve the indices of supplied values on the axis. If the
+axis has bounds then the supplied values must fall within the bounds to
+be considered valid.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$indexOf(x, method = "constant")}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{x}}{A numeric vector of values whose indices into the axis to
+extract.}
+
+\item{\code{method}}{Extract index values without ("constant", the default) or
+with ("linear") fractional parts.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisNumeric-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisNumeric-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
 }

@@ -6,10 +6,6 @@
 #'
 #' @docType class
 #'
-#' @name CFAxisNumeric
-#' @format An [R6Class] generator object.
-NULL
-
 #' @export
 CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
   inherit = CFAxis,
@@ -17,11 +13,21 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #' @field values The values of the axis, usually a numeric vector.
     values     = NULL,
 
+    #' @description Create a new instance of this class.
+    #' @param grp The group that contains the netCDF variable.
+    #' @param nc_var The netCDF variable that describes this instance.
+    #' @param nc_dim The netCDF dimension that describes the dimensionality.
+    #' @param orientation The orientation (`X`, `Y`, `Z`, or `T`) or `""` if
+    #' different or unknown.
+    #' @param values The dimension values of this axis.
     initialize = function(grp, nc_var, nc_dim, orientation, values) {
       super$initialize(grp, nc_var, nc_dim, orientation)
       self$values <- values
     },
 
+    #' @description Summary of the time axis
+    #'
+    #' Prints a summary of the time axis to the console.
     print = function() {
       super$print()
 
@@ -43,6 +49,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       self$print_attributes()
     },
 
+    #' @description Retrieve a 1-row `data.frame` with some information on this axis.
     brief = function() {
       out <- super$brief()
 
@@ -58,11 +65,22 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       out
     },
 
-    indexOf = function(x, method = "linear") {
+    #' @description Retrieve the indices of supplied values on the axis. If the
+    #' axis has bounds then the supplied values must fall within the bounds to
+    #' be considered valid.
+    #' @param x A numeric vector of values whose indices into the axis to
+    #' extract.
+    #' @param method Extract index values without ("constant", the default) or
+    #' with ("linear") fractional parts.
+    #' @returns An integer vector giving the indices in `x` of valid values
+    #' provided, or `integer(0)` if none of the `x` values are valid.
+    indexOf = function(x, method = "constant") {
       if (length(self$bounds))
         vals <- c(self$bounds$values[1L, 1L], self$bounds$values[2L, ])
       else vals <- self$values
-      stats::approx(vals, 1L:length(vals), x, method = method, yleft = 0L, yright = .Machine$integer.max)$y
+      idx <- stats::approx(vals, 1L:length(vals), x, method = method, yleft = 0L, yright = .Machine$integer.max)$y
+      idx <- idx[!is.na(idx) & idx > 0 & idx < .Machine$integer.max]
+      as.integer(idx)
     }
   ),
   active = list(

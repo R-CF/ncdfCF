@@ -259,8 +259,8 @@ CFVariable <- R6::R6Class("CFVariable",
       axes <- c(out_axes_dim, out_axes_other)
       names(axes) <- sapply(axes, function(a) a$name)
 
-      h <- paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::subset()")
-      atts <- .make_history(self$attributes, h)
+      #h <- paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::subset()")
+      atts <- self$attributes
 
       CFData$new(self$name, out_group, d, axes, atts)
     }

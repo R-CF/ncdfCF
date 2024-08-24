@@ -18,6 +18,11 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
   inherit = CFAxisNumeric,
   public = list(
 
+    #' @description Create a new instance of this class.
+    #' @param grp The group that contains the netCDF variable.
+    #' @param nc_var The netCDF variable that describes this instance.
+    #' @param nc_dim The netCDF dimension that describes the dimensionality.
+    #' @param values The dimension values of this axis.
     initialize = function(grp, nc_var, nc_dim, values) {
       super$initialize(grp, nc_var, nc_dim, "X", values)
     },

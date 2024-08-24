@@ -230,8 +230,9 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
       grid_idx <- seq_len(prod(dim(private$lon_)))[grid]
       grid_lon <- private$lon_[grid]
       grid_lat <- private$lat_[grid]
+      dt <- data.table(idx = grid_idx, lon = grid_lon, lat = grid_lat)
 
-      # Matrices of AOI longitude and latitude coordinates
+      # Vectors of AOI longitude and latitude coordinates
       aoi_dim <- private$aoi_$dim
       res <- private$aoi_$resolution
       aoi_lon <- seq(from = extent[1L] + res * 0.5, by = res, length.out = aoi_dim[1L])

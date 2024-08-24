@@ -7,6 +7,11 @@
 \format{
 An \link{R6Class} generator object.
 }
+\value{
+A \code{CFAxisLongitude} covering the indicated range of indices. If
+the \code{rng} argument includes only a single value, an \link{CFAxisScalar}
+instance is returned with the value from this axis.
+}
 \description{
 This class represents a longitude axis. Its values are numeric.
 This class is used for axes that represent longitudes.
@@ -14,4 +19,99 @@ This class is used for axes that represent longitudes.
 This class adds some logic that is specific to longitudes, such as their
 range, orientation and their meaning. (In the near future, it will also
 support selecting data that crosses the 0-360 degree boundary.)
+}
+\section{Super classes}{
+\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFAxis]{ncdfCF::CFAxis}} -> \code{\link[ncdfCF:CFAxisNumeric]{ncdfCF::CFAxisNumeric}} -> \code{CFAxisLongitude}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-CFAxisLongitude-new}{\code{CFAxisLongitude$new()}}
+\item \href{#method-CFAxisLongitude-sub_axis}{\code{CFAxisLongitude$sub_axis()}}
+\item \href{#method-CFAxisLongitude-clone}{\code{CFAxisLongitude$clone()}}
+}
+}
+\if{html}{\out{
+<details><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="time"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-time'><code>ncdfCF::CFAxis$time()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="brief"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-brief'><code>ncdfCF::CFAxisNumeric$brief()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="indexOf"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-indexOf'><code>ncdfCF::CFAxisNumeric$indexOf()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="print"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-print'><code>ncdfCF::CFAxisNumeric$print()</code></a></span></li>
+</ul>
+</details>
+}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisLongitude-new"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisLongitude-new}{}}}
+\subsection{Method \code{new()}}{
+Create a new instance of this class.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisLongitude$new(grp, nc_var, nc_dim, values)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{grp}}{The group that contains the netCDF variable.}
+
+\item{\code{nc_var}}{The netCDF variable that describes this instance.}
+
+\item{\code{nc_dim}}{The netCDF dimension that describes the dimensionality.}
+
+\item{\code{values}}{The dimension values of this axis.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisLongitude-sub_axis"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisLongitude-sub_axis}{}}}
+\subsection{Method \code{sub_axis()}}{
+Return an axis spanning a smaller dimension range.
+
+This method returns an axis which spans the range of indices given by
+the \code{rng} argument.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisLongitude$sub_axis(group, rng)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{group}}{The group to create the new axis in.}
+
+\item{\code{rng}}{The range of values from this axis to include in the returned
+axis.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisLongitude-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisLongitude-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisLongitude$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
 }

@@ -7,6 +7,8 @@
 \title{CF auxiliary longitude-latitude variable}
 \value{
 A 2-row \code{data.frame} with some details of the grid components.
+
+A \code{CFBounds} instance covering the indicated range of indices.
 }
 \description{
 This class represents the longitude and latitude variables that
@@ -214,6 +216,7 @@ The objects of this class are cloneable with this method.
 \item \href{#method-CFBounds-new}{\code{CFBounds$new()}}
 \item \href{#method-CFBounds-print}{\code{CFBounds$print()}}
 \item \href{#method-CFBounds-range}{\code{CFBounds$range()}}
+\item \href{#method-CFBounds-sub_bounds}{\code{CFBounds$sub_bounds()}}
 \item \href{#method-CFBounds-clone}{\code{CFBounds$clone()}}
 }
 }
@@ -263,6 +266,29 @@ Retrieve the lowest and highest value in the bounds.
 \if{html}{\out{<div class="r">}}\preformatted{CFBounds$range()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFBounds-sub_bounds"></a>}}
+\if{latex}{\out{\hypertarget{method-CFBounds-sub_bounds}{}}}
+\subsection{Method \code{sub_bounds()}}{
+Return bounds spanning a smaller dimension range.
+
+This method returns bounds which spans the range of indices given by
+the \code{rng} argument.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFBounds$sub_bounds(group, rng)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{group}}{The group to create the new bounds in.}
+
+\item{\code{rng}}{The range of values from this bounds object to include in the returned
+object.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFBounds-clone"></a>}}

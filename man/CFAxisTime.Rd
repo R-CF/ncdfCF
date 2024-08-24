@@ -5,6 +5,9 @@
 \alias{CFAxisTime}
 \title{Time axis object}
 \value{
+An integer vector giving the indices in the time axis of valid
+values in \code{x}, or \code{integer(0)} if none of the values are valid.
+
 A \code{CFAxisTime} covering the indicated range of indices. If the
 \code{rng} argument includes only a single value, an \link{CFAxisScalar} instance
 is returned with its value being the character timestamp of the value in
@@ -56,7 +59,7 @@ by the \code{CFtime} package.
 \if{html}{\out{<a id="method-CFAxisTime-new"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisTime-new}{}}}
 \subsection{Method \code{new()}}{
-Create a new instance of this class
+Create a new instance of this class.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$new(grp, nc_var, nc_dim, values)}\if{html}{\out{</div>}}
 }
@@ -91,7 +94,7 @@ Prints a summary of the time axis to the console.
 \if{html}{\out{<a id="method-CFAxisTime-brief"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisTime-brief}{}}}
 \subsection{Method \code{brief()}}{
-Retrieve a 1-row data.frame with some information on this axis.
+Retrieve a 1-row \code{data.frame} with some information on this axis.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$brief()}\if{html}{\out{</div>}}
 }
@@ -119,7 +122,7 @@ Retrieve the indices of supplied values on the time axis.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{x}}{A vector of timestamps whose indicaes into the time axis to
+\item{\code{x}}{A vector of timestamps whose indices into the time axis to
 extract.}
 
 \item{\code{method}}{Extract index values without ("constant", the default) or

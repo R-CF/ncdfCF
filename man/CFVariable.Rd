@@ -13,9 +13,11 @@ A 1-row \code{data.frame} with some details of the data variable.
 Character string with very basic variable information.
 
 An \link{CFData} instance, having an array with its axes and
-attributes of the variable. Note that degenerate dimensions (having
-\code{length(.) == 1}) are dropped from the array but the corresponding axis
-is maintained in the result as a scalar axis.
+attributes of the variable, or \code{NULL} if one or more of the elements in
+the \code{subset} argument falls entirely outside of the range of the axis.
+Note that degenerate dimensions (having \code{length(.) == 1}) are dropped
+from the array but the corresponding axis is maintained in the result as
+a scalar axis.
 }
 \description{
 This class represents a CF data variable, the object that

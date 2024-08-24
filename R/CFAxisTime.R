@@ -16,7 +16,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @field values The CFtime instance to manage CF time.
     values     = NULL,
 
-    #' @description Create a new instance of this class
+    #' @description Create a new instance of this class.
     #' @param grp The group that contains the netCDF variable.
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
@@ -44,7 +44,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       self$print_attributes()
     },
 
-    #' @description Retrieve a 1-row data.frame with some information on this axis.
+    #' @description Retrieve a 1-row `data.frame` with some information on this axis.
     brief = function() {
       out <- super$brief()
 
@@ -70,17 +70,21 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     },
 
     #' @description Retrieve the indices of supplied values on the time axis.
-    #' @param x A vector of timestamps whose indicaes into the time axis to
+    #' @param x A vector of timestamps whose indices into the time axis to
     #' extract.
     #' @param method Extract index values without ("constant", the default) or
     #' with ("linear") fractional parts.
     #' @param rightmost.closed Whether or not to include the upper limit.
     #' Default is `FALSE`.
+    #' @returns An integer vector giving the indices in the time axis of valid
+    #' values in `x`, or `integer(0)` if none of the values are valid.
     indexOf = function(x, method = "constant", rightmost.closed = FALSE) {
       idx <- indexOf(x, self$values, method)
       idx <- idx[!is.na(idx) & idx > 0 & idx < .Machine$integer.max]
-      if (!rightmost.closed)
-        idx[length(idx)] <- idx[length(idx)] - 1
+      len <- length(idx)
+      if (!len) return (integer(0))
+      if (!rightmost.closed) # FIXME: Is this correct????
+        idx[len] <- idx[len] - 1
       as.integer(idx)
     },
 
