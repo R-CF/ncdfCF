@@ -158,8 +158,10 @@ CFVariable <- R6::R6Class("CFVariable",
     #' latitude. If the variable has such *auxiliary coordinate variables* then
     #' they will be used automatically if, and only if, the axes are labeled in
     #' argument `subset` as `X` and `Y`. The resolution of the grid that is
-    #' produced by this method is automatically calculated. **Note** that if you
-    #' want to extract the data in the original grid, you should use the
+    #' produced by this method is automatically calculated. If you want to
+    #' subset those axes then specify values in decimal degrees; if you want to
+    #' extract the full extent, specify `numeric(0)`. **Note** that if
+    #' you want to extract the data in the original grid, you should use the
     #' horizontal axis names in argument `subset`.
     #'
     #' @param subset A list with the range to extract from each axis. The
@@ -178,9 +180,12 @@ CFVariable <- R6::R6Class("CFVariable",
     #' argument `rightmost.closed`.
     #'
     #' @returns An [CFData] instance, having an array with its axes and
-    #' attributes of the variable. Note that degenerate dimensions (having
-    #' `length(.) == 1`) are dropped from the array but the corresponding axis
-    #' is maintained in the result as a scalar axis.
+    #' attributes of the variable, or `NULL` if one or more of the elements in
+    #' the `subset` argument falls entirely outside of the range of the axis.
+    #' Note that degenerate dimensions (having `length(.) == 1`) are dropped
+    #' from the array but the corresponding axis is maintained in the result as
+    #' a scalar axis.
+    #'
     #' @aliases CFVariable$subset
     #'
     #' @examples
@@ -223,15 +228,16 @@ CFVariable <- R6::R6Class("CFVariable",
           axl <- axis$length
           if (inherits(axis, "CFAxisTime")) {
             idx <- axis$indexOf(rng, method = "linear", rightmost.closed)
+            if (!length(idx)) return(NULL)
             idx <- range(idx)
           } else {
             rng <- range(rng)
             vals <- axis$values
             idx <- range(which(vals >= rng[1L] & op(vals, rng[2L]), arr.ind = TRUE))
+            if (!length(idx)) return(NULL)
             if (!rightmost.closed && isTRUE(all.equal(vals[idx[2L]], rng[2L])))
-              idx[2L] <- idx[2L] - 1
+              idx[2L] <- idx[2L] - 1L
           }
-          idx <- as.integer(idx)
           start[ax] <- idx[1L]
           count[ax] <- idx[2L] - idx[1L] + 1L
           dvals[[ax]] <- dimnames(axis)[seq(idx[1L], idx[2L])]
@@ -252,7 +258,11 @@ CFVariable <- R6::R6Class("CFVariable",
       d <- RNetCDF::var.get.nc(self$NCvar$group$handle, self$name, start, count, collapse = TRUE, unpack = TRUE, fitnum = TRUE)
       axes <- c(out_axes_dim, out_axes_other)
       names(axes) <- sapply(axes, function(a) a$name)
-      CFData$new(self$name, out_group, d, axes, self$attributes)
+
+      h <- paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::subset()")
+      atts <- .make_history(self$attributes, h)
+
+      CFData$new(self$name, out_group, d, axes, atts)
     }
   ),
   active = list(
