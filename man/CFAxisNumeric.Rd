@@ -4,10 +4,6 @@
 \name{CFAxisNumeric}
 \alias{CFAxisNumeric}
 \title{Numeric CF axis object}
-\value{
-An integer vector giving the indices in \code{x} of valid values
-provided, or \code{integer(0)} if none of the \code{x} values are valid.
-}
 \description{
 This class represents a numeric axis. Its values are numeric.
 This class is used for axes with numeric values but without further
@@ -120,6 +116,10 @@ extract.}
 with ("linear") fractional parts.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+An integer vector giving the indices in \code{x} of valid values
+provided, or \code{integer(0)} if none of the \code{x} values are valid.
 }
 }
 \if{html}{\out{<hr>}}

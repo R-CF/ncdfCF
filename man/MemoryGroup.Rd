@@ -54,7 +54,7 @@ thus always returns \code{NULL}.
 \subsection{Method \code{new()}}{
 Create an instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MemoryGroup$new(id, name, fullname, parent)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{MemoryGroup$new(id, name, fullname, parent, title, history)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -68,6 +68,8 @@ Create an instance of this class.
 
 \item{\code{parent}}{The parent group of this group. The \code{parent} of the root
 group is \code{NULL}.}
+
+\item{\code{title, history}}{Title and history attributes for the group.}
 }
 \if{html}{\out{</div>}}
 }

@@ -7,9 +7,6 @@
 \format{
 An \code{\link{R6Class}} generator object.
 }
-\value{
-An instance of this class.
-}
 \description{
 This class represents
 user-defined types in a netCDF file. Interpretation of the UDT typically
@@ -98,6 +95,9 @@ of a "compound" type.}
 "compound" type. A \code{NULL} length indicates a scalar.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+An instance of this class.
 }
 }
 \if{html}{\out{<hr>}}

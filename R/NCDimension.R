@@ -33,7 +33,7 @@ NCDimension <- R6::R6Class("NCDimension",
     #' @param name Character string with the name of the netCDF dimension.
     #' @param length Length of the dimension.
     #' @param unlim Is the dimension unlimited?
-    #' @returns A `NCDimension` instance.
+    #' @return A `NCDimension` instance.
     initialize = function(id, name, length, unlim) {
       super$initialize(id, name)
       self$length <- length
@@ -45,7 +45,7 @@ NCDimension <- R6::R6Class("NCDimension",
     #' The information returned by this function is very concise and most useful
     #' when combined with similar information from other dimensions.
     #'
-    #' @returns Character string with very basic dimension information.
+    #' @return Character string with very basic dimension information.
     shard = function() {
       unlim <- if (self$unlim) "-U" else ""
       paste0("[", self$id, ": ", self$name, " (", self$length, unlim, ")]")

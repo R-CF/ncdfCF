@@ -22,8 +22,15 @@ MemoryGroup <- R6::R6Class("MemoryGroup",
     #' @param fullname The fully qualified name of the group.
     #' @param parent The parent group of this group. The `parent` of the root
     #'   group is `NULL`.
-    initialize = function(id, name, fullname, parent) {
+    #' @param title,history Title and history attributes for the group.
+    initialize = function(id, name, fullname, parent, title, history) {
       super$initialize(id, name, fullname, parent, NULL)
+
+      self$attributes <- data.frame(id = 0L:1L,
+                                    name = c("title", "history"),
+                                    type = c("NC_CHAR", "NC_CHAR"),
+                                    length = c(nchar(title), nchar(history)),
+                                    value = c(title, history))
     }
   ),
   active = list(

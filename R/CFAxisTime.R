@@ -76,7 +76,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' with ("linear") fractional parts.
     #' @param rightmost.closed Whether or not to include the upper limit.
     #' Default is `FALSE`.
-    #' @returns An integer vector giving the indices in the time axis of valid
+    #' @return An integer vector giving the indices in the time axis of valid
     #' values in `x`, or `integer(0)` if none of the values are valid.
     indexOf = function(x, method = "constant", rightmost.closed = FALSE) {
       idx <- indexOf(x, self$values, method)
@@ -97,7 +97,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @param rng The range of values from this axis to include in the returned
     #' axis.
     #'
-    #' @returns A `CFAxisTime` covering the indicated range of indices. If the
+    #' @return A `CFAxisTime` covering the indicated range of indices. If the
     #' `rng` argument includes only a single value, an [CFAxisScalar] instance
     #' is returned with its value being the character timestamp of the value in
     #' this axis.

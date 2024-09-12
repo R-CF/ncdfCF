@@ -117,7 +117,7 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @param scope Either "CF" (default) for a CF construct, or "NC" for a
     #'   netCDF group, dimension or variable.
     #'
-    #' @returns The object with the provided name in the requested scope. If the
+    #' @return The object with the provided name in the requested scope. If the
     #'   object is not found, returns `NULL`.
     find_by_name = function(name, scope = "CF") {
       grp <- self
@@ -204,7 +204,7 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @param bndsLong,bndsLat Instances of [CFBounds] with the 2D bounds of the
     #' longitude and latitude grid values, respectively, or `NULL` when not set.
     #'
-    #' @returns `self` invisibly.
+    #' @return `self` invisibly.
     addAuxiliaryLongLat = function(lon, lat, bndsLong, bndsLat) {
       nm <- paste(lon$name, lat$name, sep = "_")
       if (!length(self$CFaux)) {
@@ -226,7 +226,7 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @param recursive Should subgroups be scanned for names too
     #' (default is `TRUE`)?
     #'
-    #' @returns A character vector with group names.
+    #' @return A character vector with group names.
     fullnames = function(recursive = TRUE) {
       if (recursive && length(self$subgroups))
         c(self$fullname, sapply(self$subgroups, function(g) g$fullnames(recursive)))
@@ -241,7 +241,7 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @param recursive Should subgroups be scanned for CF data variables too
     #' (default is `TRUE`)?
     #'
-    #' @returns A list of `CFVariable`.
+    #' @return A list of `CFVariable`.
     variables = function(recursive = TRUE) {
       if (recursive && length(self$subgroups))
         c(self$CFvars, unlist(lapply(self$subgroups, function(g) g$variables(recursive))))
@@ -256,7 +256,7 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @param recursive Should subgroups be scanned for axes too (default is
     #'   `TRUE`)?
     #'
-    #' @returns A list of `CFAxis` descendants.
+    #' @return A list of `CFAxis` descendants.
     axes = function(recursive = TRUE) {
       if (recursive && length(self$subgroups))
         subaxes <- lapply(self$subgroups, function(g) g$axes(recursive))

@@ -5,7 +5,7 @@
 \alias{aoi}
 \title{Area of Interest}
 \usage{
-aoi(lonMin, lonMax, latMin, latMax, resolution)
+aoi(lonMin, lonMax, latMin, latMax, resX, resY)
 }
 \arguments{
 \item{lonMin, lonMax, latMin, latMax}{The minimum and maximum values of the
@@ -13,8 +13,10 @@ longitude and latitude of the AOI, in decimal degrees. The longitude values
 must agree with the range of the longitude in the variable to which this
 AOI will be applied, e.g. \verb{[-180,180]} or \verb{[0,360]}.}
 
-\item{resolution}{The separation between adjacent grid cell, in decimal
-degrees. The permitted values lie within the range \verb{[0.01 ... 10]}.}
+\item{resX, resY}{The separation between adjacent grid cell, in the longitude
+and latitude directions respectively, in decimal degrees. The permitted
+values lie within the range \verb{[0.01 ... 10]}. If \code{resY} is missing it will
+use the value of \code{resX}, yielding square grid cells.}
 }
 \value{
 The return value of the function is an \link{R6} object which uses
@@ -23,7 +25,7 @@ in all copies made of the object.
 }
 \description{
 This function constructs the area of interest of an analysis. It
-consists of an extent of longitude and latitude and a resolution, all in
+consists of an extent and a resolution of longitude and latitude, all in
 decimal degrees.
 
 The AOI is used to define the subset of data to be extracted from a
@@ -34,15 +36,15 @@ geographic system of longitude and latitude coordinates.
 }
 \details{
 Following the CF Metadata Conventions, axis coordinates represent
-the center of grid cells. So when specifying \code{aoi(20, 30, -10, 10, 1)}, the
-south-west coordinate is at \verb{(20.5, -9.5)}. If the axes of the
+the center of grid cells. So when specifying \code{aoi(20, 30, -10, 10, 1, 2)},
+the south-west grid cell coordinate is at \verb{(20.5, -9)}. If the axes of the
 longitude-latitude grid have bounds, then the bounds will coincide with the
 AOI and the \code{CFVariable$subset()} method that uses the AOI will attach
 those bounds as attributes to the resulting array.
 
 If no resolution is specified, it will be determined from the separation
 between adjacent grid cells in both longitude and latitude directions in
-the middle of the extent of interest. If no extent is specified (meaning,
+the middle of the area of interest. If no extent is specified (meaning,
 none of the values; if some but not all values are specified an error will
 be thrown), then the whole extent of the variable is used, extended
 outwards by the bounds if they are set or half the resolution otherwise.

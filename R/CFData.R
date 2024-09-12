@@ -36,6 +36,9 @@ CFData <- R6::R6Class("CFData",
     }
   ),
   public = list(
+    #' @field group The [NCGroup] that this variable is defined in.
+    group = NULL,
+
     #' @field value The data of this object. The structure of the data depends
     #' on the method that produced it. Typical structures are an array or a
     #' `data.table`.
@@ -56,17 +59,41 @@ CFData <- R6::R6Class("CFData",
     #'   axes of the argument `value`.
     #' @param attributes A `data.frame` with the attributes associated with the
     #'   data in argument `value`.
+    #' @return An instance of this class.
     initialize = function(name, group, value, axes, attributes) {
       var <- NCVariable$new(-1L, name, group, "NC_FLOAT", 0L, NULL)
       var$attributes <- attributes
       super$initialize(var)
 
+      self$group <- group
       self$value <- value
       self$axes <- axes
     },
 
+    #' @description Print a summary of the data object to the console.
+    print = function() {
+      cat("<Data>", self$name, "\n")
+      longname <- self$attribute("long_name")
+      if (length(longname) && longname != self$name)
+        cat("Long name:", longname, "\n")
+
+      rng <- range(self$value, na.rm = TRUE)
+      cat("\nValues: [", rng[1L], " ... ", rng[2L], "]\n", sep = "")
+      cat("    NA:", sum(is.na(self$value)), "\n")
+
+      cat("\nAxes:\n")
+      axes <- do.call(rbind, lapply(self$axes, function(a) a$brief()))
+      axes <- lapply(axes, function(c) if (all(c == "")) NULL else c)
+      axes$group <- NULL
+      axes <- as.data.frame(axes[lengths(axes) > 0L])
+      print(.slim.data.frame(axes, 50L), right = FALSE, row.names = FALSE)
+
+      self$print_attributes()
+    },
+
     #' @description Retrieve the data in the object exactly as it was produced
-    #' by the operation on `CFVariable`. This is usually an `array` with the
+    #' by the operation on `CFVariable`.
+    #' @return The data in the object. This is usually an `array` with the
     #' contents along axes varying.
     raw = function() {
       private$set_dimnames()

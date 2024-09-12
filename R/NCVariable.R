@@ -50,7 +50,7 @@ NCVariable <- R6::R6Class("NCVariable",
     #' @param vtype The netCDF data type of the variable.
     #' @param ndims The number of dimensions this variable uses.
     #' @param dimids The identifiers of the dimensions this variable uses.
-    #' @returns An instance of this class.
+    #' @return An instance of this class.
     initialize = function(id, name, group, vtype, ndims, dimids) {
       super$initialize(id, name)
       self$group <- group
@@ -64,7 +64,7 @@ NCVariable <- R6::R6Class("NCVariable",
     #' The information returned by this function is very concise and most useful
     #' when combined with similar information from other variables.
     #'
-    #' @returns Character string with very basic variable information.
+    #' @return Character string with very basic variable information.
     shard = function() {
       if (self$id > -1L) paste0("[", self$id, ": ", self$name, "]")
       else NULL

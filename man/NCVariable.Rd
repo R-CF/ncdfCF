@@ -7,11 +7,6 @@
 \format{
 An \code{\link{R6Class}} generator object.
 }
-\value{
-An instance of this class.
-
-Character string with very basic variable information.
-}
 \description{
 This class represents a netCDF variable, the object that holds
 the properties and data of elements like dimensions and variables of a
@@ -96,6 +91,9 @@ path from the root group.}
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+An instance of this class.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCVariable-shard"></a>}}
@@ -109,6 +107,9 @@ when combined with similar information from other variables.
 \if{html}{\out{<div class="r">}}\preformatted{NCVariable$shard()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Character string with very basic variable information.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCVariable-clone"></a>}}

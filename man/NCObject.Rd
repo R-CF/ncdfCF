@@ -7,10 +7,6 @@
 \format{
 An \code{\link{R6Class}} generator object.
 }
-\value{
-A vector of values from the \code{data.frame}, named with the \code{att}
-value, or \code{character(0)} if the attribute is not found.
-}
 \description{
 This class is a basic ancestor to all classes that represent
 netCDF objects, specifically groups, dimensions, variables and the
@@ -105,6 +101,10 @@ This method returns netCDF object attributes.}
 must be "value" (default), "type" or "length".}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A vector of values from the \code{data.frame}, named with the \code{att}
+value, or \code{character(0)} if the attribute is not found.
 }
 }
 \if{html}{\out{<hr>}}

@@ -1,6 +1,6 @@
 #' Area of Interest class
 #'
-#' @description This class represents an are of interest for analysis.
+#' @description This class represents an area of interest for analysis.
 #'
 #' @details See [aoi()] for details.
 #'
@@ -13,7 +13,7 @@ AOI <- R6::R6Class("AOI",
     maxLon  = NULL,
     minLat  = NULL,
     maxLat  = NULL,
-    res     = NULL
+    res     = NULL  # vector of X and Y resolutions
   ),
   public = list(
     #' @field aux The [CFAuxiliaryLongLat] instance using this AOI.
@@ -24,8 +24,8 @@ AOI <- R6::R6Class("AOI",
     #'   longitude and latitude of the AOI, in decimal degrees. The longitude values
     #'   must agree with the range of the longitude in the variable to which this
     #'   AOI will be applied, e.g. `[-180,180]` or `[0,360]`.
-    #' @param resolution The separation between adjacent grid cell, in decimal
-    #'   degrees.
+    #' @param resolution The separation between adjacent grid cell, in longitude
+    #'   and latitude directions, in decimal degrees.
     initialize = function(lonMin, lonMax, latMin, latMax, resolution) {
       private$minLon <- lonMin
       private$maxLon <- lonMax
@@ -49,7 +49,7 @@ AOI <- R6::R6Class("AOI",
       }
 
       if (!is.null(private$res))
-        cat(sprintf("Resolution: [%5.3f]\n", private$res))
+        cat(sprintf("Resolution: [%5.3f, %5.3f]\n", private$res[1L], private$res[2L]))
       else
         cat("Resolution: (from variable)\n")
     }
@@ -100,7 +100,7 @@ AOI <- R6::R6Class("AOI",
     },
 
     #' @field extent Set of retrieve the four extremes of the AOI, a numeric
-    #' vector in the order lomgitude minimum, maximum, latitude minimum, maximum.
+    #' vector in the order longitude minimum, maximum, latitude minimum, maximum.
     extent = function(value) {
       if (missing(value))
         c(private$minLon, private$maxLon, private$minLat, private$maxLat)
@@ -130,10 +130,22 @@ AOI <- R6::R6Class("AOI",
     #' @field dim (read-only) The dimensions of the grid of the AOI once generated.
     dim = function(value) {
       if (missing(value))
-        as.integer(c((private$maxLon - private$minLon) / private$res,
-                     (private$maxLat - private$minLat) / private$res))
+        as.integer(c((private$maxLat - private$minLat) / private$res[2L],
+                     (private$maxLon - private$minLon) / private$res[1L]))
       else
         warning("Cannot set the grid dimensions of an AOI: auto-generated\n", call. = FALSE)
+    },
+
+    #' @field dimnames (read-only) Retrieve the dimnames of the AOI, in numeric
+    #' form. These are the center points of the grid cells.
+    dimnames = function(value) {
+      if (missing(value))
+        if (is.null(private$minLat)) NULL
+        else {
+          d <- self$dim
+          list(seq(from = private$minLat + private$res[2L] * 0.5, by = private$res[2L], length = d[1L]),
+               seq(from = private$minLon + private$res[1L] * 0.5, by = private$res[1L], length = d[2L]))
+        }
     }
   )
 )
@@ -143,7 +155,7 @@ AOI <- R6::R6Class("AOI",
 #' @title Area of Interest
 #'
 #' @description This function constructs the area of interest of an analysis. It
-#'   consists of an extent of longitude and latitude and a resolution, all in
+#'   consists of an extent and a resolution of longitude and latitude, all in
 #'   decimal degrees.
 #'
 #'   The AOI is used to define the subset of data to be extracted from a
@@ -153,15 +165,15 @@ AOI <- R6::R6Class("AOI",
 #'   geographic system of longitude and latitude coordinates.
 #'
 #' @details Following the CF Metadata Conventions, axis coordinates represent
-#'   the center of grid cells. So when specifying `aoi(20, 30, -10, 10, 1)`, the
-#'   south-west coordinate is at `(20.5, -9.5)`. If the axes of the
+#'   the center of grid cells. So when specifying `aoi(20, 30, -10, 10, 1, 2)`,
+#'   the south-west grid cell coordinate is at `(20.5, -9)`. If the axes of the
 #'   longitude-latitude grid have bounds, then the bounds will coincide with the
 #'   AOI and the `CFVariable$subset()` method that uses the AOI will attach
 #'   those bounds as attributes to the resulting array.
 #'
 #'   If no resolution is specified, it will be determined from the separation
 #'   between adjacent grid cells in both longitude and latitude directions in
-#'   the middle of the extent of interest. If no extent is specified (meaning,
+#'   the middle of the area of interest. If no extent is specified (meaning,
 #'   none of the values; if some but not all values are specified an error will
 #'   be thrown), then the whole extent of the variable is used, extended
 #'   outwards by the bounds if they are set or half the resolution otherwise.
@@ -187,10 +199,12 @@ AOI <- R6::R6Class("AOI",
 #'   longitude and latitude of the AOI, in decimal degrees. The longitude values
 #'   must agree with the range of the longitude in the variable to which this
 #'   AOI will be applied, e.g. `[-180,180]` or `[0,360]`.
-#' @param resolution The separation between adjacent grid cell, in decimal
-#'   degrees. The permitted values lie within the range `[0.01 ... 10]`.
+#' @param resX,resY The separation between adjacent grid cell, in the longitude
+#'   and latitude directions respectively, in decimal degrees. The permitted
+#'   values lie within the range `[0.01 ... 10]`. If `resY` is missing it will
+#'   use the value of `resX`, yielding square grid cells.
 #'
-#' @returns The return value of the function is an [R6] object which uses
+#' @return The return value of the function is an [R6] object which uses
 #'   reference semantics. Making changes to the returned object will be visible
 #'   in all copies made of the object.
 #'
@@ -200,9 +214,13 @@ AOI <- R6::R6Class("AOI",
 #' aoi <- aoi(20, 60, -40, -20, 0.5)
 #' aoi
 #'
-aoi <- function(lonMin, lonMax, latMin, latMax, resolution) {
-  if (missing(resolution)) resolution <- NULL
-  else .aoi_check_resolution(resolution)
+aoi <- function(lonMin, lonMax, latMin, latMax, resX, resY) {
+  if (missing(resX)) resolution <- c(NULL, NULL)
+  else {
+    if (missing(resY)) resY <- resX
+    resolution <- c(resX, resY)
+    .aoi_check_resolution(resolution)
+  }
 
   if (missing(lonMin) && missing(lonMin) && missing(lonMin) && missing(lonMin))
     AOI$new(NULL, NULL, NULL, NULL, resolution)
@@ -220,7 +238,7 @@ aoi <- function(lonMin, lonMax, latMin, latMax, resolution) {
 #'
 #' @param x An instance of [AOI].
 #'
-#' @returns A vector of two values giving the longitude and latitude dimensions
+#' @return A vector of two values giving the longitude and latitude dimensions
 #' of the grid that would be created for the AOI.
 #' @export
 #'
@@ -234,7 +252,7 @@ dim.AOI <- function(x) {
 # Internal functions -----------------------------------------------------------
 
 .aoi_check_resolution <- function(res) {
-  if (res < 0.01 || res > 10)
+  if (res[1L] < 0.01 || res[1L] > 10 || res[2L] < 0.01 || res[2L] > 10)
     stop("Argument 'resolution' is outside of the permitted range of [0.01 ... 10]", call. = FALSE)
 }
 

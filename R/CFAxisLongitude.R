@@ -36,7 +36,7 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
     #' @param rng The range of values from this axis to include in the returned
     #'   axis.
     #'
-    #' @returns A `CFAxisLongitude` covering the indicated range of indices. If
+    #' @return A `CFAxisLongitude` covering the indicated range of indices. If
     #'   the `rng` argument includes only a single value, an [CFAxisScalar]
     #'   instance is returned with the value from this axis.
     sub_axis = function(group, rng) {

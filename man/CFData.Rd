@@ -92,18 +92,24 @@ data in argument \code{value}.}
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+An instance of this class.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFData-raw"></a>}}
 \if{latex}{\out{\hypertarget{method-CFData-raw}{}}}
 \subsection{Method \code{raw()}}{
 Retrieve the data in the object exactly as it was produced
-by the operation on \code{CFVariable}. This is usually an \code{array} with the
-contents along axes varying.
+by the operation on \code{CFVariable}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFData$raw()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+The data in the object. This is usually an \code{array} with the
+contents along axes varying.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFData-clone"></a>}}

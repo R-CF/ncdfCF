@@ -4,11 +4,6 @@
 \name{CFAxisLatitude}
 \alias{CFAxisLatitude}
 \title{Latitude CF axis object}
-\value{
-A \code{CFAxisLatitude} covering the indicated range of indices. If
-the \code{rng} argument includes only a single value, an \link{CFAxisScalar}
-instance is returned with the value from this axis.
-}
 \description{
 This class represents a latitude axis. Its values are numeric.
 This class adds some logic that is specific to latitudes, such as their
@@ -89,6 +84,11 @@ the \code{rng} argument.
 axis.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A \code{CFAxisLatitude} covering the indicated range of indices. If
+the \code{rng} argument includes only a single value, an \link{CFAxisScalar}
+instance is returned with the value from this axis.
 }
 }
 \if{html}{\out{<hr>}}

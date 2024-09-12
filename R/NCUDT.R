@@ -61,7 +61,7 @@ NCUDT <- R6::R6Class("NCUDT",
     #' @param dimsizes Named list with array dimensions of each field of a
     #' "compound" type. A `NULL` length indicates a scalar.
     #'
-    #' @returns An instance of this class.
+    #' @return An instance of this class.
     initialize = function(id, name, clss, size, basetype, value, offset, subtype, dimsizes) {
       super$initialize(id, name)
       self$clss <- clss

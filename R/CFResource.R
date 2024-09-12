@@ -44,7 +44,7 @@ CFResource <- R6::R6Class("CFResource",
     #' call this directly.
     #'
     #' @param uri The URI of the netCDF resource.
-    #' @returns An instance of this class.
+    #' @return An instance of this class.
     initialize = function(uri) {
       private$.uri <- uri
       private$.handle <- NULL
@@ -74,7 +74,7 @@ CFResource <- R6::R6Class("CFResource",
     #' this method is valid only for the named group.
     #'
     #' @param group_name The absolute path to the group.
-    #' @returns The handle to the group
+    #' @return The handle to the group
     group_handle = function(group_name) {
       private$open()
       if (group_name == "/")

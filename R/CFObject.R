@@ -13,43 +13,37 @@ NULL
 #'
 #' @docType class
 #'
-#' @name CFObject
-#' @format An \code{\link{R6Class}} generator object.
-NULL
-
 CFObject <- R6::R6Class("CFObject",
   public = list(
     #' @field NCvar The [NCVariable] instance that this CF object represents.
     NCvar = NULL,
 
-    #' Create a basic CF object
-    #'
-    #' Create a new CF object instance from a variable in a netCDF resource.
-    #' This method is called upon opening a netCDF resource.
+    #' @description Create a new CF object instance from a variable in a netCDF
+    #'   resource. This method is called upon opening a netCDF resource. It is
+    #'   rarely, if ever, useful to call this constructor directly from the
+    #'   console. Instead, use the methods from higher-level classes such as
+    #'   [CFVariable].
     #'
     #' @param nc_var The [NCVariable] instance upon which this CF object is
     #'   based.
-    #' @returns A basic CF object.
+    #' @return A `CFobject` instance.
     initialize = function(nc_var) {
       self$NCvar <- nc_var
     },
 
-    #' Attributes of a CF object
-    #'
-    #' This method returns CF object attributes.
+    #' @description Retrieve attributes of any CF object.
     #'
     #' @param att Vector of character strings of attributes to return.
     #' @param field The field of the `data.frame` to return values from. This
     #' must be "value" (default), "type" or "length".
-    #' @returns A vector of values from the `data.frame`, named with the `att`
-    #' value.
+    #' @return A vector of values from the `data.frame`, named with the `att`
+    #' value, `character(0)` if a name in `att` is not an attribute of this
+    #' object.
     attribute = function(att, field = "value") {
       self$NCvar$attribute(att, field)
     },
 
-    #' Print the attributes of the CF object
-    #'
-    #' This function prints the attributes of the CF object to the console,
+    #' @description Print the attributes of the CF object.
     #'
     #' @param width The maximum width of each column in the `data.frame` when
     #' printed to the console.
@@ -114,7 +108,7 @@ CFObject <- R6::R6Class("CFObject",
 #' @param x An `CFObject` whose axis names to retrieve. This could be
 #' `CFDataset`, `CFVariable`, or a class descending from `CFAxis`.
 #'
-#' @returns A vector as described in the Description section.
+#' @return A vector as described in the Description section.
 #' @examples
 #' fn <- system.file("extdata",
 #'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",

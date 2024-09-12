@@ -7,11 +7,6 @@
 \format{
 An \link{R6Class} generator object.
 }
-\value{
-A \code{CFAxisLongitude} covering the indicated range of indices. If
-the \code{rng} argument includes only a single value, an \link{CFAxisScalar}
-instance is returned with the value from this axis.
-}
 \description{
 This class represents a longitude axis. Its values are numeric.
 This class is used for axes that represent longitudes.
@@ -95,6 +90,11 @@ the \code{rng} argument.
 axis.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A \code{CFAxisLongitude} covering the indicated range of indices. If
+the \code{rng} argument includes only a single value, an \link{CFAxisScalar}
+instance is returned with the value from this axis.
 }
 }
 \if{html}{\out{<hr>}}

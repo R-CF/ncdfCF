@@ -49,7 +49,9 @@ Metadata Conventions to interpret the data. This currently applies to:
  * **Parametric vertical coordinates** are read, including variables listed in
  the `formula_terms` attribute.
  * **Auxiliary coordinates** are identified and read. This applies to both 
- scalar axes and auxiliary longitude-latitude grids.
+ **scalar axes** and **auxiliary longitude-latitude grids**. Data on non-Cartesian 
+ grids can be automatically rectified to a longitude-latitude grid if an auxiliary
+ grid is present in the resource.
 
 ##### Basic usage
 
@@ -76,7 +78,7 @@ dimnames(ds)
 t2m <- ds[["t2m"]]
 t2m
 
-# Same with dimensions, but now without first putting the object in a variable
+# Same with dimensions, but now without first attaching the object to a variable
 ds[["longitude"]]
 
 # Regular base R operations simplify life further
@@ -97,7 +99,8 @@ There are two ways to read data for a variable from the resource:
  in `ncdfCF` this is still very easy to do.
  * **`subset()`:** The `subset()` method lets you specify what you want to
  extract from each dimension in real-world coordinates and timestamps, in 
- whichever order.
+ whichever order. This can also rectify non-Cartesian grids to regular
+ longitude-latitude grids.
  
 ```{r extract}
 # Extract a timeseries for a specific location
@@ -110,12 +113,14 @@ str(ts)
 ```
 
 Note that the results contain degenerate dimensions (of length 1). This by 
-design because it allows attributes to be attached in a consistent manner.
+design because it allows attributes to be attached in a consistent manner. When
+using the `subset()` method, the data is returned as an instance of `CFData`,
+including axes and attributes:
 
 ```{r subset}
 # Extract a specific region, full time dimension
 ts <- t2m$subset(list(X = 29:30, Y = -1:-2))
-str(ts)
+ts
 
 # Extract specific time slices for a specific region
 # Note that the dimensions are specified out of order and using alternative
@@ -123,7 +128,7 @@ str(ts)
 ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
                       X = c(29.6, 28.8),
                       Y = seq(-2, -1, by = 0.05)))
-str(ts)
+ts
 ```
 
 Both of these methods will read data from the netCDF resource, but only as much
@@ -136,7 +141,7 @@ groups, variables, dimensions, user-defined data types, attributes and data from
 netCDF resources in "classic" and "netcdf4" formats. From the CF Metadata 
 Conventions it supports identification of dimension axes, interpretation of the 
 "time" dimension, name resolution when using groups, reading of "bounds" 
-information and parametric vertical coordinates.
+information, parametric vertical coordinates, and auxiliary coordinate variables.
 
 Development plans for the near future focus on supporting the below features:
 
@@ -146,6 +151,7 @@ Development plans for the near future focus on supporting the below features:
 
 ##### CF Metadata Conventions
 
+ * Calculate parametric vertical coordinates
  * Full support for discrete sampling geometries.
  * Interface to "standard_name" libraries and other "defined vocabularies".
  * Compliance with CMIP5 / CMIP6 requirements.

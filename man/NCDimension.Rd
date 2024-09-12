@@ -7,11 +7,6 @@
 \format{
 An \code{\link{R6Class}} generator object.
 }
-\value{
-A \code{NCDimension} instance.
-
-Character string with very basic dimension information.
-}
 \description{
 This class represents an netCDF dimensions. It contains the
 information on a dimension that is stored in an netCDF file.
@@ -76,6 +71,9 @@ instead. This class is instantiated when opening a netCDF resource.}
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+A \code{NCDimension} instance.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCDimension-shard"></a>}}
@@ -89,6 +87,9 @@ when combined with similar information from other dimensions.
 \if{html}{\out{<div class="r">}}\preformatted{NCDimension$shard()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Character string with very basic dimension information.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCDimension-clone"></a>}}

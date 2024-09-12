@@ -107,6 +107,10 @@ to:
  defined calendars.
  * **Bounds** information. When present, bounds are read and used in analyses.
  * **Discrete dimensions**, possibly with character labels.
+ * **Auxiliary coordinate variables** which describe **scalar axes** and
+ **auxiliary longitude-latitude grids**. The latter can be used by `ncdfCF` to
+ automatically align data variables that are not on a Cartesian grid to a
+ longitude-latitude grid.
 
 ## Basic usage
 
@@ -212,7 +216,7 @@ user in a consistent manner.
 ```{r subset}
 # Extract a specific region, full time dimension
 ts <- t2m$subset(list(X = 29:30, Y = -1:-2))
-str(ts)
+ts
   
 # Extract specific time slices for a specific region
 # Note that the axes are specified out of order and using alternative
@@ -220,7 +224,7 @@ str(ts)
 ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
                       X = c(29.6, 28.8),
                       Y = seq(-2, -1, by = 0.05)))
-dimnames(ts)
+ts
 ```
 
 These methods will read data from the netCDF resource, but only as much as is 

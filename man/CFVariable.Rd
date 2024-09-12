@@ -5,20 +5,6 @@
 \alias{CFVariable}
 \alias{CFVariable$subset}
 \title{CF data variable}
-\value{
-An instance of this class.
-
-A 1-row \code{data.frame} with some details of the data variable.
-
-Character string with very basic variable information.
-
-An \link{CFData} instance, having an array with its axes and
-attributes of the variable, or \code{NULL} if one or more of the elements in
-the \code{subset} argument falls entirely outside of the range of the axis.
-Note that degenerate dimensions (having \code{length(.) == 1}) are dropped
-from the array but the corresponding axis is maintained in the result as
-a scalar axis.
-}
 \description{
 This class represents a CF data variable, the object that
 provides access to an array of data.
@@ -109,14 +95,15 @@ Create an instance of this class.
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+An instance of this class.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFVariable-print"></a>}}
 \if{latex}{\out{\hypertarget{method-CFVariable-print}{}}}
 \subsection{Method \code{print()}}{
-Summary of the data variable
-
-Prints a summary of the data variable to the console.
+Print a summary of the data variable to the console.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFVariable$print()}\if{html}{\out{</div>}}
 }
@@ -131,6 +118,9 @@ Some details of the data variable
 \if{html}{\out{<div class="r">}}\preformatted{CFVariable$brief()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+A 1-row \code{data.frame} with some details of the data variable.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFVariable-shard"></a>}}
@@ -144,6 +134,9 @@ when combined with similar information from other variables.
 \if{html}{\out{<div class="r">}}\preformatted{CFVariable$shard()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Character string with very basic variable information.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFVariable-subset"></a>}}
@@ -151,7 +144,7 @@ when combined with similar information from other variables.
 \subsection{Method \code{subset()}}{
 Extract data from the variable
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$subset(subset, rightmost.closed = FALSE, ...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$subset(subset, lonlat = NULL, rightmost.closed = FALSE, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -167,6 +160,13 @@ be specified by name. Axis designators and names are case-sensitive and
 can be specified in any order. If values for the range per axis fall
 outside of the extent of the axis, the range is clipped to the extent of
 the axis.}
+
+\item{\code{lonlat}}{Optional, an area-of-interest created with the \code{\link[=aoi]{aoi()}}
+function to indicate the horizontal area that should be extracted. The
+longitude and latitude coordinates must be included; the X and Y
+resolution will be calculated if not given. When provided, this argument
+will take precedence over the corresponding axis information for the X
+and Y axes in the \code{subset} argument.}
 
 \item{\code{rightmost.closed}}{Single logical value to indicate if the upper
 boundary of range in each axis should be included.}
@@ -227,12 +227,22 @@ where each pixel gives the corresponding value for the longitude and
 latitude. If the variable has such \emph{auxiliary coordinate variables} then
 they will be used automatically if, and only if, the axes are labeled in
 argument \code{subset} as \code{X} and \code{Y}. The resolution of the grid that is
-produced by this method is automatically calculated. \strong{Note} that if you
-want to extract the data in the original grid, you should use the
+produced by this method is automatically calculated. If you want to
+subset those axes then specify values in decimal degrees; if you want to
+extract the full extent, specify \code{numeric(0)}. \strong{Note} that if
+you want to extract the data in the original grid, you should use the
 horizontal axis names in argument \code{subset}.
 }
 }
 
+\subsection{Returns}{
+An \link{CFData} instance, having an array with its axes and
+attributes of the variable, or \code{NULL} if one or more of the elements in
+the \code{subset} argument falls entirely outside of the range of the axis.
+Note that degenerate dimensions (having \code{length(.) == 1}) are dropped
+from the array but the corresponding axis is maintained in the result as
+a scalar axis.
+}
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{fn <- system.file("extdata",

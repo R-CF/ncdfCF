@@ -4,15 +4,6 @@
 \name{CFAxisTime}
 \alias{CFAxisTime}
 \title{Time axis object}
-\value{
-An integer vector giving the indices in the time axis of valid
-values in \code{x}, or \code{integer(0)} if none of the values are valid.
-
-A \code{CFAxisTime} covering the indicated range of indices. If the
-\code{rng} argument includes only a single value, an \link{CFAxisScalar} instance
-is returned with its value being the character timestamp of the value in
-this axis.
-}
 \description{
 This class represents a time axis. The functionality is provided
 by the \code{CFtime} package.
@@ -133,6 +124,10 @@ Default is \code{FALSE}.}
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+An integer vector giving the indices in the time axis of valid
+values in \code{x}, or \code{integer(0)} if none of the values are valid.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisTime-sub_axis"></a>}}
@@ -155,6 +150,12 @@ This method returns an axis which spans the range of indices given by the
 axis.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A \code{CFAxisTime} covering the indicated range of indices. If the
+\code{rng} argument includes only a single value, an \link{CFAxisScalar} instance
+is returned with its value being the character timestamp of the value in
+this axis.
 }
 }
 \if{html}{\out{<hr>}}

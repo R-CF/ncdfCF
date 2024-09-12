@@ -7,11 +7,6 @@
 \format{
 An \code{\link{R6Class}} generator object.
 }
-\value{
-An instance of this class.
-
-The handle to the group
-}
 \description{
 This class contains the connection details to the netCDF
 resource.
@@ -70,6 +65,9 @@ location of an online resource.}
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+An instance of this class.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFResource-finalize"></a>}}
@@ -115,6 +113,9 @@ this method is valid only for the named group.
 \item{\code{group_name}}{The absolute path to the group.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The handle to the group
 }
 }
 \if{html}{\out{<hr>}}

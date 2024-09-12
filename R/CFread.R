@@ -15,7 +15,7 @@
 #'   `keep_open = TRUE` the resource may still be closed by the operating system
 #'   or the remote server.
 #'
-#' @returns An `CFDataset` instance, or an error if the resource was not found
+#' @return An `CFDataset` instance, or an error if the resource was not found
 #'   or errored upon reading.
 #' @export
 #' @examples
@@ -79,7 +79,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 #' @param h The handle to the group in the netCDF resource.
 #' @param parent_dims The dimids that have been seen at higher levels.
 #'
-#' @returns Either the `NCGroup` instance invisibly or a try-error instance.
+#' @return Either the `NCGroup` instance invisibly or a try-error instance.
 #' @noRd
 .readGroup <- function(parent, h, parent_dims) {
   g <- RNetCDF::grp.inq.nc(h)
@@ -185,7 +185,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 # @param var `NCVariable` instance to create the axis from.
 # @param dim `NCDimension` associated with argument `var`.
 #
-# @returns An instance of `CFAxis`.
+# @return An instance of `CFAxis`.
 .makeAxis <- function(grp, var, dim) {
   h <- grp$handle
 
@@ -300,7 +300,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 #' @param param_name The "standard_name" attribute that names the specific
 #' parametric form of the axis.
 #'
-#' @returns An instance of CFAxisVertical.
+#' @return An instance of CFAxisVertical.
 #' @noRd
 .makeParametricAxis <- function(grp, var, dim, vals, param_name) {
   Z <- CFAxisVertical$new(grp, var, dim, vals, param_name)
@@ -336,7 +336,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 #'
 #' @param grp The group to scan.
 #'
-#' @returns. Nothing. CFAxisScalar and CFAuxiliaryLongLat instances are created
+#' @return Nothing. CFAxisScalar and CFAuxiliaryLongLat instances are created
 #' in the groups where the NC variables are found. These will later be picked up
 #' when CFvariables are created.
 #' @noRd
@@ -426,7 +426,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 #'
 #' @param grp The current group to scan for unused NC variables.
 #' @param axes List of available CF axes to use with the CF variables.
-#' @returns List of created CF variables.
+#' @return List of created CF variables.
 #' @noRd
 .buildVariables <- function(grp, axes) {
   if (length(grp$NCvars) > 0L) {
@@ -460,10 +460,8 @@ open_ncdf <- function(resource, keep_open = FALSE) {
             }
           }
 
-          if (inherits(varLon, "NCVariable") && inherits(varLat, "NCVariable")) {
-            ll <- varLon$group$find_by_name(paste(varLon$name, varLat$name, sep = "_"), "CF")
-            var$gridLongLat <- ll
-          }
+          if (inherits(varLon, "NCVariable") && inherits(varLat, "NCVariable"))
+            var$gridLongLat <- varLon$group$find_by_name(paste(varLon$name, varLat$name, sep = "_"), "CF")
         }
 
         var

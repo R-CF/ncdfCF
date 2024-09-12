@@ -5,7 +5,7 @@
 \alias{AOI}
 \title{Area of Interest class}
 \description{
-This class represents an are of interest for analysis.
+This class represents an area of interest for analysis.
 }
 \details{
 See \code{\link[=aoi]{aoi()}} for details.
@@ -29,11 +29,14 @@ See \code{\link[=aoi]{aoi()}} for details.
 \item{\code{latMax}}{Set or retrieve the higher latitude value.}
 
 \item{\code{extent}}{Set of retrieve the four extremes of the AOI, a numeric
-vector in the order lomgitude minimum, maximum, latitude minimum, maximum.}
+vector in the order longitude minimum, maximum, latitude minimum, maximum.}
 
 \item{\code{resolution}}{Set or retrieve the resolution.}
 
 \item{\code{dim}}{(read-only) The dimensions of the grid of the AOI once generated.}
+
+\item{\code{dimnames}}{(read-only) Retrieve the dimnames of the AOI, in numeric
+form. These are the center points of the grid cells.}
 }
 \if{html}{\out{</div>}}
 }
@@ -62,8 +65,8 @@ longitude and latitude of the AOI, in decimal degrees. The longitude values
 must agree with the range of the longitude in the variable to which this
 AOI will be applied, e.g. \verb{[-180,180]} or \verb{[0,360]}.}
 
-\item{\code{resolution}}{The separation between adjacent grid cell, in decimal
-degrees.}
+\item{\code{resolution}}{The separation between adjacent grid cell, in longitude
+and latitude directions, in decimal degrees.}
 }
 \if{html}{\out{</div>}}
 }

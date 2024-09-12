@@ -4,21 +4,6 @@
 \name{CFObject}
 \alias{CFObject}
 \title{CF base object}
-\format{
-An \code{\link{R6Class}} generator object.
-}
-\value{
-A basic CF object.
-Attributes of a CF object
-
-This method returns CF object attributes.
-
-A vector of values from the \code{data.frame}, named with the \code{att}
-value.
-Print the attributes of the CF object
-
-This function prints the attributes of the CF object to the console,
-}
 \description{
 This class is a basic ancestor to all classes that represent CF
 objects, specifically data variables and axes. More useful classes use this
@@ -30,11 +15,7 @@ The fields in this class are common among all CF objects.
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{NCvar}}{The \link{NCVariable} instance that this CF object represents.
-Create a basic CF object
-
-Create a new CF object instance from a variable in a netCDF resource.
-This method is called upon opening a netCDF resource.}
+\item{\code{NCvar}}{The \link{NCVariable} instance that this CF object represents.}
 }
 \if{html}{\out{</div>}}
 }
@@ -64,6 +45,11 @@ This method is called upon opening a netCDF resource.}
 \if{html}{\out{<a id="method-CFObject-new"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-new}{}}}
 \subsection{Method \code{new()}}{
+Create a new CF object instance from a variable in a netCDF
+resource. This method is called upon opening a netCDF resource. It is
+rarely, if ever, useful to call this constructor directly from the
+console. Instead, use the methods from higher-level classes such as
+\link{CFVariable}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFObject$new(nc_var)}\if{html}{\out{</div>}}
 }
@@ -76,11 +62,15 @@ based.}
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+A \code{CFobject} instance.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFObject-attribute"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-attribute}{}}}
 \subsection{Method \code{attribute()}}{
+Retrieve attributes of any CF object.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFObject$attribute(att, field = "value")}\if{html}{\out{</div>}}
 }
@@ -95,11 +85,17 @@ must be "value" (default), "type" or "length".}
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+A vector of values from the \code{data.frame}, named with the \code{att}
+value, \code{character(0)} if a name in \code{att} is not an attribute of this
+object.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFObject-print_attributes"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-print_attributes}{}}}
 \subsection{Method \code{print_attributes()}}{
+Print the attributes of the CF object.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFObject$print_attributes(width = 50)}\if{html}{\out{</div>}}
 }

@@ -72,7 +72,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #' extract.
     #' @param method Extract index values without ("constant", the default) or
     #' with ("linear") fractional parts.
-    #' @returns An integer vector giving the indices in `x` of valid values
+    #' @return An integer vector giving the indices in `x` of valid values
     #' provided, or `integer(0)` if none of the `x` values are valid.
     indexOf = function(x, method = "constant") {
       if (length(self$bounds))

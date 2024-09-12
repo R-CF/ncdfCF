@@ -12,7 +12,7 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
 #' @param width Maximum width of character entries. If entries are longer than
 #' width - 3, they are truncated and then '...' added.
 #'
-#' @returns data.frame with slim columns
+#' @return data.frame with slim columns
 #' @noRd
 .slim.data.frame <- function(df, width = 50) {
   maxw <- width - 3

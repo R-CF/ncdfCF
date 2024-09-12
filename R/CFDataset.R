@@ -103,7 +103,7 @@ CFDataset <- R6::R6Class("CFDataset",
     #' @param standard_name Optional, a character string to search for a
     #'   specific "standard_name" value in variables and axes.
     #'
-    #' @returns If argument `standard_name` is provided, a character vector of
+    #' @return If argument `standard_name` is provided, a character vector of
     #'   variable or axis names. If argument `standard_name` is missing or
     #'   an empty string, a named list with all "standard_name" attribute values
     #'   in the the netCDF resource; each list item is named for the variable or
@@ -130,7 +130,7 @@ CFDataset <- R6::R6Class("CFDataset",
     #' organize dimensions and variables in groups. This method will report if
     #' the data set is indeed organized with subgroups.
     #'
-    #' @returns Logical to indicate that the netCDF resource uses subgroups.
+    #' @return Logical to indicate that the netCDF resource uses subgroups.
     has_subgroups = function() {
       length(self$root$subgroups) > 0L
     },
@@ -146,7 +146,7 @@ CFDataset <- R6::R6Class("CFDataset",
     #' search for CF variables or axes, or "NC" to look for groups or NC
     #' variables.
     #'
-    #' @returns The object with the provided name. If the object is not found,
+    #' @return The object with the provided name. If the object is not found,
     #'   returns `NULL`.
     find_by_name = function(name, scope = "CF") {
       self$root$find_by_name(name, scope)
@@ -157,7 +157,7 @@ CFDataset <- R6::R6Class("CFDataset",
     #' This method lists the CF data variables located in this netCDF resource,
     #' including those in subgroups.
     #'
-    #' @returns A list of `CFVariable`s.
+    #' @return A list of `CFVariable`s.
     variables = function() {
       self$root$variables()
     },
@@ -167,7 +167,7 @@ CFDataset <- R6::R6Class("CFDataset",
     #' This method lists the axes located in this netCDF resource, including
     #' axes in subgroups.
     #'
-    #' @returns A list of `CFAxis` descendants.
+    #' @return A list of `CFAxis` descendants.
     axes = function() {
       self$root$axes()
     },
@@ -180,7 +180,7 @@ CFDataset <- R6::R6Class("CFDataset",
     #' @param group The name of the group whose attributes to return. If the
     #' argument is missing, the global attributes will be returned.
     #'
-    #' @returns A `data.frame` of attributes.
+    #' @return A `data.frame` of attributes.
     attributes = function(group) {
       if (missing(group))
         self$root$attributes
@@ -268,7 +268,7 @@ groups.CFDataset <- function(x) {
 #' @param i The name of a variable or axis in `x`. If data set `x` has groups,
 #' `i` should be an absolute path to the object to retrieve.
 #'
-#' @returns An instance of `CFVariable` or an `CFAxis` descendant
+#' @return An instance of `CFVariable` or an `CFAxis` descendant
 #' class, or `NULL` if the name is not found.
 #' @export
 #'

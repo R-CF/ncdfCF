@@ -7,23 +7,6 @@
 \format{
 An \code{\link{R6Class}} generator object.
 }
-\value{
-A basic CF object.
-
-A 1-row \code{data.frame} with some details of the axis.
-
-Character string with very basic axis information.
-
-\code{NULL}
-
-\code{NULL}
-
-Numeric vector of the same length as \code{x}. If \code{method = "constant"},
-return the index value for each match. If \code{method = "linear"}, return
-the index value with any fractional value. Values of \code{x} outside of the
-range of the values in the axis are returned as \code{0} and \code{.Machine$integer.max},
-respectively.
-}
 \description{
 This class is a basic ancestor to all classes that represent CF
 axes. More useful classes use this class as ancestor.
@@ -125,6 +108,9 @@ based.}
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+A basic CF object.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-print"></a>}}
@@ -148,6 +134,9 @@ Some details of the axis
 \if{html}{\out{<div class="r">}}\preformatted{CFAxis$brief()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+A 1-row \code{data.frame} with some details of the axis.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-shard"></a>}}
@@ -161,6 +150,9 @@ when combined with similar information from other axes.
 \if{html}{\out{<div class="r">}}\preformatted{CFAxis$shard()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+Character string with very basic axis information.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-time"></a>}}
@@ -175,6 +167,9 @@ descendants.
 \if{html}{\out{<div class="r">}}\preformatted{CFAxis$time()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+\code{NULL}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-sub_axis"></a>}}
@@ -199,6 +194,9 @@ implement this method.
 axis.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{NULL}
 }
 }
 \if{html}{\out{<hr>}}
@@ -230,6 +228,13 @@ axis.}
 \item{\code{method}}{Single character value of "constant" or "linear".}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Numeric vector of the same length as \code{x}. If \code{method = "constant"},
+return the index value for each match. If \code{method = "linear"}, return
+the index value with any fractional value. Values of \code{x} outside of the
+range of the values in the axis are returned as \code{0} and \code{.Machine$integer.max},
+respectively.
 }
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}

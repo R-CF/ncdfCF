@@ -43,7 +43,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   based.
     #' @param orientation The orientation of the axis: "X", "Y", "Z" "T", or
     #' "" when not known or relevant.
-    #' @returns A basic CF object.
+    #' @return A basic CF object.
     initialize = function(grp, nc_var, nc_dim, orientation) {
       super$initialize(nc_var)
       self$group <- grp
@@ -73,7 +73,7 @@ CFAxis <- R6::R6Class("CFAxis",
 
     #' @description Some details of the axis
     #'
-    #' @returns A 1-row `data.frame` with some details of the axis.
+    #' @return A 1-row `data.frame` with some details of the axis.
     brief = function() {
       longname <- self$attribute("long_name")
       if (!length(longname) || longname == self$name) longname <- ""
@@ -91,7 +91,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #' The information returned by this function is very concise and most useful
     #' when combined with similar information from other axes.
     #'
-    #' @returns Character string with very basic axis information.
+    #' @return Character string with very basic axis information.
     shard = function() {
       self$NCdim$shard()
     },
@@ -102,7 +102,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #' to make the call to this method succeed with no result for the other axis
     #' descendants.
     #'
-    #' @returns `NULL`
+    #' @return `NULL`
     time = function() {
       NULL
     },
@@ -118,7 +118,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #' @param rng The range of values from this axis to include in the returned
     #' axis.
     #'
-    #' @returns `NULL`
+    #' @return `NULL`
     sub_axis = function(group, rng) {
       NULL
     },
@@ -142,7 +142,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   axis.
     #' @param method Single character value of "constant" or "linear".
     #'
-    #' @returns Numeric vector of the same length as `x`. If `method = "constant"`,
+    #' @return Numeric vector of the same length as `x`. If `method = "constant"`,
     #'   return the index value for each match. If `method = "linear"`, return
     #'   the index value with any fractional value. Values of `x` outside of the
     #'   range of the values in the axis are returned as `0` and `.Machine$integer.max`,
@@ -189,7 +189,7 @@ CFAxis <- R6::R6Class("CFAxis",
 #'
 #' @param x The `CFVariable` or a descendant of `CFAxis`.
 #'
-#' @returns Vector of dimension lengths.
+#' @return Vector of dimension lengths.
 #' @export
 #'
 #' @examples

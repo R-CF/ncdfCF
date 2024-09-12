@@ -59,7 +59,7 @@ NCObject <- R6::R6Class("NCObject",
     #' @param att Vector of attribute names whose values to return.
     #' @param field The field of the `data.frame` to return values from. This
     #' must be "value" (default), "type" or "length".
-    #' @returns A vector of values from the `data.frame`, named with the `att`
+    #' @return A vector of values from the `data.frame`, named with the `att`
     #' value, or `character(0)` if the attribute is not found.
     attribute = function(att, field = "value") {
       atts <- self$attributes

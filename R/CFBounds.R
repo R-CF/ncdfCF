@@ -8,7 +8,6 @@
 #'
 #' @docType class
 #'
-#' @name CFAuxiliaryLongLat
 #' @export
 CFBounds <- R6::R6Class("CFBounds",
   inherit = CFObject,
@@ -77,7 +76,7 @@ CFBounds <- R6::R6Class("CFBounds",
     #' @param rng The range of values from this bounds object to include in the returned
     #'   object.
     #'
-    #' @returns A `CFBounds` instance covering the indicated range of indices.
+    #' @return A `CFBounds` instance covering the indicated range of indices.
     sub_bounds = function(group, rng) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 2L, NULL)
       CFBounds$new(var, self$values[, rng[1L]:rng[2L], drop = FALSE])
