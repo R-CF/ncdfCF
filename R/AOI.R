@@ -52,6 +52,28 @@ AOI <- R6::R6Class("AOI",
         cat(sprintf("Resolution: [%5.3f, %5.3f]\n", private$res[1L], private$res[2L]))
       else
         cat("Resolution: (from variable)\n")
+    },
+
+    #' @description Retrieve the bounds of the AOI.
+    #' @param group The group in which the bounds should be located. This should
+    #' usually be the group that contains the `CFAxis` instances built from the
+    #' AOI.
+    #' @return A list with two [CFBounds] instances in elements "lon" and "lat".
+    bounds = function(group) {
+      dims <- self$dim
+
+      lon_var <- NCVariable$new(-1L, "lon_bnds_aoi", group, "NC_DOUBLE", 1L, NULL)
+      lon_vals <- seq(from = private$minLon, by = private$res[1L], length = dims[2L] + 1L)
+      lon_vals <- c(lon_vals[1:dims[2L]], lon_vals[2:(dims[2L] + 1L)])
+      dim(lon_vals) <- c(2L, dims[2L])
+
+      lat_var <- NCVariable$new(-1L, "lat_bnds_aoi", group, "NC_DOUBLE", 1L, NULL)
+      lat_vals <- seq(from = private$minLat, by = private$res[2L], length = dims[1L] + 1L)
+      lat_vals <- c(lat_vals[1:dims[1L]], lat_vals[2:(dims[1L] + 1L)])
+      dim(lat_vals) <- c(2L, dims[1L])
+
+      list(lon = CFBounds$new(lon_var, lon_vals),
+           lat = CFBounds$new(lat_var, lat_vals))
     }
   ),
   active = list(
@@ -127,7 +149,9 @@ AOI <- R6::R6Class("AOI",
       }
     },
 
-    #' @field dim (read-only) The dimensions of the grid of the AOI once generated.
+    #' @field dim (read-only) The dimensions of the grid of the AOI once
+    #' generated. Returned as a numeric vector with the dimensionality of the
+    #' AOI in the Y and X directions, respectively.
     dim = function(value) {
       if (missing(value))
         as.integer(c((private$maxLat - private$minLat) / private$res[2L],
@@ -137,15 +161,18 @@ AOI <- R6::R6Class("AOI",
     },
 
     #' @field dimnames (read-only) Retrieve the dimnames of the AOI, in numeric
-    #' form. These are the center points of the grid cells.
+    #' form, as a list with the dimnames of the AOI in the Y and X directions,
+    #' respectively. These are the center points of the grid cells.
     dimnames = function(value) {
-      if (missing(value))
+      if (missing(value)) {
         if (is.null(private$minLat)) NULL
         else {
           d <- self$dim
           list(seq(from = private$minLat + private$res[2L] * 0.5, by = private$res[2L], length = d[1L]),
                seq(from = private$minLon + private$res[1L] * 0.5, by = private$res[1L], length = d[2L]))
         }
+      } else
+        warning("Cannot set the dimension names of an AOI: auto-generated\n", call. = FALSE)
     }
   )
 )

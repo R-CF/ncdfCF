@@ -88,13 +88,13 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     friendlyClassName = function(value) {
       if (missing(value))
         "Generic numeric axis"
+    },
+
+    #' @field dimnames (read-only) The coordinates of the axis as a numeric
+    #' vector.
+    dimnames = function(value) {
+      if (missing(value))
+        self$values
     }
   )
 )
-
-# Public S3 methods ------------------------------------------------------------
-
-#' @export
-dimnames.CFAxisNumeric <- function(x) {
-  x$values
-}

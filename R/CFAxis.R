@@ -200,3 +200,9 @@ CFAxis <- R6::R6Class("CFAxis",
 dim.CFAxis <- function(x) {
   x$length
 }
+
+#' @export
+dimnames.CFAxis <- function(x) {
+  x$dimnames
+}
+

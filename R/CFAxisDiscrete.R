@@ -23,13 +23,13 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     friendlyClassName = function(value) {
       if (missing(value))
         "Discrete axis"
+    },
+
+    #' @field dimnames (read-only) The coordinates of the axis as an integer
+    #' vector.
+    dimnames = function(value) {
+      if (missing(value))
+        seq(self$length)
     }
   )
 )
-
-# Public S3 methods ------------------------------------------------------------
-
-#' @export
-dimnames.CFAxisDiscrete <- function(x) {
-  seq(x$length)
-}

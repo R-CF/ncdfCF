@@ -22,6 +22,9 @@ by the \code{CFtime} package.
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+
+\item{\code{dimnames}}{(read-only) The coordinates of the axis as a character
+vector.}
 }
 \if{html}{\out{</div>}}
 }

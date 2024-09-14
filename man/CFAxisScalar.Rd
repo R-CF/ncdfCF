@@ -27,6 +27,8 @@ longitude, latitude and vertical axes.
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+
+\item{\code{dimnames}}{(read-only) The coordinate of the axis.}
 }
 \if{html}{\out{</div>}}
 }

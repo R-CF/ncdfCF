@@ -24,13 +24,13 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
    friendlyClassName = function(value) {
      if (missing(value))
        "Character axis"
+   },
+
+   #' @field dimnames (read-only) The coordinates of the axis as a character
+   #' vector.
+   dimnames = function(value) {
+     if (missing(value))
+       self$values
    }
  )
 )
-
-# Public S3 methods ------------------------------------------------------------
-
-#' @export
-dimnames.CFAxisCharacter <- function(x) {
-  x$values
-}

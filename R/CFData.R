@@ -10,16 +10,12 @@
 #' * `raw()`: The data without any further processing. The axes are
 #' as they are stored in the netCDF resource; there is thus no guarantee as to
 #' how the data is organized in the array. Dimnames will be set.
-#' * `array()`: An array of the data which is organized as a standard R array.
-#' Dimnames will be set.
-#' * `stars()`: The data is returned as a `stars` object, with all relevant
-#' metadata set. Package `stars` must be installed for this to work.
-#' * `rast()`: The data is returned as a `SpatRaster` object, with all relevant
+#' * `array()`: An array of the data which is organized as a standard R array
+#' with the axes of the data permuted to Y-X-others and Y-values in decreasing
+#' order. Dimnames will be set.
+#' * `terra()`: The data is returned as a `terra::SpatRaster` (3D) or
+#' `terra::SpatRasterDataset` (4D) object, with all relevant structural
 #' metadata set. Package `terra` must be installed for this to work.
-#' * `data.table()`: The data is returned as a `data.table`, with the first
-#' columns corresponding to the dimension values of the axes of the data,
-#' followed by a column "value". Package `data.table` must be installed for this
-#' to work.
 #'
 #' In general, the metadata from the netCDF resource will be lost when exporting
 #' to a different format insofar as those metadata are not recognized by the
@@ -31,8 +27,40 @@
 CFData <- R6::R6Class("CFData",
   inherit = CFObject,
   private = list(
+    # Set dimnames on self$value
     set_dimnames = function() {
-      # FIXME
+      dn <- lapply(1:length(dim(self$value)), function(ax) {
+        dimnames(self$axes[[ax]])
+      })
+      names(dn) <- sapply(1:length(dim(self$value)), function(ax) {self$axes[[ax]]$name})
+      dimnames(self$value) <- dn
+    },
+
+    # Orient self$value in such a way that it conforms to regular R arrays: axis
+    # order will be Y-X-others and Y values will go from the top to the bottom.
+    # Returns a new array.
+    orient = function() {
+      # Permute, if necessary
+      YX_order <- match(c("Y", "X"), sapply(self$axes, function(a) a$orientation))
+      if (!all(YX_order == c(1L, 2L))) {
+        all_axes <- seq(length(self$axes))
+        permutate <- c(YX_order, all_axes[!(all_axes %in% YX_order)])
+        out <- aperm(self$value, permutate)
+      } else out <- self$value
+
+      # Flip Y-axis, if necessary
+      ynames <- dimnames(out)[[1L]]
+      if (length(ynames) > 1L && as.numeric(ynames[2L]) > as.numeric(ynames[1L])) {
+        dn <- dimnames(out)
+        dims <- dim(out)
+        dim(out) <- c(dims[1L], prod(dims[-1L]))
+        out <- apply(out, 2, rev)
+        dim(out) <- dims
+        dn[[1L]] <- rev(dn[[1L]])
+        dimnames(out) <- dn
+      }
+
+      out
     }
   ),
   public = list(
@@ -98,6 +126,60 @@ CFData <- R6::R6Class("CFData",
     raw = function() {
       private$set_dimnames()
       self$value
+    },
+
+    #' @description Retrieve the data in the object in the form of an R array,
+    #' with axis ordering Y-X-others and Y values going from the top down.
+    #' @return An `array` of data in R ordering.
+    array = function() {
+      private$set_dimnames()
+      private$orient()
+    },
+
+    #' @description Convert the data to a `terra::SpatRaster` (3D) or a
+    #' `terra::SpatRasterDataset` (4D) object. The data
+    #' will be oriented to North-up. The 3rd dimension in the data will become
+    #' layers in the resulting `SpatRaster`, any 4th dimension the data sets.
+    #' @return A `terra::SpatRaster` or `terra::SpatRasterDataset` instance.
+    terra = function() {
+      if (!requireNamespace("terra", quietly = TRUE))
+        stop("Please install package 'terra' before using this funcionality")
+
+      # Extent
+      YX_order <- match(c("Y", "X"), sapply(self$axes, function(a) a$orientation))
+      Xbnds <- self$axes[[YX_order[2L]]]$bounds
+      if (inherits(Xbnds, "CFBounds")) Xbnds <- Xbnds$range()
+      else {
+        vals <- self$axes[[YX_order[2L]]]$values
+        halfres <- (vals[2L] - vals[1L]) * 0.5 # this assumes regular spacing
+        Xbnds <- c(vals[1L] - halfres, vals[length(vals)] + halfres)
+      }
+      Ybnds <- self$axes[[YX_order[1L]]]$bounds
+      if (inherits(Ybnds, "CFBounds")) Ybnds <- Ybnds$range()
+      else {
+        vals <- self$axes[[YX_order[1L]]]$values
+        halfres <- (vals[2L] - vals[1L]) * 0.5 # this assumes regular spacing
+        Ybnds <- c(vals[1L] - halfres, vals[length(vals)] + halfres)
+      }
+      ext <- c(Xbnds, Ybnds)
+
+      # CRS
+
+      dims <- length(dim(self$value))
+      if (dims == 4L)
+        terra::sds(self$array(), extent = ext)
+      else
+        terra::rast(self$array(), extent = ext)
+    # },
+    # Below code works in the console but not here
+    # data.table = function() {
+    #   if (!requireNamespace("data.table", quietly = TRUE))
+    #     stop("Please install package 'data.table' before using this funcionality")
+    #
+    #   dt <- data.table::as.data.table(self$raw())
+    #   cols <- c("lat", "lon")
+    #   dt[, (cols) := type.convert(.SD, as.is = TRUE), .SDcols = cols]
+    #   dt[dt[, do.call(order, .SD), .SDcols = cols]]
     }
   )
 )

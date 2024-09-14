@@ -289,29 +289,31 @@ CFVariable <- R6::R6Class("CFVariable",
       for (ax in 1:num_axes) {
         axis <- self$axes[[ax]]
 
-        if (!is.null(aux) && orientations[ax] == "X") { # Latitude
+        if (!is.null(aux) && orientations[ax] == "X") {
           start[ax] <- aux$X[1L]
           count[ax] <- aux$X[2L]
-          var <- NCVariable$new(-1L, private$llgrid$varLat$name, out_group, "NC_DOUBLE", 1L, NULL)
-          var$attributes <- private$llgrid$varLat$attributes
-          out_axis <- if (aux$X[2L] == 1L)
-            CFAxisScalar$new(out_group, var, "Y", aux$aoi$dimnames[[1L]])
-          else {
-            dim <- NCDimension$new(-1L, private$llgrid$varLat$name, aux$aoi$dim[1L], FALSE)
-            CFAxisLatitude$new(out_group, var, dim, aux$aoi$dimnames[[1L]])
-            # FIXME: set bounds
-          }
-        } else if (!is.null(aux) && orientations[ax] == "Y") { # Longitude
-          start[ax] <- aux$Y[1L]
-          count[ax] <- aux$Y[2L]
           var <- NCVariable$new(-1L, private$llgrid$varLong$name, out_group, "NC_DOUBLE", 1L, NULL)
           var$attributes <- private$llgrid$varLong$attributes
           out_axis <- if (aux$X[2L] == 1L)
             CFAxisScalar$new(out_group, var, "X", aux$aoi$dimnames[[2L]])
           else {
             dim <- NCDimension$new(-1L, private$llgrid$varLong$name, aux$aoi$dim[2L], FALSE)
-            CFAxisLongitude$new(out_group, var, dim, aux$aoi$dimnames[[2L]])
-            # FIXME: set bounds
+            newax <- CFAxisLongitude$new(out_group, var, dim, aux$aoi$dimnames[[2L]])
+            newax$bounds <- aux$aoi$bounds(out_group)$lon
+            newax
+          }
+        } else if (!is.null(aux) && orientations[ax] == "Y") {
+          start[ax] <- aux$Y[1L]
+          count[ax] <- aux$Y[2L]
+          var <- NCVariable$new(-1L, private$llgrid$varLat$name, out_group, "NC_DOUBLE", 1L, NULL)
+          var$attributes <- private$llgrid$varLat$attributes
+          out_axis <- if (aux$X[2L] == 1L)
+            CFAxisScalar$new(out_group, var, "Y", aux$aoi$dimnames[[1L]])
+          else {
+            dim <- NCDimension$new(-1L, private$llgrid$varLat$name, aux$aoi$dim[1L], FALSE)
+            newax <- CFAxisLatitude$new(out_group, var, dim, aux$aoi$dimnames[[1L]])
+            newax$bounds <- aux$aoi$bounds(out_group)$lat
+            newax
           }
         } else {
           rng <- NULL

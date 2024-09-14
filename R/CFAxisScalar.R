@@ -72,6 +72,12 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     friendlyClassName = function(value) {
       if (missing(value))
         "Scalar axis"
-      }
+    },
+
+    #' @field dimnames (read-only) The coordinate of the axis.
+    dimnames = function(value) {
+      if (missing(value))
+        self$value
+    }
   )
 )

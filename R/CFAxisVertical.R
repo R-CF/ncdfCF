@@ -63,6 +63,12 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
         private$terms <- value
         private$compute()
       }
+    },
+
+    #' @field dimnames (read-only) The coordinates of the axis.
+    dimnames = function(value) {
+      if (missing(value))
+        private$computed_values
     }
   )
 )

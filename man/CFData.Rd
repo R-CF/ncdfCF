@@ -16,16 +16,11 @@ formats:
 \item \code{raw()}: The data without any further processing. The axes are
 as they are stored in the netCDF resource; there is thus no guarantee as to
 how the data is organized in the array. Dimnames will be set.
-\item \code{array()}: An array of the data which is organized as a standard R array.
-Dimnames will be set.
-\item \code{stars()}: The data is returned as a \code{stars} object, with all relevant
-metadata set. Package \code{stars} must be installed for this to work.
+\item \code{array()}: An array of the data which is organized as a standard R array
+with the axes of the data permuted to Y-X-others and Y-values in decreasing
+order. Dimnames will be set.
 \item \code{rast()}: The data is returned as a \code{SpatRaster} object, with all relevant
 metadata set. Package \code{terra} must be installed for this to work.
-\item \code{data.table()}: The data is returned as a \code{data.table}, with the first
-columns corresponding to the dimension values of the axes of the data,
-followed by a column "value". Package \code{data.table} must be installed for this
-to work.
 }
 
 In general, the metadata from the netCDF resource will be lost when exporting
@@ -38,6 +33,8 @@ different format.
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
+\item{\code{group}}{The \link{NCGroup} that this variable is defined in.}
+
 \item{\code{value}}{The data of this object. The structure of the data depends
 on the method that produced it. Typical structures are an array or a
 \code{data.table}.}
@@ -51,7 +48,10 @@ are the axes of the data object.}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFData-new}{\code{CFData$new()}}
+\item \href{#method-CFData-print}{\code{CFData$print()}}
 \item \href{#method-CFData-raw}{\code{CFData$raw()}}
+\item \href{#method-CFData-array}{\code{CFData$array()}}
+\item \href{#method-CFData-rast}{\code{CFData$rast()}}
 \item \href{#method-CFData-clone}{\code{CFData$clone()}}
 }
 }
@@ -97,6 +97,16 @@ An instance of this class.
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFData-print"></a>}}
+\if{latex}{\out{\hypertarget{method-CFData-print}{}}}
+\subsection{Method \code{print()}}{
+Print a summary of the data object to the console.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFData$print()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFData-raw"></a>}}
 \if{latex}{\out{\hypertarget{method-CFData-raw}{}}}
 \subsection{Method \code{raw()}}{
@@ -109,6 +119,35 @@ by the operation on \code{CFVariable}.
 \subsection{Returns}{
 The data in the object. This is usually an \code{array} with the
 contents along axes varying.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFData-array"></a>}}
+\if{latex}{\out{\hypertarget{method-CFData-array}{}}}
+\subsection{Method \code{array()}}{
+Retrieve the data in the object in the form of an R array,
+with axis ordering Y-X-others and Y values going from the top down.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFData$array()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+An \code{array} of data in R ordering.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFData-rast"></a>}}
+\if{latex}{\out{\hypertarget{method-CFData-rast}{}}}
+\subsection{Method \code{rast()}}{
+Convert the data to a \code{terra::SpatRaster} object. The data
+will be oriented to North-up. The 3rd dimension in the data will become
+layers in the resulting \code{SpatRaster}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFData$rast()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A \code{terra::SpatRaster} instance.
 }
 }
 \if{html}{\out{<hr>}}

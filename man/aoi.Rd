@@ -33,10 +33,13 @@ vector in the order longitude minimum, maximum, latitude minimum, maximum.}
 
 \item{\code{resolution}}{Set or retrieve the resolution.}
 
-\item{\code{dim}}{(read-only) The dimensions of the grid of the AOI once generated.}
+\item{\code{dim}}{(read-only) The dimensions of the grid of the AOI once
+generated. Returned as a numeric vector with the dimensionality of the
+AOI in the Y and X directions, respectively.}
 
 \item{\code{dimnames}}{(read-only) Retrieve the dimnames of the AOI, in numeric
-form. These are the center points of the grid cells.}
+form, as a list with the dimnames of the AOI in the Y and X directions,
+respectively. These are the center points of the grid cells.}
 }
 \if{html}{\out{</div>}}
 }
@@ -45,6 +48,7 @@ form. These are the center points of the grid cells.}
 \itemize{
 \item \href{#method-AOI-new}{\code{AOI$new()}}
 \item \href{#method-AOI-print}{\code{AOI$print()}}
+\item \href{#method-AOI-bounds}{\code{AOI$bounds()}}
 \item \href{#method-AOI-clone}{\code{AOI$clone()}}
 }
 }
@@ -80,6 +84,28 @@ Summary of the area of interest
 \if{html}{\out{<div class="r">}}\preformatted{AOI$print()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-AOI-bounds"></a>}}
+\if{latex}{\out{\hypertarget{method-AOI-bounds}{}}}
+\subsection{Method \code{bounds()}}{
+Retrieve the bounds of the AOI.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{AOI$bounds(group)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{group}}{The group in which the bounds should be located. This should
+usually be the group that contains the \code{CFAxis} instances built from the
+AOI.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A list with two \link{CFBounds} instances in elements "lon" and "lat".
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-AOI-clone"></a>}}

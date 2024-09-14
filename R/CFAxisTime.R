@@ -120,13 +120,13 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     friendlyClassName = function(value) {
       if (missing(value))
         "Time axis"
+    },
+
+    #' @field dimnames (read-only) The coordinates of the axis as a character
+    #' vector.
+    dimnames = function(value) {
+      if (missing(value))
+        format(self$values)
     }
   )
 )
-
-# Public S3 methods ------------------------------------------------------------
-
-#' @export
-dimnames.CFAxisTime <- function(x) {
-  format(x$values)
-}
