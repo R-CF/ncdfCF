@@ -7,10 +7,6 @@
 #'
 #' @docType class
 #'
-#' @name CFAxis
-#' @format An \code{\link{R6Class}} generator object.
-NULL
-
 #' @export
 CFAxis <- R6::R6Class("CFAxis",
   inherit = CFObject,

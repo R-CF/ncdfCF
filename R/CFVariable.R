@@ -93,6 +93,11 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   are the axes of the variable.
     axes  = list(),
 
+    #' @field grid_mapping The [CFGridMapping] of this variable. If this field
+    #' is `NULL`, the horizontal component of the axes are in decimal degrees of
+    #' longitude and latitude.
+    grid_mapping = NULL,
+
     #' @description Create an instance of this class.
     #'
     #' @param grp The group that this CF variable lives in.
@@ -116,6 +121,11 @@ CFVariable <- R6::R6Class("CFVariable",
       longname <- self$attribute("long_name")
       if (length(longname) && longname != self$name)
         cat("Long name:", longname, "\n")
+
+      if (!is.null(self$grid_mapping)) {
+        cat("\nGrid mapping:\n")
+        print(.slim.data.frame(self$grid_mapping$brief(), 50L), right = FALSE, row.names = FALSE)
+      }
 
       cat("\nAxes:\n")
       axes <- do.call(rbind, lapply(self$axes, function(a) a$brief()))
@@ -269,6 +279,12 @@ CFVariable <- R6::R6Class("CFVariable",
       names(axis_order) <- c("X", "Y", "Z", "T")
 
       sub_names <- names(subset)
+
+      if (all(c("X", "Y") %in% sub_names) && inherits(private$llgrid, "CFAuxiliaryLongLat")) {
+        aux <- private$auxiliary_interpolation(subset, lonlat)
+        sub_names <- sub_names[!grepl("X|Y", sub_names)]
+      } else aux <- NULL
+
       bad <- sub_names[!(sub_names %in% c(axis_names, orientations))]
       if (length(bad))
         stop("Argument `subset` contains elements not corresponding to an axis:", paste(bad, collapse = ", "))
@@ -276,10 +292,6 @@ CFVariable <- R6::R6Class("CFVariable",
       out_group <- MemoryGroup$new(-1L, "Memory_group", "/Memory_group", NULL,
                                    paste("Processing result of variable", self$name),
                                    paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::subset()"))
-
-      if (all(c("X", "Y") %in% sub_names) && inherits(private$llgrid, "CFAuxiliaryLongLat")) {
-        aux <- private$auxiliary_interpolation(subset, lonlat)
-      } else aux <- NULL
 
       start <- rep(1L, num_axes)
       count <- rep(NA_integer_, num_axes)
@@ -351,17 +363,21 @@ CFVariable <- R6::R6Class("CFVariable",
         dim(d) <- c(aux$box, ZT_dim)
       }
 
-      # Sanitize the attributes, as required
+      # Sanitize the attributes and CRS for the result, as required
       atts <- self$attributes
-      atts <- atts[!(atts$name == "coordinates"), ]
+      atts <- atts[!(atts$name == "coordinates"), ]     # drop: these have been set in axes
       if (!is.null(aux)) {
-        atts <- atts[!(atts$name == "grid_mapping"), ]
+        atts <- atts[!(atts$name == "grid_mapping"), ]  # drop: warped to lat-long
+        crs <- EPSG4326
+      } else {
+        crs <- self$grid_mapping$crs()
+        if (is.null(crs)) crs <- EPSG4326
       }
 
       # Assemble the CFData instance
       axes <- c(out_axes_dim, out_axes_other)
       names(axes) <- sapply(axes, function(a) a$name)
-      CFData$new(self$name, out_group, d, axes, atts)
+      CFData$new(self$name, out_group, d, axes, crs, atts)
     }
   ),
   active = list(

@@ -43,6 +43,10 @@ x
 
 \item{\code{axes}}{List of instances of classes descending from \link{CFAxis} that
 are the axes of the variable.}
+
+\item{\code{grid_mapping}}{The \link{CFGridMapping} of this variable. If this field
+is \code{NULL}, the horizontal component of the axes are in decimal degrees of
+longitude and latitude.}
 }
 \if{html}{\out{</div>}}
 }

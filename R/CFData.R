@@ -76,6 +76,9 @@ CFData <- R6::R6Class("CFData",
     #'   are the axes of the data object.
     axes  = list(),
 
+    #' @field crs Character string of the WKT of the CRS of the data object.
+    crs = "",
+
     #' @description Create an instance of this class.
     #' @param name The name of the object.
     #' @param group The group that this data should live in. This is usually an
@@ -85,10 +88,11 @@ CFData <- R6::R6Class("CFData",
     #'   on the method that produced it.
     #' @param axes A `list` of [CFAxis] descendant instances that describe the
     #'   axes of the argument `value`.
+    #' @param crs The WKT string of the CRS of this data object.
     #' @param attributes A `data.frame` with the attributes associated with the
     #'   data in argument `value`.
     #' @return An instance of this class.
-    initialize = function(name, group, value, axes, attributes) {
+    initialize = function(name, group, value, axes, crs, attributes) {
       var <- NCVariable$new(-1L, name, group, "NC_FLOAT", 0L, NULL)
       var$attributes <- attributes
       super$initialize(var)
@@ -96,6 +100,7 @@ CFData <- R6::R6Class("CFData",
       self$group <- group
       self$value <- value
       self$axes <- axes
+      self$crs <- crs
     },
 
     #' @description Print a summary of the data object to the console.
@@ -163,13 +168,21 @@ CFData <- R6::R6Class("CFData",
       }
       ext <- c(Xbnds, Ybnds)
 
-      # CRS
+      arr <- self$array()
+      numdims <- length(dim(self$value))
+      dn <- dimnames(arr)
+      if (numdims == 4L) {
+        r <- terra::sds(arr, extent = ext, crs = self$crs)
+        for (d4 in seq_along(dn[[4L]]))
+          names(r[d4]) <- dn[[3L]]
+        names(r) <- dn[[4L]]
+      } else {
+        r <- terra::rast(arr, extent = ext, crs = self$crs)
+        if (numdims == 3L)
+          names(r) <- dn[[3L]]
+      }
 
-      dims <- length(dim(self$value))
-      if (dims == 4L)
-        terra::sds(self$array(), extent = ext)
-      else
-        terra::rast(self$array(), extent = ext)
+      r
     # },
     # Below code works in the console but not here
     # data.table = function() {

@@ -42,6 +42,7 @@ thus always returns \code{NULL}.
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCGroup" data-id="axes"><a href='../../ncdfCF/html/NCGroup.html#method-NCGroup-axes'><code>ncdfCF::NCGroup$axes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCGroup" data-id="find_by_name"><a href='../../ncdfCF/html/NCGroup.html#method-NCGroup-find_by_name'><code>ncdfCF::NCGroup$find_by_name()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCGroup" data-id="fullnames"><a href='../../ncdfCF/html/NCGroup.html#method-NCGroup-fullnames'><code>ncdfCF::NCGroup$fullnames()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCGroup" data-id="grid_mappings"><a href='../../ncdfCF/html/NCGroup.html#method-NCGroup-grid_mappings'><code>ncdfCF::NCGroup$grid_mappings()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCGroup" data-id="hierarchy"><a href='../../ncdfCF/html/NCGroup.html#method-NCGroup-hierarchy'><code>ncdfCF::NCGroup$hierarchy()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCGroup" data-id="print"><a href='../../ncdfCF/html/NCGroup.html#method-NCGroup-print'><code>ncdfCF::NCGroup$print()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCGroup" data-id="variables"><a href='../../ncdfCF/html/NCGroup.html#method-NCGroup-variables'><code>ncdfCF::NCGroup$variables()</code></a></span></li>

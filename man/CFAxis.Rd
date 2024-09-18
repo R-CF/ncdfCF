@@ -3,15 +3,14 @@
 \docType{class}
 \name{CFAxis}
 \alias{CFAxis}
-\title{CF axis object}
-\format{
-An \code{\link{R6Class}} generator object.
-}
+\title{Find indices in the axis domain}
 \description{
 This class is a basic ancestor to all classes that represent CF
 axes. More useful classes use this class as ancestor.
 }
 \details{
+CF axis object
+
 The fields in this class are common among all CF axis objects.
 }
 \examples{

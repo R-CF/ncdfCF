@@ -48,6 +48,7 @@ NCGroup <- R6::R6Class("NCGroup",
     CFvars    = list(), # of CFVariable
     CFaxes    = list(), # of CFAxis
     CFaux     = list(), # of CFAuxiliaryLongLat
+    CFcrs     = list(), # of CFGridMapping
 
     #' @noRd
     initialize = function(id, name, fullname, parent, resource) {
@@ -112,8 +113,8 @@ NCGroup <- R6::R6Class("NCGroup",
     #'
     #' @param name The name of an object, with an optional absolute or relative
     #'   group path from the calling group. The object must either an CF
-    #'   construct (data variable, axis, or auxiliary axis) or an NC group,
-    #'   dimension or variable.
+    #'   construct (data variable, axis, auxiliary axis, or grid mapping) or an
+    #'   NC group, dimension or variable.
     #' @param scope Either "CF" (default) for a CF construct, or "NC" for a
     #'   netCDF group, dimension or variable.
     #'
@@ -163,6 +164,9 @@ NCGroup <- R6::R6Class("NCGroup",
 
           idx <- which(names(g$CFaux) == nm)
           if (length(idx)) return(g$CFaux[[idx]])
+
+          idx <- which(names(g$CFcrs) == nm)
+          if (length(idx)) return(g$CFcrs[[idx]])
         } else {
           idx <- which(names(g$NCvars) == nm)
           if (length(idx)) return(g$NCvars[[idx]])
@@ -262,6 +266,22 @@ NCGroup <- R6::R6Class("NCGroup",
         subaxes <- lapply(self$subgroups, function(g) g$axes(recursive))
       else subaxes <- list()
       c(self$CFaxes, unlist(subaxes))
+    },
+
+    #' List the grid mappings of CF data variables in this group
+    #'
+    #' This method lists the grid mappings located in this group, optionally
+    #' including grid mappings in subgroups.
+    #'
+    #' @param recursive Should subgroups be scanned for grid mappings too
+    #'   (default is `TRUE`)?
+    #'
+    #' @return A list of `CFGridMapping` instances.
+    grid_mappings = function(recursive = TRUE) {
+      if (recursive && length(self$subgroups))
+        subgm <- lapply(self$subgroups, function(g) g$grid_mappings(recursive))
+      else subgm <- list()
+      c(self$CFcrs, unlist(subgm))
     }
   ),
   active = list(

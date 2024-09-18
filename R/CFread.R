@@ -62,6 +62,9 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   # Auxiliary CVs and scalar CVs
   .makeCoordinates(root)
 
+  # Coordinate reference systems
+  .makeCRS(root)
+
   # Identify variables
   if (length(axes) > 0L)
     vars <- .buildVariables(root, axes)
@@ -403,6 +406,35 @@ open_ncdf <- function(resource, keep_open = FALSE) {
     lapply(grp$subgroups, function(g) .makeCoordinates(g))
 }
 
+#' Make CRS instances for "grid_mapping" references
+#'
+#' NC variables are scanned for a "grid_mapping_name" attribute. The NC variable
+#' referenced is converted into a CFGridMapping instance in the group where its
+#' NC variable is located.
+#'
+#' @param grp The group to scan.
+#'
+#' @return Nothing. CFGridMapping instances are created in the groups where the
+#'   NC variables are found. These will later be picked up when CFvariables are
+#'   created.
+#' @noRd
+.makeCRS <- function(grp) {
+  if (length(grp$NCvars) > 0L) {
+    # Scan each unused NCVariable for the "grid_mapping_name" property and process.
+    for (refid in seq_along(grp$NCvars)) {
+      v <- grp$NCvars[[refid]]
+      if (!length(v$CF) && length(gm <- v$attribute("grid_mapping_name")))
+        grp$CFcrs <- append(grp$CFcrs, CFGridMapping$new(grp, v, gm))
+    }
+    if (length(grp$CFcrs))
+      names(grp$CFcrs) <- sapply(grp$CFcrs, function(c) c$name)
+  }
+
+  # Descend into subgroups
+  if (length(grp$subgroups))
+    lapply(grp$subgroups, function(g) .makeCRS(g))
+}
+
 # Utility function to read bounds values
 .readBounds <- function(grp, bounds) {
   if (length(bounds) > 0L && is.na(bounds)) NULL
@@ -416,7 +448,6 @@ open_ncdf <- function(resource, keep_open = FALSE) {
     }
   }
 }
-
 
 #' Build CF variables from unused dimensional NC variables
 #'
@@ -460,8 +491,18 @@ open_ncdf <- function(resource, keep_open = FALSE) {
             }
           }
 
-          if (inherits(varLon, "NCVariable") && inherits(varLat, "NCVariable"))
-            var$gridLongLat <- varLon$group$find_by_name(paste(varLon$name, varLat$name, sep = "_"), "CF")
+          if (inherits(varLon, "NCVariable") && inherits(varLat, "NCVariable")) {
+            aux <- varLon$group$find_by_name(paste(varLon$name, varLat$name, sep = "_"), "CF")
+            if (!is.null(aux)) var$gridLongLat <- aux
+          }
+        }
+
+        # Add grid mapping
+        gm <- v$attribute("grid_mapping")
+        if (length(gm)) {
+          gm <- v$group$find_by_name(gm, "CF")
+          if (inherits(gm, "CFGridMapping"))
+            var$grid_mapping <- gm
         }
 
         var

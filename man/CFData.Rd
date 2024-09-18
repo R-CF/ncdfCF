@@ -19,7 +19,8 @@ how the data is organized in the array. Dimnames will be set.
 \item \code{array()}: An array of the data which is organized as a standard R array
 with the axes of the data permuted to Y-X-others and Y-values in decreasing
 order. Dimnames will be set.
-\item \code{rast()}: The data is returned as a \code{SpatRaster} object, with all relevant
+\item \code{terra()}: The data is returned as a \code{terra::SpatRaster} (3D) or
+\code{terra::SpatRasterDataset} (4D) object, with all relevant structural
 metadata set. Package \code{terra} must be installed for this to work.
 }
 
@@ -41,6 +42,8 @@ on the method that produced it. Typical structures are an array or a
 
 \item{\code{axes}}{List of instances of classes descending from \link{CFAxis} that
 are the axes of the data object.}
+
+\item{\code{crs}}{Character string of the WKT of the CRS of the data object.}
 }
 \if{html}{\out{</div>}}
 }
@@ -51,7 +54,7 @@ are the axes of the data object.}
 \item \href{#method-CFData-print}{\code{CFData$print()}}
 \item \href{#method-CFData-raw}{\code{CFData$raw()}}
 \item \href{#method-CFData-array}{\code{CFData$array()}}
-\item \href{#method-CFData-rast}{\code{CFData$rast()}}
+\item \href{#method-CFData-terra}{\code{CFData$terra()}}
 \item \href{#method-CFData-clone}{\code{CFData$clone()}}
 }
 }
@@ -69,7 +72,7 @@ are the axes of the data object.}
 \subsection{Method \code{new()}}{
 Create an instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFData$new(name, group, value, axes, attributes)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFData$new(name, group, value, axes, crs, attributes)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -86,6 +89,8 @@ on the method that produced it.}
 
 \item{\code{axes}}{A \code{list} of \link{CFAxis} descendant instances that describe the
 axes of the argument \code{value}.}
+
+\item{\code{crs}}{The WKT string of the CRS of this data object.}
 
 \item{\code{attributes}}{A \code{data.frame} with the attributes associated with the
 data in argument \code{value}.}
@@ -136,18 +141,19 @@ An \code{array} of data in R ordering.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFData-rast"></a>}}
-\if{latex}{\out{\hypertarget{method-CFData-rast}{}}}
-\subsection{Method \code{rast()}}{
-Convert the data to a \code{terra::SpatRaster} object. The data
+\if{html}{\out{<a id="method-CFData-terra"></a>}}
+\if{latex}{\out{\hypertarget{method-CFData-terra}{}}}
+\subsection{Method \code{terra()}}{
+Convert the data to a \code{terra::SpatRaster} (3D) or a
+\code{terra::SpatRasterDataset} (4D) object. The data
 will be oriented to North-up. The 3rd dimension in the data will become
-layers in the resulting \code{SpatRaster}.
+layers in the resulting \code{SpatRaster}, any 4th dimension the data sets.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFData$rast()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFData$terra()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
-A \code{terra::SpatRaster} instance.
+A \code{terra::SpatRaster} or \code{terra::SpatRasterDataset} instance.
 }
 }
 \if{html}{\out{<hr>}}
