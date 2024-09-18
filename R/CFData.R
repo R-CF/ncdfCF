@@ -111,7 +111,8 @@ CFData <- R6::R6Class("CFData",
         cat("Long name:", longname, "\n")
 
       rng <- range(self$value, na.rm = TRUE)
-      cat("\nValues: [", rng[1L], " ... ", rng[2L], "]\n", sep = "")
+      units <- self$attribute("units")
+      cat("\nValues: [", rng[1L], " ... ", rng[2L], "] ", units, "\n", sep = "")
       cat("    NA:", sum(is.na(self$value)), "\n")
 
       cat("\nAxes:\n")

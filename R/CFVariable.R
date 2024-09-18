@@ -370,8 +370,9 @@ CFVariable <- R6::R6Class("CFVariable",
         atts <- atts[!(atts$name == "grid_mapping"), ]  # drop: warped to lat-long
         crs <- EPSG4326
       } else {
-        crs <- self$grid_mapping$crs()
-        if (is.null(crs)) crs <- EPSG4326
+        gm <- self$grid_mapping
+        if (is.null(gm)) crs <- EPSG4326
+        else crs <- gm$crs()
       }
 
       # Assemble the CFData instance
