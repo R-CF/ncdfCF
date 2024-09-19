@@ -207,7 +207,7 @@ CFDataset <- R6::R6Class("CFDataset",
     conventions = function(value) {
       if (missing(value)) {
         conv <- self$root$attribute("Conventions")
-        if (!length(conv)) conv <- "(not indicated)"
+        if (!nzchar(conv)) conv <- "(not indicated)"
         conv
       }
     }

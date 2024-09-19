@@ -209,7 +209,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   standard <- props["standard_name"]
 
   # Z: standard_names and formula_terms for parametric vertical axis
-  if (!is.na(standard) && standard %in% Z_parametric_standard_names)
+  if (standard %in% Z_parametric_standard_names)
     return(.makeParametricAxis(grp, var, dim, vals, standard))
 
   # Does the axis have bounds?
@@ -217,9 +217,9 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 
   # See if we have a "units" attribute that makes time
   units <- props["units"]
-  if (!is.na(units)) {
+  if (nzchar(units)) {
     cal <- props["calendar"]
-    if (is.na(cal)) cal <- "standard"
+    if (!nzchar(cal)) cal <- "standard"
     cf <- try(CFtime::CFtime(units, cal, vals), silent = TRUE)
     if (!inherits(cf, "try-error")) {
       if (!is.null(CFbounds))
@@ -232,20 +232,19 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 
   # Orientation of the axis
   orient <- props["axis"]
-  if (is.na(orient)) {
-    if (!is.na(units)) {
+  if (!nzchar(orient)) {
+    if (nzchar(units)) {
       if (grepl("^degree(s?)(_?)(east|E)$", units)) orient <- "X"
       else if (grepl("^degree(s?)(_?)(north|N)$", units)) orient <- "Y"
     }
   }
-  if (is.na(orient)) {
+  if (!nzchar(orient)) {
     # Last option: standard_name, only X and Y
-    if (!is.na(standard)) {
+    if (nzchar(standard)) {
       if (standard == "longitude") orient <- "X"
       else if (standard == "latitude") orient <- "Y"
     }
   }
-  if (is.na(orient)) orient <- "" # Fallback value if not set
 
   axis <- if (orient == "X")
     CFAxisLongitude$new(grp, var, dim, vals)
@@ -310,7 +309,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 
   # Get the formula terms
   ft <- var$attribute("formula_terms")
-  if (!is.na(ft)) {
+  if (nzchar(ft)) {
     ft <- trimws(strsplit(ft, " ")[[1L]], whitespace = ":")
     dim(ft) <- c(2, length(ft) * 0.5)
     rownames(ft) <- c("term", "variable")
@@ -350,7 +349,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
     for (refid in seq_along(grp$NCvars)) {
       v <- grp$NCvars[[refid]]
       if (!length(v$CF) && length(vdimids <- v$dimids) &&
-          length(coords <- v$attribute("coordinates"))) {
+          nzchar(coords <- v$attribute("coordinates"))) {
         coords <- strsplit(coords, " ", fixed = TRUE)[[1L]]
         varLon <- varLat <- bndsLon <- bndsLat <- NA
         for (cid in seq_along(coords)) {
@@ -365,7 +364,6 @@ open_ncdf <- function(resource, keep_open = FALSE) {
               val <- try(RNetCDF::var.get.nc(grp$handle, aux$name), silent = TRUE)
               if (inherits(val, "try-error")) val <- NULL
               orient <- aux$attribute("axis")
-              if (!length(orient)) orient <- ""
               scalar <- CFAxisScalar$new(aux$group, aux, orient, val)
               scalar$bounds <- .readBounds(aux$group, bounds)
               aux$group$CFaxes[[aux$name]] <- scalar
@@ -377,7 +375,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
                 # "degrees_east" or "degrees_north" it is a longitude or latitude,
                 # respectively. Record the fact and move on.
                 units <- aux$attribute("units")
-                if (!is.na(units)) {
+                if (nzchar(units)) {
                   if (grepl("^degree(s?)(_?)(east|E)$", units)) {
                     varLon <- aux
                     bndsLon <- .readBounds(aux$group, bounds)
@@ -423,7 +421,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
     # Scan each unused NCVariable for the "grid_mapping_name" property and process.
     for (refid in seq_along(grp$NCvars)) {
       v <- grp$NCvars[[refid]]
-      if (!length(v$CF) && length(gm <- v$attribute("grid_mapping_name")))
+      if (!length(v$CF) && nzchar(gm <- v$attribute("grid_mapping_name")))
         grp$CFcrs <- append(grp$CFcrs, CFGridMapping$new(grp, v, gm))
     }
     if (length(grp$CFcrs))
@@ -437,7 +435,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 
 # Utility function to read bounds values
 .readBounds <- function(grp, bounds) {
-  if (length(bounds) > 0L && is.na(bounds)) NULL
+  if (!nzchar(bounds)) NULL
   else {
     NCbounds <- grp$find_by_name(bounds, "NC")
     if (is.null(NCbounds)) NULL
@@ -475,7 +473,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 
         # Add references to any "coordinates" of the variable
         varLon <- varLat <- NULL
-        if (length(coords <- v$attribute("coordinates"))) {
+        if (nzchar(coords <- v$attribute("coordinates"))) {
           coords <- strsplit(coords, " ", fixed = TRUE)[[1L]]
           for (cid in seq_along(coords)) {
             aux <- grp$find_by_name(coords[cid], "CF")
@@ -484,7 +482,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
             else {
               aux <- grp$find_by_name(coords[cid], "NC")
               units <- aux$attribute("units")
-              if (!is.na(units)) {
+              if (nzchar(units)) {
                 if (grepl("^degree(s?)(_?)(east|E)$", units)) varLon <- aux
                 else if (grepl("^degree(s?)(_?)(north|N)$", units)) varLat <- aux
               }
@@ -499,7 +497,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 
         # Add grid mapping
         gm <- v$attribute("grid_mapping")
-        if (length(gm)) {
+        if (nzchar(gm)) {
           gm <- v$group$find_by_name(gm, "CF")
           if (inherits(gm, "CFGridMapping"))
             var$grid_mapping <- gm

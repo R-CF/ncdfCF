@@ -22,9 +22,9 @@ CFVariable <- R6::R6Class("CFVariable",
 
     .varProperties = function() {
       unit <- self$attribute("units")
-      if (!length(unit)) unit <- ""
+      if (!nzchar(unit)) unit <- ""
       longname <- self$attribute("long_name")
-      if (!length(longname)) longname <- ""
+      if (!nzchar(longname)) longname <- ""
       if (longname == self$name) longname <- ""
       list(longname = longname, unit = unit)
     },
@@ -119,7 +119,7 @@ CFVariable <- R6::R6Class("CFVariable",
         cat("Group    :", self$group$name, "\n")
 
       longname <- self$attribute("long_name")
-      if (length(longname) && longname != self$name)
+      if (nzchar(longname) && longname != self$name)
         cat("Long name:", longname, "\n")
 
       if (!is.null(self$grid_mapping)) {

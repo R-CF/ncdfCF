@@ -40,13 +40,13 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
         cat("Group    :", self$group$fullname, "\n")
 
       longname <- self$attribute("long_name")
-      if (length(longname) && longname != self$name)
+      if (nzchar(longname) && longname != self$name)
         cat("Long name:", longname, "\n")
 
       cat("Axis     :", self$orientation, "\n")
 
       units <- self$attribute("units")
-      if (!length(units)) units <- ""
+      if (!nzchar(units)) units <- ""
       cat("Value    : ", self$value, " ", units, "\n", sep = "")
       if (inherits(self$bounds, "CFBounds"))
         self$bounds$print()
@@ -58,9 +58,9 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     #' @description Retrieve a 1-row data.frame with some information on this axis.
     brief = function() {
       longname <- self$attribute("long_name")
-      if (!length(longname) || longname == self$name) longname <- ""
+      if (!nzchar(longname) || longname == self$name) longname <- ""
       units <- self$attribute("units")
-      if (!length(units)) units <- ""
+      if (!nzchar(units)) units <- ""
 
       data.frame(id = "", axis = self$orientation, group = self$group$fullname,
                  name = self$name, long_name = longname, length = 1L,

@@ -59,7 +59,7 @@ CFAxis <- R6::R6Class("CFAxis",
         cat("Group    :", self$group$fullname, "\n")
 
       longname <- self$attribute("long_name")
-      if (length(longname) && longname != self$name)
+      if (nzchar(longname) && longname != self$name)
         cat("Long name:", longname, "\n")
 
       cat("Length   :", self$NCdim$length)
@@ -72,10 +72,10 @@ CFAxis <- R6::R6Class("CFAxis",
     #' @return A 1-row `data.frame` with some details of the axis.
     brief = function() {
       longname <- self$attribute("long_name")
-      if (!length(longname) || longname == self$name) longname <- ""
+      if (!nzchar(longname) || longname == self$name) longname <- ""
       unlim <- if (self$NCdim$unlim) "U" else ""
       units <- self$attribute("units")
-      if (!length(units)) units <- ""
+      if (!nzchar(units)) units <- ""
 
       data.frame(id = self$dimid, axis = self$orientation, group = self$group$fullname,
                  name = self$name, long_name = longname, length = self$NCdim$length,

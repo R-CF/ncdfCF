@@ -107,7 +107,7 @@ CFData <- R6::R6Class("CFData",
     print = function() {
       cat("<Data>", self$name, "\n")
       longname <- self$attribute("long_name")
-      if (length(longname) && longname != self$name)
+      if (nzchar(longname) && longname != self$name)
         cat("Long name:", longname, "\n")
 
       rng <- range(self$value, na.rm = TRUE)

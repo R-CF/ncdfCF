@@ -32,7 +32,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       super$print()
 
       units <- self$attribute("units")
-      if (!length(units)) units <- ""
+      if (!nzchar(units)) units <- ""
       len <- length(self$values)
       if (len < 7L) {
         vals <- trimws(formatC(self$values, digits = 8L))
