@@ -40,10 +40,14 @@ CFData <- R6::R6Class("CFData",
     # order will be Y-X-others and Y values will go from the top to the bottom.
     # Returns a new array.
     orient = function() {
+      # Drop any CFAxisScalar axes
+      axes <- lapply(self$axes, function(ax) if (!inherits(ax, "CFAxisScalar")) ax$orientation)
+      axes <- unlist(axes[lengths(axes) > 0L])
+
       # Permute, if necessary
-      YX_order <- match(c("Y", "X"), sapply(self$axes, function(a) a$orientation))
+      YX_order <- match(c("Y", "X"), axes)
       if (!all(YX_order == c(1L, 2L))) {
-        all_axes <- seq(length(self$axes))
+        all_axes <- seq(length(axes))
         permutate <- c(YX_order, all_axes[!(all_axes %in% YX_order)])
         out <- aperm(self$value, permutate)
       } else out <- self$value
@@ -76,7 +80,7 @@ CFData <- R6::R6Class("CFData",
     #'   are the axes of the data object.
     axes  = list(),
 
-    #' @field crs Character string of the WKT of the CRS of the data object.
+    #' @field crs Character string of the WKT2 of the CRS of the data object.
     crs = "",
 
     #' @description Create an instance of this class.
@@ -113,7 +117,8 @@ CFData <- R6::R6Class("CFData",
       rng <- range(self$value, na.rm = TRUE)
       units <- self$attribute("units")
       cat("\nValues: [", rng[1L], " ... ", rng[2L], "] ", units, "\n", sep = "")
-      cat("    NA:", sum(is.na(self$value)), "\n")
+      NAs <- sum(is.na(self$value))
+      cat(sprintf("    NA: %d (%.1f%%)\n", NAs, NAs * 100 / length(self$value)))
 
       cat("\nAxes:\n")
       axes <- do.call(rbind, lapply(self$axes, function(a) a$brief()))
@@ -184,7 +189,7 @@ CFData <- R6::R6Class("CFData",
       }
 
       r
-    # },
+    } #,
     # Below code works in the console but not here
     # data.table = function() {
     #   if (!requireNamespace("data.table", quietly = TRUE))
@@ -194,6 +199,6 @@ CFData <- R6::R6Class("CFData",
     #   cols <- c("lat", "lon")
     #   dt[, (cols) := type.convert(.SD, as.is = TRUE), .SDcols = cols]
     #   dt[dt[, do.call(order, .SD), .SDcols = cols]]
-    }
+    # }
   )
 )

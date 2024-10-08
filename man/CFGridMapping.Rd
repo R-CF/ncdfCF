@@ -90,13 +90,21 @@ Retrieve a 1-row \code{data.frame} with some information on this grid mapping.
 \if{html}{\out{<a id="method-CFGridMapping-crs"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGridMapping-crs}{}}}
 \subsection{Method \code{crs()}}{
-Retrieve the CRS string.
+Retrieve the CRS string for a specific variable.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$crs()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$crs(axis_info)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{axis_info}}{A list with information that describes the axes of the
+\code{CFVariable} or \code{CFData} instance to describe.}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
-A character string with the CRS.
+A character string with the CRS in WKT2 format.
 }
 }
 \if{html}{\out{<hr>}}

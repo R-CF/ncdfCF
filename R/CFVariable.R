@@ -83,6 +83,41 @@ CFVariable <- R6::R6Class("CFVariable",
       # aoi = the AOI that was used to index
       # box = the dim of the original index
       list(index = index, X = c(ry[1L], rows), Y = c(rx[1L], cols), aoi = private$llgrid$aoi, box = dim_index)
+    },
+
+    # Return the axis information from this variable to construct a WKT2 string
+    # of the CRS of this variable. Returns a list with relevant information.
+    # In the EPSG database, X and Y UOMs are always the same. Hence only one UOM
+    # is reported back.
+    # Furthermore, axis order is considered important only in the context of
+    # providing coordinated tuples to a coordinate transformation engine,
+    # something this package is not concerned with. Consequently, axis order is
+    # always reported as the standard X,Y. R packages like terra and stars deal
+    # with the idiosyncracies of R arrays. This has been tested with the
+    # results of [CFData] functions.
+    # This method may be extended in the future to inject more intelligence into
+    # the WKT2 strings produced. Currently it just returns the "units" string of
+    # the X axis (the Y axis has the same unit), and the Z axis, if present, in
+    # a list.
+    wkt2_axis_info = function() {
+      # Horizontal axes unit
+      x_attributes <- c("projection_x_coordinate", "grid_longitude", "projection_x_angular_coordinate")
+      ax <- lapply(self$axes, function(x) {
+        if (x$attribute("standard_name") %in% x_attributes) x
+      })
+      ax <- ax[lengths(ax) > 0L]
+      horz <- if (length(ax) > 0L) list(LENGTHUNIT = ax[[1L]]$attribute("units"))
+              else list()
+
+      # Vertical axes unit
+      z <- sapply(self$axes, function(x) x$orientation)
+      ndx <- which(z == "Z")
+      vert <- if (length(ndx)) {
+        z <- self$axes[[ndx]]
+        if (inherits(z, "CFAxis")) list(VERTINFO = z$attribute(c("standard_name", "positive", "units")))
+        else list()
+      } else list()
+      c(horz, vert)
     }
   ),
   public = list(
@@ -162,6 +197,22 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @return Character string with very basic variable information.
     shard = function() {
       self$NCvar$shard()
+    },
+
+    #' @description Retrieve all data of the variable. Scalar variables are not
+    #' present in the result.
+    #'
+    #' @return A [CFData] instance with all data from this variable.
+    data = function() {
+      out_group <- MemoryGroup$new(-1L, "Memory_group", "/Memory_group", NULL,
+                                   paste("Data copy of variable", self$name),
+                                   paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::data()"))
+      axes <- lapply(self$axes, function(ax) ax$clone())
+      d <- RNetCDF::var.get.nc(self$NCvar$group$handle, self$name, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+      atts <- self$attributes
+      atts <- atts[!(atts$name == "coordinates"), ]
+
+      CFData$new(self$name, out_group, d, axes, self$crs, atts)
     },
 
     #' @description Extract data from the variable
@@ -254,18 +305,6 @@ CFVariable <- R6::R6Class("CFVariable",
     #'
     #' @aliases CFVariable$subset
     #'
-    #' @examples
-    #' fn <- system.file("extdata",
-    #'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
-    #'   package = "ncdfCF")
-    #' ds <- open_ncdf(fn)
-    #' pr <- ds[["pr"]]
-    #'
-    #' # Precipitation data for March for a small area
-    #' x <- pr$subset(subset = list(X = c(9, 11),
-    #'                              Y = 42:45,
-    #'                              T = c("2024-03-01", "2024-04-01")))
-    #' x
     subset = function(subset, lonlat = NULL, rightmost.closed = FALSE, ...) {
       num_axes <- length(self$axes)
       if (!num_axes)
@@ -363,16 +402,15 @@ CFVariable <- R6::R6Class("CFVariable",
         dim(d) <- c(aux$box, ZT_dim)
       }
 
-      # Sanitize the attributes and CRS for the result, as required
+      # Sanitize the attributes for the result, as required
       atts <- self$attributes
       atts <- atts[!(atts$name == "coordinates"), ]     # drop: these have been set in axes
-      if (!is.null(aux)) {
+
+      # Get a proper CRS
+      if (is.null(aux)) crs <- self$crs
+      else {
         atts <- atts[!(atts$name == "grid_mapping"), ]  # drop: warped to lat-long
-        crs <- EPSG4326
-      } else {
-        gm <- self$grid_mapping
-        if (is.null(gm)) crs <- EPSG4326
-        else crs <- gm$crs()
+        crs <- .wkt2_crs_geo(4326L)
       }
 
       # Assemble the CFData instance
@@ -401,6 +439,21 @@ CFVariable <- R6::R6Class("CFVariable",
         ax2 <- sapply(self$axes, function(x) if (x$dimid == dimids[[2L]]) x$orientation)
         ax2 <- ax2[lengths(ax2) > 0L]
         c(ax1[[1L]], ax2[[1L]])
+      }
+    },
+
+    #' @field crs (read-only) Retrieve the coordinate reference system
+    #' description of the variable as a WKT2 string.
+    crs = function(value) {
+      if (missing(value)) {
+        # Get the axis information to inform the CRS
+        info <- private$wkt2_axis_info()
+
+        # If no grid_mapping has been set, return the default GEOGCRS
+        if (is.null(self$grid_mapping))
+          .wkt2_crs_geo(4326)
+        else
+          self$grid_mapping$crs(info)
       }
     }
   )
@@ -461,7 +514,7 @@ dimnames.CFVariable <- function(x) {
 #' @docType methods
 #' @examples
 #' fn <- system.file("extdata",
-#'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
+#'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20230101-20231231_vncdfCF.nc",
 #'   package = "ncdfCF")
 #' ds <- open_ncdf(fn)
 #' pr <- ds[["pr"]]

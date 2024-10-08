@@ -1,0 +1,88 @@
+"coord_sys_code","coord_sys_name","coord_sys_type","dimension"
+1037,"Cartesian 2D CS for north polar azimuthal lonO 18°E. Axes: X,Y. Orientations: X along 108°E, Y along 162°W meridians. UoM: m.","Cartesian",2
+4487,"Cartesian 2D CS for south polar azimuthal lonO 150°E. Axes: E,N. Orientations: E along 120°W, N along 150°E meridians. UoM: m.","Cartesian",2
+6496,"Vertical CS. Axis: height (H). Orientation: up. UoM: ft(Br36).","vertical",1
+4403,"Cartesian 2D CS. Axes: easting, northing (E,N). Orientations: east, north. UoM: ftCla.","Cartesian",2
+6403,"Ellipsoidal 2D CS. Axes: latitude, longitude. Orientations: north, east. UoM: grads.","ellipsoidal",2
+1036,"Cartesian 2D CS for north polar azimuthal lonO 33°W. Axes: X,Y. Orientations: X along 57°E, Y along 147°E meridians. UoM: m.","Cartesian",2
+4499,"Cartesian 2D CS. Axes: easting, northing (X,Y). Orientations: east, north. UoM: m.","Cartesian",2
+4481,"Cartesian 2D CS for south polar azimuthal lonO 30°E. Axes: E,N. Orientations: E along 120°E, N along 30°Emeridians. UoM: m.","Cartesian",2
+4407,"Cartesian 2D CS. Axes: easting, northing (E,N). Orientations: east, north. UoM: lkCla.","Cartesian",2
+1046,"Affine 3D CS. Axes: northing, easting, ellipsoidal height (X,Y,h). Orientations: north, east, up. UoM: m.","Cartesian",3
+1031,"Cartesian 2D CS. Axes: northing, westing (Y,X). Orientations: north, west. UoM: m.","Cartesian",2
+4484,"Cartesian 2D CS for south polar azimuthal lonO 90°E. Axes: E,N. Orientations: E along 180°E, N along 90°E meridians. UoM: m.","Cartesian",2
+4496,"Cartesian 2D CS. Axes: easting, northing [E(X),N(Y)]. Orientations: east, north. UoM: m.","Cartesian",2
+1043,"Vertical CS. Axis: depth (D). Orientation: down. UoM: ftUS.","vertical",1
+4405,"Cartesian 2D CS. Axes: easting, northing (E,N). Orientations: east, north. UoM: ftSe.","Cartesian",2
+4493,"Cartesian 2D CS for UPS north. Axes: N,E. Orientations: N along 180°E meridian, E along 90°E meridian. UoM: m.","Cartesian",2
+4480,"Cartesian 2D CS for south polar azimuthal lonO 15°E. Axes: E,N. Orientations: E along 105°E, N along 15°E meridians. UoM: m.","Cartesian",2
+4471,"Cartesian 2D CS for south polar azimuthal lonO 165°W. Axes: E,N. Orientations: E along 75°W, N along 165°W meridians. UoM: m.","Cartesian",2
+1024,"Cartesian 2D CS. Axes: easting, northing (M,P). Orientations east, north. UoM: m.","Cartesian",2
+4470,"Cartesian 2D CS for south polar azimuthal lonO 0°E. Axes: X,Y. Orientations: X along 90°E, Y along 0°E meridians. UoM: m.","Cartesian",2
+4464,"Cartesian 2D CS for north polar azimuthal lonO 180°E. Axes: X,Y. Orientations: X along 90°W, Y along 0°E meridians. UoM: m.","Cartesian",2
+4495,"Cartesian 2D CS. Axes: easting, northing (X,Y). Orientations: east, north. UoM: ft.","Cartesian",2
+1030,"Vertical CS. Axis: height (H). Orientation: up. UoM: ft.","vertical",1
+1028,"Cartesian 2D CS. Axes: easting, northing (E,N). Orientations: east, north. UoM: ydCl.","Cartesian",2
+1039,"Cartesian 2D CS. Axes: easting, northing (E,N). Orientations: east, north. UoM: ft.","Cartesian",2
+6502,"Cartesian 2D CS. Axes: westing, southing (Y,X). Orientations: west, south. UoM: GLM.","Cartesian",2
+1025,"Cartesian 2D CS for south polar azimuthal lonO 140°E. Axes: X,Y. Orientations: X along 130°W, Y along 140°E meridians. UoM: m.","Cartesian",2
+4406,"Cartesian 2D CS. Axes: easting, northing (E,N). Orientations: east, north. UoM: km.","Cartesian",2
+1053,"Cartesian 2D CS. Axes: northing, easting (N,E). Orientations: north, east. UoM: ftUS.","Cartesian",2
+4408,"Cartesian 2D CS. Axes: easting, northing (E,N). Orientations: east, north. UoM: ydInd.","Cartesian",2
+4477,"Cartesian 2D CS for south polar azimuthal lonO 45°W. Axes: E,N. Orientations: E along 45°E, N along 45°W meridians. UoM: m.","Cartesian",2
+4479,"Cartesian 2D CS for south polar azimuthal lonO 15°W. Axes: E,N. Orientations: E along 75°E, N along 15°W meridians. UoM: m.","Cartesian",2
+4474,"Cartesian 2D CS for south polar azimuthal lonO 105°W. Axes: E,N. Orientations: E along 15°W, N along 105°W meridians. UoM: m.","Cartesian",2
+6501,"Cartesian 2D CS. Axes: southing, westing (X,Y). Orientations: south, west. UoM: m.","Cartesian",2
+4472,"Cartesian 2D CS for south polar azimuthal lonO 150°W. Axes: E,N. Orientations: E along 60°W, N along 150°W meridians. UoM: m.","Cartesian",2
+6500,"Cartesian 3D CS (geocentric). Axes: geocentric X Y Z. Orientations: X and Y in equatorial plane, X positive through intersection with prime meridian, Y through 0°N 90°E. Z axis parallel to mean earth rotation axis and positive towards North Pole. UoM: m.","Cartesian",3
+1049,"Vertical CS. Axis: local depth (d). Orientation: down. UoM: m.","vertical",1
+6426,"Ellipsoidal 3D CS. Axes: longitude, latitude, ellipsoidal height. Orientations: east, north, up. UoM: degree, degree, metre.","ellipsoidal",3
+4531,"Cartesian 2D CS. Axes: northing, easting (x,y). Orientations: north, east. UoM: m.","Cartesian",2
+6509,"Cartesian 2D CS. Axes: southing, westing (P,M). Orientations: south, west. UoM: m.","Cartesian",2
+4473,"Cartesian 2D CS for south polar azimuthal lonO 135°W. Axes: E,N. Orientations: E along 45°W, N along 135°W meridians. UoM: m.","Cartesian",2
+4500,"Cartesian 2D CS. Axes: northing, easting (N,E). Orientations: north, east. UoM: m.","Cartesian",2
+4483,"Cartesian 2D CS for south polar azimuthal lonO 75°E. Axes: E,N. Orientations: E along 165°E, N along 75°E meridians. UoM: m.","Cartesian",2
+4485,"Cartesian 2D CS for south polar azimuthal lonO 105°E. Axes: E,N. Orientations: E along 165°W, N along 105°E meridians. UoM: m.","Cartesian",2
+4489,"Cartesian 2D CS for south polar azimuthal lonO 70°E. Axes: E,N. Orientations: E along 160°E, N along 70°E meridians. UoM: m.","Cartesian",2
+4488,"Cartesian 2D CS for south polar azimuthal lonO 165°E. Axes: E,N. Orientations: E along 105°W, N along 165°E meridians. UoM: m.","Cartesian",2
+6498,"Vertical CS. Axis: depth (D). Orientation: down. UoM: m.","vertical",1
+4497,"Cartesian 2D CS. Axes: easting, northing (X,Y). Orientations: east, north. UoM: ftUS.","Cartesian",2
+4404,"Cartesian 2D CS. Axes: easting, northing (E,N). Orientations: east, north. UoM: ftGC.","Cartesian",2
+1050,"Vertical CS. Axis: local depth (d). Orientation: down. UoM: ft.","vertical",1
+6503,"Cartesian 2D CS. Axes: westing, southing (Y,X). Orientations: west, south. UoM: m.","Cartesian",2
+4502,"Cartesian 2D CS. Axes: northing, easting (N,E). Orientations: north, east. UoM: ftCla.","Cartesian",2
+1044,"Cartesian 2D CS for south polar azimuthal lonO 180°E. Axes: N,E. Orientations: N along 180°E, E along 90°W meridians. UoM: m.","Cartesian",2
+4466,"Cartesian 2D CS for north polar azimuthal lonO 100°W. Axes: X,Y. Orientations: X along 10°W, Y along 80°E meridians. UoM: m.","Cartesian",2
+6422,"Ellipsoidal 2D CS. Axes: latitude, longitude. Orientations: north, east. UoM: degree","ellipsoidal",2
+4478,"Cartesian 2D CS for south polar azimuthal lonO 30°W. Axes: E,N. Orientations: E along 60°E, N along 30°W meridians. UoM: m.","Cartesian",2
+4465,"Cartesian 2D CS for north polar azimuthal lonO 40°W. Axes: X,Y. Orientations: X along 50°E, Y along 140°E meridians. UoM: m.","Cartesian",2
+4482,"Cartesian 2D CS for south polar azimuthal lonO 45°E. Axes: E,N. Orientations: E along 135°E, N along 45°E meridians. UoM: m.","Cartesian",2
+4409,"Cartesian 2D CS. Axes: easting, northing (E,N). Orientations: east, north. UoM: ydSe.","Cartesian",2
+4476,"Cartesian 2D CS for south polar azimuthal lonO 75°W. Axes: E,N. Orientations: E along 15°E, N along 75°W meridians. UoM: m.","Cartesian",2
+4410,"Cartesian 2D CS. Axes: easting, northing (E,N). Orientations: east, north. UoM: chSe(T).","Cartesian",2
+4486,"Cartesian 2D CS for south polar azimuthal lonO 135°E. Axes: E,N. Orientations: E along 135°W, N along 135°E meridians. UoM: m.","Cartesian",2
+6423,"Ellipsoidal 3D CS. Axes: latitude, longitude, ellipsoidal height. Orientations: north, east, up. UoM: degree, degree, metre.","ellipsoidal",3
+4532,"Cartesian 2D CS. Axes: northing, easting (Y,X). Orientations: north, east. UoM: m.","Cartesian",2
+4533,"Cartesian 2D CS. Axes: northing, easting (X,Y). Orientations: north, east. UoM: lk.","Cartesian",2
+6495,"Vertical CS. Axis: depth (D). Orientation: down. UoM: ft.","vertical",1
+1038,"Cartesian 2D CS for north polar azimuthal lonO 105°E. Axes: X,Y. Orientations: X along 165°W, Y along 75°W meridians. UoM: m.","Cartesian",2
+1027,"Cartesian 2D CS for UPS south. Axes: E,N. Orientations: E along 90°E, N along 0°E meridians. UoM: m.","Cartesian",2
+4468,"Cartesian 2D CS for north polar azimuthal lonO 45°W. Axes: X,Y. Orientations: X along 45°E, Y along 135°E meridians. UoM: m.","Cartesian",2
+1029,"Cartesian 2D CS. Axes: northing, easting (N,E). Orientations: north, east. UoM: ft.","Cartesian",2
+4469,"Cartesian 2D CS for north polar azimuthal lonO 0°E. Axes: X,Y. Orientations: X along 90°E, Y along 180°E meridians. UoM: m.","Cartesian",2
+4530,"Cartesian 2D CS. Axes: northing, easting (X,Y). Orientations: north, east. UoM: m.","Cartesian",2
+4494,"Cartesian 2D CS for UPS south. Axes: N,E. Orientations: N along 0°E, E along 90°E meridians. UoM: m.","Cartesian",2
+4475,"Cartesian 2D CS for south polar azimuthal lonO 90°W. Axes: E,N. Orientations: E along 0°E, N along 90°W meridians. UoM: m.","Cartesian",2
+4467,"Cartesian 2D CS for north polar azimuthal lonO 150°W. Axes: X,Y. Orientations: X along 60°W, Y along 30°E meridians. UoM: m.","Cartesian",2
+4498,"Cartesian 2D CS. Axes: easting, northing (Y,X). Orientations: east, north. UoM: m.","Cartesian",2
+6499,"Vertical CS. Axis: height (H). Orientation: up. UoM: m.","vertical",1
+4534,"Cartesian 2D CS. Axes: northing, easting (no abbrev). Orientations: north, east. UoM: m.","Cartesian",2
+6497,"Vertical CS. Axis: height (H). Orientation: up. UoM: ftUS.","vertical",1
+4491,"Cartesian 2D CS. Axes: westing, northing (W,N). Orientations: west, north. UoM: m.","Cartesian",2
+1035,"Cartesian 2D CS for north polar azimuthal lonO 90°E. Axes: X,Y. Orientations: X along 180°E, Y along 90°W meridians. UoM: m.","Cartesian",2
+4463,"Cartesian 2D CS for north polar azimuthal lonO 10°E. Axes: X,Y. Orientations: X along 100°E, Y along 170°W meridians. UoM: m.","Cartesian",2
+4402,"Cartesian 2D CS. Axes: easting, northing (E,N). Orientations: east, north. UoM: chSe.","Cartesian",2
+4400,"Cartesian 2D CS. Axes: easting, northing (E,N). Orientations: east, north. UoM: m.","Cartesian",2
+1026,"Cartesian 2D CS for UPS north. Axes: E,N. Orientations: E along 90°E meridian, N along 180°E meridian. UoM: m.","Cartesian",2
+6424,"Ellipsoidal 2D CS. Axes: longitude, latitude. Orientations: east, north. UoM: degree","ellipsoidal",2
+4490,"Cartesian 2D CS for south polar azimuthal lonO 0°E. Axes: E,N. Orientations: E along 90°E, N along 0°E meridians. UoM: m.","Cartesian",2

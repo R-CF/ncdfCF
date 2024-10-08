@@ -97,14 +97,20 @@ This method returns netCDF object attributes.}
 \describe{
 \item{\code{att}}{Vector of attribute names whose values to return.}
 
-\item{\code{field}}{The field of the \code{data.frame} to return values from. This
-must be "value" (default), "type" or "length".}
+\item{\code{field}}{The field of the attributes to return values from. This must
+be "value" (default), "type" or "length".}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A vector of values from the \code{data.frame}, named with the \code{att}
-value, or \code{character(0)} if the attribute is not found.
+If the \code{field} argument is "type' or "length", a vector named
+with the \code{att} values that were found in the attributes. If argument
+\code{field} is "value", a list with elements named with the \code{att} values,
+containing the attribute value(s), except when argument \code{att} names a
+single attribute, in which case that attribute value is returned as an
+atomic object. If no attribute is named with a value of argument \code{att}
+an empty list is returned, or an empty string if there was only one
+value in argument \code{att}.
 }
 }
 \if{html}{\out{<hr>}}

@@ -20,7 +20,7 @@
 #' @export
 #' @examples
 #' fn <- system.file("extdata",
-#'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
+#'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20230101-20231231_vncdfCF.nc",
 #'   package = "ncdfCF")
 #' ds <- open_ncdf(fn)
 #' ds
@@ -111,11 +111,8 @@ open_ncdf <- function(resource, keep_open = FALSE) {
     grp$NCudts <- lapply(g$typeids, function(t) RNetCDF::type.inq.nc(h, t, fields = TRUE))
 
   # Global attributes
-  if (g$ngatts) {
-    atts <- do.call(rbind, lapply(0L:(g$ngatts - 1L), function (a) as.data.frame(RNetCDF::att.inq.nc(h, "NC_GLOBAL", a))))
-    atts$value <- sapply(0L:(g$ngatts - 1L), function (a) RNetCDF::att.get.nc(h, "NC_GLOBAL", a))
-    grp$attributes <- atts
-  }
+  if (g$ngatts)
+    grp$attributes <- .readAttributes(h, "NC_GLOBAL", g$ngatts)
 
   # Subgroups
   if (length(g$grps)) {
@@ -137,11 +134,8 @@ open_ncdf <- function(resource, keep_open = FALSE) {
     var$netcdf4 <- vmeta[-(1L:6L)]
 
   # Get the attributes
-  if (vmeta$natts > 0L) {
-    atts <- do.call(rbind, lapply(0L:(vmeta$natts - 1L), function (a) as.data.frame(RNetCDF::att.inq.nc(h, vmeta$name, a))))
-    atts$value <- sapply(0L:(vmeta$natts - 1L), function (a) RNetCDF::att.get.nc(h, vmeta$name, a))
-    var$attributes <- atts
-  }
+  if (vmeta$natts > 0L)
+    var$attributes <- .readAttributes(h, vmeta$name, vmeta$natts)
 
   var
 }
@@ -206,20 +200,20 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 
   # Get essential attributes
   props <- var$attribute(c("standard_name", "units", "calendar", "axis", "bounds"))
-  standard <- props["standard_name"]
+  standard <- props[["standard_name"]]
 
   # Z: standard_names and formula_terms for parametric vertical axis
-  if (standard %in% Z_parametric_standard_names)
+  if (!is.null(standard) && standard %in% Z_parametric_standard_names)
     return(.makeParametricAxis(grp, var, dim, vals, standard))
 
   # Does the axis have bounds?
-  CFbounds <- .readBounds(grp, props["bounds"])
+  CFbounds <- .readBounds(grp, props[["bounds"]])
 
   # See if we have a "units" attribute that makes time
-  units <- props["units"]
-  if (nzchar(units)) {
-    cal <- props["calendar"]
-    if (!nzchar(cal)) cal <- "standard"
+  units <- props[["units"]]
+  if (!is.null(units)) {
+    cal <- props[["calendar"]]
+    if (is.null(cal)) cal <- "standard"
     cf <- try(CFtime::CFtime(units, cal, vals), silent = TRUE)
     if (!inherits(cf, "try-error")) {
       if (!is.null(CFbounds))
@@ -231,20 +225,21 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   }
 
   # Orientation of the axis
-  orient <- props["axis"]
-  if (!nzchar(orient)) {
-    if (nzchar(units)) {
+  orient <- props[["axis"]]
+  if (is.null(orient)) {
+    if (!is.null(units)) {
       if (grepl("^degree(s?)(_?)(east|E)$", units)) orient <- "X"
       else if (grepl("^degree(s?)(_?)(north|N)$", units)) orient <- "Y"
     }
   }
-  if (!nzchar(orient)) {
+  if (is.null(orient)) {
     # Last option: standard_name, only X and Y
-    if (nzchar(standard)) {
+    if (!is.null(standard)) {
       if (standard == "longitude") orient <- "X"
       else if (standard == "latitude") orient <- "Y"
     }
   }
+  if (is.null(orient)) orient <- ""
 
   axis <- if (orient == "X")
     CFAxisLongitude$new(grp, var, dim, vals)
@@ -435,12 +430,12 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 
 # Utility function to read bounds values
 .readBounds <- function(grp, bounds) {
-  if (!nzchar(bounds)) NULL
+  if (is.null(bounds)) NULL
   else {
     NCbounds <- grp$find_by_name(bounds, "NC")
     if (is.null(NCbounds)) NULL
     else {
-      bnds <- try(RNetCDF::var.get.nc(grp$handle, bounds), silent = TRUE)
+      bnds <- try(RNetCDF::var.get.nc(grp$handle, bounds, collapse = FALSE), silent = TRUE)
       if (inherits(bnds, "try-error")) NULL
       else CFBounds$new(NCbounds, bnds)
     }
@@ -481,10 +476,12 @@ open_ncdf <- function(resource, keep_open = FALSE) {
               var$axes[[aux$name]] <- aux
             else {
               aux <- grp$find_by_name(coords[cid], "NC")
-              units <- aux$attribute("units")
-              if (nzchar(units)) {
-                if (grepl("^degree(s?)(_?)(east|E)$", units)) varLon <- aux
-                else if (grepl("^degree(s?)(_?)(north|N)$", units)) varLat <- aux
+              if (!is.null(aux)) {
+                units <- aux$attribute("units")
+                if (nzchar(units)) {
+                  if (grepl("^degree(s?)(_?)(east|E)$", units)) varLon <- aux
+                  else if (grepl("^degree(s?)(_?)(north|N)$", units)) varLat <- aux
+                }
               }
             }
           }
@@ -516,4 +513,11 @@ open_ncdf <- function(resource, keep_open = FALSE) {
     vars <- append(vars, unlist(lapply(grp$subgroups, function(g) .buildVariables(g, axes))))
 
   vars
+}
+
+# Read the attributes for a group or a variable
+.readAttributes <- function(h, name, num) {
+  atts <- do.call(rbind, lapply(0L:(num - 1L), function (a) as.data.frame(RNetCDF::att.inq.nc(h, name, a))))
+  atts$value <- lapply(0L:(num - 1L), function (a) RNetCDF::att.get.nc(h, name, a, fitnum = TRUE))
+  atts
 }

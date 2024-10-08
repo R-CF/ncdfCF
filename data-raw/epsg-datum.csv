@@ -1,0 +1,827 @@
+"datum_code","datum_name","datum_type","ellipsoid_code","prime_meridian_code","frame_reference_epoch"
+1024,"Hungarian Datum 1909","geodetic",7004,8901,NULL
+1025,"Taiwan Datum 1967","geodetic",7050,8901,NULL
+1026,"Taiwan Datum 1997","geodetic",7019,8901,NULL
+1027,"EGM2008 geoid","vertical",NULL,NULL,NULL
+1028,"Fao 1979","vertical",NULL,NULL,NULL
+1029,"Iraqi Geospatial Reference System","geodetic",7019,8901,NULL
+1030,"N2000","vertical",NULL,NULL,NULL
+1031,"MGI 1901","geodetic",7004,8901,NULL
+1032,"MOLDREF99","geodetic",7019,8901,NULL
+1033,"Reseau Geodesique de la RDC 2005","geodetic",7019,8901,NULL
+1034,"Serbian Reference Network 1998","geodetic",7019,8901,NULL
+1035,"Red Geodesica de Canarias 1995","geodetic",7019,8901,NULL
+1036,"Reseau Geodesique de Mayotte 2004","geodetic",7019,8901,NULL
+1037,"Cadastre 1997","geodetic",7022,8901,NULL
+1038,"Reseau Geodesique de Saint Pierre et Miquelon 2006","geodetic",7019,8901,NULL
+1039,"New Zealand Vertical Datum 2009","vertical",NULL,NULL,NULL
+1040,"Dunedin-Bluff 1960","vertical",NULL,NULL,NULL
+1041,"Autonomous Regions of Portugal 2008","geodetic",7019,8901,NULL
+1042,"Mexico ITRF92","geodetic",7019,8901,NULL
+1043,"China 2000","geodetic",1024,8901,NULL
+1044,"Sao Tome","geodetic",7022,8901,NULL
+1045,"New Beijing","geodetic",7024,8901,NULL
+1046,"Principe","geodetic",7022,8901,NULL
+1047,"Reseau de Reference des Antilles Francaises 1991","geodetic",7019,8901,NULL
+1048,"Tokyo 1892","geodetic",7004,8901,NULL
+1049,"Korean Vertical Datum 1964","vertical",NULL,NULL,NULL
+1050,"Trieste","vertical",NULL,NULL,NULL
+1051,"Genoa 1942","vertical",NULL,NULL,NULL
+1052,"System of the Unified Trigonometrical Cadastral Network/05","geodetic",7004,8901,NULL
+1053,"Sri Lanka Datum 1999","geodetic",7015,8901,NULL
+1054,"Sri Lanka Vertical Datum","vertical",NULL,NULL,NULL
+1055,"System of the Unified Trigonometrical Cadastral Network/05 (Ferro)","geodetic",7004,8909,NULL
+1056,"Geocentric Datum Brunei Darussalam 2009","geodetic",7019,8901,NULL
+1057,"Turkish National Reference Frame","geodetic",7019,8901,NULL
+1058,"Bhutan National Geodetic Datum","geodetic",7019,8901,NULL
+1059,"Faroe Islands Vertical Reference 2009","vertical",NULL,NULL,NULL
+1060,"Islands Net 2004","geodetic",7019,8901,NULL
+1061,"International Terrestrial Reference Frame 2008","dynamic geodetic",7019,8901,"2005"
+1062,"Posiciones Geodesicas Argentinas 2007","geodetic",7030,8901,NULL
+1063,"Marco Geodesico Nacional de Bolivia","geodetic",7019,8901,NULL
+1064,"SIRGAS-Chile realization 1 epoch 2002","geodetic",7019,8901,NULL
+1065,"Costa Rica 2005","geodetic",7030,8901,NULL
+1066,"Sistema Geodesico Nacional de Panama MACARIO SOLIS","geodetic",7019,8901,NULL
+1067,"Peru96","geodetic",7019,8901,NULL
+1068,"SIRGAS-ROU98","geodetic",7030,8901,NULL
+1069,"SIRGAS_ES2007.8","geodetic",7019,8901,NULL
+1070,"Ocotepeque 1935","geodetic",7008,8901,NULL
+1071,"Sibun Gorge 1922","geodetic",7007,8901,NULL
+1072,"Panama-Colon 1911","geodetic",7008,8901,NULL
+1073,"Reseau Geodesique des Antilles Francaises 2009","geodetic",7019,8901,NULL
+1074,"Corrego Alegre 1961","geodetic",7022,8901,NULL
+1075,"South American Datum 1969(96)","geodetic",7050,8901,NULL
+1076,"Papua New Guinea Geodetic Datum 1994","geodetic",7019,8901,NULL
+1077,"Ukraine 2000","geodetic",7024,8901,NULL
+1078,"Fehmarnbelt Datum 2010","geodetic",7019,8901,NULL
+1079,"Fehmarnbelt Vertical Reference 2010","vertical",NULL,NULL,NULL
+1080,"Lowest Astronomical Tide","vertical",NULL,NULL,NULL
+1081,"Deutsche Bahn Reference System","geodetic",7004,8901,NULL
+1082,"Highest Astronomical Tide","vertical",NULL,NULL,NULL
+1083,"Lower Low Water Large Tide","vertical",NULL,NULL,NULL
+1084,"Higher High Water Large Tide","vertical",NULL,NULL,NULL
+1085,"Indian Spring Low Water","vertical",NULL,NULL,NULL
+1086,"Mean Lower Low Water Spring Tides","vertical",NULL,NULL,NULL
+1087,"Mean Low Water Spring Tides","vertical",NULL,NULL,NULL
+1088,"Mean High Water Spring Tides","vertical",NULL,NULL,NULL
+1089,"Mean Lower Low Water","vertical",NULL,NULL,NULL
+1090,"Mean Higher High Water","vertical",NULL,NULL,NULL
+1091,"Mean Low Water","vertical",NULL,NULL,NULL
+1092,"Mean High Water","vertical",NULL,NULL,NULL
+1093,"Low Water","vertical",NULL,NULL,NULL
+1094,"High Water","vertical",NULL,NULL,NULL
+1095,"Tonga Geodetic Datum 2005","geodetic",7019,8901,NULL
+1096,"Norway Normal Null 2000","vertical",NULL,NULL,"2000"
+1097,"Grand Cayman Vertical Datum 1954","vertical",NULL,NULL,NULL
+1098,"Little Cayman Vertical Datum 1961","vertical",NULL,NULL,NULL
+1099,"Cayman Brac Vertical Datum 1961","vertical",NULL,NULL,NULL
+1100,"Cayman Islands Geodetic Datum 2011","geodetic",7019,8901,NULL
+1101,"Cais da Pontinha","vertical",NULL,NULL,NULL
+1102,"Cais da Vila","vertical",NULL,NULL,NULL
+1103,"Cais das Velas","vertical",NULL,NULL,NULL
+1104,"Horta","vertical",NULL,NULL,NULL
+1105,"Cais da Madalena","vertical",NULL,NULL,NULL
+1106,"Santa Cruz da Graciosa","vertical",NULL,NULL,NULL
+1107,"Cais da Figueirinha","vertical",NULL,NULL,NULL
+1108,"Santa Cruz das Flores","vertical",NULL,NULL,NULL
+1109,"Cais da Vila do Porto","vertical",NULL,NULL,NULL
+1110,"Ponta Delgada","vertical",NULL,NULL,NULL
+1111,"Nepal 1981","geodetic",7015,8901,NULL
+1112,"Cyprus Geodetic Reference System 1993","geodetic",7030,8901,NULL
+1113,"Reseau Geodesique des Terres Australes et Antarctiques Francaises 2007","geodetic",7019,8901,NULL
+1114,"Israeli Geodetic Datum 2005","geodetic",7030,8901,NULL
+1115,"Israeli Geodetic Datum 2005(2012)","geodetic",7030,8901,NULL
+1116,"NAD83 (National Spatial Reference System 2011)","geodetic",7019,8901,NULL
+1117,"NAD83 (National Spatial Reference System PA11)","geodetic",7019,8901,NULL
+1118,"NAD83 (National Spatial Reference System MA11)","geodetic",7019,8901,NULL
+1119,"Northern Marianas Vertical Datum of 2003","vertical",NULL,NULL,NULL
+1120,"Mexico ITRF2008","geodetic",7019,8901,NULL
+1121,"Tutuila Vertical Datum of 1962","vertical",NULL,NULL,NULL
+1122,"Guam Vertical Datum of 1963","vertical",NULL,NULL,NULL
+1123,"Puerto Rico Vertical Datum of 2002","vertical",NULL,NULL,NULL
+1124,"Virgin Islands Vertical Datum of 2009","vertical",NULL,NULL,NULL
+1125,"American Samoa Vertical Datum of 2002","vertical",NULL,NULL,NULL
+1126,"Guam Vertical Datum of 2004","vertical",NULL,NULL,NULL
+1127,"Canadian Geodetic Vertical Datum of 2013 (CGG2013)","vertical",NULL,NULL,NULL
+1128,"Japanese Geodetic Datum 2011","geodetic",7019,8901,NULL
+1129,"Japanese Standard Levelling Datum 1972","vertical",NULL,NULL,NULL
+1130,"Japanese Geodetic Datum 2000 (vertical)","vertical",NULL,NULL,NULL
+1131,"Japanese Geodetic Datum 2011 (vertical)","vertical",NULL,NULL,NULL
+1132,"Rete Dinamica Nazionale 2008","geodetic",7019,8901,NULL
+1133,"NAD83 (Continuously Operating Reference Station 1996)","geodetic",7019,8901,NULL
+1135,"Aden 1925","geodetic",7012,8901,NULL
+1136,"Bioko","geodetic",7022,8901,NULL
+1137,"Bekaa Valley 1920","geodetic",7012,8901,NULL
+1138,"South East Island 1943","geodetic",7012,8901,NULL
+1139,"Gambia","geodetic",7012,8901,NULL
+1140,"Singapore Height Datum","vertical",NULL,NULL,NULL
+1141,"IGS08","dynamic geodetic",7019,8901,"2005"
+1142,"IG05 Intermediate Datum","geodetic",7019,8901,NULL
+1144,"IG05/12 Intermediate Datum","geodetic",7019,8901,NULL
+1146,"Ras Ghumays","vertical",NULL,NULL,NULL
+1147,"Oman National Geodetic Datum 2014","geodetic",7019,8901,NULL
+1148,"Famagusta 1960","vertical",NULL,NULL,NULL
+1149,"PNG08","vertical",NULL,NULL,NULL
+1150,"Kumul 34","vertical",NULL,NULL,NULL
+1151,"Kiunga","vertical",NULL,NULL,NULL
+1152,"World Geodetic System 1984 (G730)","dynamic geodetic",7030,8901,"1994"
+1153,"World Geodetic System 1984 (G873)","dynamic geodetic",7030,8901,"1997"
+1154,"World Geodetic System 1984 (G1150)","dynamic geodetic",7030,8901,"2001"
+1155,"World Geodetic System 1984 (G1674)","dynamic geodetic",7030,8901,"2005"
+1156,"World Geodetic System 1984 (G1762)","dynamic geodetic",7030,8901,"2005"
+1157,"Parametry Zemli 1990.02","dynamic geodetic",7054,8901,"2002"
+1158,"Parametry Zemli 1990.11","dynamic geodetic",7054,8901,"2010"
+1159,"Geodezicheskaya Sistema Koordinat 2011","geodetic",1025,8901,NULL
+1160,"Kyrgyzstan Geodetic Datum 2006","geodetic",7019,8901,NULL
+1161,"Deutsches Haupthoehennetz 1912","vertical",NULL,NULL,NULL
+1162,"Latvian Height System 2000","vertical",NULL,NULL,NULL
+1164,"Ordnance Datum Newlyn (Offshore)","vertical",NULL,NULL,NULL
+1165,"International Terrestrial Reference Frame 2014","dynamic geodetic",7019,8901,"2010"
+1166,"World Geodetic System 1984 (Transit)","dynamic geodetic",7030,8901,"1984"
+1167,"Bulgaria Geodetic System 2005","geodetic",7019,8901,NULL
+1168,"Geocentric Datum of Australia 2020","geodetic",7019,8901,NULL
+1169,"New Zealand Vertical Datum 2016","vertical",NULL,NULL,NULL
+1170,"Deutsches Haupthoehennetz 2016","vertical",NULL,NULL,NULL
+1171,"Port Moresby 1996","vertical",NULL,NULL,NULL
+1172,"Port Moresby 2008","vertical",NULL,NULL,NULL
+1173,"St. Helena Tritan","geodetic",7030,8901,NULL
+1174,"St. Helena Geodetic Datum 2015","geodetic",7019,8901,NULL
+1175,"Jamestown 1971","vertical",NULL,NULL,NULL
+1176,"St. Helena Tritan Vertical Datum 2011","vertical",NULL,NULL,NULL
+1177,"St. Helena Vertical Datum 2015","vertical",NULL,NULL,NULL
+1178,"European Terrestrial Reference Frame 1989","geodetic",7019,8901,NULL
+1179,"European Terrestrial Reference Frame 1990","geodetic",7019,8901,NULL
+1180,"European Terrestrial Reference Frame 1991","geodetic",7019,8901,NULL
+1181,"European Terrestrial Reference Frame 1992","geodetic",7019,8901,NULL
+1182,"European Terrestrial Reference Frame 1993","geodetic",7019,8901,NULL
+1183,"European Terrestrial Reference Frame 1994","geodetic",7019,8901,NULL
+1184,"European Terrestrial Reference Frame 1996","geodetic",7019,8901,NULL
+1185,"European Terrestrial Reference Frame 1997","geodetic",7019,8901,NULL
+1186,"European Terrestrial Reference Frame 2000","geodetic",7019,8901,NULL
+1187,"Islands Net 2016","geodetic",7019,8901,NULL
+1188,"Gusterberg (Ferro)","geodetic",1026,8909,NULL
+1189,"St. Stephen (Ferro)","geodetic",1026,8909,NULL
+1190,"Landshaedarkerfi Islands 2004","vertical",NULL,NULL,NULL
+1191,"IGS14","dynamic geodetic",7019,8901,"2010"
+1192,"North American Datum of 1983 (CSRS96)","geodetic",7019,8901,NULL
+1193,"North American Datum of 1983 (CSRS) version 2","geodetic",7019,8901,NULL
+1194,"North American Datum of 1983 (CSRS) version 3","geodetic",7019,8901,NULL
+1195,"North American Datum of 1983 (CSRS) version 4","geodetic",7019,8901,NULL
+1196,"North American Datum of 1983 (CSRS) version 5","geodetic",7019,8901,NULL
+1197,"North American Datum of 1983 (CSRS) version 6","geodetic",7019,8901,NULL
+1198,"North American Datum of 1983 (CSRS) version 7","geodetic",7019,8901,NULL
+1199,"Greenland Vertical Reference 2000","vertical",NULL,NULL,NULL
+1200,"Greenland Vertical Reference 2016","vertical",NULL,NULL,NULL
+1201,"System of the Unified Trigonometrical Cadastral Network [JTSK03]","geodetic",7004,8901,NULL
+1202,"Baltic 1957","vertical",NULL,NULL,NULL
+1204,"European Terrestrial Reference Frame 2005","geodetic",7019,8901,NULL
+1205,"EPSG example wellbore vertical datum","vertical",NULL,NULL,NULL
+1206,"European Terrestrial Reference Frame 2014","geodetic",7019,8901,NULL
+1207,"Macao 1920","geodetic",7022,8901,NULL
+1208,"Macao Geodetic Datum 2008","geodetic",7019,8901,NULL
+1209,"Hong Kong Geodetic","geodetic",7019,8901,NULL
+1210,"Macao Height Datum","vertical",NULL,NULL,NULL
+1211,"NAD83 (Federal Base Network)","geodetic",7019,8901,NULL
+1212,"NAD83 (High Accuracy Reference Network - Corrected)","geodetic",7019,8901,NULL
+1213,"Helsinki 1943","vertical",NULL,NULL,NULL
+1214,"Serbian Spatial Reference System 2000","geodetic",7019,8901,NULL
+1215,"Slovenian Vertical System 2010","vertical",NULL,NULL,NULL
+1216,"Serbian Vertical Reference System 2012","vertical",NULL,NULL,NULL
+1217,"Camacupa 2015","geodetic",7012,8901,NULL
+1218,"MOMRA Terrestrial Reference Frame 2000","geodetic",7019,8901,NULL
+1219,"MOMRA Vertical Geodetic Control","vertical",NULL,NULL,NULL
+1220,"Reference System de Angola 2013","geodetic",7019,8901,NULL
+1221,"North American Datum of 1983 (MARP00)","geodetic",7019,8901,NULL
+1223,"Reseau Geodesique de Wallis et Futuna 1996","geodetic",7019,8901,NULL
+1224,"Taiwan Vertical Datum 2001","vertical",NULL,NULL,NULL
+1225,"CR-SIRGAS","geodetic",7019,8901,NULL
+1226,"Datum Altimetrico de Costa Rica 1952","vertical",NULL,NULL,NULL
+1227,"SIRGAS Continuously Operating Network DGF00P01","dynamic geodetic",7019,8901,"2000.4"
+1228,"SIRGAS Continuously Operating Network DGF01P01","dynamic geodetic",7019,8901,"2000"
+1229,"SIRGAS Continuously Operating Network DGF01P02","dynamic geodetic",7019,8901,"1998.4"
+1230,"SIRGAS Continuously Operating Network DGF02P01","dynamic geodetic",7019,8901,"2000"
+1231,"SIRGAS Continuously Operating Network DGF04P01","dynamic geodetic",7019,8901,"2003"
+1232,"SIRGAS Continuously Operating Network DGF05P01","dynamic geodetic",7019,8901,"2004"
+1233,"SIRGAS Continuously Operating Network DGF06P01","dynamic geodetic",7019,8901,"2004"
+1234,"SIRGAS Continuously Operating Network DGF07P01","dynamic geodetic",7019,8901,"2004.5"
+1235,"SIRGAS Continuously Operating Network DGF08P01","dynamic geodetic",7019,8901,"2004.5"
+1236,"SIRGAS Continuously Operating Network SIR09P01","dynamic geodetic",7019,8901,"2005"
+1237,"SIRGAS Continuously Operating Network SIR10P01","dynamic geodetic",7019,8901,"2005"
+1238,"SIRGAS Continuously Operating Network SIR11P01","dynamic geodetic",7019,8901,"2005"
+1239,"SIRGAS Continuously Operating Network SIR13P01","dynamic geodetic",7019,8901,"2012"
+1240,"SIRGAS Continuously Operating Network SIR14P01","dynamic geodetic",7019,8901,"2013"
+1241,"SIRGAS Continuously Operating Network SIR15P01","dynamic geodetic",7019,8901,"2013"
+1242,"SIRGAS Continuously Operating Network SIR17P01","dynamic geodetic",7019,8901,"2015"
+1243,"SIRGAS-Chile realization 2 epoch 2010","geodetic",7019,8901,NULL
+1244,"IGS97","dynamic geodetic",7019,8901,"1997"
+1245,"IGS00","dynamic geodetic",7019,8901,"1998"
+1246,"IGb00","dynamic geodetic",7019,8901,"1998"
+1247,"IGS05","dynamic geodetic",7019,8901,"2000"
+1248,"IGb08","dynamic geodetic",7019,8901,"2005"
+1249,"North American Datum of 1983 (PACP00)","geodetic",7019,8901,NULL
+1250,"IGN 2008 LD","vertical",NULL,NULL,NULL
+1251,"Kosovo Reference System 2001","geodetic",7019,8901,NULL
+1252,"SIRGAS-Chile realization 3 epoch 2013","geodetic",7019,8901,NULL
+1253,"SIRGAS-Chile realization 4 epoch 2016","geodetic",7019,8901,NULL
+1255,"Nivellement General de Nouvelle Caledonie 2008","vertical",NULL,NULL,NULL
+1256,"Canadian Geodetic Vertical Datum of 2013 (CGG2013a) epoch 2010","vertical",NULL,NULL,NULL
+1257,"Tapi Aike","geodetic",7022,8901,NULL
+1258,"Ministerio de Marina Norte","geodetic",7022,8901,NULL
+1259,"Ministerio de Marina Sur","geodetic",7022,8901,NULL
+1260,"Sistema de Referencia Vertical Nacional 2016","vertical",NULL,NULL,NULL
+1261,"European Vertical Reference Frame 2000 Austria","vertical",NULL,NULL,NULL
+1262,"South Africa Land Levelling Datum","vertical",NULL,NULL,NULL
+1263,"Oman National Geodetic Datum 2017","geodetic",7019,8901,NULL
+1264,"HS2 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1265,"HS2 Vertical Reference Frame","vertical",NULL,NULL,NULL
+1266,"TPEN11 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1267,"Wiener Null","vertical",NULL,NULL,NULL
+1268,"Kingdom of Saudi Arabia Geodetic Reference Frame 2017","geodetic",7019,8901,NULL
+1269,"Kingdom of Saudi Arabia Vertical Reference Frame Jeddah 2014","vertical",NULL,NULL,NULL
+1270,"Mean Sea Level Netherlands","vertical",NULL,NULL,NULL
+1271,"MML07 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1272,"IGb14","dynamic geodetic",7019,8901,"2010"
+1273,"AbInvA96_2020 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1274,"European Vertical Reference Frame 2019","vertical",NULL,NULL,NULL
+1275,"Mallorca","vertical",NULL,NULL,NULL
+1276,"Menorca","vertical",NULL,NULL,NULL
+1277,"Ibiza","vertical",NULL,NULL,NULL
+1278,"Lanzarote","vertical",NULL,NULL,NULL
+1279,"Fuerteventura","vertical",NULL,NULL,NULL
+1280,"Gran Canaria","vertical",NULL,NULL,NULL
+1281,"Tenerife","vertical",NULL,NULL,NULL
+1282,"La Gomera","vertical",NULL,NULL,NULL
+1283,"La Palma","vertical",NULL,NULL,NULL
+1284,"El Hierro","vertical",NULL,NULL,NULL
+1285,"Ceuta 2","vertical",NULL,NULL,NULL
+1286,"Pico de las Nieves 1968","geodetic",7022,8901,NULL
+1287,"European Vertical Reference Frame 2019 mean tide","vertical",NULL,NULL,NULL
+1288,"British Isles height ensemble","ensemble",NULL,NULL,NULL
+1289,"GBK19 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1290,"Lowest Astronomical Tide Netherlands","vertical",NULL,NULL,NULL
+1291,"Australian Terrestrial Reference Frame 2014","dynamic geodetic",7019,8901,"2020"
+1292,"Australian Vertical Working Surface","vertical",NULL,NULL,NULL
+1293,"Sistem Referensi Geospasial Indonesia 2013","dynamic geodetic",7030,8901,"2012"
+1294,"Indonesian Geoid 2020 version 1","vertical",NULL,NULL,NULL
+1295,"Lyon Turin Ferroviaire 2004","geodetic",7019,8901,NULL
+1296,"Baltic 1986","vertical",NULL,NULL,NULL
+1297,"European Vertical Reference Frame 2007 Poland","vertical",NULL,NULL,NULL
+1298,"Estonian Height System 2000","vertical",NULL,NULL,NULL
+1299,"Lithuanian Height System 2007","vertical",NULL,NULL,NULL
+1300,"Bulgarian Height System 2005","vertical",NULL,NULL,NULL
+1301,"Norwegian Chart Datum","vertical",NULL,NULL,NULL
+1302,"Local Tidal Datum at Pago Pago 2020","vertical",NULL,NULL,NULL
+1303,"National Vertical Datum 1992","vertical",NULL,NULL,NULL
+1304,"Red Geodesica Para Mineria en Chile","dynamic geodetic",7019,8901,"2019"
+1305,"ETRF2000 Poland","geodetic",7019,8901,NULL
+1306,"Catania 1965","vertical",NULL,NULL,NULL
+1307,"Cagliari 1956","vertical",NULL,NULL,NULL
+1308,"EOS21 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1309,"World Geodetic System 1984 (G2139)","dynamic geodetic",7030,8901,"2016"
+1310,"ECML14_NB Intermediate Reference Frame","geodetic",7019,8901,NULL
+1311,"EWR2 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1312,"Reseau Geodesique Francais 1993 v2","geodetic",7019,8901,NULL
+1313,"Reseau Geodesique Francais 1993 v2b","geodetic",7019,8901,NULL
+1314,"MRH21 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1315,"MOLDOR11 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1316,"GNTRANS","vertical",NULL,NULL,NULL
+1317,"HULLEE13 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1318,"GNTRANS2016","vertical",NULL,NULL,NULL
+1319,"EBBWV14 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1320,"SCM22 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1321,"FNL22 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1322,"International Terrestrial Reference Frame 2020","dynamic geodetic",7019,8901,"2015"
+1323,"Svalbard vertical datum 2006","vertical",NULL,NULL,NULL
+1324,"MWC18 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1325,"Canadian Geodetic Vertical Datum of 2013 (CGG2013a) epoch 2002","vertical",NULL,NULL,NULL
+1326,"Canadian Geodetic Vertical Datum of 2013 (CGG2013a) epoch 1997","vertical",NULL,NULL,NULL
+1327,"SIRGAS-Chile realization 5 epoch 2021","geodetic",7019,8901,NULL
+1328,"Indonesian Geoid 2020 version 2","vertical",NULL,NULL,NULL
+1329,"Marco Geocentrico Nacional de Referencia 2018","geodetic",7019,8901,NULL
+1330,"Mean Sea Level UK & Ireland VORF08","vertical",NULL,NULL,NULL
+1331,"Chart Datum UK & Ireland VORF08","vertical",NULL,NULL,NULL
+1332,"System 34 Jylland Intermediate Datum","geodetic",7022,8901,NULL
+1333,"IGS20","dynamic geodetic",7019,8901,"2015"
+1334,"DoPw22 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1335,"ShAb07 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1336,"CNH22 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1337,"System 34 Sjaelland Intermediate Datum","geodetic",7022,8901,NULL
+1338,"CWS13 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1339,"DIBA15 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1340,"GWPBS22 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1341,"GWWAB22 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1342,"GWWWA22 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1343,"MALS09 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1344,"OxWo08 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1345,"SYC20 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1346,"System 45 Bornholm Intermediate Datum","geodetic",7022,8901,NULL
+1347,"Generalstabens System Intermediate Datum","geodetic",7051,8901,NULL
+1348,"Generalstabens System Bornholm Intermediate Datum","geodetic",7051,8901,NULL
+1349,"Copenhagen Commune Intermediate Datum","geodetic",7051,8901,NULL
+1350,"Ostenfeld  Intermediate Datum","geodetic",7004,8901,NULL
+1351,"SMITB20 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1352,"RBEPP12 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1353,"ETRS89/DREF91 Realization 2016","geodetic",7019,8901,NULL
+1354,"Nivellement General de l'Algerie 2022","vertical",NULL,NULL,NULL
+1355,"Sonatrach Reference Frame 2020","geodetic",7019,8901,NULL
+1356,"Latvian coordinate system 2020","geodetic",7019,8901,NULL
+1357,"Reseau Geodesique de Nouvelle Caledonie 2015","geodetic",7019,8901,NULL
+1358,"BH_ETRS89","geodetic",7019,8901,NULL
+1359,"Hughes 1980","geodetic",7058,8901,NULL
+1360,"NSIDC International 1924 Authalic Sphere","geodetic",7057,8901,NULL
+1361,"Chart Datum Portugal ","vertical",NULL,NULL,NULL
+1362,"Formentera","vertical",NULL,NULL,NULL
+1363,"Alboran","vertical",NULL,NULL,NULL
+1364,"Melilla","vertical",NULL,NULL,NULL
+1365,"North American Datum of 1983 (CSRS) version 8","geodetic",7019,8901,NULL
+1366,"COV23 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1367,"Brenner Base Tunnel 2000","geodetic",7030,8901,NULL
+1368,"Dansk Vertikal Reference 1990 (2002)","vertical",NULL,NULL,NULL
+1369,"Dansk Vertikal Reference 1990 (2013)","vertical",NULL,NULL,NULL
+1370,"Dansk Vertikal Reference 1990 (2023)","vertical",NULL,NULL,NULL
+1371,"Dansk Vertikal Reference 1990 ensemble","ensemble",NULL,NULL,NULL
+1372,"Denmark Mean Sea Level (2022)","vertical",NULL,NULL,NULL
+1373,"Denmark Lowest Astronomical Tide (2022)","vertical",NULL,NULL,NULL
+1374,"Denmark Mean Sea Level (2023)","vertical",NULL,NULL,NULL
+1375,"Denmark Lowest Astronomic Tide (2023)","vertical",NULL,NULL,NULL
+1376,"Denmark Mean Sea Level ","ensemble",NULL,NULL,NULL
+1377,"Denmark Lowest Astronomical Tide ","ensemble",NULL,NULL,NULL
+1378,"Greenland Local Mean Sea Level (2022)","vertical",NULL,NULL,NULL
+1382,"European Terrestrial Reference Frame 2020","geodetic",7019,8901,NULL
+1383,"World Geodetic System 1984 (G2296)","dynamic geodetic",7030,8901,"2024"
+1385,"ECML14 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1386,"WC05 Intermediate Reference Frame","geodetic",7019,8901,NULL
+1387,"Greenland Mean Sea Level (2023)","vertical",NULL,NULL,NULL
+1388,"Greenland Lowest Astronomic Tide (2023)","vertical",NULL,NULL,NULL
+5100,"Mean Sea Level","vertical",NULL,NULL,NULL
+5101,"Ordnance Datum Newlyn","vertical",NULL,NULL,NULL
+5102,"National Geodetic Vertical Datum 1929","vertical",NULL,NULL,NULL
+5103,"North American Vertical Datum 1988","vertical",NULL,NULL,NULL
+5104,"Yellow Sea 1956","vertical",NULL,NULL,NULL
+5105,"Baltic 1977","vertical",NULL,NULL,NULL
+5106,"Caspian Sea","vertical",NULL,NULL,NULL
+5109,"Normaal Amsterdams Peil","vertical",NULL,NULL,NULL
+5110,"Ostend","vertical",NULL,NULL,NULL
+5111,"Australian Height Datum","vertical",NULL,NULL,NULL
+5112,"Australian Height Datum (Tasmania)","vertical",NULL,NULL,NULL
+5113,"Instantaneous Water Level","vertical",NULL,NULL,NULL
+5114,"Canadian Geodetic Vertical Datum of 1928","vertical",NULL,NULL,NULL
+5115,"Piraeus Harbour 1986","vertical",NULL,NULL,NULL
+5116,"Helsinki 1960","vertical",NULL,NULL,NULL
+5117,"Rikets hojdsystem 1970","vertical",NULL,NULL,NULL
+5118,"Nivellement General de la France - Lallemand","vertical",NULL,NULL,NULL
+5119,"Nivellement General de la France - IGN69","vertical",NULL,NULL,NULL
+5120,"Nivellement General de la France - IGN78","vertical",NULL,NULL,NULL
+5121,"Maputo","vertical",NULL,NULL,NULL
+5122,"Japanese Standard Levelling Datum 1969","vertical",NULL,NULL,NULL
+5123,"PDO Height Datum 1993","vertical",NULL,NULL,NULL
+5124,"Fahud Height Datum","vertical",NULL,NULL,NULL
+5125,"Ha Tien 1960","vertical",NULL,NULL,NULL
+5126,"Hon Dau 1992","vertical",NULL,NULL,NULL
+5127,"Landesnivellement 1902","vertical",NULL,NULL,NULL
+5128,"Landeshohennetz 1995","vertical",NULL,NULL,NULL
+5129,"European Vertical Reference Frame 2000","vertical",NULL,NULL,NULL
+5130,"Malin Head","vertical",NULL,NULL,NULL
+5131,"Belfast Lough","vertical",NULL,NULL,NULL
+5132,"Dansk Normal Nul","vertical",NULL,NULL,NULL
+5133,"AIOC 1995","vertical",NULL,NULL,NULL
+5134,"Black Sea","vertical",NULL,NULL,NULL
+5135,"Hong Kong Principal Datum","vertical",NULL,NULL,NULL
+5136,"Hong Kong Chart Datum","vertical",NULL,NULL,NULL
+5137,"Yellow Sea 1985","vertical",NULL,NULL,NULL
+5138,"Ordnance Datum Newlyn (Orkney Isles)","vertical",NULL,NULL,NULL
+5139,"Fair Isle","vertical",NULL,NULL,NULL
+5140,"Lerwick","vertical",NULL,NULL,NULL
+5141,"Foula","vertical",NULL,NULL,NULL
+5142,"Sule Skerry","vertical",NULL,NULL,NULL
+5143,"North Rona","vertical",NULL,NULL,NULL
+5144,"Stornoway","vertical",NULL,NULL,NULL
+5145,"St. Kilda","vertical",NULL,NULL,NULL
+5146,"Flannan Isles","vertical",NULL,NULL,NULL
+5147,"St. Marys","vertical",NULL,NULL,NULL
+5148,"Douglas","vertical",NULL,NULL,NULL
+5149,"Fao","vertical",NULL,NULL,NULL
+5150,"Bandar Abbas","vertical",NULL,NULL,NULL
+5151,"Nivellement General de Nouvelle Caledonie","vertical",NULL,NULL,NULL
+5152,"Poolbeg","vertical",NULL,NULL,NULL
+5153,"Nivellement General Guyanais 1977","vertical",NULL,NULL,NULL
+5154,"Martinique 1987","vertical",NULL,NULL,NULL
+5155,"Guadeloupe 1988","vertical",NULL,NULL,NULL
+5156,"Reunion 1989","vertical",NULL,NULL,NULL
+5157,"Auckland 1946","vertical",NULL,NULL,NULL
+5158,"Bluff 1955","vertical",NULL,NULL,NULL
+5159,"Dunedin 1958","vertical",NULL,NULL,NULL
+5160,"Gisborne 1926","vertical",NULL,NULL,NULL
+5161,"Lyttelton 1937","vertical",NULL,NULL,NULL
+5162,"Moturiki 1953","vertical",NULL,NULL,NULL
+5163,"Napier 1962","vertical",NULL,NULL,NULL
+5164,"Nelson 1955","vertical",NULL,NULL,NULL
+5165,"One Tree Point 1964","vertical",NULL,NULL,NULL
+5166,"Tararu 1952","vertical",NULL,NULL,NULL
+5167,"Taranaki 1970","vertical",NULL,NULL,NULL
+5168,"Wellington 1953","vertical",NULL,NULL,NULL
+5169,"Waitangi (Chatham Island) 1959","vertical",NULL,NULL,NULL
+5170,"Stewart Island 1977","vertical",NULL,NULL,NULL
+5171,"EGM96 geoid","vertical",NULL,NULL,NULL
+5172,"Nivellement General du Luxembourg 1995","vertical",NULL,NULL,NULL
+5173,"Antalya","vertical",NULL,NULL,NULL
+5174,"Norway Normal Null 1954","vertical",NULL,NULL,NULL
+5175,"Durres","vertical",NULL,NULL,NULL
+5176,"Gebrauchshohen ADRIA","vertical",NULL,NULL,NULL
+5177,"Slovenian Vertical System 2000","vertical",NULL,NULL,NULL
+5178,"Cascais","vertical",NULL,NULL,NULL
+5179,"Constanta","vertical",NULL,NULL,NULL
+5180,"Alicante","vertical",NULL,NULL,NULL
+5181,"Deutsches Haupthoehennetz 1992","vertical",NULL,NULL,NULL
+5182,"Deutsches Haupthoehennetz 1985","vertical",NULL,NULL,NULL
+5183,"Staatlichen Nivellementnetzes 1976","vertical",NULL,NULL,NULL
+5184,"Baltic 1982","vertical",NULL,NULL,NULL
+5185,"Baltic 1980","vertical",NULL,NULL,NULL
+5186,"Kuwait PWD","vertical",NULL,NULL,NULL
+5187,"KOC Well Datum","vertical",NULL,NULL,NULL
+5188,"KOC Construction Datum","vertical",NULL,NULL,NULL
+5189,"Nivellement General de la Corse 1948","vertical",NULL,NULL,NULL
+5190,"Danger 1950","vertical",NULL,NULL,NULL
+5191,"Mayotte 1950","vertical",NULL,NULL,NULL
+5192,"Martinique 1955","vertical",NULL,NULL,NULL
+5193,"Guadeloupe 1951","vertical",NULL,NULL,NULL
+5194,"Lagos 1955","vertical",NULL,NULL,NULL
+5195,"Nivellement General de Polynesie Francaise","vertical",NULL,NULL,NULL
+5196,"IGN 1966","vertical",NULL,NULL,NULL
+5197,"Moorea SAU 1981","vertical",NULL,NULL,NULL
+5198,"Raiatea SAU 2001","vertical",NULL,NULL,NULL
+5199,"Maupiti SAU 2001","vertical",NULL,NULL,NULL
+5200,"Huahine SAU 2001","vertical",NULL,NULL,NULL
+5201,"Tahaa SAU 2001","vertical",NULL,NULL,NULL
+5202,"Bora Bora SAU 2001","vertical",NULL,NULL,NULL
+5203,"EGM84 geoid","vertical",NULL,NULL,NULL
+5204,"International Great Lakes Datum 1955","vertical",NULL,NULL,NULL
+5205,"International Great Lakes Datum 1985","vertical",NULL,NULL,NULL
+5206,"Dansk Vertikal Reference 1990 (2000)","vertical",NULL,NULL,NULL
+5207,"Croatian Vertical Reference Datum 1971","vertical",NULL,NULL,NULL
+5208,"Rikets hojdsystem 2000","vertical",NULL,NULL,"2000"
+5209,"Rikets hojdsystem 1900","vertical",NULL,NULL,NULL
+5210,"IGN 1988 LS","vertical",NULL,NULL,NULL
+5211,"IGN 1988 MG","vertical",NULL,NULL,NULL
+5212,"IGN 1992 LD","vertical",NULL,NULL,NULL
+5213,"IGN 1988 SB","vertical",NULL,NULL,NULL
+5214,"IGN 1988 SM","vertical",NULL,NULL,NULL
+5215,"European Vertical Reference Frame 2007","vertical",NULL,NULL,NULL
+6120,"Greek","geodetic",7004,8901,NULL
+6121,"Greek Geodetic Reference System 1987","geodetic",7019,8901,NULL
+6122,"Average Terrestrial System 1977","geodetic",7041,8901,NULL
+6123,"Kartastokoordinaattijarjestelma (1966)","geodetic",7022,8901,NULL
+6124,"Rikets koordinatsystem 1990","geodetic",7004,8901,NULL
+6126,"Lithuania 1994 (ETRS89)","geodetic",7019,8901,NULL
+6127,"Tete","geodetic",7008,8901,NULL
+6128,"Madzansua","geodetic",7008,8901,NULL
+6129,"Observatario","geodetic",7008,8901,NULL
+6130,"Moznet (ITRF94)","geodetic",7030,8901,NULL
+6131,"Indian 1960","geodetic",7015,8901,NULL
+6132,"Final Datum 1958","geodetic",7012,8901,NULL
+6133,"Estonia 1992","geodetic",7019,8901,NULL
+6134,"PDO Survey Datum 1993","geodetic",7012,8901,NULL
+6135,"Old Hawaiian","geodetic",7008,8901,NULL
+6136,"St. Lawrence Island","geodetic",7008,8901,NULL
+6137,"St. Paul Island","geodetic",7008,8901,NULL
+6138,"St. George Island","geodetic",7008,8901,NULL
+6139,"Puerto Rico","geodetic",7008,8901,NULL
+6140,"NAD83 Canadian Spatial Reference System","geodetic",7019,8901,NULL
+6141,"Israel 1993","geodetic",7019,8901,NULL
+6142,"Locodjo 1965","geodetic",7012,8901,NULL
+6143,"Abidjan 1987","geodetic",7012,8901,NULL
+6144,"Kalianpur 1937","geodetic",7015,8901,NULL
+6145,"Kalianpur 1962","geodetic",7044,8901,NULL
+6146,"Kalianpur 1975","geodetic",7045,8901,NULL
+6147,"Hanoi 1972","geodetic",7024,8901,NULL
+6148,"Hartebeesthoek94","geodetic",7030,8901,NULL
+6149,"CH1903","geodetic",7004,8901,NULL
+6150,"CH1903+","geodetic",7004,8901,NULL
+6151,"Swiss Terrestrial Reference System 1995","geodetic",7019,8901,NULL
+6152,"NAD83 (High Accuracy Reference Network)","geodetic",7019,8901,NULL
+6153,"Rassadiran","geodetic",7022,8901,NULL
+6154,"European Datum 1950(1977)","geodetic",7022,8901,NULL
+6155,"Dabola 1981","geodetic",7011,8901,NULL
+6156,"System of the Unified Trigonometrical Cadastral Network","geodetic",7004,8901,NULL
+6157,"Mount Dillon","geodetic",7007,8901,NULL
+6158,"Naparima 1955","geodetic",7022,8901,NULL
+6159,"European Libyan Datum 1979","geodetic",7022,8901,NULL
+6160,"Chos Malal 1914","geodetic",7022,8901,NULL
+6161,"Pampa del Castillo","geodetic",7022,8901,NULL
+6162,"Korean Datum 1985","geodetic",7004,8901,NULL
+6163,"Yemen National Geodetic Network 1996","geodetic",7030,8901,NULL
+6164,"South Yemen","geodetic",7024,8901,NULL
+6165,"Bissau","geodetic",7022,8901,NULL
+6166,"Korean Datum 1995","geodetic",7030,8901,NULL
+6167,"New Zealand Geodetic Datum 2000","geodetic",7019,8901,NULL
+6168,"Accra","geodetic",7029,8901,NULL
+6169,"American Samoa 1962","geodetic",7008,8901,NULL
+6170,"Sistema de Referencia Geocentrico para America del Sur 1995","geodetic",7019,8901,NULL
+6171,"Reseau Geodesique Francais 1993 v1","geodetic",7019,8901,NULL
+6173,"IRENET95","geodetic",7019,8901,NULL
+6174,"Sierra Leone Colony 1924","geodetic",7029,8901,NULL
+6175,"Sierra Leone 1968","geodetic",7012,8901,NULL
+6176,"Australian Antarctic Datum 1998","geodetic",7019,8901,NULL
+6178,"Pulkovo 1942(83)","geodetic",7024,8901,NULL
+6179,"Pulkovo 1942(58)","geodetic",7024,8901,NULL
+6180,"Estonia 1997","geodetic",7019,8901,NULL
+6181,"Luxembourg Reference Frame","geodetic",7022,8901,NULL
+6182,"Azores Occidental Islands 1939","geodetic",7022,8901,NULL
+6183,"Azores Central Islands 1948","geodetic",7022,8901,NULL
+6184,"Azores Oriental Islands 1940","geodetic",7022,8901,NULL
+6188,"OSNI 1952","geodetic",7001,8901,NULL
+6189,"Red Geodesica Venezolana","geodetic",7019,8901,NULL
+6190,"Posiciones Geodesicas Argentinas 1998","geodetic",7019,8901,NULL
+6191,"Albanian 1987","geodetic",7024,8901,NULL
+6192,"Douala 1948","geodetic",7022,8901,NULL
+6193,"Manoca 1962","geodetic",7011,8901,NULL
+6194,"Qornoq 1927","geodetic",7022,8901,NULL
+6195,"Scoresbysund 1952","geodetic",7022,8901,NULL
+6196,"Ammassalik 1958","geodetic",7022,8901,NULL
+6197,"Garoua","geodetic",7012,8901,NULL
+6198,"Kousseri","geodetic",7012,8901,NULL
+6199,"Egypt 1930","geodetic",7022,8901,NULL
+6200,"Pulkovo 1995","geodetic",7024,8901,NULL
+6201,"Adindan","geodetic",7012,8901,NULL
+6202,"Australian Geodetic Datum 1966","geodetic",7003,8901,NULL
+6203,"Australian Geodetic Datum 1984","geodetic",7003,8901,NULL
+6204,"Ain el Abd 1970","geodetic",7022,8901,NULL
+6205,"Afgooye","geodetic",7024,8901,NULL
+6206,"Agadez","geodetic",7011,8901,NULL
+6207,"Lisbon 1937","geodetic",7022,8901,NULL
+6208,"Aratu","geodetic",7022,8901,NULL
+6209,"Arc 1950","geodetic",7013,8901,NULL
+6210,"Arc 1960","geodetic",7012,8901,NULL
+6211,"Batavia","geodetic",7004,8901,NULL
+6212,"Barbados 1938","geodetic",7012,8901,NULL
+6213,"Beduaram","geodetic",7011,8901,NULL
+6214,"Beijing 1954","geodetic",7024,8901,NULL
+6215,"Reseau National Belge 1950","geodetic",7022,8901,NULL
+6216,"Bermuda 1957","geodetic",7008,8901,NULL
+6218,"Bogota 1975","geodetic",7022,8901,NULL
+6219,"Bukit Rimpah","geodetic",7004,8901,NULL
+6220,"Camacupa 1948","geodetic",7012,8901,NULL
+6221,"Campo Inchauspe","geodetic",7022,8901,NULL
+6222,"Cape","geodetic",7013,8901,NULL
+6223,"Carthage","geodetic",7011,8901,NULL
+6224,"Chua","geodetic",7022,8901,NULL
+6225,"Corrego Alegre 1970-72","geodetic",7022,8901,NULL
+6227,"Deir ez Zor","geodetic",7011,8901,NULL
+6229,"Egypt 1907","geodetic",7020,8901,NULL
+6230,"European Datum 1950","geodetic",7022,8901,NULL
+6231,"European Datum 1987","geodetic",7022,8901,NULL
+6232,"Fahud","geodetic",7012,8901,NULL
+6236,"Hu Tzu Shan 1950","geodetic",7022,8901,NULL
+6237,"Hungarian Datum 1972","geodetic",7036,8901,NULL
+6238,"Indonesian Datum 1974","geodetic",7021,8901,NULL
+6239,"Indian 1954","geodetic",7015,8901,NULL
+6240,"Indian 1975","geodetic",7015,8901,NULL
+6241,"Jamaica 1875","geodetic",7034,8901,NULL
+6242,"Jamaica 1969","geodetic",7008,8901,NULL
+6243,"Kalianpur 1880","geodetic",7042,8901,NULL
+6244,"Kandawala","geodetic",7015,8901,NULL
+6245,"Kertau 1968","geodetic",7018,8901,NULL
+6246,"Kuwait Oil Company","geodetic",7012,8901,NULL
+6247,"La Canoa","geodetic",7022,8901,NULL
+6248,"Provisional South American Datum 1956","geodetic",7022,8901,NULL
+6249,"Lake","geodetic",7022,8901,NULL
+6250,"Leigon","geodetic",7012,8901,NULL
+6251,"Liberia 1964","geodetic",7012,8901,NULL
+6252,"Lome","geodetic",7011,8901,NULL
+6253,"Luzon 1911","geodetic",7008,8901,NULL
+6254,"Hito XVIII 1963","geodetic",7022,8901,NULL
+6255,"Herat North","geodetic",7022,8901,NULL
+6256,"Mahe 1971","geodetic",7012,8901,NULL
+6257,"Makassar","geodetic",7004,8901,NULL
+6258,"European Terrestrial Reference System 1989 ensemble","ensemble",NULL,NULL,NULL
+6259,"Malongo 1987","geodetic",7022,8901,NULL
+6261,"Merchich","geodetic",7011,8901,NULL
+6262,"Massawa","geodetic",7004,8901,NULL
+6263,"Minna","geodetic",7012,8901,NULL
+6265,"Monte Mario","geodetic",7022,8901,NULL
+6266,"M'poraloko","geodetic",7011,8901,NULL
+6267,"North American Datum 1927","geodetic",7008,8901,NULL
+6269,"North American Datum 1983","geodetic",7019,8901,NULL
+6270,"Nahrwan 1967","geodetic",7012,8901,NULL
+6271,"Naparima 1972","geodetic",7022,8901,NULL
+6272,"New Zealand Geodetic Datum 1949","geodetic",7022,8901,NULL
+6273,"NGO 1948","geodetic",7005,8901,NULL
+6274,"Datum 73","geodetic",7022,8901,NULL
+6275,"Nouvelle Triangulation Francaise","geodetic",7011,8901,NULL
+6276,"NSWC 9Z-2","geodetic",7025,8901,NULL
+6277,"Ordnance Survey of Great Britain 1936","geodetic",7001,8901,NULL
+6278,"OSGB 1970 (SN)","geodetic",7001,8901,NULL
+6279,"OS (SN) 1980","geodetic",7001,8901,NULL
+6281,"Palestine 1923","geodetic",7010,8901,NULL
+6282,"Congo 1960 Pointe Noire","geodetic",7011,8901,NULL
+6283,"Geocentric Datum of Australia 1994","geodetic",7019,8901,NULL
+6284,"Pulkovo 1942","geodetic",7024,8901,NULL
+6285,"Qatar 1974","geodetic",7022,8901,NULL
+6286,"Qatar 1948","geodetic",7020,8901,NULL
+6288,"Loma Quintana","geodetic",7022,8901,NULL
+6289,"Amersfoort","geodetic",7004,8901,NULL
+6292,"Sapper Hill 1943","geodetic",7022,8901,NULL
+6293,"Schwarzeck","geodetic",7046,8901,NULL
+6295,"Serindung","geodetic",7004,8901,NULL
+6297,"Tananarive 1925","geodetic",7022,8901,NULL
+6298,"Timbalai 1948","geodetic",7016,8901,NULL
+6299,"TM65","geodetic",7002,8901,NULL
+6300,"Geodetic Datum of 1965","geodetic",7002,8901,NULL
+6301,"Tokyo","geodetic",7004,8901,NULL
+6302,"Trinidad 1903","geodetic",7007,8901,NULL
+6303,"Trucial Coast 1948","geodetic",7020,8901,NULL
+6304,"Voirol 1875","geodetic",7011,8901,NULL
+6306,"Bern 1938","geodetic",7004,8901,NULL
+6307,"Nord Sahara 1959","geodetic",7012,8901,NULL
+6308,"Stockholm 1938","geodetic",7004,8901,NULL
+6309,"Yacare","geodetic",7022,8901,NULL
+6310,"Yoff","geodetic",7011,8901,NULL
+6311,"Zanderij","geodetic",7022,8901,NULL
+6312,"Militar-Geographische Institut","geodetic",7004,8901,NULL
+6313,"Reseau National Belge 1972","geodetic",7022,8901,NULL
+6314,"Deutsches Hauptdreiecksnetz","geodetic",7004,8901,NULL
+6315,"Conakry 1905","geodetic",7011,8901,NULL
+6316,"Dealul Piscului 1930","geodetic",7022,8901,NULL
+6318,"National Geodetic Network","geodetic",7030,8901,NULL
+6319,"Kuwait Utility","geodetic",7019,8901,NULL
+6322,"World Geodetic System 1972","dynamic geodetic",7043,8901,"1972"
+6324,"WGS 72 Transit Broadcast Ephemeris","dynamic geodetic",7043,8901,"1972"
+6326,"World Geodetic System 1984 ensemble","ensemble",NULL,NULL,NULL
+6600,"Anguilla 1957","geodetic",7012,8901,NULL
+6601,"Antigua 1943","geodetic",7012,8901,NULL
+6602,"Dominica 1945","geodetic",7012,8901,NULL
+6603,"Grenada 1953","geodetic",7012,8901,NULL
+6604,"Montserrat 1958","geodetic",7012,8901,NULL
+6605,"St. Kitts 1955","geodetic",7012,8901,NULL
+6606,"St. Lucia 1955","geodetic",7012,8901,NULL
+6607,"St. Vincent 1945","geodetic",7012,8901,NULL
+6608,"North American Datum 1927 (1976)","geodetic",7008,8901,NULL
+6609,"North American Datum 1927 (CGQ77)","geodetic",7008,8901,NULL
+6610,"Xian 1980","geodetic",7049,8901,NULL
+6611,"Hong Kong 1980","geodetic",7022,8901,NULL
+6612,"Japanese Geodetic Datum 2000","geodetic",7019,8901,NULL
+6613,"Gunung Segara","geodetic",7004,8901,NULL
+6614,"Qatar National Datum 1995","geodetic",7022,8901,NULL
+6615,"Porto Santo 1936","geodetic",7022,8901,NULL
+6616,"Selvagem Grande","geodetic",7022,8901,NULL
+6618,"South American Datum 1969","geodetic",7050,8901,NULL
+6619,"SWEREF99","geodetic",7019,8901,NULL
+6620,"Point 58","geodetic",7012,8901,NULL
+6621,"Fort Marigot","geodetic",7022,8901,NULL
+6622,"Guadeloupe 1948","geodetic",7022,8901,NULL
+6623,"Centre Spatial Guyanais 1967","geodetic",7022,8901,NULL
+6624,"Reseau Geodesique Francais Guyane 1995","geodetic",7019,8901,NULL
+6625,"Martinique 1938","geodetic",7022,8901,NULL
+6626,"Reunion 1947","geodetic",7022,8901,NULL
+6627,"Reseau Geodesique de la Reunion 1992","geodetic",7019,8901,NULL
+6628,"Tahiti 52","geodetic",7022,8901,NULL
+6629,"Tahaa 54","geodetic",7022,8901,NULL
+6630,"IGN72 Nuku Hiva","geodetic",7022,8901,NULL
+6632,"Combani 1950","geodetic",7022,8901,NULL
+6633,"IGN56 Lifou","geodetic",7022,8901,NULL
+6634,"IGN72 Grande Terre","geodetic",7022,8901,NULL
+6636,"Petrels 1972","geodetic",7022,8901,NULL
+6637,"Pointe Geologie Perroud 1950","geodetic",7022,8901,NULL
+6638,"Saint Pierre et Miquelon 1950","geodetic",7008,8901,NULL
+6639,"MOP78","geodetic",7022,8901,NULL
+6641,"IGN53 Mare","geodetic",7022,8901,NULL
+6642,"ST84 Ile des Pins","geodetic",7022,8901,NULL
+6643,"ST71 Belep","geodetic",7022,8901,NULL
+6644,"NEA74 Noumea","geodetic",7022,8901,NULL
+6646,"Grand Comoros","geodetic",7022,8901,NULL
+6647,"International Terrestrial Reference Frame 1988","dynamic geodetic",7019,8901,"1988"
+6648,"International Terrestrial Reference Frame 1989","dynamic geodetic",7019,8901,"1988"
+6649,"International Terrestrial Reference Frame 1990","dynamic geodetic",7019,8901,"1988"
+6650,"International Terrestrial Reference Frame 1991","dynamic geodetic",7019,8901,"1988"
+6651,"International Terrestrial Reference Frame 1992","dynamic geodetic",7019,8901,"1988"
+6652,"International Terrestrial Reference Frame 1993","dynamic geodetic",7019,8901,"1993"
+6653,"International Terrestrial Reference Frame 1994","dynamic geodetic",7019,8901,"1993"
+6654,"International Terrestrial Reference Frame 1996","dynamic geodetic",7019,8901,"1997"
+6655,"International Terrestrial Reference Frame 1997","dynamic geodetic",7019,8901,"1997"
+6656,"International Terrestrial Reference Frame 2000","dynamic geodetic",7019,8901,"1997"
+6657,"Reykjavik 1900","geodetic",7051,8901,NULL
+6658,"Hjorsey 1955","geodetic",7022,8901,NULL
+6659,"Islands Net 1993","geodetic",7019,8901,NULL
+6660,"Helle 1954","geodetic",7022,8901,NULL
+6661,"Latvian geodetic coordinate system 1992","geodetic",7019,8901,NULL
+6663,"Porto Santo 1995","geodetic",7022,8901,NULL
+6664,"Azores Oriental Islands 1995","geodetic",7022,8901,NULL
+6665,"Azores Central Islands 1995","geodetic",7022,8901,NULL
+6666,"Lisbon 1890","geodetic",7004,8901,NULL
+6667,"Iraq-Kuwait Boundary Datum 1992","geodetic",7030,8901,NULL
+6668,"European Datum 1979","geodetic",7022,8901,NULL
+6670,"Istituto Geografico Militaire 1995","geodetic",7019,8901,NULL
+6671,"Voirol 1879","geodetic",7011,8901,NULL
+6672,"Chatham Islands Datum 1971","geodetic",7022,8901,NULL
+6673,"Chatham Islands Datum 1979","geodetic",7022,8901,NULL
+6674,"Sistema de Referencia Geocentrico para las AmericaS 2000","geodetic",7019,8901,NULL
+6675,"Guam 1963","geodetic",7008,8901,NULL
+6676,"Vientiane 1982","geodetic",7024,8901,NULL
+6677,"Lao 1993","geodetic",7024,8901,NULL
+6678,"Lao National Datum 1997","geodetic",7024,8901,NULL
+6679,"Jouik 1961","geodetic",7012,8901,NULL
+6680,"Nouakchott 1965","geodetic",7012,8901,NULL
+6682,"Gulshan 303","geodetic",7015,8901,NULL
+6683,"Philippine Reference System 1992","geodetic",7008,8901,NULL
+6684,"Gan 1970","geodetic",7022,8901,NULL
+6686,"Marco Geocentrico Nacional de Referencia","geodetic",7019,8901,NULL
+6687,"Reseau Geodesique de la Polynesie Francaise","geodetic",7019,8901,NULL
+6688,"Fatu Iva 72","geodetic",7022,8901,NULL
+6689,"IGN63 Hiva Oa","geodetic",7022,8901,NULL
+6690,"Tahiti 79","geodetic",7022,8901,NULL
+6691,"Moorea 87","geodetic",7022,8901,NULL
+6692,"Maupiti 83","geodetic",7022,8901,NULL
+6693,"Nakhl-e Ghanem","geodetic",7030,8901,NULL
+6694,"Posiciones Geodesicas Argentinas 1994","geodetic",7030,8901,NULL
+6695,"Katanga 1955","geodetic",7008,8901,NULL
+6696,"Kasai 1953","geodetic",7012,8901,NULL
+6697,"IGC 1962 Arc of the 6th Parallel South","geodetic",7012,8901,NULL
+6698,"IGN 1962 Kerguelen","geodetic",7022,8901,NULL
+6699,"Le Pouce 1934","geodetic",7012,8901,NULL
+6700,"IGN Astro 1960","geodetic",7012,8901,NULL
+6701,"Institut Geographique du Congo Belge 1955","geodetic",7012,8901,NULL
+6702,"Mauritania 1999","geodetic",7019,8901,NULL
+6703,"Missao Hidrografico Angola y Sao Tome 1951","geodetic",7012,8901,NULL
+6704,"Mhast (onshore)","geodetic",7022,8901,NULL
+6705,"Mhast (offshore)","geodetic",7022,8901,NULL
+6706,"Egypt Gulf of Suez S-650 TL","geodetic",7020,8901,NULL
+6707,"Tern Island 1961","geodetic",7022,8901,NULL
+6708,"Cocos Islands 1965","geodetic",7003,8901,NULL
+6709,"Iwo Jima 1945","geodetic",7022,8901,NULL
+6710,"Astro DOS 71","geodetic",7022,8901,NULL
+6711,"Marcus Island 1952","geodetic",7022,8901,NULL
+6712,"Ascension Island 1958","geodetic",7022,8901,NULL
+6713,"Ayabelle Lighthouse","geodetic",7012,8901,NULL
+6714,"Bellevue","geodetic",7022,8901,NULL
+6715,"Camp Area Astro","geodetic",7022,8901,NULL
+6716,"Phoenix Islands 1966","geodetic",7022,8901,NULL
+6717,"Cape Canaveral","geodetic",7008,8901,NULL
+6718,"Solomon 1968","geodetic",7022,8901,NULL
+6719,"Easter Island 1967","geodetic",7022,8901,NULL
+6720,"Fiji Geodetic Datum 1986","geodetic",7043,8901,NULL
+6721,"Fiji 1956","geodetic",7022,8901,NULL
+6722,"South Georgia 1968","geodetic",7022,8901,NULL
+6723,"Grand Cayman Geodetic Datum 1959","geodetic",7008,8901,NULL
+6724,"Diego Garcia 1969","geodetic",7022,8901,NULL
+6725,"Johnston Island 1961","geodetic",7022,8901,NULL
+6726,"Sister Islands Geodetic Datum 1961","geodetic",7008,8901,NULL
+6727,"Midway 1961","geodetic",7022,8901,NULL
+6728,"Pico de las Nieves 1984","geodetic",7022,8901,NULL
+6729,"Pitcairn 1967","geodetic",7022,8901,NULL
+6730,"Santo 1965","geodetic",7022,8901,NULL
+6732,"Marshall Islands 1960","geodetic",7053,8901,NULL
+6733,"Wake Island 1952","geodetic",7022,8901,NULL
+6734,"Tristan 1968","geodetic",7022,8901,NULL
+6735,"Kusaie 1951","geodetic",7022,8901,NULL
+6736,"Deception Island","geodetic",7012,8901,NULL
+6737,"Korean Geodetic Datum 2002","geodetic",7019,8901,NULL
+6738,"Hong Kong 1963","geodetic",7007,8901,NULL
+6739,"Hong Kong 1963(67)","geodetic",7022,8901,NULL
+6740,"Parametry Zemli 1990","dynamic geodetic",7054,8901,"1990"
+6741,"Faroe Datum 1954","geodetic",7022,8901,NULL
+6742,"Geodetic Datum of Malaysia 2000","geodetic",7019,8901,NULL
+6743,"Karbala 1979","geodetic",7012,8901,NULL
+6744,"Nahrwan 1934","geodetic",7012,8901,NULL
+6745,"Rauenberg Datum/83","geodetic",7004,8901,NULL
+6746,"Potsdam Datum/83","geodetic",7004,8901,NULL
+6747,"Greenland 1996","geodetic",7019,8901,NULL
+6748,"Vanua Levu 1915","geodetic",7055,8901,NULL
+6749,"Reseau Geodesique de Nouvelle Caledonie 91-93","geodetic",7019,8901,NULL
+6750,"ST87 Ouvea","geodetic",7030,8901,NULL
+6751,"Kertau (RSO)","geodetic",7056,8901,NULL
+6752,"Viti Levu 1912","geodetic",7055,8901,NULL
+6753,"fk89","geodetic",7022,8901,NULL
+6754,"Libyan Geodetic Datum 2006","geodetic",7022,8901,NULL
+6755,"Datum Geodesi Nasional 1995","geodetic",7030,8901,NULL
+6756,"Vietnam 2000","geodetic",7030,8901,NULL
+6757,"SVY21","geodetic",7030,8901,NULL
+6758,"Jamaica 2001","geodetic",7030,8901,NULL
+6759,"NAD83 (National Spatial Reference System 2007)","geodetic",7019,8901,NULL
+6760,"World Geodetic System 1966","dynamic geodetic",7025,8901,"1966"
+6761,"Croatian Terrestrial Reference System","geodetic",7019,8901,NULL
+6762,"Bermuda 2000","geodetic",7030,8901,NULL
+6763,"Pitcairn 2006","geodetic",7030,8901,NULL
+6764,"Ross Sea Region Geodetic Datum 2000","geodetic",7019,8901,NULL
+6765,"Slovenia Geodetic Datum 1996","geodetic",7019,8901,NULL
+6801,"CH1903 (Bern)","geodetic",7004,8907,NULL
+6802,"Bogota 1975 (Bogota)","geodetic",7022,8904,NULL
+6803,"Lisbon 1937 (Lisbon)","geodetic",7022,8902,NULL
+6804,"Makassar (Jakarta)","geodetic",7004,8908,NULL
+6805,"Militar-Geographische Institut (Ferro)","geodetic",7004,8909,NULL
+6806,"Monte Mario (Rome)","geodetic",7022,8906,NULL
+6807,"Nouvelle Triangulation Francaise (Paris)","geodetic",7011,8903,NULL
+6809,"Reseau National Belge 1950 (Brussels)","geodetic",7022,8910,NULL
+6810,"Tananarive 1925 (Paris)","geodetic",7022,8903,NULL
+6811,"Voirol 1875 (Paris)","geodetic",7011,8903,NULL
+6813,"Batavia (Jakarta)","geodetic",7004,8908,NULL
+6814,"Stockholm 1938 (Stockholm)","geodetic",7004,8911,NULL
+6815,"Greek (Athens)","geodetic",7004,8912,NULL
+6816,"Carthage (Paris)","geodetic",7011,8903,NULL
+6817,"NGO 1948 (Oslo)","geodetic",7005,8913,NULL
+6818,"System of the Unified Trigonometrical Cadastral Network (Ferro)","geodetic",7004,8909,NULL
+6820,"Gunung Segara (Jakarta)","geodetic",7004,8908,NULL
+6821,"Voirol 1879 (Paris)","geodetic",7011,8903,NULL
+6896,"International Terrestrial Reference Frame 2005","dynamic geodetic",7019,8901,"2000"
+6901,"Ancienne Triangulation Francaise (Paris)","geodetic",7027,8914,NULL
+6903,"Madrid 1870 (Madrid)","geodetic",7028,8905,NULL
+6904,"Lisbon 1890 (Lisbon)","geodetic",7004,8902,NULL

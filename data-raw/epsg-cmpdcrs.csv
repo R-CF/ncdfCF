@@ -1,0 +1,436 @@
+"coord_ref_sys_code","coord_ref_sys_name","cmpd_horizcrs_code","cmpd_vertcrs_code"
+3901,"KKJ / Finland Uniform Coordinate System + N60 height",2393,5717
+3902,"ETRS89 / TM35FIN(N,E) + N60 height",5048,5717
+3903,"ETRS89 / TM35FIN(N,E) + N2000 height",5048,3900
+4097,"ETRS89 / DKTM1 + DVR90 height",4093,5799
+4098,"ETRS89 / DKTM2 + DVR90 height",4094,5799
+4099,"ETRS89 / DKTM3 + DVR90 height",4095,5799
+4100,"ETRS89 / DKTM4 + DVR90 height",4096,5799
+5318,"ETRS89 / Faroe TM + FVR09 height",5316,5317
+5498,"NAD83 + NAVD88 height",4269,5703
+5499,"NAD83(HARN) + NAVD88 height",4152,5703
+5500,"NAD83(NSRS2007) + NAVD88 height",4759,5703
+5554,"ETRS89 / UTM zone 31N + DHHN92 height",25831,5783
+5555,"ETRS89 / UTM zone 32N + DHHN92 height",25832,5783
+5556,"ETRS89 / UTM zone 33N + DHHN92 height",25833,5783
+5598,"FEH2010 / Fehmarnbelt TM + FCSVR10 height",5596,5597
+5628,"SWEREF99 + RH2000 height",4619,5613
+5698,"RGF93 v1 / Lambert-93 + NGF-IGN69 height",2154,5720
+5699,"RGF93 v1 / Lambert-93 + NGF-IGN78 height",2154,5721
+5707,"NTF (Paris) / Lambert zone I + NGF-IGN69 height",27571,5720
+5708,"NTF (Paris) / Lambert zone IV + NGF-IGN78 height",27574,5721
+5845,"SWEREF99 TM + RH2000 height",3006,5613
+5846,"SWEREF99 12 00 + RH2000 height",3007,5613
+5847,"SWEREF99 13 30 + RH2000 height",3008,5613
+5848,"SWEREF99 15 00 + RH2000 height",3009,5613
+5849,"SWEREF99 16 30 + RH2000 height",3010,5613
+5850,"SWEREF99 18 00 + RH2000 height",3011,5613
+5851,"SWEREF99 14 15 + RH2000 height",3012,5613
+5852,"SWEREF99 15 45 + RH2000 height",3013,5613
+5853,"SWEREF99 17 15 + RH2000 height",3014,5613
+5854,"SWEREF99 18 45 + RH2000 height",3015,5613
+5855,"SWEREF99 20 15 + RH2000 height",3016,5613
+5856,"SWEREF99 21 45 + RH2000 height",3017,5613
+5857,"SWEREF99 23 15 + RH2000 height",3018,5613
+5942,"ETRS89 + NN2000 height",4258,5941
+5945,"ETRS89 / NTM zone 5 + NN2000 height",5105,5941
+5946,"ETRS89 / NTM zone 6 + NN2000 height",5106,5941
+5947,"ETRS89 / NTM zone 7 + NN2000 height",5107,5941
+5948,"ETRS89 / NTM zone 8 + NN2000 height",5108,5941
+5949,"ETRS89 / NTM zone 9 + NN2000 height",5109,5941
+5950,"ETRS89 / NTM zone 10 + NN2000 height",5110,5941
+5951,"ETRS89 / NTM zone 11 + NN2000 height",5111,5941
+5952,"ETRS89 / NTM zone 12 + NN2000 height",5112,5941
+5953,"ETRS89 / NTM zone 13 + NN2000 height",5113,5941
+5954,"ETRS89 / NTM zone 14 + NN2000 height",5114,5941
+5955,"ETRS89 / NTM zone 15 + NN2000 height",5115,5941
+5956,"ETRS89 / NTM zone 16 + NN2000 height",5116,5941
+5957,"ETRS89 / NTM zone 17 + NN2000 height",5117,5941
+5958,"ETRS89 / NTM zone 18 + NN2000 height",5118,5941
+5959,"ETRS89 / NTM zone 19 + NN2000 height",5119,5941
+5960,"ETRS89 / NTM zone 20 + NN2000 height",5120,5941
+5961,"ETRS89 / NTM zone 21 + NN2000 height",5121,5941
+5962,"ETRS89 / NTM zone 22 + NN2000 height",5122,5941
+5963,"ETRS89 / NTM zone 23 + NN2000 height",5123,5941
+5964,"ETRS89 / NTM zone 24 + NN2000 height",5124,5941
+5965,"ETRS89 / NTM zone 25 + NN2000 height",5125,5941
+5966,"ETRS89 / NTM zone 26 + NN2000 height",5126,5941
+5967,"ETRS89 / NTM zone 27 + NN2000 height",5127,5941
+5968,"ETRS89 / NTM zone 28 + NN2000 height",5128,5941
+5969,"ETRS89 / NTM zone 29 + NN2000 height",5129,5941
+5970,"ETRS89 / NTM zone 30 + NN2000 height",5130,5941
+5971,"ETRS89 / UTM zone 31N + NN2000 height",25831,5941
+5972,"ETRS89 / UTM zone 32N + NN2000 height",25832,5941
+5973,"ETRS89 / UTM zone 33N + NN2000 height",25833,5941
+5974,"ETRS89 / UTM zone 34N + NN2000 height",25834,5941
+5975,"ETRS89 / UTM zone 35N + NN2000 height",25835,5941
+5976,"ETRS89 / UTM zone 36N + NN2000 height",25836,5941
+6144,"ETRS89 + NN54 height",4258,5776
+6145,"ETRS89 / NTM zone 5 + NN54 height",5105,5776
+6146,"ETRS89 / NTM zone 6 + NN54 height",5106,5776
+6147,"ETRS89 / NTM zone 7 + NN54 height",5107,5776
+6148,"ETRS89 / NTM zone 8 + NN54 height",5108,5776
+6149,"ETRS89 / NTM zone 9 + NN54 height",5109,5776
+6150,"ETRS89 / NTM zone 10 + NN54 height",5110,5776
+6151,"ETRS89 / NTM zone 11 + NN54 height",5111,5776
+6152,"ETRS89 / NTM zone 12 + NN54 height",5112,5776
+6153,"ETRS89 / NTM zone 13 + NN54 height",5113,5776
+6154,"ETRS89 / NTM zone 14 + NN54 height",5114,5776
+6155,"ETRS89 / NTM zone 15 + NN54 height",5115,5776
+6156,"ETRS89 / NTM zone 16 + NN54 height",5116,5776
+6157,"ETRS89 / NTM zone 17 + NN54 height",5117,5776
+6158,"ETRS89 / NTM zone 18 + NN54 height",5118,5776
+6159,"ETRS89 / NTM zone 19 + NN54 height",5119,5776
+6160,"ETRS89 / NTM zone 20 + NN54 height",5120,5776
+6161,"ETRS89 / NTM zone 21 + NN54 height",5121,5776
+6162,"ETRS89 / NTM zone 22 + NN54 height",5122,5776
+6163,"ETRS89 / NTM zone 23 + NN54 height",5123,5776
+6164,"ETRS89 / NTM zone 24 + NN54 height",5124,5776
+6165,"ETRS89 / NTM zone 25 + NN54 height",5125,5776
+6166,"ETRS89 / NTM zone 26 + NN54 height",5126,5776
+6167,"ETRS89 / NTM zone 27 + NN54 height",5127,5776
+6168,"ETRS89 / NTM zone 28 + NN54 height",5128,5776
+6169,"ETRS89 / NTM zone 29 + NN54 height",5129,5776
+6170,"ETRS89 / NTM zone 30 + NN54 height",5130,5776
+6171,"ETRS89 / UTM zone 31N + NN54 height",25831,5776
+6172,"ETRS89 / UTM zone 32N + NN54 height",25832,5776
+6173,"ETRS89 / UTM zone 33N + NN54 height",25833,5776
+6174,"ETRS89 / UTM zone 34N + NN54 height",25834,5776
+6175,"ETRS89 / UTM zone 35N + NN54 height",25835,5776
+6176,"ETRS89 / UTM zone 36N + NN54 height",25836,5776
+6190,"BD72 / Belgian Lambert 72 + Ostend height",31370,5710
+6349,"NAD83(2011) + NAVD88 height",6318,5703
+6649,"NAD83(CSRS) + CGVD2013(CGG2013) height",4617,6647
+6650,"NAD83(CSRS) / UTM zone 7N + CGVD2013 height",3154,6647
+6651,"NAD83(CSRS) / UTM zone 8N + CGVD2013 height",3155,6647
+6652,"NAD83(CSRS) / UTM zone 9N + CGVD2013 height",3156,6647
+6653,"NAD83(CSRS) / UTM zone 10N + CGVD2013 height",3157,6647
+6654,"NAD83(CSRS) / UTM zone 11N + CGVD2013 height",2955,6647
+6655,"NAD83(CSRS) / UTM zone 12N + CGVD2013 height",2956,6647
+6656,"NAD83(CSRS) / UTM zone 13N + CGVD2013 height",2957,6647
+6657,"NAD83(CSRS) / UTM zone 14N + CGVD2013 height",3158,6647
+6658,"NAD83(CSRS) / UTM zone 15N + CGVD2013 height",3159,6647
+6659,"NAD83(CSRS) / UTM zone 16N + CGVD2013 height",3160,6647
+6660,"NAD83(CSRS) / UTM zone 17N + CGVD2013 height",2958,6647
+6661,"NAD83(CSRS) / UTM zone 18N + CGVD2013 height",2959,6647
+6662,"NAD83(CSRS) / UTM zone 19N + CGVD2013 height",2960,6647
+6663,"NAD83(CSRS) / UTM zone 20N + CGVD2013 height",2961,6647
+6664,"NAD83(CSRS) / UTM zone 21N + CGVD2013 height",2962,6647
+6665,"NAD83(CSRS) / UTM zone 22N + CGVD2013 height",3761,6647
+6696,"JGD2000 + JGD2000 (vertical) height",4612,6694
+6697,"JGD2011 + JGD2011 (vertical) height",6668,6695
+6700,"Tokyo + JSLD72 height",4301,6693
+6893,"WGS 84 / World Mercator + EGM2008 height",3395,3855
+6917,"SVY21 + SHD height",4757,6916
+6927,"SVY21 / Singapore TM + SHD height",3414,6916
+7400,"NTF (Paris) + NGF-IGN69 height",4807,5720
+7404,"RT90 + RH70 height",4124,5718
+7405,"OSGB36 / British National Grid + ODN height",27700,5701
+7406,"NAD27 + NGVD29 height (ftUS)",4267,5702
+7407,"NAD27 / Texas North + NGVD29 height (ftUS)",32037,5702
+7409,"ETRS89 + EVRF2000 height",4258,5730
+7410,"PSHD93",4134,5724
+7411,"NTF (Paris) / Lambert zone II + NGF Lallemand height",27572,5719
+7414,"Tokyo + JSLD69 height",4301,5723
+7415,"Amersfoort / RD New + NAP height",28992,5709
+7416,"ETRS89 / UTM zone 32N + DVR90 height",25832,5799
+7417,"ETRS89 / UTM zone 33N + DVR90 height",25833,5799
+7418,"ETRS89 / Kp2000 Jutland + DVR90 height",2196,5799
+7419,"ETRS89 / Kp2000 Zealand + DVR90 height",2197,5799
+7420,"ETRS89 / Kp2000 Bornholm + DVR90 height",2198,5799
+7421,"NTF (Paris) / Lambert zone II + NGF-IGN69 height",27572,5720
+7422,"NTF (Paris) / Lambert zone III + NGF-IGN69 height",27573,5720
+7423,"ETRS89 + EVRF2007 height",4258,5621
+7954,"Astro DOS 71 / UTM zone 30S + Jamestown 1971 height",7878,7888
+7955,"St. Helena Tritan / UTM zone 30S + Tritan 2011 height",7883,7889
+7956,"SHMG2015 + SHVD2015 height",7887,7890
+8349,"GR96 + GVR2000 height",4747,8266
+8350,"GR96 + GVR2016 height",4747,8267
+8360,"ETRS89 + Baltic 1957 height",4258,8357
+8370,"ETRS89 / Belgian Lambert 2008 + Ostend height",3812,5710
+8700,"NAD83 / Arizona East (ft) + NAVD88 height (ft)",2222,8228
+8701,"NAD83 / Arizona Central (ft) + NAVD88 height (ft)",2223,8228
+8702,"NAD83 / Arizona West (ft) + NAVD88 height (ft)",2224,8228
+8703,"NAD83 / Michigan North (ft) + NAVD88 height (ft)",2251,8228
+8704,"NAD83 / Michigan Central (ft) + NAVD88 height (ft)",2252,8228
+8705,"NAD83 / Michigan South (ft) + NAVD88 height (ft)",2253,8228
+8706,"NAD83 / Montana (ft) + NAVD88 height (ft)",2256,8228
+8707,"NAD83 / North Dakota North (ft) + NAVD88 height (ft)",2265,8228
+8708,"NAD83 / North Dakota South (ft) + NAVD88 height (ft)",2266,8228
+8709,"NAD83 / Oregon North (ft) + NAVD88 height (ft)",2269,8228
+8710,"NAD83 / Oregon South (ft) + NAVD88 height (ft)",2270,8228
+8711,"NAD83 / South Carolina (ft) + NAVD88 height (ft)",2273,8228
+8712,"NAD83 / Arkansas North (ftUS) + NAVD88 height (ftUS)",3433,6360
+8713,"NAD83 / Arkansas South (ftUS) + NAVD88 height (ftUS)",3434,6360
+8714,"NAD83 / California zone 1 (ftUS) + NAVD88 height (ftUS)",2225,6360
+8715,"NAD83 / California zone 2 (ftUS) + NAVD88 height (ftUS)",2226,6360
+8716,"NAD83 / California zone 3 (ftUS) + NAVD88 height (ftUS)",2227,6360
+8717,"NAD83 / California zone 4 (ftUS) + NAVD88 height (ftUS)",2228,6360
+8718,"NAD83 / California zone 5 (ftUS) + NAVD88 height (ftUS)",2229,6360
+8719,"NAD83 / California zone 6 (ftUS) + NAVD88 height (ftUS)",2230,6360
+8720,"NAD83 / Colorado North (ftUS) + NAVD88 height (ftUS)",2231,6360
+8721,"NAD83 / Colorado Central (ftUS) + NAVD88 height (ftUS)",2232,6360
+8722,"NAD83 / Colorado South (ftUS) + NAVD88 height (ftUS)",2233,6360
+8723,"NAD83 / Connecticut (ftUS) + NAVD88 height (ftUS)",2234,6360
+8724,"NAD83 / Delaware (ftUS) + NAVD88 height (ftUS)",2235,6360
+8725,"NAD83 / Florida North (ftUS) + NAVD88 height (ftUS)",2238,6360
+8726,"NAD83 / Florida East (ftUS) + NAVD88 height (ftUS)",2236,6360
+8727,"NAD83 / Florida West (ftUS) + NAVD88 height (ftUS)",2237,6360
+8728,"NAD83 / Georgia East (ftUS) + NAVD88 height (ftUS)",2239,6360
+8729,"NAD83 / Georgia West (ftUS) + NAVD88 height (ftUS)",2240,6360
+8730,"NAD83 / Idaho East (ftUS) + NAVD88 height (ftUS)",2241,6360
+8731,"NAD83 / Idaho Central (ftUS) + NAVD88 height (ftUS)",2242,6360
+8732,"NAD83 / Idaho West (ftUS) + NAVD88 height (ftUS)",2243,6360
+8733,"NAD83 / Illinois East (ftUS) + NAVD88 height (ftUS)",3435,6360
+8734,"NAD83 / Illinois West (ftUS) + NAVD88 height (ftUS)",3436,6360
+8735,"NAD83 / Indiana East (ftUS) + NAVD88 height (ftUS)",2965,6360
+8736,"NAD83 / Indiana West (ftUS) + NAVD88 height (ftUS)",2966,6360
+8737,"NAD83 / Iowa North (ftUS) + NAVD88 height (ftUS)",3417,6360
+8738,"NAD83 / Iowa South (ftUS) + NAVD88 height (ftUS)",3418,6360
+8739,"NAD83 / Kansas North (ftUS) + NAVD88 height (ftUS)",3419,6360
+8740,"NAD83 / Kansas South (ftUS) + NAVD88 height (ftUS)",3420,6360
+8741,"NAD83 / Kentucky North (ftUS) + NAVD88 height (ftUS)",2246,6360
+8742,"NAD83 / Kentucky South (ftUS) + NAVD88 height (ftUS)",2247,6360
+8743,"NAD83 / Louisiana North (ftUS) + NAVD88 height (ftUS)",3451,6360
+8744,"NAD83 / Louisiana South (ftUS) + NAVD88 height (ftUS)",3452,6360
+8745,"NAD83 / Maine East (ftUS) + NAVD88 height (ftUS)",26847,6360
+8746,"NAD83 / Maine West (ftUS) + NAVD88 height (ftUS)",26848,6360
+8747,"NAD83 / Maryland (ftUS) + NAVD88 height (ftUS)",2248,6360
+8748,"NAD83 / Massachusetts Mainland (ftUS) + NAVD88 height (ftUS)",2249,6360
+8749,"NAD83 / Massachusetts Island (ftUS) + NAVD88 height (ftUS)",2250,6360
+8750,"NAD83 / Minnesota North (ftUS) + NAVD88 height (ftUS)",26849,6360
+8751,"NAD83 / Minnesota Central (ftUS) + NAVD88 height (ftUS)",26850,6360
+8752,"NAD83 / Minnesota South (ftUS) + NAVD88 height (ftUS)",26851,6360
+8753,"NAD83 / Mississippi East (ftUS) + NAVD88 height (ftUS)",2254,6360
+8754,"NAD83 / Mississippi West (ftUS) + NAVD88 height (ftUS)",2255,6360
+8755,"NAD83 / Nebraska (ftUS) + NAVD88 height (ftUS)",26852,6360
+8756,"NAD83 / Nevada East (ftUS) + NAVD88 height (ftUS)",3421,6360
+8757,"NAD83 / Nevada Central (ftUS) + NAVD88 height (ftUS)",3422,6360
+8758,"NAD83 / Nevada West (ftUS) + NAVD88 height (ftUS)",3423,6360
+8759,"NAD83 / New Hampshire (ftUS) + NAVD88 height (ftUS)",3437,6360
+8760,"NAD83 / New Jersey (ftUS) + NAVD88 height (ftUS)",3424,6360
+8761,"NAD83 / New Mexico East (ftUS) + NAVD88 height (ftUS)",2257,6360
+8762,"NAD83 / New Mexico Central (ftUS) + NAVD88 height (ftUS)",2258,6360
+8763,"NAD83 / New Mexico West (ftUS) + NAVD88 height (ftUS)",2259,6360
+8764,"NAD83 / New York East (ftUS) + NAVD88 height (ftUS)",2260,6360
+8765,"NAD83 / New York Central (ftUS) + NAVD88 height (ftUS)",2261,6360
+8766,"NAD83 / New York West (ftUS) + NAVD88 height (ftUS)",2262,6360
+8767,"NAD83 / New York Long Island (ftUS) + NAVD88 height (ftUS)",2263,6360
+8768,"NAD83 / North Carolina (ftUS) + NAVD88 height (ftUS)",2264,6360
+8769,"NAD83 / Ohio North (ftUS) + NAVD88 height (ftUS)",3734,6360
+8770,"NAD83 / Ohio South (ftUS) + NAVD88 height (ftUS)",3735,6360
+8771,"NAD83 / Oklahoma North (ftUS) + NAVD88 height (ftUS)",2267,6360
+8772,"NAD83 / Oklahoma South (ftUS) + NAVD88 height (ftUS)",2268,6360
+8773,"NAD83 / Pennsylvania North (ftUS) + NAVD88 height (ftUS)",2271,6360
+8774,"NAD83 / Pennsylvania South (ftUS) + NAVD88 height (ftUS)",2272,6360
+8775,"NAD83 / Rhode Island (ftUS) + NAVD88 height (ftUS)",3438,6360
+8776,"NAD83 / South Dakota North (ftUS) + NAVD88 height (ftUS)",4457,6360
+8777,"NAD83 / South Dakota South (ftUS) + NAVD88 height (ftUS)",3455,6360
+8778,"NAD83 / Tennessee (ftUS) + NAVD88 height (ftUS)",2274,6360
+8779,"NAD83 / Texas North (ftUS) + NAVD88 height (ftUS)",2275,6360
+8780,"NAD83 / Texas North Central (ftUS) + NAVD88 height (ftUS)",2276,6360
+8781,"NAD83 / Texas Central (ftUS) + NAVD88 height (ftUS)",2277,6360
+8782,"NAD83 / Texas South Central (ftUS) + NAVD88 height (ftUS)",2278,6360
+8783,"NAD83 / Texas South (ftUS) + NAVD88 height (ftUS)",2279,6360
+8784,"NAD83 / Utah North (ftUS) + NAVD88 height (ftUS)",3560,6360
+8785,"NAD83 / Utah Central (ftUS) + NAVD88 height (ftUS)",3566,6360
+8786,"NAD83 / Utah South (ftUS) + NAVD88 height (ftUS)",3567,6360
+8787,"NAD83 / Vermont (ftUS) + NAVD88 height (ftUS)",5646,6360
+8788,"NAD83 / Virginia North (ftUS) + NAVD88 height (ftUS)",2283,6360
+8789,"NAD83 / Virginia South (ftUS) + NAVD88 height (ftUS)",2284,6360
+8790,"NAD83 / Washington North (ftUS) + NAVD88 height (ftUS)",2285,6360
+8791,"NAD83 / Washington South (ftUS) + NAVD88 height (ftUS)",2286,6360
+8792,"NAD83 / West Virginia North (ftUS) + NAVD88 height (ftUS)",26853,6360
+8793,"NAD83 / West Virginia South (ftUS) + NAVD88 height (ftUS)",26854,6360
+8794,"NAD83 / Wisconsin North (ftUS) + NAVD88 height (ftUS)",2287,6360
+8795,"NAD83 / Wisconsin Central (ftUS) + NAVD88 height (ftUS)",2288,6360
+8796,"NAD83 / Wisconsin South (ftUS) + NAVD88 height (ftUS)",2289,6360
+8797,"NAD83 / Wyoming East (ftUS) + NAVD88 height (ftUS)",3736,6360
+8798,"NAD83 / Wyoming East Central (ftUS) + NAVD88 height (ftUS)",3737,6360
+8799,"NAD83 / Wyoming West Central (ftUS) + NAVD88 height (ftUS)",3738,6360
+8800,"NAD83 / Wyoming West (ftUS) + NAVD88 height (ftUS)",3739,6360
+8801,"NAD83 / Alabama East + NAVD88 height",26929,5703
+8802,"NAD83 / Alabama West + NAVD88 height",26930,5703
+8803,"NAD83 / Alaska zone 1 + NAVD88 height",26931,5703
+8804,"NAD83 / Alaska zone 2 + NAVD88 height",26932,5703
+8805,"NAD83 / Alaska zone 3 + NAVD88 height",26933,5703
+8806,"NAD83 / Alaska zone 4 + NAVD88 height",26934,5703
+8807,"NAD83 / Alaska zone 5 + NAVD88 height",26935,5703
+8808,"NAD83 / Alaska zone 6 + NAVD88 height",26936,5703
+8809,"NAD83 / Alaska zone 7 + NAVD88 height",26937,5703
+8810,"NAD83 / Alaska zone 8 + NAVD88 height",26938,5703
+8811,"NAD83 / Alaska zone 9 + NAVD88 height",26939,5703
+8812,"NAD83 / Alaska zone 10 + NAVD88 height",26940,5703
+8813,"NAD83 / Missouri East + NAVD88 height",26996,5703
+8814,"NAD83 / Missouri Central + NAVD88 height",26997,5703
+8815,"NAD83 / Missouri West + NAVD88 height",26998,5703
+8912,"CR-SIRGAS / CRTM05 + DACR52 height",8908,8911
+9286,"ETRS89 + NAP height",4258,5709
+9289,"ETRS89 + LAT NL depth",4258,9287
+9290,"ETRS89 + MSL NL depth",4258,9288
+9306,"HS2 Survey Grid + HS2-VRF height",9300,9303
+9368,"TPEN11 Grid + ODN height",9367,5701
+9374,"MML07 Grid + ODN height",9373,5701
+9388,"AbInvA96_2020 Grid + ODN height",9387,5701
+9422,"ETRS89 + EVRF2019 height",4258,9389
+9423,"ETRS89 + EVRF2019 mean-tide height",4258,9390
+9424,"ETRS89 + ODN height",4258,5701
+9425,"ETRS89 + ODN (Offshore) height",4258,7707
+9426,"ETRS89 + ODN Orkney height",4258,5740
+9427,"ETRS89 + Lerwick height",4258,5742
+9428,"ETRS89 + Stornoway height",4258,5746
+9429,"ETRS89 + Douglas height",4258,5750
+9430,"ETRS89 + St. Marys height",4258,5749
+9449,"ETRS89 + Malin Head height",4258,5731
+9450,"ETRS89 + Belfast height",4258,5732
+9452,"ETRS89 + BI height",4258,9451
+9457,"GBK19 Grid + ODN height",9456,5701
+9462,"GDA2020 + AVWS height",7844,9458
+9463,"GDA2020 + AHD height",7844,5711
+9464,"GDA94 + AHD height",4283,5711
+9500,"ETRS89 + EVRF2000 Austria height",4258,9274
+9501,"MGI + EVRF2000 Austria height",4312,9274
+9502,"CIGD11 + CBVD61 height (ft)",6135,6132
+9503,"CIGD11 + GCVD54 height (ft)",6135,6130
+9504,"CIGD11 + LCVD61 height (ft)",6135,6131
+9505,"ETRS89 + Alicante height",4258,5782
+9506,"ETRS89 + Ceuta 2 height",4258,9402
+9507,"ETRS89 + Ibiza height",4258,9394
+9508,"ETRS89 + Mallorca height",4258,9392
+9509,"ETRS89 + Menorca height",4258,9393
+9510,"REGCAN95 + El Hierro height",4081,9401
+9511,"REGCAN95 + Fuerteventura height",4081,9396
+9512,"REGCAN95 + Gran Canaria height",4081,9397
+9513,"REGCAN95 + La Gomera height",4081,9399
+9514,"REGCAN95 + La Palma height",4081,9400
+9515,"REGCAN95 + Lanzarote height",4081,9395
+9516,"REGCAN95 + Tenerife height",4081,9398
+9517,"SHGD2015 + SHVD2015 height",7886,7890
+9518,"WGS 84 + EGM2008 height",4326,3855
+9519,"FEH2010 + FCSVR10 height",5593,5597
+9520,"KSA-GRF17 + KSA-VRF14 height",9333,9335
+9521,"POSGAR 2007 + SRVN16 height",5340,9255
+9522,"NAD83(2011) + PRVD02 height",6318,6641
+9523,"NAD83(2011) + VIVD09 height",6318,6642
+9524,"NAD83(MA11) + GUVD04 height",6325,6644
+9525,"NAD83(MA11) + NMVD03 height",6325,6640
+9526,"NAD83(PA11) + ASVD02 height",6322,6643
+9527,"NZGD2000 + NZVD2009 height",4167,4440
+9528,"NZGD2000 + NZVD2016 height",4167,7839
+9529,"SRGI2013 + INAGeoid2020 v1 height",9470,9471
+9530,"RGFG95 + NGG1977 height",4624,5755
+9531,"RGAF09 + Guadeloupe 1988 height",5489,5757
+9532,"RGAF09 + IGN 1988 LS height",5489,5616
+9533,"RGAF09 + IGN 1988 MG height",5489,5617
+9534,"RGAF09 + IGN 1988 SB height",5489,5619
+9535,"RGAF09 + IGN 1988 SM height",5489,5620
+9536,"RGAF09 + IGN 2008 LD height",5489,9130
+9537,"RGAF09 + Martinique 1987 height",5489,5756
+9538,"RGF93 v2 + NGF-IGN69 height",9777,5720
+9539,"RGF93 v2 + NGF-IGN78 height",9777,5721
+9540,"RGNC91-93 + NGNC08 height",4749,9351
+9541,"RGSPM06 + Danger 1950 height",4463,5792
+9542,"RRAF 1991 + IGN 2008 LD height",4558,9130
+9543,"ITRF2005 + SA LLD height",8998,9279
+9544,"NAD83(CSRS)v6 + CGVD2013a(2010) height",8252,9245
+9656,"ETRF2000-PL + Baltic 1986 height",9702,9650
+9657,"ETRF2000-PL + EVRF2007-PL height",9702,9651
+9705,"WGS 84 + MSL height",4326,5714
+9707,"WGS 84 + EGM96 height",4326,5773
+9711,"NAD83(CSRS) / UTM zone 23N + CGVD2013 height",9709,6647
+9714,"NAD83(CSRS) / UTM zone 24N + CGVD2013 height",9713,6647
+9715,"NAD83(CSRS) / UTM zone 15N + CGVD2013a(2010) height",3159,9245
+9723,"ETRS89 + Genoa 1942 height",4258,5214
+9724,"ETRS89 + Catania 1965 height",4258,9721
+9725,"ETRS89 + Cagliari 1956 height",4258,9722
+9742,"EOS21 Grid + ODN height",9741,5701
+9762,"ECML14_NB Grid + ODN height",9761,5701
+9767,"EWR2 Grid + ODN height",9766,5701
+9785,"RGF93 v2b + NGF-IGN69 height",9782,5720
+9870,"MRH21 Grid + ODN height",9869,5701
+9881,"MOLDOR11 Grid + ODN height",9880,5701
+9883,"ETRS89 + CD Norway depth",4258,9672
+9897,"LUREF / Luxembourg TM + NG95 height",2169,5774
+9907,"ETRS89 + Ostend height",4258,5710
+9920,"OSGB36 / British National Grid + BI height",27700,9451
+9922,"ETRS89 / ITM + BI height",2157,9451
+9924,"ETRS89 + DHHN2016 height",4258,7837
+9928,"DB_REF2003 zone 2",5682,9923
+9929,"DB_REF2003 zone 3",5683,9923
+9930,"DB_REF2003 zone 4",5684,9923
+9931,"DB_REF2003 zone 5",5685,9923
+9932,"DB_REF2016 zone 2",5682,9927
+9933,"DB_REF2016 zone 3",5683,9927
+9934,"DB_REF2016 zone 4",5684,9927
+9935,"DB_REF2016 zone 5",5685,9927
+9944,"EBBWV14 Grid + ODN height",9943,5701
+9948,"ISN93 + ISH2004 height",4659,8089
+9949,"ISN2004 + ISH2004 height",5324,8089
+9950,"ISN2016 + ISH2004 height",8086,8089
+9951,"ISN93 / Lambert 1993 + ISH2004 height",3057,8089
+9952,"ISN2004 / Lambert 2004 + ISH2004 height",5325,8089
+9953,"ISN2016 / Lambert 2016 + ISH2004 height",8088,8089
+9968,"HULLEE13 Grid + ODN height",9967,5701
+9973,"SCM22 Grid + ODN height",9972,5701
+9978,"FNL22 Grid + ODN height",9977,5701
+10156,"ETRS89 + MSL UK & Ireland VORF08 depth",4258,10150
+10157,"ETRS89 + CD UK & Ireland VORF08 depth",4258,10151
+10162,"JGD2011 / Japan Plane Rectangular CS I + JGD2011 (vertical) height",6669,6695
+10163,"JGD2011 / Japan Plane Rectangular CS II + JGD2011 (vertical) height",6670,6695
+10164,"JGD2011 / Japan Plane Rectangular CS III + JGD2011 (vertical) height",6671,6695
+10165,"JGD2011 / Japan Plane Rectangular CS IV + JGD2011 (vertical) height",6672,6695
+10166,"JGD2011 / Japan Plane Rectangular CS V + JGD2011 (vertical) height",6673,6695
+10167,"JGD2011 / Japan Plane Rectangular CS VI + JGD2011 (vertical) height",6674,6695
+10168,"JGD2011 / Japan Plane Rectangular CS VII + JGD2011 (vertical) height",6675,6695
+10169,"JGD2011 / Japan Plane Rectangular CS VIII + JGD2011 (vertical) height",6676,6695
+10170,"JGD2011 / Japan Plane Rectangular CS IX + JGD2011 (vertical) height",6677,6695
+10171,"JGD2011 / Japan Plane Rectangular CS X + JGD2011 (vertical) height",6678,6695
+10172,"JGD2011 / Japan Plane Rectangular CS XI + JGD2011 (vertical) height",6679,6695
+10173,"JGD2011 / Japan Plane Rectangular CS XII + JGD2011 (vertical) height",6680,6695
+10174,"JGD2011 / Japan Plane Rectangular CS XIII + JGD2011 (vertical) height",6681,6695
+10184,"DoPw22 Grid + ODN height",10183,5701
+10189,"ShAb07 Grid + ODN height",10188,5701
+10195,"CNH22 Grid + ODN height",10194,5701
+10200,"CWS13 Grid + ODN height",10199,5701
+10208,"DIBA15 Grid + ODN height",10207,5701
+10213,"GWPBS22 Grid + ODN height",10212,5701
+10218,"GWWAB22 Grid + ODN height",10217,5701
+10223,"GWWWA22 Grid + ODN height",10222,5701
+10228,"MALS09 Grid + ODN height",10227,5701
+10236,"OxWo08 Grid + ODN height",10235,5701
+10241,"SYC20 Grid + ODN height",10240,5701
+10245,"Slovenia 1996 + SVS2010 height",4765,8690
+10246,"Slovenia 1996 / Slovene National Grid + SVS2010 height",3794,8690
+10276,"SMITB20 Grid + ODN height",10275,5701
+10281,"RBEPP12 Grid + ODN height",10280,5701
+10293,"ETRS89/DREF91/2016 + DHHN2016 height",10284,7837
+10318,"RGNC15 (lon-lat) + NGNC08 height",10312,9351
+10355,"ETRS89 + Formentera height",4258,10352
+10356,"ETRS89 + Alboran height",4258,10353
+10357,"ETRS89 + Melilla height",4258,10354
+10365,"KGD2002 + KVD1964 height",4737,5193
+10472,"COV23 Grid + ODN height",10471,5701
+10486,"ETRS89 + DVR90(2002) height",4258,10483
+10487,"ETRS89 + DVR90(2013) height",4258,10484
+10488,"ETRS89 + DVR90(2023) height",4258,10485
+10497,"RGF93 v2 / Lambert-93 + NGF-IGN69 height",9793,5720
+10498,"RGF93 v2 / Lambert-93 + NGF-IGN78 height",9793,5721
+10499,"RGF93 v2b / Lambert-93 + NGF-IGN69 height",9794,5720
+10500,"RGF93 v2b / Lambert-93 + NGF-IGN78 height",9794,5721
+10507,"RGF93 v2b + NGF-IGN78 height",9782,5721
+10545,"ETRS89 + Cascais height",4258,5780
+10553,"ETRS89 + DKMSL(2022) depth",4258,10547
+10554,"ETRS89 + DKLAT(2022) depth",4258,10548
+10555,"ETRS89 + DKMSL(2023) depth",4258,10549
+10556,"ETRS89 + DKLAT(2023) depth",4258,10550
+10627,"ECML14 Grid + ODN height",10626,5701
+10633,"RGAF09 / UTM zone 20N + Martinique 1987 height",5490,5756
+10651,"GR96 + GLMSL(2023) depth",4747,10649
+10652,"GR96 + GLLAT(2023) depth",4747,10650
+10659,"ETRF2000 + EOMA 1980 height",9067,5787
+10660,"HD72 / EOV + EOMA 1980 height",23700,5787
+20001,"ETRS89 + SVD2006 height",4258,20000
+20003,"MWC18 Grid + ODN height",20002,5701
+20037,"NAD83(CSRS)v4 + CGVD2013a(2002) height",8246,20034
+20038,"NAD83(CSRS)v3 + CGVD2013a(1997) height",8240,20035
+20043,"SRGI2013 + INAGeoid2020 v2 height",9470,20036

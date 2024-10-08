@@ -36,6 +36,7 @@ vector.}
 \item \href{#method-CFAxisNumeric-print}{\code{CFAxisNumeric$print()}}
 \item \href{#method-CFAxisNumeric-brief}{\code{CFAxisNumeric$brief()}}
 \item \href{#method-CFAxisNumeric-indexOf}{\code{CFAxisNumeric$indexOf()}}
+\item \href{#method-CFAxisNumeric-sub_axis}{\code{CFAxisNumeric$sub_axis()}}
 \item \href{#method-CFAxisNumeric-clone}{\code{CFAxisNumeric$clone()}}
 }
 }
@@ -45,7 +46,6 @@ vector.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="sub_axis"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-sub_axis'><code>ncdfCF::CFAxis$sub_axis()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="time"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-time'><code>ncdfCF::CFAxis$time()</code></a></span></li>
 </ul>
 </details>
@@ -123,6 +123,34 @@ with ("linear") fractional parts.}
 \subsection{Returns}{
 An integer vector giving the indices in \code{x} of valid values
 provided, or \code{integer(0)} if none of the \code{x} values are valid.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisNumeric-sub_axis"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisNumeric-sub_axis}{}}}
+\subsection{Method \code{sub_axis()}}{
+Return an axis spanning a smaller dimension range.
+
+This method returns an axis which spans the range of indices given by
+the \code{rng} argument.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$sub_axis(group, rng)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{group}}{The group to create the new axis in.}
+
+\item{\code{rng}}{The range of values from this axis to include in the returned
+axis.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A \code{CFAxisNumeric} covering the indicated range of indices. If
+the \code{rng} argument includes only a single value, an \link{CFAxisScalar}
+instance is returned with the value from this axis.
 }
 }
 \if{html}{\out{<hr>}}

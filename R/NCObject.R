@@ -57,26 +57,26 @@ NCObject <- R6::R6Class("NCObject",
     #' This method returns netCDF object attributes.
     #'
     #' @param att Vector of attribute names whose values to return.
-    #' @param field The field of the `data.frame` to return values from. This
-    #' must be "value" (default), "type" or "length".
-    #' @return A vector of values from the `data.frame`, named with the `att`
-    #' value, or an empty string (`""`) if the attribute is not found.
+    #' @param field The field of the attributes to return values from. This must
+    #'   be "value" (default), "type" or "length".
+    #' @return If the `field` argument is "type' or "length", a vector named
+    #'   with the `att` values that were found in the attributes. If argument
+    #'   `field` is "value", a list with elements named with the `att` values,
+    #'   containing the attribute value(s), except when argument `att` names a
+    #'   single attribute, in which case that attribute value is returned as an
+    #'   atomic object. If no attribute is named with a value of argument `att`
+    #'   an empty list is returned, or an empty string if there was only one
+    #'   value in argument `att`.
     attribute = function(att, field = "value") {
+      num <- length(att)
       atts <- self$attributes
-      if (!nrow(atts)) return("")
+      if (!nrow(atts)) return(if (num == 1L) "" else list())
       val <- atts[atts$name %in% att, ]
-      if (!nrow(val))
-        return("")
+      if (!nrow(val)) return(if (num == 1L) "" else list())
 
-      if (field == "value")
-        out <- unlist(lapply(val[field], function(a) {
-          if (is.list(a)) paste0(a, collapse = ", ")
-          else a
-        }))
-      else
-        out <- unlist(val[field])
-
+      out <- val[[field]]
       names(out) <- val[["name"]]
+      if (num == 1L && field == "value") out <- val$value[[1L]]
       out
     }
   )

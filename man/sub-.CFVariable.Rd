@@ -51,7 +51,7 @@ dimension into the data array.
 }
 \examples{
 fn <- system.file("extdata",
-  "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
+  "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20230101-20231231_vncdfCF.nc",
   package = "ncdfCF")
 ds <- open_ncdf(fn)
 pr <- ds[["pr"]]

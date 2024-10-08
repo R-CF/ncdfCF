@@ -5,17 +5,6 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
   "ocean_sigma_coordinate", "ocean_s_coordinate", "ocean_s_coordinate_g1",
   "ocean_s_coordinate_g2", "ocean_sigma_z_coordinate", "ocean_double_sigma_coordinate")
 
-# Standard names for grid mappings
-CRS_names <- c("albers_conical_equal_area", "azimuthal_equidistant",
-               "geostationary", "lambert_azimuthal_equal_area",
-               "lambert_conformal_conic", "lambert_cylindrical_equal_area",
-               "latitude_longitude", "mercator", "oblique_mercator",
-               "orthographic", "polar_stereographic",
-               "rotated_latitude_longitude", "sinusoidal", "stereographic",
-               "transverse_mercator", "vertical_perspective")
-
-EPSG4326 <- 'GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]'
-
 #' Make a data.frame slimmer by shortening long strings. List elements are
 #' pasted together.
 #'
@@ -66,3 +55,18 @@ EPSG4326 <- 'GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.2572
 unused_imports <- function() {
   stringr::word
 }
+
+# sysdata.rda
+# ===========
+# The internal data file contains the following objects:
+# * epsg_uom - EPSG unit-of-measure information
+# * epsg_pm - EPSG prime meridian information
+# * epsg_ell - EPSG ellipsoid information
+# * epsg_datum - EPSG datum information
+#
+# All EPSG objects are taken from EPSG database v11.017, with deprecated records
+# dropped, as well as informational attributes. The PostgreSQL database is used
+# with tables exported to csv and then imported into R as data.frames. Columns
+# with numerical data and NULLs come out as character so they need to be
+# converted to the right type.
+#

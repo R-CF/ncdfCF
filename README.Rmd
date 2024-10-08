@@ -52,6 +52,9 @@ Metadata Conventions to interpret the data. This currently applies to:
  **scalar axes** and **auxiliary longitude-latitude grids**. Data on non-Cartesian 
  grids can be automatically rectified to a longitude-latitude grid if an auxiliary
  grid is present in the resource.
+ * The **grid_mapping** variables, providing the coordinate reference system 
+ (CRS) of the data, with support for all defined objects in the latest EPSG 
+ database as well as "manual" construction of CRSs.
 
 ##### Basic usage
 
@@ -91,9 +94,12 @@ ds[["pev"]]$attribute("long_name")
 
 ##### Extracting data
 
-There are two ways to read data for a variable from the resource:
+There are three ways to read data for a variable from the resource:
 
- * **`[]`:** The usual R array operator. This uses index values into the
+ * **`data():`** The `data()` method returns all data of a variable, including 
+ its metadata, in a `CFData` instance.
+ * **`[]`:** The usual R array operator gives you access to the raw, non-interpreted
+ data in the netCDF resource. This uses index values into the
  dimensions and requires you to know the order in which the dimensions are 
  specified for the variable. With a bit of tinkering and some helper functions
  in `ncdfCF` this is still very easy to do.
@@ -113,9 +119,9 @@ str(ts)
 ```
 
 Note that the results contain degenerate dimensions (of length 1). This by 
-design because it allows attributes to be attached in a consistent manner. When
-using the `subset()` method, the data is returned as an instance of `CFData`,
-including axes and attributes:
+design when using basic `[]` data access because it allows attributes to be 
+attached in a consistent manner. When using the `subset()` method, the data is 
+returned as an instance of `CFData`, including axes and attributes:
 
 ```{r subset}
 # Extract a specific region, full time dimension
@@ -131,8 +137,8 @@ ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
 ts
 ```
 
-Both of these methods will read data from the netCDF resource, but only as much
-as is requested. 
+The latter two methods will read only as much data
+from the netCDF resource as is requested. 
 
 ## Development plan
 
@@ -141,7 +147,8 @@ groups, variables, dimensions, user-defined data types, attributes and data from
 netCDF resources in "classic" and "netcdf4" formats. From the CF Metadata 
 Conventions it supports identification of dimension axes, interpretation of the 
 "time" dimension, name resolution when using groups, reading of "bounds" 
-information, parametric vertical coordinates, and auxiliary coordinate variables.
+information, parametric vertical coordinates, auxiliary coordinate variables,
+and grid mapping information.
 
 Development plans for the near future focus on supporting the below features:
 
@@ -151,8 +158,9 @@ Development plans for the near future focus on supporting the below features:
 
 ##### CF Metadata Conventions
 
- * Calculate parametric vertical coordinates
- * Full support for discrete sampling geometries.
+ * Calculate parametric vertical coordinates.
+ * Aggregation, using the CFA convention
+ * Support for discrete sampling geometries.
  * Interface to "standard_name" libraries and other "defined vocabularies".
  * Compliance with CMIP5 / CMIP6 requirements.
 

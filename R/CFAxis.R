@@ -143,14 +143,6 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   the index value with any fractional value. Values of `x` outside of the
     #'   range of the values in the axis are returned as `0` and `.Machine$integer.max`,
     #'    respectively.
-    #' @examples
-    #' fn <- system.file("extdata",
-    #'                   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
-    #'                   package = "ncdfCF")
-    #' ds <- open_ncdf(fn)
-    #' lon <- ds[["lon"]]
-    #' lon$indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1))
-    #' lon$indexOf(c(8.5, 8.9, 9.3, 9.7, 10.1), "linear")
     indexOf = function(x, method = "constant") {
       stop("`indexOf()` must be implemented by descendant CFAxis class.")
     }

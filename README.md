@@ -43,6 +43,9 @@ Metadata Conventions to interpret the data. This currently applies to:
   on non-Cartesian grids can be automatically rectified to a
   longitude-latitude grid if an auxiliary grid is present in the
   resource.
+- The **grid_mapping** variables, providing the coordinate reference
+  system (CRS) of the data, with support for all defined objects in the
+  latest EPSG database as well as “manual” construction of CRSs.
 
 ##### Basic usage
 
@@ -150,18 +153,20 @@ dimnames(ds[["longitude"]]) # A dimension: vector of dimension element values
 
 # Access attributes
 ds[["pev"]]$attribute("long_name")
-#>               long_name 
-#> "Potential evaporation"
+#> [1] "Potential evaporation"
 ```
 
 ##### Extracting data
 
-There are two ways to read data for a variable from the resource:
+There are three ways to read data for a variable from the resource:
 
-- **`[]`:** The usual R array operator. This uses index values into the
-  dimensions and requires you to know the order in which the dimensions
-  are specified for the variable. With a bit of tinkering and some
-  helper functions in `ncdfCF` this is still very easy to do.
+- **`data():`** The `data()` method returns all data of a variable,
+  including its metadata, in a `CFData` instance.
+- **`[]`:** The usual R array operator gives you access to the raw,
+  non-interpreted data in the netCDF resource. This uses index values
+  into the dimensions and requires you to know the order in which the
+  dimensions are specified for the variable. With a bit of tinkering and
+  some helper functions in `ncdfCF` this is still very easy to do.
 - **`subset()`:** The `subset()` method lets you specify what you want
   to extract from each dimension in real-world coordinates and
   timestamps, in whichever order. This can also rectify non-Cartesian
@@ -181,8 +186,7 @@ str(ts)
 #>  - attr(*, "time")=List of 1
 #>   ..$ time:Formal class 'CFtime' [package "CFtime"] with 4 slots
 #>   .. .. ..@ datum     :Formal class 'CFdatum' [package "CFtime"] with 5 slots
-#>   .. .. .. .. ..@ definition: Named chr "hours since 1900-01-01 00:00:00.0"
-#>   .. .. .. .. .. ..- attr(*, "names")= chr "units"
+#>   .. .. .. .. ..@ definition: chr "hours since 1900-01-01 00:00:00.0"
 #>   .. .. .. .. ..@ unit      : int 3
 #>   .. .. .. .. ..@ origin    :'data.frame':   1 obs. of  8 variables:
 #>   .. .. .. .. .. ..$ year  : int 1900
@@ -193,8 +197,7 @@ str(ts)
 #>   .. .. .. .. .. ..$ second: num 0
 #>   .. .. .. .. .. ..$ tz    : chr "+0000"
 #>   .. .. .. .. .. ..$ offset: num 0
-#>   .. .. .. .. ..@ calendar  : Named chr "gregorian"
-#>   .. .. .. .. .. ..- attr(*, "names")= chr "calendar"
+#>   .. .. .. .. ..@ calendar  : chr "gregorian"
 #>   .. .. .. .. ..@ cal_id    : int 1
 #>   .. .. ..@ resolution: num 1
 #>   .. .. ..@ offsets   : num [1:24] 1016832 1016833 1016834 1016835 1016836 ...
@@ -213,8 +216,7 @@ str(ts)
 #>  - attr(*, "time")=List of 1
 #>   ..$ time:Formal class 'CFtime' [package "CFtime"] with 4 slots
 #>   .. .. ..@ datum     :Formal class 'CFdatum' [package "CFtime"] with 5 slots
-#>   .. .. .. .. ..@ definition: Named chr "hours since 1900-01-01 00:00:00.0"
-#>   .. .. .. .. .. ..- attr(*, "names")= chr "units"
+#>   .. .. .. .. ..@ definition: chr "hours since 1900-01-01 00:00:00.0"
 #>   .. .. .. .. ..@ unit      : int 3
 #>   .. .. .. .. ..@ origin    :'data.frame':   1 obs. of  8 variables:
 #>   .. .. .. .. .. ..$ year  : int 1900
@@ -225,8 +227,7 @@ str(ts)
 #>   .. .. .. .. .. ..$ second: num 0
 #>   .. .. .. .. .. ..$ tz    : chr "+0000"
 #>   .. .. .. .. .. ..$ offset: num 0
-#>   .. .. .. .. ..@ calendar  : Named chr "gregorian"
-#>   .. .. .. .. .. ..- attr(*, "names")= chr "calendar"
+#>   .. .. .. .. ..@ calendar  : chr "gregorian"
 #>   .. .. .. .. ..@ cal_id    : int 1
 #>   .. .. ..@ resolution: num NA
 #>   .. .. ..@ offsets   : num 1016843
@@ -234,9 +235,10 @@ str(ts)
 ```
 
 Note that the results contain degenerate dimensions (of length 1). This
-by design because it allows attributes to be attached in a consistent
-manner. When using the `subset()` method, the data is returned as an
-instance of `CFData`, including axes and attributes:
+by design when using basic `[]` data access because it allows attributes
+to be attached in a consistent manner. When using the `subset()` method,
+the data is returned as an instance of `CFData`, including axes and
+attributes:
 
 ``` r
 # Extract a specific region, full time dimension
@@ -245,8 +247,8 @@ ts
 #> <Data> t2m 
 #> Long name: 2 metre temperature 
 #> 
-#> Values: [283.0182 ... 299.917]
-#>     NA: 0 
+#> Values: [283.0182 ... 299.917] K
+#>     NA: 0 (0.0%)
 #> 
 #> Axes:
 #>  id axis name      length unlim values                                       
@@ -277,8 +279,8 @@ ts
 #> <Data> t2m 
 #> Long name: 2 metre temperature 
 #> 
-#> Values: [288.2335 ... 299.917]
-#>     NA: 0 
+#> Values: [288.2335 ... 299.917] K
+#>     NA: 0 (0.0%)
 #> 
 #> Axes:
 #>  id axis name      length values                                       
@@ -296,8 +298,8 @@ ts
 #>  5  missing_value NC_SHORT   1     -32767
 ```
 
-Both of these methods will read data from the netCDF resource, but only
-as much as is requested.
+The latter two methods will read only as much data from the netCDF
+resource as is requested.
 
 ## Development plan
 
@@ -307,7 +309,8 @@ attributes and data from netCDF resources in “classic” and “netcdf4”
 formats. From the CF Metadata Conventions it supports identification of
 dimension axes, interpretation of the “time” dimension, name resolution
 when using groups, reading of “bounds” information, parametric vertical
-coordinates, and auxiliary coordinate variables.
+coordinates, auxiliary coordinate variables, and grid mapping
+information.
 
 Development plans for the near future focus on supporting the below
 features:
@@ -318,8 +321,9 @@ features:
 
 ##### CF Metadata Conventions
 
-- Calculate parametric vertical coordinates
-- Full support for discrete sampling geometries.
+- Calculate parametric vertical coordinates.
+- Aggregation, using the CFA convention
+- Support for discrete sampling geometries.
 - Interface to “standard_name” libraries and other “defined
   vocabularies”.
 - Compliance with CMIP5 / CMIP6 requirements.

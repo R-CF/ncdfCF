@@ -1,0 +1,170 @@
+"coord_axis_code","coord_axis_name","coord_sys_code","coord_axis_order","coord_axis_orientation","coord_axis_abbreviation","uom_code"
+32773,"Easting",1024,1,"east","M",9001
+32774,"Northing",1024,2,"north","P",9001
+1062,"Easting",1025,1,"North along 130°W","X",9001
+1063,"Northing",1025,2,"North along 140°E","Y",9001
+1065,"Easting",1026,1,"South along 90°E","E",9001
+1066,"Northing",1026,2,"South along 180°E","N",9001
+1056,"Easting",1027,1,"North along 90°E","E",9001
+1058,"Northing",1027,2,"North along 0°E","N",9001
+1073,"Easting",1028,1,"east","E",9037
+1074,"Northing",1028,2,"north","N",9037
+1078,"Northing",1029,1,"north","N",9002
+1079,"Easting",1029,2,"east","E",9002
+1082,"Gravity-related height",1030,1,"up","H",9002
+1101,"Northing",1031,1,"north","Y",9001
+1102,"Westing",1031,2,"west","X",9001
+1466,"Easting",1035,1,"South along 180°E","X",9001
+1467,"Northing",1035,2,"South along 90°W","Y",9001
+1471,"Easting",1036,1,"South along 57°E","X",9001
+1472,"Northing",1036,2,"South along 147°E","Y",9001
+1476,"Easting",1037,1,"South along 108°E","X",9001
+1477,"Northing",1037,2,"South along 162°W","Y",9001
+1481,"Easting",1038,1,"South along 165°W","X",9001
+1482,"Northing",1038,2,"South along 75°W","Y",9001
+1486,"Easting",1039,1,"east","E",9002
+1487,"Northing",1039,2,"north","N",9002
+1516,"Depth",1043,1,"down","D",9003
+1525,"Northing",1044,1,"North along 180°E","N",9001
+1526,"Easting",1044,2,"North along 90°W","E",9001
+32928,"Northing",1046,1,"north","X",9001
+32929,"Easting",1046,2,"east","Y",9001
+32930,"Ellipsoidal height",1046,3,"up","h",9001
+1051,"Local depth",1049,1,"down","d",9001
+1053,"Local depth",1050,1,"down","d",9002
+32933,"Northing",1053,1,"north","N",9003
+32934,"Easting",1053,2,"east","E",9003
+1,"Easting",4400,1,"east","E",9001
+2,"Northing",4400,2,"north","N",9001
+5,"Easting",4402,1,"east","E",9042
+6,"Northing",4402,2,"north","N",9042
+7,"Easting",4403,1,"east","E",9005
+8,"Northing",4403,2,"north","N",9005
+9,"Easting",4404,1,"east","E",9094
+10,"Northing",4404,2,"north","N",9094
+11,"Easting",4405,1,"east","E",9041
+12,"Northing",4405,2,"north","N",9041
+13,"Easting",4406,1,"east","X",9036
+14,"Northing",4406,2,"north","Y",9036
+15,"Easting",4407,1,"east","E",9039
+16,"Northing",4407,2,"north","N",9039
+17,"Easting",4408,1,"east","E",9084
+18,"Northing",4408,2,"north","N",9084
+19,"Easting",4409,1,"east","E",9040
+20,"Northing",4409,2,"north","N",9040
+181,"Easting",4410,1,"east","E",9301
+182,"Northing",4410,2,"north","N",9301
+195,"Easting",4463,1,"South along 100°E","X",9001
+196,"Northing",4463,2,"South along 170°W","Y",9001
+197,"Easting",4464,1,"South along 90°W","X",9001
+198,"Northing",4464,2,"South along 0°E","Y",9001
+199,"Easting",4465,1,"South along 50°E","X",9001
+200,"Northing",4465,2,"South along 140°E","Y",9001
+201,"Easting",4466,1,"South along 10°W","X",9001
+202,"Northing",4466,2,"South along 80°E","Y",9001
+203,"Easting",4467,1,"South along 60°W","X",9001
+204,"Northing",4467,2,"South along 30°E","Y",9001
+191,"Easting",4468,1,"South along 45°E","X",9001
+192,"Northing",4468,2,"South along 135°E","Y",9001
+187,"Easting",4469,1,"South along 90°E","X",9001
+188,"Northing",4469,2,"South along 180°E","Y",9001
+185,"Easting",4470,1,"North along 90°E","X",9001
+186,"Northing",4470,2,"North along 0°E","Y",9001
+137,"Easting",4471,1,"North along 75°W","E",9001
+138,"Northing",4471,2,"North along 165°W","N",9001
+156,"Easting",4472,1,"North along 60°W","E",9001
+139,"Northing",4472,2,"North along 150°W","N",9001
+157,"Easting",4473,1,"North along 45°W","E",9001
+140,"Northing",4473,2,"North along 135°W","N",9001
+158,"Easting",4474,1,"North along 15°W","E",9001
+141,"Northing",4474,2,"North along 105°W","N",9001
+159,"Easting",4475,1,"North along 0°E","E",9001
+142,"Northing",4475,2,"North along 90°W","N",9001
+160,"Easting",4476,1,"North along 15°E","E",9001
+143,"Northing",4476,2,"North along 75°W","N",9001
+161,"Easting",4477,1,"North along 45°E","E",9001
+144,"Northing",4477,2,"North along 45°W","N",9001
+162,"Easting",4478,1,"North along 60°E","E",9001
+145,"Northing",4478,2,"North along 30°W","N",9001
+163,"Easting",4479,1,"North along 75°E","E",9001
+146,"Northing",4479,2,"North along 15°W","N",9001
+164,"Easting",4480,1,"North along 105°E","E",9001
+147,"Northing",4480,2,"North along 15°E","N",9001
+165,"Easting",4481,1,"North along 120°E","E",9001
+148,"Northing",4481,2,"North along 30°E","N",9001
+166,"Easting",4482,1,"North along 135°E","E",9001
+149,"Northing",4482,2,"North along 45°E","N",9001
+167,"Easting",4483,1,"North along 165°E","E",9001
+150,"Northing",4483,2,"North along 75°E","N",9001
+168,"Easting",4484,1,"North along 180°E","E",9001
+151,"Northing",4484,2,"North along 90°E","N",9001
+169,"Easting",4485,1,"North along 165°W","E",9001
+152,"Northing",4485,2,"North along 105°E","N",9001
+170,"Easting",4486,1,"North along 135°W","E",9001
+153,"Northing",4486,2,"North along 135°E","N",9001
+171,"Easting",4487,1,"North along 120°W","E",9001
+154,"Northing",4487,2,"North along 150°E","N",9001
+172,"Easting",4488,1,"North along 105°W","E",9001
+155,"Northing",4488,2,"North along 165°E","N",9001
+21,"Easting",4489,1,"North along 160°E","E",9001
+22,"Northing",4489,2,"North along 70°E","N",9001
+23,"Easting",4490,1,"North along 90°E","E",9001
+24,"Northing",4490,2,"North along 0°E","N",9001
+26,"Westing",4491,1,"west","W",9001
+25,"Northing",4491,2,"north","N",9001
+30,"Northing",4493,1,"South along 180°E","N",9001
+29,"Easting",4493,2,"South along 90°E","E",9001
+32,"Northing",4494,1,"North along 0°E","N",9001
+31,"Easting",4494,2,"North along 90°E","E",9001
+33,"Easting",4495,1,"east","X",9002
+34,"Northing",4495,2,"north","Y",9002
+35,"Easting",4496,1,"east","E(X)",9001
+36,"Northing",4496,2,"north","N(Y)",9001
+37,"Easting",4497,1,"east","X",9003
+38,"Northing",4497,2,"north","Y",9003
+39,"Easting",4498,1,"east","Y",9001
+40,"Northing",4498,2,"north","X",9001
+41,"Easting",4499,1,"east","X",9001
+42,"Northing",4499,2,"north","Y",9001
+44,"Northing",4500,1,"north","N",9001
+43,"Easting",4500,2,"east","E",9001
+189,"Northing",4502,1,"north","N",9005
+190,"Easting",4502,2,"east","E",9005
+48,"Northing",4530,1,"north","X",9001
+47,"Easting",4530,2,"east","Y",9001
+50,"Northing",4531,1,"north","x",9001
+49,"Easting",4531,2,"east","y",9001
+52,"Northing",4532,1,"north","Y",9001
+51,"Easting",4532,2,"east","X",9001
+180,"Northing",4533,1,"north","X",9098
+179,"Easting",4533,2,"east","Y",9098
+183,"Northing",4534,1,"north","none",9001
+184,"Easting",4534,2,"east","none",9001
+58,"Geodetic latitude",6403,1,"north","Lat",9105
+59,"Geodetic longitude",6403,2,"east","Lon",9105
+106,"Geodetic latitude",6422,1,"north","Lat",9122
+107,"Geodetic longitude",6422,2,"east","Lon",9122
+108,"Geodetic latitude",6423,1,"north","Lat",9122
+109,"Geodetic longitude",6423,2,"east","Lon",9122
+110,"Ellipsoidal height",6423,3,"up","h",9001
+220,"Geodetic longitude",6424,1,"east","Lon",9122
+221,"Geodetic latitude",6424,2,"north","Lat",9122
+222,"Geodetic longitude",6426,1,"east","Lon",9122
+223,"Geodetic latitude",6426,2,"north","Lat",9122
+224,"Ellipsoidal height",6426,3,"up","h",9001
+214,"Depth",6495,1,"down","D",9002
+111,"Gravity-related height",6496,1,"up","H",9095
+112,"Gravity-related height",6497,1,"up","H",9003
+113,"Depth",6498,1,"down","D",9001
+114,"Gravity-related height",6499,1,"up","H",9001
+115,"Geocentric X",6500,1,"geocentricX","X",9001
+116,"Geocentric Y",6500,2,"geocentricY","Y",9001
+117,"Geocentric Z",6500,3,"geocentricZ","Z",9001
+119,"Southing",6501,1,"south","X",9001
+118,"Westing",6501,2,"west","Y",9001
+120,"Westing",6502,1,"west","Y",9031
+121,"Southing",6502,2,"south","X",9031
+122,"Westing",6503,1,"west","Y",9001
+123,"Southing",6503,2,"south","X",9001
+135,"Southing",6509,1,"south","P",9001
+134,"Westing",6509,2,"west","M",9001

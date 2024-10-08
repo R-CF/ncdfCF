@@ -43,7 +43,7 @@ on the method that produced it. Typical structures are an array or a
 \item{\code{axes}}{List of instances of classes descending from \link{CFAxis} that
 are the axes of the data object.}
 
-\item{\code{crs}}{Character string of the WKT of the CRS of the data object.}
+\item{\code{crs}}{Character string of the WKT2 of the CRS of the data object.}
 }
 \if{html}{\out{</div>}}
 }

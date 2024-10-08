@@ -81,7 +81,33 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       idx <- stats::approx(vals, 1L:length(vals), x, method = method, yleft = 0L, yright = .Machine$integer.max)$y
       idx <- idx[!is.na(idx) & idx > 0 & idx < .Machine$integer.max]
       as.integer(idx)
+    },
+
+    #' @description Return an axis spanning a smaller dimension range.
+    #'
+    #'   This method returns an axis which spans the range of indices given by
+    #'   the `rng` argument.
+    #'
+    #' @param group The group to create the new axis in.
+    #' @param rng The range of values from this axis to include in the returned
+    #'   axis.
+    #'
+    #' @return A `CFAxisNumeric` covering the indicated range of indices. If
+    #'   the `rng` argument includes only a single value, an [CFAxisScalar]
+    #'   instance is returned with the value from this axis.
+    sub_axis = function(group, rng) {
+      var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
+      if (rng[1L] == rng[2L]) {
+        ax <- CFAxisScalar$new(group, var, self$orientation, self$values[rng[1L]])
+      } else {
+        dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
+        ax <- CFAxisNumeric$new(group, var, dim, self$orientation, self$values[rng[1L]:rng[2L]])
+      }
+      bnds <- self$bounds
+      if (inherits(bnds, "CFBounds")) ax$bounds <- bnds$sub_bounds(group, rng)
+      ax
     }
+
   ),
   active = list(
     #' @field friendlyClassName (read-only) A nice description of the class.

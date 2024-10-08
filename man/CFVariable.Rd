@@ -15,24 +15,6 @@ the netCDF resource, as well as all the details that have been associated
 with the data variable, such as axis information, grid mapping parameters,
 etc.
 }
-\examples{
-
-## ------------------------------------------------
-## Method `CFVariable$subset`
-## ------------------------------------------------
-
-fn <- system.file("extdata",
-  "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
-  package = "ncdfCF")
-ds <- open_ncdf(fn)
-pr <- ds[["pr"]]
-
-# Precipitation data for March for a small area
-x <- pr$subset(subset = list(X = c(9, 11),
-                             Y = 42:45,
-                             T = c("2024-03-01", "2024-04-01")))
-x
-}
 \section{Super class}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFVariable}
 }
@@ -57,6 +39,9 @@ longitude and latitude.}
 
 \item{\code{gridLongLat}}{The grid of longitude and latitude values of every
 grid cell when the main variable grid has a different coordinate system.}
+
+\item{\code{crs}}{(read-only) Retrieve the coordinate reference system
+description of the variable as a WKT2 string.}
 }
 \if{html}{\out{</div>}}
 }
@@ -67,6 +52,7 @@ grid cell when the main variable grid has a different coordinate system.}
 \item \href{#method-CFVariable-print}{\code{CFVariable$print()}}
 \item \href{#method-CFVariable-brief}{\code{CFVariable$brief()}}
 \item \href{#method-CFVariable-shard}{\code{CFVariable$shard()}}
+\item \href{#method-CFVariable-data}{\code{CFVariable$data()}}
 \item \href{#method-CFVariable-subset}{\code{CFVariable$subset()}}
 \item \href{#method-CFVariable-clone}{\code{CFVariable$clone()}}
 }
@@ -140,6 +126,20 @@ when combined with similar information from other variables.
 
 \subsection{Returns}{
 Character string with very basic variable information.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-data"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-data}{}}}
+\subsection{Method \code{data()}}{
+Retrieve all data of the variable. Scalar variables are not
+present in the result.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$data()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A \link{CFData} instance with all data from this variable.
 }
 }
 \if{html}{\out{<hr>}}
@@ -247,24 +247,6 @@ Note that degenerate dimensions (having \code{length(.) == 1}) are dropped
 from the array but the corresponding axis is maintained in the result as
 a scalar axis.
 }
-\subsection{Examples}{
-\if{html}{\out{<div class="r example copy">}}
-\preformatted{fn <- system.file("extdata",
-  "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20240101-20241231_vncdfCF.nc",
-  package = "ncdfCF")
-ds <- open_ncdf(fn)
-pr <- ds[["pr"]]
-
-# Precipitation data for March for a small area
-x <- pr$subset(subset = list(X = c(9, 11),
-                             Y = 42:45,
-                             T = c("2024-03-01", "2024-04-01")))
-x
-}
-\if{html}{\out{</div>}}
-
-}
-
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFVariable-clone"></a>}}

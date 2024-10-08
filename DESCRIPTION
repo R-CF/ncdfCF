@@ -48,6 +48,7 @@ Collate:
     'NCVariable.R'
     'ncdfCF-package.R'
     'utils.R'
+    'wkt2.R'
 Suggests: 
     knitr,
     rmarkdown,
