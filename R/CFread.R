@@ -194,9 +194,12 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   if (is.numeric(vals)) vals <- round(vals, 5) # Drop spurious "precision"
 
   # Does `var` have attributes?
-  if (!nrow(var$attributes))
+  if (!nrow(var$attributes)) {
     # No attributes so nothing left to do
-    return(CFAxisNumeric$new(grp, var, dim, "", vals))
+    if (var$vtype %in% c("NC_CHAR", "NC_STRING"))
+      return(CFAxisCharacter$new(grp, var, dim, "", vals))
+    else return(CFAxisNumeric$new(grp, var, dim, "", vals))
+  }
 
   # Get essential attributes
   props <- var$attribute(c("standard_name", "units", "calendar", "axis", "bounds"))

@@ -29,13 +29,17 @@ CFVariable <- R6::R6Class("CFVariable",
       list(longname = longname, unit = unit)
     },
 
+    # Turn the rng argument into index values into the axis.
     range2index = function(axis, rng, closed) {
       axl <- axis$length
       if (inherits(axis, "CFAxisTime")) {
         idx <- axis$indexOf(rng, method = "linear", closed)
         if (!length(idx)) return(NULL)
         idx <- range(idx)
+      } else if (inherits(axis, "CFAxisCharacter")) {
+        idx <- range(match(rng, axis$values))
       } else {
+        rng <- range(rng)
         vals <- axis$values
         idx <- if (closed)
           range(which(vals >= rng[1L] & vals <= rng[2L], arr.ind = TRUE))
@@ -378,7 +382,7 @@ CFVariable <- R6::R6Class("CFVariable",
             out_axis <- axis$clone()
             out_axis$group <- out_group
           } else {
-            idx <- private$range2index(axis, range(rng), rightmost.closed)
+            idx <- private$range2index(axis, rng, rightmost.closed)
             if (is.null(idx)) return(NULL)
             start[ax] <- idx[1L]
             count[ax] <- idx[2L] - idx[1L] + 1L
@@ -395,12 +399,13 @@ CFVariable <- R6::R6Class("CFVariable",
       }
 
       # Read the data, index as required
-      d <- RNetCDF::var.get.nc(self$NCvar$group$handle, self$name, start, count, collapse = TRUE, unpack = TRUE, fitnum = TRUE)
+      d <- RNetCDF::var.get.nc(self$NCvar$group$handle, self$name, start, count, unpack = TRUE, fitnum = TRUE)
       if (!is.null(aux)) {
         dim(d) <- c(aux$X[2L] * aux$Y[2L], prod(ZT_dim))
         d <- d[aux$index, ]
         dim(d) <- c(aux$box, ZT_dim)
       }
+      d <- drop(d)
 
       # Sanitize the attributes for the result, as required
       atts <- self$attributes
