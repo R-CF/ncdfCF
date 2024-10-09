@@ -72,7 +72,7 @@ Return an axis spanning a smaller dimension range.
 This method returns an axis which spans the range of indices given by
 the \code{rng} argument.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisLatitude$sub_axis(group, rng)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisLatitude$sub_axis(group, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -88,7 +88,8 @@ axis.}
 \subsection{Returns}{
 A \code{CFAxisLatitude} covering the indicated range of indices. If
 the \code{rng} argument includes only a single value, an \link{CFAxisScalar}
-instance is returned with the value from this axis.
+instance is returned with the value from this axis. If the value of the
+argument is \code{NULL}, return the entire axis (possibly as a scalar axis).
 }
 }
 \if{html}{\out{<hr>}}

@@ -94,18 +94,36 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #'
     #' @return A `CFAxisNumeric` covering the indicated range of indices. If
     #'   the `rng` argument includes only a single value, an [CFAxisScalar]
-    #'   instance is returned with the value from this axis.
-    sub_axis = function(group, rng) {
+    #'   instance is returned with the value from this axis. If the value of the
+    #'   argument is `NULL`, return the entire axis (possibly as a scalar axis).
+    sub_axis = function(group, rng = NULL) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
-      if (rng[1L] == rng[2L]) {
-        ax <- CFAxisScalar$new(group, var, self$orientation, self$values[rng[1L]])
-      } else {
-        dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
-        ax <- CFAxisNumeric$new(group, var, dim, self$orientation, self$values[rng[1L]:rng[2L]])
+
+      .make_scalar <- function(idx) {
+        scl <- CFAxisScalar$new(group, var, self$orientation, idx)
+        bnds <- self$bounds
+        if (inherits(bnds, "CFBounds")) scl$bounds <- bnds$sub_bounds(group, idx)
+        scl
       }
-      bnds <- self$bounds
-      if (inherits(bnds, "CFBounds")) ax$bounds <- bnds$sub_bounds(group, rng)
-      ax
+
+      if (is.null(rng)) {
+        if (length(self$values) > 1L) {
+          ax <- self$clone()
+          ax$group <- group
+          ax
+        } else
+          .make_scalar(1L)
+      } else {
+        if (rng[1L] == rng[2L])
+          .make_scalar(self$values[rng[1L]])
+        else {
+          dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
+          ax <- CFAxisNumeric$new(group, var, dim, self$orientation, self$values[rng[1L]:rng[2L]])
+          bnds <- self$bounds
+          if (inherits(bnds, "CFBounds")) ax$bounds <- bnds$sub_bounds(group, rng)
+          ax
+        }
+      }
     }
 
   ),

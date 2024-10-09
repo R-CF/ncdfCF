@@ -112,10 +112,11 @@ CFAxis <- R6::R6Class("CFAxis",
     #'
     #' @param group The group to create the new axis in.
     #' @param rng The range of values from this axis to include in the returned
-    #' axis.
+    #' axis. If the value of the argument is `NULL`, return the entire axis
+    #' (possibly as a scalar axis).
     #'
     #' @return `NULL`
-    sub_axis = function(group, rng) {
+    sub_axis = function(group, rng = NULL) {
       NULL
     },
 

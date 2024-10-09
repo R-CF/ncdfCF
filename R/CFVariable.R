@@ -39,6 +39,7 @@ CFVariable <- R6::R6Class("CFVariable",
       } else if (inherits(axis, "CFAxisCharacter")) {
         idx <- range(match(rng, axis$values))
       } else {
+        if (length(rng) == 1L) closed <- TRUE
         rng <- range(rng)
         vals <- axis$values
         idx <- if (closed)
@@ -370,7 +371,7 @@ CFVariable <- R6::R6Class("CFVariable",
             newax$bounds <- aux$aoi$bounds(out_group)$lat
             newax
           }
-        } else {
+        } else { # No auxiliary coordinates
           rng <- NULL
           if (!is.null(lonlat))
             rng <- if (orientations[ax] == "X") c(lonlat[1L], lonlat[2L])
@@ -379,8 +380,7 @@ CFVariable <- R6::R6Class("CFVariable",
           if (is.null(rng)) rng <- subset[[ orientations[ax] ]]
           if (is.null(rng)) {
             ZT_dim <- c(ZT_dim, axis$length)
-            out_axis <- axis$clone()
-            out_axis$group <- out_group
+            out_axis <- axis$sub_axis(out_group, NULL)
           } else {
             idx <- private$range2index(axis, rng, rightmost.closed)
             if (is.null(idx)) return(NULL)

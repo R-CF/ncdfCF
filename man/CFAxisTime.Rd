@@ -138,10 +138,10 @@ values in \code{x}, or \code{integer(0)} if none of the values are valid.
 \subsection{Method \code{sub_axis()}}{
 Return an axis spanning a smaller dimension range
 
-This method returns an axis which spans the range of indices given by the
-\code{rng} argument.
+This method returns an axis which spans the range of indices given by
+the \code{rng} argument.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$sub_axis(group, rng)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$sub_axis(group, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -157,8 +157,9 @@ axis.}
 \subsection{Returns}{
 A \code{CFAxisTime} covering the indicated range of indices. If the
 \code{rng} argument includes only a single value, an \link{CFAxisScalar} instance
-is returned with its value being the character timestamp of the value in
-this axis.
+is returned with its value being the character timestamp of the value
+in this axis. If the value of the argument is \code{NULL}, return the entire
+axis (possibly as a scalar axis).
 }
 }
 \if{html}{\out{<hr>}}

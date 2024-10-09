@@ -90,28 +90,44 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
 
     #' @description Return an axis spanning a smaller dimension range
     #'
-    #' This method returns an axis which spans the range of indices given by the
-    #' `rng` argument.
+    #'   This method returns an axis which spans the range of indices given by
+    #'   the `rng` argument.
     #'
     #' @param group The group to create the new axis in.
     #' @param rng The range of values from this axis to include in the returned
-    #' axis.
+    #'   axis.
     #'
     #' @return A `CFAxisTime` covering the indicated range of indices. If the
-    #' `rng` argument includes only a single value, an [CFAxisScalar] instance
-    #' is returned with its value being the character timestamp of the value in
-    #' this axis.
-    sub_axis = function(group, rng) {
+    #'   `rng` argument includes only a single value, an [CFAxisScalar] instance
+    #'   is returned with its value being the character timestamp of the value
+    #'   in this axis. If the value of the argument is `NULL`, return the entire
+    #'   axis (possibly as a scalar axis).
+    sub_axis = function(group, rng = NULL) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
-      if (rng[1L] == rng[2L]) {
-        scl <- CFAxisScalar$new(group, var, "T", as_timestamp(self$values)[rng[1L]])
+
+      .make_scalar <- function(idx) {
+        scl <- CFAxisScalar$new(group, var, "T", as_timestamp(self$values)[idx])
         bnds <- bounds(self$values)
-        if (!is.null(bnds)) scl$bounds <- bnds[, rng[1L]]
+        if (!is.null(bnds)) scl$bounds <- bnds[, idx]
         scl
+      }
+
+      if (is.null(rng)) {
+        if (length(self$values) > 1L) {
+          ax <- self$clone()
+          ax$group <- group
+          ax
+        } else
+          .make_scalar(1L)
       } else {
-        idx <- indexOf(seq(from = rng[1L], to = rng[2L], by = 1L), self$values)
-        dim <- NCDimension$new(-1L, self$name, length(idx), FALSE)
-        CFAxisTime$new(group, var, dim, attr(idx, "CFtime"))
+        rng <- range(rng)
+        if (rng[1L] == rng[2L])
+          .make_scalar(rng[1L])
+        else {
+          idx <- indexOf(seq(from = rng[1L], to = rng[2L], by = 1L), self$values)
+          dim <- NCDimension$new(-1L, self$name, length(idx), FALSE)
+          CFAxisTime$new(group, var, dim, attr(idx, "CFtime"))
+        }
       }
     }
   ),

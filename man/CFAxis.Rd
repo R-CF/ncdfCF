@@ -167,7 +167,7 @@ than return \code{NULL}. This stub is here to make the call to this method
 succeed with no result for the other axis descendants that do not
 implement this method.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$sub_axis(group, rng)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$sub_axis(group, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -176,7 +176,8 @@ implement this method.
 \item{\code{group}}{The group to create the new axis in.}
 
 \item{\code{rng}}{The range of values from this axis to include in the returned
-axis.}
+axis. If the value of the argument is \code{NULL}, return the entire axis
+(possibly as a scalar axis).}
 }
 \if{html}{\out{</div>}}
 }
