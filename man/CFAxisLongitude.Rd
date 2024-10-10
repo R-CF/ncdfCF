@@ -43,6 +43,7 @@ support selecting data that crosses the 0-360 degree boundary.)
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="brief"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-brief'><code>ncdfCF::CFAxisNumeric$brief()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="indexOf"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-indexOf'><code>ncdfCF::CFAxisNumeric$indexOf()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="print"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-print'><code>ncdfCF::CFAxisNumeric$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="range"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-range'><code>ncdfCF::CFAxisNumeric$range()</code></a></span></li>
 </ul>
 </details>
 }}

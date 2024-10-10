@@ -65,6 +65,13 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       out
     },
 
+    #' @description Retrieve the range of coordinate values in the axis.
+    #' @return A numeric vector with two elements with the minimum and maximum
+    #' values in the axis, respectively.
+    range = function() {
+      range(self$values)
+    },
+
     #' @description Retrieve the indices of supplied values on the axis. If the
     #' axis has bounds then the supplied values must fall within the bounds to
     #' be considered valid.

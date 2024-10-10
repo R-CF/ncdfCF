@@ -65,6 +65,19 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
       data.frame(id = "", axis = self$orientation, group = self$group$fullname,
                  name = self$name, long_name = longname, length = 1L,
                  unlim = "", values = paste0("[", self$value, "]"), unit = units)
+    },
+
+    #' @description Return the axis. This method returns a clone of this axis,
+    #' given that a scalar axis cannot be subset.
+    #'
+    #' @param group The group to create the new axis in.
+    #' @param rng Ignored.
+    #'
+    #' @return A `CFAxisScalar` cloned from this axis.
+    sub_axis = function(group, rng = NULL) {
+      ax <- self$clone()
+      ax$group <- group
+      ax
     }
   ),
   active = list(

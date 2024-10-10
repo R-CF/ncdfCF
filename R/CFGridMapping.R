@@ -488,7 +488,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
         .wkt2_ellipsoid(details$ellipsoid_code)
       else {
         # (3) Manual WKT
-        uom <- .wkt2_id(9001L) # CF only supports meter uom
+        uom <- .wkt2_uom(9001L) # CF only supports meter uom
         if (!is.null(a)) {
           if (is.null(invf))
             infv <- if (is.null(b)) 0 else a / (a - b)
@@ -509,7 +509,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
         epsg_pm[epsg_pm$prime_meridian_name == atts$prime_meridian_name, ]
       } else if (!is.null(atts$longitude_of_prime_meridian)) {
         epsg_pm[isTRUE(all.equal(epsg_pm$greenwich_longitude, atts$longitude_of_prime_meridian)), ]
-      } else integer(0)
+      } else data.frame()
       if (nrow(details)) list(WKT2 = .wkt2_pm(details$prime_meridian_code), ANGLEUNIT = details$uom_code)
       else list(WKT2 = '', ANGLEUNIT = 9102)
     },
@@ -542,12 +542,12 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
       dtm_name <- self$attribute("horizontal_datum_name")
 
       # EPSG datum from attribute name
-      if (!is.null(dtm_name)) {
+      if (nzchar(dtm_name)) {
         dtm_code <- epsg_datum[epsg_datum$cf_name == dtm_name, "datum_code"]
         if (!length(dtm_code))
           dtm_code <- epsg_datum[epsg_datum$datum_name == dtm_name, "datum_code"]
         if (length(dtm_code))
-          return(list(WKT2 = .wkt2_datum_geo(dtm_code), ANGLEUNIT = private$datum_angleunit(dtm_code)))
+          return(list(source = "EPSG", WKT2 = .wkt2_datum_geo(dtm_code), ANGLEUNIT = private$datum_angleunit(dtm_code)))
       } else dtm_name <- 'unknown'
 
       # Manual
@@ -555,9 +555,9 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
       if (nzchar(ellipsoid)) {
         pm <- private$prime_meridian()
         if (nzchar(pm$WKT2)) pm$WKT2 <- paste0(',', pm$WKT2)
-        list(WKT2 = paste0('DATUM["', dtm_name, '",', ellipsoid, ']', pm$WKT2), ANGLEUNIT = pm$ANGLEUNIT)
+        list(source = "manual", WKT2 = paste0('DATUM["', dtm_name, '",', ellipsoid, ']', pm$WKT2), ANGLEUNIT = pm$ANGLEUNIT)
       } else
-        list(WKT2 = .wkt2_datum_geo(6326L), ANGLEUNIT = private$datum_angleunit(6326L))
+        list(source = "default", WKT2 = .wkt2_datum_geo(6326L), ANGLEUNIT = private$datum_angleunit(6326L))
     },
 
     datum_vert = function(name) {
@@ -696,12 +696,13 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
       # database so create a manual WKT from it
       datum <- private$datum_geo()
       angle <- .wkt2_uom(datum$ANGLEUNIT)
-      length <- private$uom(axis_info$LENGTHUNIT)
 
       if (self$grid_mapping_name == "latitude_longitude")
         return(paste0('GEOGCRS["', geocrs_name, '",', datum$WKT2,
                       ',CS[ellipsoidal,2],AXIS["north (Lat)",north,ORDER[1],',
                       angle, '],AXIS["east (Lon)",east,ORDER[2],', angle, ']]'))
+
+      length <- private$uom(axis_info$LENGTHUNIT)
 
       # Is there a vertical axis?
       vert <- self$attribute(c("geoid_name", "geopotential_datum_name"))

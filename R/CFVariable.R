@@ -43,10 +43,11 @@ CFVariable <- R6::R6Class("CFVariable",
         rng <- range(rng)
         vals <- axis$values
         idx <- if (closed)
-          range(which(vals >= rng[1L] & vals <= rng[2L], arr.ind = TRUE))
+          which(vals >= rng[1L] & vals <= rng[2L], arr.ind = TRUE)
         else
-          range(which(vals >= rng[1L] & vals < rng[2L], arr.ind = TRUE))
+          which(vals >= rng[1L] & vals < rng[2L], arr.ind = TRUE)
         if (!length(idx)) return(NULL)
+        else idx <- range(idx)
         if (!closed && isTRUE(all.equal(vals[idx[2L]], rng[2L])))
           idx[2L] <- idx[2L] - 1L
       }
@@ -454,10 +455,21 @@ CFVariable <- R6::R6Class("CFVariable",
         # Get the axis information to inform the CRS
         info <- private$wkt2_axis_info()
 
-        # If no grid_mapping has been set, return the default GEOGCRS
-        if (is.null(self$grid_mapping))
-          .wkt2_crs_geo(4326)
-        else
+        if (is.null(self$grid_mapping)) {
+          # If no grid_mapping has been set, return the default GEOGCRS unless
+          # the axis coordinates fall out of range in which case an empty string
+          # is returned.
+          orient <- lapply(self$axes, function(x) x$orientation)
+          X <- match("X", orient, nomatch = 0L)
+          Y <- match("Y", orient, nomatch = 0L)
+          if (X && Y) {
+            X <- self$axes[[X]]$range()
+            Y <- self$axes[[Y]]$range()
+            if (Y[1L] >= -90 && Y[2L] <= 90 && ((X[1L] >= 0 && X[2L] <= 360) || (X[1L] >= -180 && X[2L] <= 180)))
+              .wkt2_crs_geo(4326)
+            else ""
+          } else ""
+        } else
           self$grid_mapping$crs(info)
       }
     }

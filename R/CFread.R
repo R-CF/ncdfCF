@@ -242,7 +242,11 @@ open_ncdf <- function(resource, keep_open = FALSE) {
       else if (standard == "latitude") orient <- "Y"
     }
   }
-  if (is.null(orient)) orient <- ""
+  if (is.null(orient)) {
+    # Desperate option: try name of NC variable - non-standard
+    nm <- toupper(var$name)
+    orient <- if (match(nm, c("X", "Y", "Z", "T"), nomatch = 0L)) nm else ""
+  }
 
   axis <- if (orient == "X")
     CFAxisLongitude$new(grp, var, dim, vals)

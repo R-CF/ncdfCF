@@ -38,17 +38,17 @@ longitude, latitude and vertical axes.
 \item \href{#method-CFAxisScalar-new}{\code{CFAxisScalar$new()}}
 \item \href{#method-CFAxisScalar-print}{\code{CFAxisScalar$print()}}
 \item \href{#method-CFAxisScalar-brief}{\code{CFAxisScalar$brief()}}
+\item \href{#method-CFAxisScalar-sub_axis}{\code{CFAxisScalar$sub_axis()}}
 \item \href{#method-CFAxisScalar-clone}{\code{CFAxisScalar$clone()}}
 }
 }
 \if{html}{\out{
-<details><summary>Inherited methods</summary>
+<details open><summary>Inherited methods</summary>
 <ul>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="indexOf"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-indexOf'><code>ncdfCF::CFAxis$indexOf()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="sub_axis"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-sub_axis'><code>ncdfCF::CFAxis$sub_axis()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="time"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-time'><code>ncdfCF::CFAxis$time()</code></a></span></li>
 </ul>
 </details>
@@ -97,6 +97,29 @@ Retrieve a 1-row data.frame with some information on this axis.
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisScalar$brief()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisScalar-sub_axis"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisScalar-sub_axis}{}}}
+\subsection{Method \code{sub_axis()}}{
+Return the axis. This method returns a clone of this axis,
+given that a scalar axis cannot be subset.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisScalar$sub_axis(group, rng = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{group}}{The group to create the new axis in.}
+
+\item{\code{rng}}{Ignored.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A \code{CFAxisScalar} cloned from this axis.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisScalar-clone"></a>}}

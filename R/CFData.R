@@ -172,7 +172,8 @@ CFData <- R6::R6Class("CFData",
         halfres <- (vals[2L] - vals[1L]) * 0.5 # this assumes regular spacing
         Ybnds <- c(vals[1L] - halfres, vals[length(vals)] + halfres)
       }
-      ext <- c(Xbnds, Ybnds)
+      if (Ybnds[1L] > Ybnds[2L]) Ybnds <- rev(Ybnds)
+      ext <- round(c(Xbnds, Ybnds), 4) # Round off spurious "accuracy"
 
       arr <- self$array()
       numdims <- length(dim(self$value))

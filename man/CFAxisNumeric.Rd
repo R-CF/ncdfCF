@@ -35,6 +35,7 @@ vector.}
 \item \href{#method-CFAxisNumeric-new}{\code{CFAxisNumeric$new()}}
 \item \href{#method-CFAxisNumeric-print}{\code{CFAxisNumeric$print()}}
 \item \href{#method-CFAxisNumeric-brief}{\code{CFAxisNumeric$brief()}}
+\item \href{#method-CFAxisNumeric-range}{\code{CFAxisNumeric$range()}}
 \item \href{#method-CFAxisNumeric-indexOf}{\code{CFAxisNumeric$indexOf()}}
 \item \href{#method-CFAxisNumeric-sub_axis}{\code{CFAxisNumeric$sub_axis()}}
 \item \href{#method-CFAxisNumeric-clone}{\code{CFAxisNumeric$clone()}}
@@ -97,6 +98,20 @@ Retrieve a 1-row \code{data.frame} with some information on this axis.
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$brief()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisNumeric-range"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisNumeric-range}{}}}
+\subsection{Method \code{range()}}{
+Retrieve the range of coordinate values in the axis.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$range()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A numeric vector with two elements with the minimum and maximum
+values in the axis, respectively.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisNumeric-indexOf"></a>}}
