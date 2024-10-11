@@ -371,7 +371,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
               aux$group$CFaxes[[aux$name]] <- scalar
             } else {
               if (!all(aux$dimids %in% vdimids) || nd > 2L)
-                warning("Unmatched `coordinates` value '", c, "' found in variable '", v$name, "'", call. = FALSE)
+                warning("Unmatched `coordinates` value '", coords[cid], "' found in variable '", v$name, "'", call. = FALSE)
               if (nd == 2L) {
                 # If the NCVariable aux has an attribute "units" with value
                 # "degrees_east" or "degrees_north" it is a longitude or latitude,
@@ -444,7 +444,13 @@ open_ncdf <- function(resource, keep_open = FALSE) {
     else {
       bnds <- try(RNetCDF::var.get.nc(grp$handle, bounds, collapse = FALSE), silent = TRUE)
       if (inherits(bnds, "try-error")) NULL
-      else CFBounds$new(NCbounds, bnds)
+      else {
+        if (length(dim(bnds)) == 3L) { # Never seen more dimensions than this
+          # FIXME: Flag non-standard item
+          bnds <- bnds[, , 1L]
+        }
+        CFBounds$new(NCbounds, bnds)
+      }
     }
   }
 }

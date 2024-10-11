@@ -63,8 +63,8 @@ CFVariable <- R6::R6Class("CFVariable",
 
       private$llgrid$aoi <- if (is.null(lonlat)) {
         ext <- private$llgrid$extent
-        Xrng <- if (length(subset$X)) range(subset$X) else ext[1:2]
-        Yrng <- if (length(subset$Y)) range(subset$Y) else ext[3:4]
+        Xrng <- if (is.na(subset$X)) ext[1:2] else range(subset$X)
+        Yrng <- if (is.na(subset$Y)) ext[3:4] else range(subset$Y)
         aoi(Xrng[1L], Xrng[2L], Yrng[1L], Yrng[2L])
       } else lonlat
 
@@ -277,7 +277,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #' argument `subset` as `X` and `Y`. The resolution of the grid that is
     #' produced by this method is automatically calculated. If you want to
     #' subset those axes then specify values in decimal degrees; if you want to
-    #' extract the full extent, specify `numeric(0)`. **Note** that if
+    #' extract the full extent, specify `NA`. **Note** that if
     #' you want to extract the data in the original grid, you should use the
     #' horizontal axis names in argument `subset`.
     #'

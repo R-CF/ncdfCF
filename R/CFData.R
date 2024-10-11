@@ -45,7 +45,11 @@ CFData <- R6::R6Class("CFData",
       axes <- unlist(axes[lengths(axes) > 0L])
 
       # Permute, if necessary
-      YX_order <- match(c("Y", "X"), axes)
+      YX_order <- match(c("Y", "X"), axes, nomatch = 0L)
+      if (!all(YX_order)) {
+        warning("Cannot orient data array because axis orientation has not been set")
+        return(self$value)
+      }
       if (!all(YX_order == c(1L, 2L))) {
         all_axes <- seq(length(axes))
         permutate <- c(YX_order, all_axes[!(all_axes %in% YX_order)])
@@ -114,11 +118,16 @@ CFData <- R6::R6Class("CFData",
       if (nzchar(longname) && longname != self$name)
         cat("Long name:", longname, "\n")
 
-      rng <- range(self$value, na.rm = TRUE)
-      units <- self$attribute("units")
-      cat("\nValues: [", rng[1L], " ... ", rng[2L], "] ", units, "\n", sep = "")
-      NAs <- sum(is.na(self$value))
-      cat(sprintf("    NA: %d (%.1f%%)\n", NAs, NAs * 100 / length(self$value)))
+      if (all(is.na(self$value))) {
+        cat("\nValues: -\n")
+        cat(sprintf("    NA: %d (100%%)\n", length(self$value)))
+      } else {
+        rng <- range(self$value, na.rm = TRUE)
+        units <- self$attribute("units")
+        cat("\nValues: [", rng[1L], " ... ", rng[2L], "] ", units, "\n", sep = "")
+        NAs <- sum(is.na(self$value))
+        cat(sprintf("    NA: %d (%.1f%%)\n", NAs, NAs * 100 / length(self$value)))
+      }
 
       cat("\nAxes:\n")
       axes <- do.call(rbind, lapply(self$axes, function(a) a$brief()))
@@ -143,6 +152,9 @@ CFData <- R6::R6Class("CFData",
     #' with axis ordering Y-X-others and Y values going from the top down.
     #' @return An `array` of data in R ordering.
     array = function() {
+      if (length(self$axes) < 2L)
+        stop("Cannot create an array from data object with only one axis.", call. = FALSE)
+
       private$set_dimnames()
       private$orient()
     },
@@ -157,7 +169,10 @@ CFData <- R6::R6Class("CFData",
         stop("Please install package 'terra' before using this funcionality")
 
       # Extent
-      YX_order <- match(c("Y", "X"), sapply(self$axes, function(a) a$orientation))
+      YX_order <- match(c("Y", "X"), sapply(self$axes, function(a) a$orientation), nomatch = 0L)
+      if (!all(YX_order))
+        stop("Cannot create terra object because data does not have X and Y axes.", call. = FALSE)
+
       Xbnds <- self$axes[[YX_order[2L]]]$bounds
       if (inherits(Xbnds, "CFBounds")) Xbnds <- Xbnds$range()
       else {
