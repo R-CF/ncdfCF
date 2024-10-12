@@ -10,10 +10,6 @@
 #'
 #' @docType class
 #'
-#' @name CFResource
-#' @format An \code{\link{R6Class}} generator object.
-NULL
-
 CFResource <- R6::R6Class("CFResource",
   private = list(
     .uri    = "",

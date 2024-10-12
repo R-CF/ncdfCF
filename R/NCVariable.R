@@ -10,10 +10,6 @@
 #'
 #' @docType class
 #'
-#' @name NCVariable
-#' @format An \code{\link{R6Class}} generator object.
-NULL
-
 NCVariable <- R6::R6Class("NCVariable",
   inherit = NCObject,
   private = list(

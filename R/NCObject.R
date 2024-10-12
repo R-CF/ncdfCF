@@ -10,10 +10,6 @@
 #'
 #' @docType class
 #'
-#' @name NCObject
-#' @format An \code{\link{R6Class}} generator object.
-NULL
-
 NCObject <- R6::R6Class("NCObject",
   public = list(
     #' @field id Numeric identifier of the netCDF object.

@@ -6,10 +6,6 @@
 #'
 #' @docType class
 #'
-#' @name NCUDT
-#' @format An \code{\link{R6Class}} generator object.
-NULL
-
 NCUDT <- R6::R6Class("NCUDT",
   inherit = NCObject,
   public = list(

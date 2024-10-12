@@ -4,9 +4,6 @@
 \name{NCUDT}
 \alias{NCUDT}
 \title{NetCDF user-defined type}
-\format{
-An \code{\link{R6Class}} generator object.
-}
 \description{
 This class represents
 user-defined types in a netCDF file. Interpretation of the UDT typically

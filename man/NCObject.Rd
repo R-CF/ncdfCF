@@ -4,9 +4,6 @@
 \name{NCObject}
 \alias{NCObject}
 \title{NetCDF base object}
-\format{
-An \code{\link{R6Class}} generator object.
-}
 \description{
 This class is a basic ancestor to all classes that represent
 netCDF objects, specifically groups, dimensions, variables and the

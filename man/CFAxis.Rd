@@ -94,7 +94,7 @@ based.}
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A basic CF object.
+A basic \code{CFAxis} object.
 }
 }
 \if{html}{\out{<hr>}}

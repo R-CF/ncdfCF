@@ -9,11 +9,6 @@
 #'
 #' @docType class
 #'
-#' @name CFAxisLongitude
-#' @format An [R6Class] generator object.
-NULL
-
-#' @export
 CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
   inherit = CFAxisNumeric,
   public = list(

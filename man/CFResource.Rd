@@ -4,9 +4,6 @@
 \name{CFResource}
 \alias{CFResource}
 \title{CF resource object}
-\format{
-An \code{\link{R6Class}} generator object.
-}
 \description{
 This class contains the connection details to the netCDF
 resource.

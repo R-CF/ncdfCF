@@ -527,7 +527,7 @@ dimnames.CFVariable <- function(x) {
 #'
 #' @return An array with dimnames and other attributes set.
 #' @export
-#' @aliases [,CFVariable-method
+#' @aliases bracket_select
 #' @docType methods
 #' @examples
 #' fn <- system.file("extdata",

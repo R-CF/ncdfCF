@@ -12,12 +12,6 @@
 #'
 #' @docType class
 #'
-#' @name CFDataset
-#' @format An \code{\link{R6Class}} generator object.
-NULL
-
-#' @rdname CFDataset
-#' @export
 CFDataset <- R6::R6Class("CFDataset",
   private = list(
     res       = NULL,
@@ -43,7 +37,14 @@ CFDataset <- R6::R6Class("CFDataset",
     #' access methods instead.
     root      = NULL,
 
-    #' @noRd
+    #' @description Create an instance of this class.
+    #' @param name The name that describes this instance.
+    #' @param resource An instance of `CFResource` that links to the netCDF
+    #' resource.
+    #' @param keep_open Logical. Should the netCDF resource be kept open for
+    #' further access?
+    #' @param format Character string with the format of the netCDF resource as
+    #' reported by the call opening the resource.
     initialize = function(name, resource, keep_open, format) {
       self$name <- name
       private$res <- resource
@@ -103,18 +104,13 @@ CFDataset <- R6::R6Class("CFDataset",
     #' @param standard_name Optional, a character string to search for a
     #'   specific "standard_name" value in variables and axes.
     #'
+    #' @aliases standard_name
+    #'
     #' @return If argument `standard_name` is provided, a character vector of
     #'   variable or axis names. If argument `standard_name` is missing or
     #'   an empty string, a named list with all "standard_name" attribute values
     #'   in the the netCDF resource; each list item is named for the variable or
     #'   axis.
-    #'
-    #' @examples
-    #' fn <- system.file("extdata",
-    #'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20230101-20231231_vncdfCF.nc",
-    #'   package = "ncdfCF")
-    #' ds <- open_ncdf(fn)
-    #' ds$objects_by_standard_name("precipitation_flux")
     objects_by_standard_name = function(standard_name) {
       nm <- c(sapply(self$root$variables(), function(v) v$attribute("standard_name")),
               sapply(self$root$axes(), function(x) x$attribute("standard_name")))
@@ -198,12 +194,12 @@ CFDataset <- R6::R6Class("CFDataset",
         "Data set"
     },
 
-    #' @field The connection details of the netCDF resource.
+    #' @field resource The connection details of the netCDF resource.
     resource = function(value) {
       private$res
     },
 
-    #' @field Returns the conventions that this netCDF resource conforms to.
+    #' @field conventions Returns the conventions that this netCDF resource conforms to.
     conventions = function(value) {
       if (missing(value)) {
         conv <- self$root$attribute("Conventions")

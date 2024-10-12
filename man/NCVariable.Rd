@@ -4,9 +4,6 @@
 \name{NCVariable}
 \alias{NCVariable}
 \title{NetCDF variable}
-\format{
-An \code{\link{R6Class}} generator object.
-}
 \description{
 This class represents a netCDF variable, the object that holds
 the properties and data of elements like dimensions and variables of a

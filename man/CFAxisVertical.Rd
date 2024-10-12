@@ -4,9 +4,6 @@
 \name{CFAxisVertical}
 \alias{CFAxisVertical}
 \title{Parametric vertical CF axis object}
-\format{
-An \link{R6Class} generator object.
-}
 \description{
 This class represents a parametric vertical axis. It is defined
 through an index value that is contained in the axis, with additional
@@ -16,4 +13,97 @@ vertical axes are stored in an \link{CFAxisNumeric}.
 }
 \references{
 https://cfconventions.org/Data/cf-conventions/cf-conventions-1.11/cf-conventions.html#parametric-vertical-coordinate
+}
+\section{Super classes}{
+\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFAxis]{ncdfCF::CFAxis}} -> \code{\link[ncdfCF:CFAxisNumeric]{ncdfCF::CFAxisNumeric}} -> \code{CFAxisVertical}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{parameter_name}}{The 'standard_name' attribute of the \link{NCVariable}
+that identifies the parametric form of this axis.}
+
+\item{\code{computed_name}}{The standard name for the computed values of the axis.}
+
+\item{\code{computed_units}}{The unit of the computed values of the axis.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+
+\item{\code{formula_terms}}{(read-only) A \code{data.frame} with the "formula_terms"
+to calculate the parametric axis values.}
+
+\item{\code{dimnames}}{(read-only) The coordinates of the axis.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-CFAxisVertical-new}{\code{CFAxisVertical$new()}}
+\item \href{#method-CFAxisVertical-clone}{\code{CFAxisVertical$clone()}}
+}
+}
+\if{html}{\out{
+<details><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="time"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-time'><code>ncdfCF::CFAxis$time()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="brief"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-brief'><code>ncdfCF::CFAxisNumeric$brief()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="indexOf"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-indexOf'><code>ncdfCF::CFAxisNumeric$indexOf()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="print"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-print'><code>ncdfCF::CFAxisNumeric$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="range"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-range'><code>ncdfCF::CFAxisNumeric$range()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="sub_axis"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-sub_axis'><code>ncdfCF::CFAxisNumeric$sub_axis()</code></a></span></li>
+</ul>
+</details>
+}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisVertical-new"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisVertical-new}{}}}
+\subsection{Method \code{new()}}{
+Create a new instance of this class.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$new(grp, nc_var, nc_dim, values, standard_name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{grp}}{The group that contains the netCDF variable.}
+
+\item{\code{nc_var}}{The netCDF variable that describes this instance.}
+
+\item{\code{nc_dim}}{The netCDF dimension that describes the dimensionality.}
+
+\item{\code{values}}{The dimension values of this axis.}
+
+\item{\code{standard_name}}{Character string with the "standard_name" that
+defines the meaning, and processing of coordinates, of this axis.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisVertical-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisVertical-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
 }

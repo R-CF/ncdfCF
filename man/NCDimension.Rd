@@ -4,9 +4,6 @@
 \name{NCDimension}
 \alias{NCDimension}
 \title{NetCDF dimension object}
-\format{
-An \code{\link{R6Class}} generator object.
-}
 \description{
 This class represents an netCDF dimensions. It contains the
 information on a dimension that is stored in an netCDF file.

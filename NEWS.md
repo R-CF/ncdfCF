@@ -25,7 +25,11 @@ amount of memory when large integer variables are read as they would remain
 integers rather than the default numeric type.
 * Data is returned from CFVariable$subset() as an instance of the CFData class,
 with associated objects such as axes and the attributes from the variable. Data
-can be read out in a variety of forms, currently only as a raw array.
+can be read out in a variety of forms, currently as a raw array, an oriented
+array or as a `terra::SpatRaster` or `terra::SpatRasterDataset`.
+* Full support for grid mapping variables. As a significant extension over CF
+Metadata requirements, CRS strings are produced in the OGC WKT2 format, using
+the latest EPSG database of geodetic objects.
 * Improvements in printing object details.
 * Code refactored to R6.
 * GHA enabled

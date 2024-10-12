@@ -4,9 +4,6 @@
 \name{CFAxisScalar}
 \alias{CFAxisScalar}
 \title{Scalar CF axis object}
-\format{
-An \link{R6Class} generator object.
-}
 \description{
 This class represents a scalar axis. Its single value can be of
 any type. It is typically used as an auxiliary axis to record some parameter

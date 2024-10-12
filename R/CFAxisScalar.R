@@ -9,11 +9,6 @@
 #'
 #' @docType class
 #'
-#' @name CFAxisScalar
-#' @format An [R6Class] generator object.
-NULL
-
-#' @export
 CFAxisScalar <- R6::R6Class("CFAxisScalar",
   inherit = CFAxis,
   public = list(

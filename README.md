@@ -64,7 +64,7 @@ ds <- open_ncdf(fn)
 # Easy access in understandable format to all the details
 ds
 #> <Dataset> ERA5land_Rwanda_20160101 
-#> Resource   : /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
+#> Resource   : /private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpUihQLG/temp_libpath68c95052b923/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
 #> Format     : offset64 
 #> Conventions: CF-1.6 
 #> Keep open  : FALSE 
@@ -301,6 +301,21 @@ ts
 The latter two methods will read only as much data from the netCDF
 resource as is requested.
 
+##### A note on Discrete Sampling Geometries
+
+Discrete Sampling Geometries (DSG) map almost directly to the venerable
+`data.frame` in R (with several exceptions). In that sense, they are
+rather distinct from array-based data sets. At the moment there is no
+specific code for DSG, but the simplest layouts can currently already be
+read (without any warranty). Various methods, such as
+`CFVariable::subset()` or `CFData::array()` will fail miserably, and you
+are well-advised to try no more than the empty array indexing operator
+`CFVariable::[]` which will yield the full data set with column and row
+names set as an array. You can identify a DSG data set by the
+`featureType` attribute of the `CFDataset`.
+
+More comprehensive support for DSG is in the development plan.
+
 ## Development plan
 
 Package `ncdfCF` is in the early phases of development. It supports
@@ -322,7 +337,7 @@ features:
 ##### CF Metadata Conventions
 
 - Calculate parametric vertical coordinates.
-- Aggregation, using the CFA convention
+- Aggregation, using the CFA convention.
 - Support for discrete sampling geometries.
 - Interface to “standard_name” libraries and other “defined
   vocabularies”.

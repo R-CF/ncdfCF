@@ -8,10 +8,6 @@
 #'
 #' @docType class
 #'
-#' @name NCDimension
-#' @format An \code{\link{R6Class}} generator object.
-NULL
-
 NCDimension <- R6::R6Class("NCDimension",
   inherit = NCObject,
   public = list(

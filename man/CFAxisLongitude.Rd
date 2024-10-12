@@ -4,9 +4,6 @@
 \name{CFAxisLongitude}
 \alias{CFAxisLongitude}
 \title{Longitude CF axis object}
-\format{
-An \link{R6Class} generator object.
-}
 \description{
 This class represents a longitude axis. Its values are numeric.
 This class is used for axes that represent longitudes.

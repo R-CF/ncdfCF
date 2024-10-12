@@ -3,10 +3,8 @@
 \docType{class}
 \name{CFDataset}
 \alias{CFDataset}
+\alias{standard_name}
 \title{CF data set}
-\format{
-An \code{\link{R6Class}} generator object.
-}
 \description{
 This class represents a CF data set, the object that
 encapsulates a netCDF resource. You should never have to instantiate this
@@ -17,4 +15,249 @@ be called, or the base R functions called with this instance.
 \details{
 The CF data set instance provides access to all the objects in the
 netCDF resource, organized in groups.
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{name}}{The name of the netCDF resource. This is extracted from the
+URI (file name or URL).}
+
+\item{\code{keep_open}}{Logical flag to indicate if the netCDF resource has to
+remain open after reading the metadata. This should be enabled
+typically only for programmatic access or when a remote resource has an
+expensive access protocol (i.e. 2FA). The resource has to be explicitly
+closed with \code{close()} after use. Note that when a data set is opened
+with \code{keep_open = TRUE} the resource may still be closed by the
+operating system or the remote server.}
+
+\item{\code{root}}{Root of the group hierarchy through which all elements of the
+netCDF resource are accessed. It is \strong{strongly discouraged} to
+manipulate the objects in the group hierarchy directly. Use the provided
+access methods instead.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+
+\item{\code{resource}}{The connection details of the netCDF resource.}
+
+\item{\code{conventions}}{Returns the conventions that this netCDF resource conforms to.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-CFDataset-new}{\code{CFDataset$new()}}
+\item \href{#method-CFDataset-print}{\code{CFDataset$print()}}
+\item \href{#method-CFDataset-hierarchy}{\code{CFDataset$hierarchy()}}
+\item \href{#method-CFDataset-objects_by_standard_name}{\code{CFDataset$objects_by_standard_name()}}
+\item \href{#method-CFDataset-has_subgroups}{\code{CFDataset$has_subgroups()}}
+\item \href{#method-CFDataset-find_by_name}{\code{CFDataset$find_by_name()}}
+\item \href{#method-CFDataset-variables}{\code{CFDataset$variables()}}
+\item \href{#method-CFDataset-axes}{\code{CFDataset$axes()}}
+\item \href{#method-CFDataset-attributes}{\code{CFDataset$attributes()}}
+\item \href{#method-CFDataset-clone}{\code{CFDataset$clone()}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-new"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-new}{}}}
+\subsection{Method \code{new()}}{
+Create an instance of this class.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$new(name, resource, keep_open, format)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{The name that describes this instance.}
+
+\item{\code{resource}}{An instance of \code{CFResource} that links to the netCDF
+resource.}
+
+\item{\code{keep_open}}{Logical. Should the netCDF resource be kept open for
+further access?}
+
+\item{\code{format}}{Character string with the format of the netCDF resource as
+reported by the call opening the resource.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-print"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-print}{}}}
+\subsection{Method \code{print()}}{
+Summary of the data set
+
+Prints a summary of the data set to the console.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$print()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-hierarchy"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-hierarchy}{}}}
+\subsection{Method \code{hierarchy()}}{
+Print the group hierarchy to the console
+Get objects by standard_name
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$hierarchy()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-objects_by_standard_name"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-objects_by_standard_name}{}}}
+\subsection{Method \code{objects_by_standard_name()}}{
+Several conventions define standard vocabularies for
+physical properties. The standard names from those vocabularies are
+usually stored as the "standard_name" attribute with variables or
+axes. This method retrieves all variables or axes that list
+the specified "standard_name" in its attributes.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$objects_by_standard_name(standard_name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{standard_name}}{Optional, a character string to search for a
+specific "standard_name" value in variables and axes.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+If argument \code{standard_name} is provided, a character vector of
+variable or axis names. If argument \code{standard_name} is missing or
+an empty string, a named list with all "standard_name" attribute values
+in the the netCDF resource; each list item is named for the variable or
+axis.
+Does the netCDF resource have subgroups
+
+Newer versions of the \code{netcdf} library, specifically \code{netcdf4}, can
+organize dimensions and variables in groups. This method will report if
+the data set is indeed organized with subgroups.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-has_subgroups"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-has_subgroups}{}}}
+\subsection{Method \code{has_subgroups()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$has_subgroups()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Logical to indicate that the netCDF resource uses subgroups.
+Find an object by its name
+
+Given the name of a CF data variable or axis, possibly preceded by an
+absolute group path, return the object to the caller.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-find_by_name"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-find_by_name}{}}}
+\subsection{Method \code{find_by_name()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$find_by_name(name, scope = "CF")}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{The name of a CF data variable or axis, with an optional
+absolute group path.}
+
+\item{\code{scope}}{The scope to look for the name. Either "CF" (default) to
+search for CF variables or axes, or "NC" to look for groups or NC
+variables.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The object with the provided name. If the object is not found,
+returns \code{NULL}.
+List all the CF data variables in this netCDF resource
+
+This method lists the CF data variables located in this netCDF resource,
+including those in subgroups.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-variables"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-variables}{}}}
+\subsection{Method \code{variables()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$variables()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A list of \code{CFVariable}s.
+List all the axes of CF data variables in this netCDF resource
+
+This method lists the axes located in this netCDF resource, including
+axes in subgroups.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-axes"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-axes}{}}}
+\subsection{Method \code{axes()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$axes()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A list of \code{CFAxis} descendants.
+List all the attributes of a group
+
+This method returns a \code{data.frame} containing all the attributes of the
+indicated \code{group}.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-attributes"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-attributes}{}}}
+\subsection{Method \code{attributes()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$attributes(group)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{group}}{The name of the group whose attributes to return. If the
+argument is missing, the global attributes will be returned.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A \code{data.frame} of attributes.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
 }

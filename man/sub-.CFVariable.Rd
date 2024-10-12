@@ -3,7 +3,7 @@
 \docType{methods}
 \name{[.CFVariable}
 \alias{[.CFVariable}
-\alias{[,CFVariable-method}
+\alias{bracket_select}
 \title{Extract data for a variable}
 \usage{
 \method{[}{CFVariable}(x, i, j, ..., drop = FALSE)

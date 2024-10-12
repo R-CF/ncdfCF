@@ -6,7 +6,6 @@
 #'
 #' @docType class
 #'
-#' @export
 AOI <- R6::R6Class("AOI",
   private = list(
     minLon  = NULL,
@@ -236,7 +235,7 @@ AOI <- R6::R6Class("AOI",
 #'   in all copies made of the object.
 #'
 #' @export
-#' @name aoi_
+#' @name aoi_method
 #' @examples
 #' aoi <- aoi(20, 60, -40, -20, 0.5)
 #' aoi
@@ -287,6 +286,7 @@ dim.AOI <- function(x) {
   if (min < -180 || (min < 0 && max > 180) || max > 360 || min >= max)
     stop("Longitude range is not valid", call. = FALSE)
 }
+
 .aoi_check_latitude <- function(min, max) {
   if (min < -90 || max > 90 || min >= max)
     stop("Latitude range is not valid", call. = FALSE)

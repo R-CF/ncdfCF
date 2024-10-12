@@ -39,7 +39,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   based.
     #' @param orientation The orientation of the axis: "X", "Y", "Z" "T", or
     #' "" when not known or relevant.
-    #' @return A basic CF object.
+    #' @return A basic `CFAxis` object.
     initialize = function(grp, nc_var, nc_dim, orientation) {
       super$initialize(nc_var)
       self$group <- grp

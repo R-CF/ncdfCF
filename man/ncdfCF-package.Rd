@@ -20,37 +20,177 @@ Climate Change (IPCC).
 }
 \details{
 This package currently supports group traversal with scoping rules, axis
-determination, time interpretation with all 9 defined calendars, use of
-bounds data, and search for and use of standard names.
+determination and interpretation, including auxiliary axes, time axis
+interpretation with all 9 defined calendars, grid mapping, use of
+bounds data, read and interpret attributes of groups (including global
+attributes) and variables, search for and use of standard names. Some
+specific constructs in CF are also supported:
+\itemize{
+\item Axes can be oriented to access the data in the familiar R arrangement
+(CF allows any data arrangement and most data sets indeed use an arrangment
+that is not immediately useful in R).
+\item The \code{CFVariable::subset()} function allows one to select subsets of data
+using coordinate values along the axes (such as latitude values, or points
+in time) rather than index values into the array.
+\item Use of auxiliary grids to warp data variables using a non-default grid to
+a regular latitude-longitude grid.
+}
 
 Properties of the netCDF resource objects are easily examined using common
 R commands. Access to the data in the variables can be had using similarly
-known patterns.
+known patterns, and data can be exported to a variety of formats.
 
-\strong{Open, inquire}
+This package is intended to access data from netCDF resources in a format
+that is easily integrated with other R coding patterns and packages, with
+full support for the CF Metadata Conventions that define the data properties.
+This package does very little beyond that; specifically, there is no support
+for spatial analysis, mosaicing, changing the coordinate reference system
+(i.e. projection), plotting, or any form of data analysis at all. The user is
+directed to other packages for such functionality.
+
+\strong{Global functions}
 \itemize{
 \item \code{\link[=open_ncdf]{open_ncdf()}}: Open a netCDF resource, either in a local file system or on
-a THREDDS server. Note that resources are automatically closed.
-\item \code{\link[=show]{show()}}, \code{brief()}, and \code{shard()}: Print (increasingly more compact)
-information to the console for a data set, variable, or axis.
-\item \code{\link[=dimnames]{dimnames()}}: Vector of names of the axes in the data set or variable,
-or a vector of coordinate values for an axis.
-\item \code{\link[=dim]{dim()}}, \code{\link[=length]{length()}}: Vector of the dimension lengths for a data set or
-variable, or the length of a single axis
-\item \code{\link[=axis]{axis()}}: The orientation of an axis.
-\item \code{\link[=time]{time()}}: Return the \href{https://cran.r-project.org/web//packages//CFtime/index.html}{CFtime}
-instance of the axis, or \code{NULL} if not a time axis
+a THREDDS server, or through any other means supported by the \code{RNetCDF}
+package. The return value is a \code{CFDataset}. Note that resources are
+automatically closed.
 }
 
-\strong{Filtering and selection}
+\strong{Data set}
+
+A \link{CFDataset} is the object that contains a netCDF resource. This is the main
+class that you need to access netCDF data.
 \itemize{
-\item [\verb{[]}][bracket_select]: Select the entire variable or a part thereof
-using index values.
-\item \code{\link[=subset]{subset()}}: Select a subset from a variable by specifying extents in
-real-world coordinates for the axes.
-\item \code{\link[=indexOf]{indexOf()}}: Index values into the axis from real-world coordinates,
-possibly with fractional part for interpolation.
+\item \code{show()}: Print information about the data set to the console. This will
+print some information on the resource, as well as all identified data
+variables, axes, and the global attributes.
+\item \code{name}: The name of the data set.
+\item \code{conventions}: The conventions that this data set complies with. There
+could be multiple conventions listed in a single character string. CF
+Metadata Conventions use a "CF-1.*" label.
+\item \code{variables()}, \code{axes()}, \code{attributes()}: Return a list or \code{data.frame} with
+all objects of the specific type found in the data set.
+\item \code{find_by_name()}: Find a named object in the data set. This can be a data
+variable, an axis, or a grid mapping object. A short-hand method to achieve
+the same is the \code{[[} operator.
+\item \code{objects_by_standard_name()}: Find objects that use a specific value for
+the "standard_name" attribute, or return all objects that have such the
+"standard_name" attribute irrespective of its value.
+\item \code{has_subgroups()}: Indicates if the data set has subgroups below the root
+group.
+\item \code{hierarchy()}: Prints the group hierarchy in the data set to the console.
 }
+
+\emph{\strong{S3 methods for CFDataset}}
+\itemize{
+\item \code{\link[=names]{names()}}: Vector of names of the data variables in the data set.
+\item \code{\link[=dimnames]{dimnames()}}: Vector of names of the axes in the data set.
+}
+
+\strong{Data variable}
+
+A \link{CFVariable} contains a single data variable from a data set. It contains
+detailed information on the data variable and there are functions to access
+the data, with different selection methods.
+\itemize{
+\item \code{show()}, \code{brief()}, and \code{shard()}: Print (increasingly more compact)
+information to the console for a data variable.
+\item \code{name}, \code{id}: Basic properties of the data variable.
+\item \code{axes()}: List of \code{CFAxis} objects representing the axes that the data
+variable uses.
+\item \code{attributes}: \code{data.frame} with the attributes of the data variable.
+\item \code{attribute()}: Retrieve the values of one or more attributes of the data
+variable.
+\item \code{grid_mapping}: The so-called grid-mapping object that contains information
+on the coordinate reference system (CRS) of the data variable.
+\item \code{crs}: The CRS of the data variable, in WKT2 format. This is derived from
+the data in the grid-mapping object.
+\item \code{data()}: Extract all data from a data variable into a \code{CFData} object.
+\item \code{subset()}: Select a subset of data from a variable by specifying extents
+in real-world coordinates for the axes into a \code{CFData} object. This can also
+process "auxiliary coordinate variables", if present, to warp data from its
+native CRS to latitude-longitude.
+}
+
+\emph{\strong{S3 methods for CFVariable}}
+\itemize{
+\item \code{\link[=dim]{dim()}}, \code{\link[=dimnames]{dimnames()}}: Vector of the dimension lengths and values of the
+axes of the data variable.
+\item \verb{[]}\link{bracket_select}: Select the entire data variable or a part thereof
+using index values, returning an array of data values.
+}
+
+\strong{Axis}
+
+The \code{CFAxis} class is the common ancestor of specialized classes that
+represent specific types of axes. These sub-classes are the ones that are
+actually returned when retrieving an axis. These classes are:
+\itemize{
+\item \link{CFAxisNumeric} is a basic numeric axis, where the dimension values
+represent some physical property. The \link{CFAxisLongitude} and \link{CFAxisLatitude}
+classes derive from the basic numeric class to manage the specifics of
+geodetic coordinate systems. Class \link{CFAxisVertical} also derives from the
+basic class to manage depth and height axes.
+\item \link{CFAxisTime} is a specialized class to deal with time axes. Under the CF
+Metadata Conventions 9 different calendars have been defined and this class
+deals with the complexities of all of these. Functionality is provided by the
+\code{CFtime} package.
+\item \link{CFAxisCharacter} is for axes that use character labels as categorical
+values.
+\item \link{CFAxisDiscrete} is for axes that don't have any intrinsic coordinate
+values, instead the ordinal values along the axis are used.
+\item \link{CFAxisScalar} is an axis of length 1 of any type. This axis is not
+included in the data array of the data variable, it is mostly useful to
+record a specific property of the data variable, such as observation time or
+a constant height or depth of the data.
+}
+
+Methods for \code{CFAxis} instances:
+\itemize{
+\item \code{show()}, \code{brief()}, and \code{shard()}: Print (increasingly more compact)
+information to the console for an axis.
+\item \code{name}, \code{id}: Basic properties of the axis.
+\item \code{indexOf()}: Retrieve the sub-range of the axis that encompasses the
+physical values passed.
+\item \code{sub_axis}: Create a new \code{CFAxis} instance that spans a sub-range of the
+axis.
+\item \code{time()} (\code{CFAxisTime} only): Retrieve the \code{CFtime} instance of the axis.
+}
+
+\strong{\strong{S3 methods for CFAxis}}
+\itemize{
+\item \code{\link[=dim]{dim()}}, \code{\link[=dimnames]{dimnames()}}: The dimension length and values of the axis.
+}
+
+\strong{Data}
+
+The \code{CFVariable::data()} and \code{CFVariable::subset()} methods return a \link{CFData}
+object to the caller. The \code{CFData} object contains the data from the netCDF
+resource, as well as important metadata from the data variable: axes, CRS and
+attributes. The data is easily accessed as a raw array, or processed to some
+other format.
+\itemize{
+\item \code{show()}: Print information about the data object to the console, including
+axes, the CRS and its attributes.
+\item \code{axes()}: List of \code{CFAxis} objects representing the axes that the data
+object uses.
+\item \code{crs}: A WKT2-formatted string of the CRS of the data object.
+\item \code{raw()}: The array of data values from the data variable as read from the
+netCDF resource.
+\item \code{array()}: The array of data values from the data variable, oriented in the
+standard R arrangement.
+\item \code{terra()}: (requires the \code{terra} package) The data values from the data
+variable as a \code{terra::SpatRaster} (2 or 3 dimensions) or
+\code{terra::SpatRasterDataset} (4 dimensions), with all relevant properties set.
+}
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/pvanlaake/ncdfCF}
+  \item Report bugs at \url{https://github.com/pvanlaake/ncdfCF/issues}
+}
+
 }
 \author{
 \strong{Maintainer}: Patrick Van Laake \email{patrick@vanlaake.net} [copyright holder]
