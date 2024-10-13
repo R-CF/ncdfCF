@@ -157,7 +157,7 @@ axis.
 \item \code{time()} (\code{CFAxisTime} only): Retrieve the \code{CFtime} instance of the axis.
 }
 
-\strong{\strong{S3 methods for CFAxis}}
+\emph{\strong{S3 methods for CFAxis}}
 \itemize{
 \item \code{\link[=dim]{dim()}}, \code{\link[=dimnames]{dimnames()}}: The dimension length and values of the axis.
 }

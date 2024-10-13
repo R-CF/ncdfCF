@@ -22,6 +22,7 @@ Imports:
     stringr
 Collate: 
     'AOI.R'
+    'AOImethod.R'
     'CFAuxiliaryLongLat.R'
     'CFAxis.R'
     'CFAxisCharacter.R'

@@ -141,7 +141,7 @@
 #' axis.
 #' * `time()` (`CFAxisTime` only): Retrieve the `CFtime` instance of the axis.
 #'
-#' ****S3 methods for CFAxis****
+#' ***S3 methods for CFAxis***
 #'
 #' * [dim()], [dimnames()]: The dimension length and values of the axis.
 #'
