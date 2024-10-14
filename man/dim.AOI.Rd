@@ -7,7 +7,7 @@
 \method{dim}{AOI}(x)
 }
 \arguments{
-\item{x}{An instance of \link{AOI}.}
+\item{x}{An instance of the \code{AOI} class.}
 }
 \value{
 A vector of two values giving the longitude and latitude dimensions

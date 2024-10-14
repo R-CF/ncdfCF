@@ -1,4 +1,4 @@
-#' Area of Interest class
+#' Region of Interest class
 #'
 #' @description This class represents an area of interest for analysis.
 #'

@@ -55,18 +55,18 @@ CFVariable <- R6::R6Class("CFVariable",
     },
 
     # Do the auxiliary grid interpolation. Argument "subset" is passed from the
-    # subset() function. Argument "lonlat" is an AOI, if supplied by the caller
+    # subset() function. Argument "aoi" is an AOI, if supplied by the caller
     # to subset(). Return a list of useful objects to subset().
-    auxiliary_interpolation = function(subset, lonlat) {
+    auxiliary_interpolation = function(subset, aoi) {
       # This code assumes that the grid orientation of the data variable is the
       # same as that of the longitude-latitude grid
 
-      private$llgrid$aoi <- if (is.null(lonlat)) {
+      private$llgrid$aoi <- if (is.null(aoi)) {
         ext <- private$llgrid$extent
-        Xrng <- if (is.na(subset$X)) ext[1:2] else range(subset$X)
-        Yrng <- if (is.na(subset$Y)) ext[3:4] else range(subset$Y)
+        Xrng <- if (is.na(subset$X[[1L]])) ext[1:2] else range(subset$X)
+        Yrng <- if (is.na(subset$Y[[1L]])) ext[3:4] else range(subset$Y)
         aoi(Xrng[1L], Xrng[2L], Yrng[1L], Yrng[2L])
-      } else lonlat
+      } else aoi
 
       index <- private$llgrid$grid_index()
       dim_index <- dim(index)
@@ -291,12 +291,12 @@ CFVariable <- R6::R6Class("CFVariable",
     #' can be specified in any order. If values for the range per axis fall
     #' outside of the extent of the axis, the range is clipped to the extent of
     #' the axis.
-    #' @param lonlat Optional, an area-of-interest created with the [aoi()]
-    #' function to indicate the horizontal area that should be extracted. The
-    #' longitude and latitude coordinates must be included; the X and Y
-    #' resolution will be calculated if not given. When provided, this argument
-    #' will take precedence over the corresponding axis information for the X
-    #' and Y axes in the `subset` argument.
+    #' @param aoi Optional, an area-of-interest instance of class `AOI` created
+    #' with the [aoi()] function to indicate the horizontal area that should be
+    #' extracted. The longitude and latitude coordinates must be included; the X
+    #' and Y resolution will be calculated if not given. When provided, this
+    #' argument will take precedence over the corresponding axis information for
+    #' the X and Y axes in the `subset` argument.
     #' @param rightmost.closed Single logical value to indicate if the upper
     #' boundary of range in each axis should be included.
     #' @param ... Ignored. Included to avoid "unused argument" errors on
@@ -311,12 +311,12 @@ CFVariable <- R6::R6Class("CFVariable",
     #'
     #' @aliases CFVariable$subset
     #'
-    subset = function(subset, lonlat = NULL, rightmost.closed = FALSE, ...) {
+    subset = function(subset, aoi = NULL, rightmost.closed = FALSE, ...) {
       num_axes <- length(self$axes)
       if (!num_axes)
         stop("Cannot subset a scalar variable")
-      if (!is.null(lonlat) && is.null(lonlat$lonMin))
-        stop("Argument `lonlat` must have coordinates set")
+      if (!is.null(aoi) && is.null(aoi$lonMin))
+        stop("Argument `aoi` must have coordinates set")
 
       axis_names <- names(self$axes)
       orientations <- sapply(self$axes, function(a) a$orientation)
@@ -325,8 +325,8 @@ CFVariable <- R6::R6Class("CFVariable",
 
       sub_names <- names(subset)
 
-      if (all(c("X", "Y") %in% sub_names) && inherits(private$llgrid, "CFAuxiliaryLongLat")) {
-        aux <- private$auxiliary_interpolation(subset, lonlat)
+      if ((all(c("X", "Y") %in% sub_names) || !missing(aoi)) && inherits(private$llgrid, "CFAuxiliaryLongLat")) {
+        aux <- private$auxiliary_interpolation(subset, aoi)
         sub_names <- sub_names[!grepl("X|Y", sub_names)]
       } else aux <- NULL
 
@@ -374,9 +374,9 @@ CFVariable <- R6::R6Class("CFVariable",
           }
         } else { # No auxiliary coordinates
           rng <- NULL
-          if (!is.null(lonlat))
-            rng <- if (orientations[ax] == "X") c(lonlat[1L], lonlat[2L])
-                   else if (orientations[ax] == "Y") c(lonlat[3L], lonlat[4L])
+          if (!is.null(aoi))
+            rng <- if (orientations[ax] == "X") c(aoi$lonMin, aoi$lonMax)
+                   else if (orientations[ax] == "Y") c(aoi$latMin, aoi$latMax)
           if (is.null(rng)) rng <- subset[[ axis_names[ax] ]]
           if (is.null(rng)) rng <- subset[[ orientations[ax] ]]
           if (is.null(rng)) {

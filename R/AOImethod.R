@@ -50,12 +50,11 @@
 #'   values lie within the range `[0.01 ... 10]`. If `resY` is missing it will
 #'   use the value of `resX`, yielding square grid cells.
 #'
-#' @return The return value of the function is an [R6] object which uses
+#' @return The return value of the function is an `R6` object which uses
 #'   reference semantics. Making changes to the returned object will be visible
 #'   in all copies made of the object.
 #'
 #' @export
-#' @name aoi_method
 #' @examples
 #' aoi <- aoi(20, 60, -40, -20, 0.5)
 #' aoi
@@ -82,7 +81,7 @@ aoi <- function(lonMin, lonMax, latMin, latMax, resX, resY) {
 #' This method returns the dimensions of the grid that would be created for the
 #' AOI.
 #'
-#' @param x An instance of [AOI].
+#' @param x An instance of the `AOI` class.
 #'
 #' @return A vector of two values giving the longitude and latitude dimensions
 #' of the grid that would be created for the AOI.

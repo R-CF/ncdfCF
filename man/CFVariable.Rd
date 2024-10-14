@@ -148,7 +148,7 @@ A \link{CFData} instance with all data from this variable.
 \subsection{Method \code{subset()}}{
 Extract data from the variable
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$subset(subset, lonlat = NULL, rightmost.closed = FALSE, ...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$subset(subset, aoi = NULL, rightmost.closed = FALSE, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -165,12 +165,12 @@ can be specified in any order. If values for the range per axis fall
 outside of the extent of the axis, the range is clipped to the extent of
 the axis.}
 
-\item{\code{lonlat}}{Optional, an area-of-interest created with the \code{\link[=aoi]{aoi()}}
-function to indicate the horizontal area that should be extracted. The
-longitude and latitude coordinates must be included; the X and Y
-resolution will be calculated if not given. When provided, this argument
-will take precedence over the corresponding axis information for the X
-and Y axes in the \code{subset} argument.}
+\item{\code{aoi}}{Optional, an area-of-interest instance of class \code{AOI} created
+with the \code{\link[=aoi]{aoi()}} function to indicate the horizontal area that should be
+extracted. The longitude and latitude coordinates must be included; the X
+and Y resolution will be calculated if not given. When provided, this
+argument will take precedence over the corresponding axis information for
+the X and Y axes in the \code{subset} argument.}
 
 \item{\code{rightmost.closed}}{Single logical value to indicate if the upper
 boundary of range in each axis should be included.}

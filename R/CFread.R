@@ -380,10 +380,10 @@ open_ncdf <- function(resource, keep_open = FALSE) {
                 if (nzchar(units)) {
                   if (grepl("^degree(s?)(_?)(east|E)$", units)) {
                     varLon <- aux
-                    bndsLon <- .readBounds(aux$group, bounds)
+                    bndsLon <- .readBounds(aux$group, bounds, 2L)
                   } else if (grepl("^degree(s?)(_?)(north|N)$", units)) {
                     varLat <- aux
-                    bndsLat <- .readBounds(aux$group, bounds)
+                    bndsLat <- .readBounds(aux$group, bounds, 2L)
                   }
                 }
               }
@@ -436,7 +436,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 }
 
 # Utility function to read bounds values
-.readBounds <- function(grp, bounds) {
+.readBounds <- function(grp, bounds, axis_dims = 1L) {
   if (is.null(bounds)) NULL
   else {
     NCbounds <- grp$find_by_name(bounds, "NC")
@@ -445,7 +445,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
       bnds <- try(RNetCDF::var.get.nc(grp$handle, bounds, collapse = FALSE), silent = TRUE)
       if (inherits(bnds, "try-error")) NULL
       else {
-        if (length(dim(bnds)) == 3L) { # Never seen more dimensions than this
+        if (length(dim(bnds)) == 3L && axis_dims == 1L) { # Never seen more dimensions than this
           # FIXME: Flag non-standard item
           bnds <- bnds[, , 1L]
         }
