@@ -1,3 +1,5 @@
+# ncdfCF 0.2.1
+
 # ncdfCF 0.2.0
 
 * NetCDF groups are now fully supported, including traversing group hierarchies 
