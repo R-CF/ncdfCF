@@ -1,4 +1,4 @@
-# ncdfCF (development version)
+# ncdfCF 0.2.0
 
 * NetCDF groups are now fully supported, including traversing group hierarchies 
 with absolute or relative paths.
