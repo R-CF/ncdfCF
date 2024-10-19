@@ -186,6 +186,9 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     #' grid of the sampling points, or `c(NA, NA)` is no grid point is located
     #' within the `maxDist` distance from the sampling point.
     sample_index = function(x, y, maxDist = 0.1) {
+      if (is.null(x) || is.null(y) || length(x) != length(y))
+        stop("Arguments `x` and `y` must be vectors of the same length", call. = FALSE)
+
       private$loadData()
 
       out <- mapply(function(lon, lat, max2) {

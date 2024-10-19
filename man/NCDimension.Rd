@@ -35,6 +35,7 @@ instead. This class is instantiated when opening a netCDF resource.}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-NCDimension-new}{\code{NCDimension$new()}}
+\item \href{#method-NCDimension-print}{\code{NCDimension$print()}}
 \item \href{#method-NCDimension-shard}{\code{NCDimension$shard()}}
 \item \href{#method-NCDimension-clone}{\code{NCDimension$clone()}}
 }
@@ -70,6 +71,23 @@ instead. This class is instantiated when opening a netCDF resource.}
 }
 \subsection{Returns}{
 A \code{NCDimension} instance.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCDimension-print"></a>}}
+\if{latex}{\out{\hypertarget{method-NCDimension-print}{}}}
+\subsection{Method \code{print()}}{
+Summary of the NC dimension.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCDimension$print(...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Passed on to other methods.}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}

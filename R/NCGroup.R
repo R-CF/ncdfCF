@@ -59,8 +59,7 @@ NCGroup <- R6::R6Class("NCGroup",
     },
 
     #' @description Summary of the group
-    #'
-    #' Prints a summary of the group to the console.
+    #' @param ... Passed on to other methods.
     print = function(...) {
       if (self$name != "/") {
         cat("<", self$friendlyClassName, "> [", self$id, "] ", self$name, "\n", sep = "")
@@ -72,9 +71,7 @@ NCGroup <- R6::R6Class("NCGroup",
       self$print_attributes()
     },
 
-    #' @description Group hierarchy
-    #'
-    #'   Prints the hierarchy of the group and its subgroups to the console,
+    #' @description Prints the hierarchy of the group and its subgroups to the console,
     #'   with a summary of contained objects. Usually called from the root group
     #'   to display the full group hierarchy.
     hierarchy = function(idx, total) {
@@ -109,7 +106,7 @@ NCGroup <- R6::R6Class("NCGroup",
     #' Given the name of an object, possibly preceded by an absolute or relative
     #' group path, return the object to the caller. Typically, this method is
     #' called programmatically; similar interactive use is provided through the
-    #' `[[.CFDataset()` function.
+    #' `[[.CFDataset()` operator.
     #'
     #' @param name The name of an object, with an optional absolute or relative
     #'   group path from the calling group. The object must either an CF
@@ -195,6 +192,21 @@ NCGroup <- R6::R6Class("NCGroup",
 
       # Give up
       NULL
+    },
+
+    unused = function() {
+      # Return unused NCVariables. This method is undocumented and is useful
+      # primarily for investigating issues with the netCDF resource.
+      vars <- lapply(self$NCvars, function(v) { if (!length(v$CF)) v})
+      vars <- vars[lengths(vars) > 0L]
+
+      # Descend into subgroups
+      if (length(self$subgroups)) {
+        subvars <- lapply(self$subgroups, function(g) g$unused())
+        vars <- append(vars, unlist(subvars))
+      }
+
+      vars
     },
 
     #' Add an auxiliary long-lat variable to the group

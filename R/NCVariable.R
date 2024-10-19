@@ -55,6 +55,17 @@ NCVariable <- R6::R6Class("NCVariable",
       self$dimids <- dimids
     },
 
+    #' @description Summary of the NC variable.
+    #' @param ... Passed on to other methods.
+    print = function(...) {
+      cat("<netCDF variable> [", self$id, "] ", self$name, "\n", sep = "")
+      cat("Group        :", self$group$fullname, "\n")
+      cat("Data type    :", self$vtype, "\n")
+      cat("Dimension ids:", paste(self$dimids, collapse = ", "), "\n")
+
+      self$print_attributes()
+    },
+
     #' @description Very concise information on the variable
     #'
     #' The information returned by this function is very concise and most useful

@@ -59,12 +59,9 @@ library(ncdfCF)
 fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 
 # Open the file, all metadata is read
-ds <- open_ncdf(fn)
-
-# Easy access in understandable format to all the details
-ds
+(ds <- open_ncdf(fn))
 #> <Dataset> ERA5land_Rwanda_20160101 
-#> Resource   : /private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpUihQLG/temp_libpath68c95052b923/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
+#> Resource   : /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
 #> Format     : offset64 
 #> Conventions: CF-1.6 
 #> Keep open  : FALSE 
@@ -103,9 +100,8 @@ names(ds)
 dimnames(ds)
 #> [1] "time"      "longitude" "latitude"
 
-# Variables can be accessed through standard list-type extraction syntax
-t2m <- ds[["t2m"]]
-t2m
+# Variables and dimensions can be accessed through standard list-type extraction syntax
+(t2m <- ds[["t2m"]])
 #> <Variable> t2m 
 #> Long name: 2 metre temperature 
 #> 
@@ -128,7 +124,6 @@ t2m
 #>  4  _FillValue    NC_SHORT   1     -32767             
 #>  5  missing_value NC_SHORT   1     -32767
 
-# Same with dimensions, but now without first attaching the object to a variable
 ds[["longitude"]]
 #> <Longitude axis> [1] longitude
 #> Length   : 31
@@ -242,8 +237,7 @@ attributes:
 
 ``` r
 # Extract a specific region, full time dimension
-ts <- t2m$subset(list(X = 29:30, Y = -1:-2))
-ts
+(ts <- t2m$subset(list(X = 29:30, Y = -1:-2)))
 #> <Data> t2m 
 #> Long name: 2 metre temperature 
 #> 
@@ -272,10 +266,9 @@ ts
 # Extract specific time slices for a specific region
 # Note that the dimensions are specified out of order and using alternative
 # specifications: only the extreme values are used.
-ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
-                      X = c(29.6, 28.8),
-                      Y = seq(-2, -1, by = 0.05)))
-ts
+(ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
+                       X = c(29.6, 28.8),
+                       Y = seq(-2, -1, by = 0.05))))
 #> <Data> t2m 
 #> Long name: 2 metre temperature 
 #> 

@@ -1,5 +1,9 @@
 # ncdfCF (development version)
 
+* `print()` method for `NCVariable` and `NCDimension`.
+* Minor code fixes.
+* Documentation extended, new vignette.
+
 # ncdfCF 0.2.1
 
 * NetCDF groups are now fully supported, including traversing group hierarchies 

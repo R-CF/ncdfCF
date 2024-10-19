@@ -474,6 +474,10 @@ open_ncdf <- function(resource, keep_open = FALSE) {
         ax <- vector("list", v$ndims)
         for (x in 1:v$ndims) {
           ndx <- which(sapply(xids, function(e) v$dimids[x] %in% e))
+          if (!length(ndx)) {
+            warning(paste0("Possible variable '", v$name, "' cannot be constructed because of unknown axis number ", x))
+            return(NULL)
+          }
           ax[[x]] <- axes[[ndx]]
         }
         names(ax) <- sapply(ax, function(x) x$name)

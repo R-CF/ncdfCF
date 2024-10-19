@@ -51,6 +51,7 @@ path from the root group.}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-NCVariable-new}{\code{NCVariable$new()}}
+\item \href{#method-NCVariable-print}{\code{NCVariable$print()}}
 \item \href{#method-NCVariable-shard}{\code{NCVariable$shard()}}
 \item \href{#method-NCVariable-clone}{\code{NCVariable$clone()}}
 }
@@ -90,6 +91,23 @@ path from the root group.}
 }
 \subsection{Returns}{
 An instance of this class.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCVariable-print"></a>}}
+\if{latex}{\out{\hypertarget{method-NCVariable-print}{}}}
+\subsection{Method \code{print()}}{
+Summary of the NC variable.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCVariable$print(...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Passed on to other methods.}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}

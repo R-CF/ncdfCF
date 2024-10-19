@@ -36,6 +36,14 @@ NCDimension <- R6::R6Class("NCDimension",
       self$unlim <- unlim
     },
 
+    #' @description Summary of the NC dimension.
+    #' @param ... Passed on to other methods.
+    print = function(...) {
+      cat("<netCDF dimension> [", self$id, "] ", self$name, "\n", sep = "")
+      cat("Length       :", self$length, "\n")
+      cat("Unlimited    :", self$unlim, "\n")
+    },
+
     #' @description Very concise information on the dimension
     #'
     #' The information returned by this function is very concise and most useful

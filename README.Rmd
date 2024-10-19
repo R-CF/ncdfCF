@@ -68,20 +68,15 @@ library(ncdfCF)
 fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 
 # Open the file, all metadata is read
-ds <- open_ncdf(fn)
-
-# Easy access in understandable format to all the details
-ds
+(ds <- open_ncdf(fn))
 
 # ...or very brief details
 names(ds)
 dimnames(ds)
 
-# Variables can be accessed through standard list-type extraction syntax
-t2m <- ds[["t2m"]]
-t2m
+# Variables and dimensions can be accessed through standard list-type extraction syntax
+(t2m <- ds[["t2m"]])
 
-# Same with dimensions, but now without first attaching the object to a variable
 ds[["longitude"]]
 
 # Regular base R operations simplify life further
@@ -125,16 +120,14 @@ returned as an instance of `CFData`, including axes and attributes:
 
 ```{r subset}
 # Extract a specific region, full time dimension
-ts <- t2m$subset(list(X = 29:30, Y = -1:-2))
-ts
+(ts <- t2m$subset(list(X = 29:30, Y = -1:-2)))
 
 # Extract specific time slices for a specific region
 # Note that the dimensions are specified out of order and using alternative
 # specifications: only the extreme values are used.
-ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
-                      X = c(29.6, 28.8),
-                      Y = seq(-2, -1, by = 0.05)))
-ts
+(ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
+                       X = c(29.6, 28.8),
+                       Y = seq(-2, -1, by = 0.05))))
 ```
 
 The latter two methods will read only as much data from the netCDF resource as 
