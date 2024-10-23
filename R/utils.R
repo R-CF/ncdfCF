@@ -55,18 +55,3 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
 unused_imports <- function() {
   stringr::word
 }
-
-# sysdata.rda
-# ===========
-# The internal data file contains the following objects:
-# * epsg_uom - EPSG unit-of-measure information
-# * epsg_pm - EPSG prime meridian information
-# * epsg_ell - EPSG ellipsoid information
-# * epsg_datum - EPSG datum information
-#
-# All EPSG objects are taken from EPSG database v11.017, with deprecated records
-# dropped, as well as informational attributes. The PostgreSQL database is used
-# with tables exported to csv and then imported into R as data.frames. Columns
-# with numerical data and NULLs come out as character so they need to be
-# converted to the right type.
-#

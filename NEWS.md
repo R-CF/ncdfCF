@@ -1,5 +1,9 @@
 # ncdfCF (development version)
 
+* Functions `makeMemoryGroup()`, `makeLongitudeAxis()` and `makeLatitudeAxis()`
+added to create scaffolding for new CF objects.
+* `NCGroup::unused()` method identifies unused `NCVariable`s to aid in finding
+issues with netCDF resources.
 * `print()` method for `NCVariable` and `NCDimension`.
 * Minor code fixes.
 * Documentation extended, new vignette.

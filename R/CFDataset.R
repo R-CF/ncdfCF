@@ -81,9 +81,9 @@ CFDataset <- R6::R6Class("CFDataset",
         if (all(axes$group == "/")) axes$group <- NULL
         axes <- unique(as.data.frame(axes[lengths(axes) > 0L]))
         print(.slim.data.frame(axes, 50L), right = FALSE, row.names = FALSE)
-
-        self$root$print_attributes()
       }
+
+      self$root$print_attributes()
     },
 
     #' @description Print the group hierarchy to the console

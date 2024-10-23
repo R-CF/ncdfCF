@@ -47,6 +47,7 @@ Collate:
     'NCGroup.R'
     'NCUDT.R'
     'NCVariable.R'
+    'makeCFObjects.R'
     'ncdfCF-package.R'
     'utils.R'
     'wkt2.R'
