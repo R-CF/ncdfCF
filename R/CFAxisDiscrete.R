@@ -25,8 +25,15 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #' @return A 1-row `data.frame` with some details of the axis.
     brief = function() {
       out <- super$brief()
-      out$values <- if (self$length == 1L) "[1]"
-                    else paste0("[1 ... ", self$length, "]")
+      lbls <- self$labels
+      if (!length(lbls)) {
+        out$values <- if (self$length == 1L) "[1]"
+                      else paste0("[1 ... ", self$length, "]")
+      } else {
+        lbls <- lbls[[1L]]$values
+        out$values <- if (self$length == 1L) paste0("[", lbls[1L], "]")
+                      else paste0("[", lbls[1L], " ... ", lbls[length(lbls)], "]")
+      }
       out
     },
 
@@ -56,10 +63,12 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     },
 
     #' @field dimnames (read-only) The coordinates of the axis as an integer
-    #' vector.
+    #' vector, or labels for every axis element if they have been set.
     dimnames = function(value) {
-      if (missing(value))
-        seq(self$length)
+      if (missing(value)) {
+        if (length(self$lbls)) self$lbls[[1L]]$values
+        else seq(self$length)
+      }
     }
   )
 )

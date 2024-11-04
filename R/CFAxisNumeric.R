@@ -33,13 +33,24 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
 
       units <- self$attribute("units")
       if (!nzchar(units)) units <- ""
+      if (units == "1") units <- ""
+
+      lbls <- self$labels
       len <- length(self$values)
-      if (len < 7L) {
-        vals <- trimws(formatC(self$values, digits = 8L))
-        cat("Values   : ", paste(vals, collapse = ", "), " ", units, "\n", sep = "")
+      if (length(lbls)) {
+        lbls <- lbls[[1L]]$values
+        if (len < 5L)
+          cat("Values   : ", paste(lbls, collapse = ", "), "\n", sep = "")
+        else
+          cat("Values   : ", lbls[1L], ", ", lbls[2L], " ... ", lbls[len - 1L], ", ", lbls[len], "\n", sep = "")
       } else {
-        vals <- trimws(formatC(c(self$values[1L:3L], self$values[(len-2):len], digits = 8L)))
-        cat("Values   : ", vals[1L], ", ", vals[2L], ", ", vals[3L], " ... ", vals[4L], ", ", vals[5L], ", ", vals[6L], " ", units, "\n", sep = "")
+        if (len < 7L) {
+          vals <- trimws(formatC(self$values, digits = 8L))
+          cat("Values   : ", paste(vals, collapse = ", "), " ", units, "\n", sep = "")
+        } else {
+          vals <- trimws(formatC(c(self$values[1L:3L], self$values[(len-2):len], digits = 8L)))
+          cat("Values   : ", vals[1L], ", ", vals[2L], ", ", vals[3L], " ... ", vals[4L], ", ", vals[5L], ", ", vals[6L], " ", units, "\n", sep = "")
+        }
       }
 
       if (!is.null(self$bounds))
@@ -53,12 +64,19 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     brief = function() {
       out <- super$brief()
 
+      lbls <- self$labels
       nv <- length(self$values)
-      if (nv == 1L)
-        dims <- sprintf("[%s]", gsub(" ", "", formatC(self$values[1L], digits = 8L)))
-      else {
-        vals <- trimws(formatC(c(self$values[1L], self$values[nv]), digits = 8L))
-        dims <- sprintf("[%s ... %s]", vals[1L], vals[2L])
+      if (!length(lbls)) {
+        if (nv == 1L)
+          dims <- sprintf("[%s]", gsub(" ", "", formatC(self$values[1L], digits = 8L)))
+        else {
+          vals <- trimws(formatC(c(self$values[1L], self$values[nv]), digits = 8L))
+          dims <- sprintf("[%s ... %s]", vals[1L], vals[2L])
+        }
+      } else {
+        lbls <- lbls[[1L]]$values
+        if (nv == 1L) dims <- paste0("[", lbls[1L], "]")
+        else dims <- paste0("[", lbls[1L], " ... ", lbls[length(lbls)], "]")
       }
 
       out$values <- dims
@@ -142,10 +160,12 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     },
 
     #' @field dimnames (read-only) The coordinates of the axis as a numeric
-    #' vector.
+    #' vector, or labels for every axis element if they have been set.
     dimnames = function(value) {
-      if (missing(value))
-        self$values
+      if (missing(value)) {
+        if (length(self$lbls)) self$lbls[[1L]]$values
+        else self$values
+      }
     }
   )
 )

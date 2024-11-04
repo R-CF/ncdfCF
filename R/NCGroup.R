@@ -47,6 +47,7 @@ NCGroup <- R6::R6Class("NCGroup",
     NCudts    = list(), # list of lists of UDTs in RNetCDF format
     CFvars    = list(), # of CFVariable
     CFaxes    = list(), # of CFAxis
+    CFlabels  = list(), # of CFLabel
     CFaux     = list(), # of CFAuxiliaryLongLat
     CFcrs     = list(), # of CFGridMapping
 
@@ -110,8 +111,8 @@ NCGroup <- R6::R6Class("NCGroup",
     #'
     #' @param name The name of an object, with an optional absolute or relative
     #'   group path from the calling group. The object must either an CF
-    #'   construct (data variable, axis, auxiliary axis, or grid mapping) or an
-    #'   NC group, dimension or variable.
+    #'   construct (data variable, axis, auxiliary axis, label, or grid mapping)
+    #'   or an NC group, dimension or variable.
     #' @param scope Either "CF" (default) for a CF construct, or "NC" for a
     #'   netCDF group, dimension or variable.
     #'
@@ -162,6 +163,9 @@ NCGroup <- R6::R6Class("NCGroup",
           idx <- which(names(g$CFaux) == nm)
           if (length(idx)) return(g$CFaux[[idx]])
 
+          idx <- which(names(g$CFlabels) == nm)
+          if (length(idx)) return(g$CFlabels[[idx]])
+
           idx <- which(names(g$CFcrs) == nm)
           if (length(idx)) return(g$CFcrs[[idx]])
         } else {
@@ -192,6 +196,29 @@ NCGroup <- R6::R6Class("NCGroup",
 
       # Give up
       NULL
+    },
+
+    #' Find an NC dimension object by its id
+    #'
+    #' Given the id of a dimension, return the [NCDimension] object to the
+    #' caller. The dimension has to be found in the current group or any of its
+    #' parents.
+    #'
+    #' @param id The id of the dimension.
+    #'
+    #' @return The [NCDimension] object with an identifier equal to the `id`
+    #'   argument. If the object is not found, returns `NULL`.
+    find_dim_by_id = function(id) {
+      dims <- sapply(self$NCdims, function(d) d$id)
+      if (length(dims)) {
+        idx <- which(dims == id)
+        if (length(idx))
+          return(self$NCdims[[idx]])
+      }
+      if (!is.null(self$parent))
+        return(self$parent$find_dim_by_id(id))
+      else
+        return(NULL)
     },
 
     unused = function() {

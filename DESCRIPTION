@@ -37,6 +37,7 @@ Collate:
     'CFData.R'
     'CFDataset.R'
     'CFGridMapping.R'
+    'CFLabel.R'
     'NCObject.R'
     'CFObject.R'
     'CFResource.R'

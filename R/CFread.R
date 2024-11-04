@@ -266,7 +266,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 # dimension is defined.
 #
 # Argument `grp` is the current group to scan, `add_dims` is a vector of
-# dimension ids for which a discrete axis must be created because variables
+# dimension ids for which a discrete axis must be created because NC variables
 # refer to the dimension.
 .addBareDimensions <- function(grp, add_dims) {
   if (length(grp$NCdims) > 0L) {
@@ -333,10 +333,14 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 #'
 #' NC variables are scanned for a "coordinates" attribute (which must be a data
 #' variable, domain variable or geometry container variable). The NC variable
-#' referenced is converted into a scalar coordinate variable in the group where
-#' its NC variable is located, or into a long-lat auxiliary coordinate variable
-#' when both a longitude and latitude NC variable are found, in the group of the
-#' longitude NC variable.
+#' referenced is converted into one of 3 objects, depending on context:
+#' 1. A scalar coordinate variable in the group where its NC variable is
+#' located;
+#' 2. A label variable in the group where its NC variable is located; multiple
+#' label coordinates (such as in the case of taxon name and identifier) are
+#' stored in a single label variable;
+#' 3. A long-lat auxiliary coordinate variable when both a longitude and
+#' latitude NC variable are found, in the group of the longitude NC variable.
 #'
 #' @param grp The group to scan.
 #'
@@ -369,6 +373,12 @@ open_ncdf <- function(resource, keep_open = FALSE) {
               scalar <- CFAxisScalar$new(aux$group, aux, orient, val)
               scalar$bounds <- .readBounds(aux$group, bounds)
               aux$group$CFaxes[[aux$name]] <- scalar
+            } else if (aux$vtype %in% c("NC_CHAR", "NC_STRING")) {
+              # Label
+              val <- try(RNetCDF::var.get.nc(grp$handle, aux$name), silent = TRUE)
+              if (inherits(val, "try-error")) val <- NULL
+              dim <- grp$find_dim_by_id(aux$dimids[length(aux$dimids)]) # If there are 2 dimids, the first is a string length for a NC_CHAR type
+              aux$group$CFlabels[[aux$name]] <- CFLabel$new(aux$group, aux, dim, val)
             } else {
               if (!all(aux$dimids %in% vdimids) || nd > 2L)
                 warning("Unmatched `coordinates` value '", coords[cid], "' found in variable '", v$name, "'", call. = FALSE)
@@ -475,7 +485,8 @@ open_ncdf <- function(resource, keep_open = FALSE) {
         for (x in 1:v$ndims) {
           ndx <- which(sapply(xids, function(e) v$dimids[x] %in% e))
           if (!length(ndx)) {
-            warning(paste0("Possible variable '", v$name, "' cannot be constructed because of unknown axis number ", x))
+            warning(paste0("Possible variable '", v$name, "' cannot be constructed because of unknown axis identifier ", v$dimids[x]))
+            # FIXME
             return(NULL)
           }
           ax[[x]] <- axes[[ndx]]
@@ -489,9 +500,19 @@ open_ncdf <- function(resource, keep_open = FALSE) {
           coords <- strsplit(coords, " ", fixed = TRUE)[[1L]]
           for (cid in seq_along(coords)) {
             aux <- grp$find_by_name(coords[cid], "CF")
-            if (!is.null(aux) && inherits(aux, "CFAxisScalar"))
-              var$axes[[aux$name]] <- aux
-            else {
+            if (!is.null(aux)) {
+              clss <- class(aux)[1L]
+              if (clss == "CFAxisScalar")
+                var$axes[[aux$name]] <- aux
+              else if (clss == "CFLabel") {
+                ndx <- which(sapply(ax, function(x) x$dimid == aux$dimid))
+                if (length(ndx)) ax[[ndx]]$labels <- aux
+                else {  # FIXME: record warning
+                }
+              } else {
+                # FIXME: Record warning
+              }
+            } else {
               aux <- grp$find_by_name(coords[cid], "NC")
               if (!is.null(aux)) {
                 units <- aux$attribute("units")

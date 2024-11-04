@@ -3,14 +3,12 @@
 \docType{class}
 \name{CFAxis}
 \alias{CFAxis}
-\title{Find indices in the axis domain}
+\title{CF axis object}
 \description{
 This class is a basic ancestor to all classes that represent CF
 axes. More useful classes use this class as ancestor.
 }
 \details{
-CF axis object
-
 The fields in this class are common among all CF axis objects.
 }
 \section{Super class}{
@@ -27,7 +25,10 @@ This is \code{NULL} for \link{CFAxisScalar} instances.}
 \item{\code{orientation}}{A character "X", "Y", "Z" or "T" to indicate the
 orientation of the axis, or an empty string if not known or different.}
 
-\item{\code{bounds}}{The boundary values of this axis, if set.
+\item{\code{bounds}}{The boundary values of this axis, if set.}
+
+\item{\code{lbls}}{A list of \link{CFLabel} instances, if any are defined for the
+axis.
 Create a basic CF axis object
 
 Create a new CF axis instance from a dimension and a variable in a netCDF
@@ -45,6 +46,9 @@ axis.}
 \item{\code{dimid}}{The netCDF dimension id of this axis.}
 
 \item{\code{length}}{The declared length of this axis.}
+
+\item{\code{labels}}{Set or retrieve the lables for the axis. On assignment, the
+value muc=st be an instance of \link{CFLabel}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -58,6 +62,7 @@ axis.}
 \item \href{#method-CFAxis-time}{\code{CFAxis$time()}}
 \item \href{#method-CFAxis-sub_axis}{\code{CFAxis$sub_axis()}}
 \item \href{#method-CFAxis-indexOf}{\code{CFAxis$indexOf()}}
+\item \href{#method-CFAxis-label_set}{\code{CFAxis$label_set()}}
 \item \href{#method-CFAxis-clone}{\code{CFAxis$clone()}}
 }
 }
@@ -183,12 +188,8 @@ axis. If the value of the argument is \code{NULL}, return the entire axis
 }
 \subsection{Returns}{
 \code{NULL}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxis-indexOf"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxis-indexOf}{}}}
-\subsection{Method \code{indexOf()}}{
+Find indices in the axis domain
+
 Given a vector of numerical, timestamp or categorical values
 \code{x}, find their indices in the values of the axis. With
 \code{method = "constant"} this returns the index of the value lower than the
@@ -199,6 +200,12 @@ If bounds are set on the numerical or time axis, the indices are taken
 from those bounds. Returned indices may fall in between bounds if the
 latter are not contiguous, with the exception of the extreme values in
 \code{x}.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-indexOf"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-indexOf}{}}}
+\subsection{Method \code{indexOf()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxis$indexOf(x, method = "constant")}\if{html}{\out{</div>}}
 }
@@ -221,6 +228,32 @@ return the index value for each match. If \code{method = "linear"}, return
 the index value with any fractional value. Values of \code{x} outside of the
 range of the values in the axis are returned as \code{0} and \code{.Machine$integer.max},
 respectively.
+Retrieve a set of string labels for the axis elements.
+
+Retrieve a set of character labels corresponding to the elements of an
+axis. An axis can have multiple sets of labels and by default the first
+set is returned.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-label_set"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-label_set}{}}}
+\subsection{Method \code{label_set()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$label_set(index = 1L)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{index}}{An integer value indicating which set of labels to retrieve.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A character vector of string labels with as many elements as the
+axis has, or \code{NULL} when no labels have been set or when argument \code{index}
+is not valid.
 }
 }
 \if{html}{\out{<hr>}}

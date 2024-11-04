@@ -25,7 +25,7 @@ knowledge of their nature. More specific classes descend from this class.
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
 \item{\code{dimnames}}{(read-only) The coordinates of the axis as a numeric
-vector.}
+vector, or labels for every axis element if they have been set.}
 }
 \if{html}{\out{</div>}}
 }
@@ -46,6 +46,7 @@ vector.}
 <ul>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="label_set"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-label_set'><code>ncdfCF::CFAxis$label_set()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="time"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-time'><code>ncdfCF::CFAxis$time()</code></a></span></li>
 </ul>

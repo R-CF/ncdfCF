@@ -12,18 +12,22 @@ CFAxis <- R6::R6Class("CFAxis",
   inherit = CFObject,
   public = list(
     #' @field group The [NCGroup] that this axis is located in.
-    group       = NULL,
+    group = NULL,
 
     #' @field NCdim The [NCDimension] that stores the netCDF dimension details.
     #' This is `NULL` for [CFAxisScalar] instances.
-    NCdim       = NULL,
+    NCdim = NULL,
 
     #' @field orientation A character "X", "Y", "Z" or "T" to indicate the
     #' orientation of the axis, or an empty string if not known or different.
     orientation = "",
 
     #' @field bounds The boundary values of this axis, if set.
-    bounds      = NULL,
+    bounds = NULL,
+
+    #' @field lbls A list of [CFLabel] instances, if any are defined for the
+    #' axis.
+    lbls = list(),
 
     #' Create a basic CF axis object
     #'
@@ -76,6 +80,7 @@ CFAxis <- R6::R6Class("CFAxis",
       unlim <- if (self$NCdim$unlim) "U" else ""
       units <- self$attribute("units")
       if (!nzchar(units)) units <- ""
+      if (units == "1") units <- ""
 
       data.frame(id = self$dimid, axis = self$orientation, group = self$group$fullname,
                  name = self$name, long_name = longname, length = self$NCdim$length,
@@ -120,9 +125,9 @@ CFAxis <- R6::R6Class("CFAxis",
       NULL
     },
 
-    #' @title Find indices in the axis domain
+    #' Find indices in the axis domain
     #'
-    #' @description Given a vector of numerical, timestamp or categorical values
+    #' Given a vector of numerical, timestamp or categorical values
     #' `x`, find their indices in the values of the axis. With
     #' `method = "constant"` this returns the index of the value lower than the
     #' supplied values in `x`. With `method = "linear"` the return value
@@ -146,6 +151,23 @@ CFAxis <- R6::R6Class("CFAxis",
     #'    respectively.
     indexOf = function(x, method = "constant") {
       stop("`indexOf()` must be implemented by descendant CFAxis class.")
+    },
+
+    #' Retrieve a set of string labels for the axis elements.
+    #'
+    #' Retrieve a set of character labels corresponding to the elements of an
+    #' axis. An axis can have multiple sets of labels and by default the first
+    #' set is returned.
+    #'
+    #' @param index An integer value indicating which set of labels to retrieve.
+    #'
+    #' @return A character vector of string labels with as many elements as the
+    #' axis has, or `NULL` when no labels have been set or when argument `index`
+    #' is not valid.
+    label_set = function(index = 1L) {
+      if (index > 0L && index <= length(self$lbls))
+        self$lbls[[index]]$values
+      else NULL
     }
   ),
 
@@ -166,6 +188,17 @@ CFAxis <- R6::R6Class("CFAxis",
     length = function(value) {
       if (missing(value))
         self$NCdim$length
+    },
+
+    #' @field labels Set or retrieve the lables for the axis. On assignment, the
+    #' value muc=st be an instance of [CFLabel].
+    labels = function(value) {
+      if (missing(value))
+        self$lbls
+      else {
+        if (inherits(value, "CFLabel") && value$length == self$length)
+          self$lbls <- append(self$lbls, value)
+      }
     }
   )
 )
