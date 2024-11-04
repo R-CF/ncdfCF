@@ -35,7 +35,9 @@ Metadata Conventions to interpret the data. This currently applies to:
   intelligible dates and times, for all 9 defined calendars.
 - **Bounds** information. When present, bounds are read and used in
   analyses.
-- **Discrete dimensions**, optionally with character labels.
+- **Discrete dimensions**, optionally with character labels. When labels
+  are provided, these will be used as `dimnames` for the axis. (Note
+  that this also applies to generic numeric axes with labels defined.)
 - **Parametric vertical coordinates** are read, including variables
   listed in the `formula_terms` attribute.
 - **Auxiliary coordinates** are identified and read. This applies to
@@ -317,7 +319,7 @@ attributes and data from netCDF resources in “classic” and “netcdf4”
 formats. From the CF Metadata Conventions it supports identification of
 dimension axes, interpretation of the “time” dimension, name resolution
 when using groups, reading of “bounds” information, parametric vertical
-coordinates, auxiliary coordinate variables, and grid mapping
+coordinates, auxiliary coordinate variables, labels, and grid mapping
 information.
 
 Development plans for the near future focus on supporting the below
