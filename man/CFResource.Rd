@@ -3,25 +3,22 @@
 \docType{class}
 \name{CFResource}
 \alias{CFResource}
-\title{CF resource object}
+\title{NetCDF resource object}
 \description{
-This class contains the connection details to the netCDF
-resource.
-}
-\details{
-There is a single instance for every netCDF resource, owned by the
-CFDataset instance. The instance is shared by other objects, specifically
-\link{NCGroup} and \link{CFVariable} instances, for access to the underlying resource
-for reading of data.
+This class contains the connection details to a netCDF resource.
+
+There is a single instance of this class for every netCDF resource, owned
+by the \link{CFDataset} instance. The instance is shared by other objects,
+specifically \link{NCGroup} and \link{CFVariable} instances, for access to the
+underlying resource for reading of data.
+
+This class should never have to be accessed directly. All access is handled
+by higher-level methods.
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{error}}{Error message, or empty string.
-Create a netCDF resource
-
-This is called when opening a netCDF resource. You should never have to
-call this directly.}
+\item{\code{error}}{Error message, or empty string.}
 }
 \if{html}{\out{</div>}}
 }
@@ -30,10 +27,10 @@ call this directly.}
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{handle}}{The handle to the netCDF resource.}
+\item{\code{handle}}{(read-only) The handle to the netCDF resource.}
 
-\item{\code{uri}}{The URI of the netCDF resource, either a local filename or the
-location of an online resource.}
+\item{\code{uri}}{(read-only) The URI of the netCDF resource, either a local
+filename or the location of an online resource.}
 }
 \if{html}{\out{</div>}}
 }
@@ -51,6 +48,9 @@ location of an online resource.}
 \if{html}{\out{<a id="method-CFResource-new"></a>}}
 \if{latex}{\out{\hypertarget{method-CFResource-new}{}}}
 \subsection{Method \code{new()}}{
+Create a connection to a netCDF resource. This is called by
+\code{\link[=open_ncdf]{open_ncdf()}} when opening a netCDF resource; you should never have to
+call this directly.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFResource$new(uri)}\if{html}{\out{</div>}}
 }
@@ -58,7 +58,7 @@ location of an online resource.}
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{uri}}{The URI of the netCDF resource.}
+\item{\code{uri}}{The URI to the netCDF resource.}
 }
 \if{html}{\out{</div>}}
 }
@@ -70,10 +70,8 @@ An instance of this class.
 \if{html}{\out{<a id="method-CFResource-finalize"></a>}}
 \if{latex}{\out{\hypertarget{method-CFResource-finalize}{}}}
 \subsection{Method \code{finalize()}}{
-Clean up open resources
-
-This method is called automatically when the instance is deleted,
-ensuring that file handles are properly closed.
+This method is called automatically when the instance is
+deleted, ensuring that file handles are properly closed.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFResource$finalize()}\if{html}{\out{</div>}}
 }
@@ -83,14 +81,8 @@ ensuring that file handles are properly closed.
 \if{html}{\out{<a id="method-CFResource-close"></a>}}
 \if{latex}{\out{\hypertarget{method-CFResource-close}{}}}
 \subsection{Method \code{close()}}{
-Close an open resource
-
-Closing an open netCDF resource. It should rarely be necessary to call
-this method directly.
-Get the netCDF handle to a group
-
-Every group in a netCDF file has its own handle. The handle returned by
-this method is valid only for the named group.
+Closing an open netCDF resource. It should rarely be
+necessary to call this method directly.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFResource$close()}\if{html}{\out{</div>}}
 }
@@ -100,6 +92,9 @@ this method is valid only for the named group.
 \if{html}{\out{<a id="method-CFResource-group_handle"></a>}}
 \if{latex}{\out{\hypertarget{method-CFResource-group_handle}{}}}
 \subsection{Method \code{group_handle()}}{
+Every group in a netCDF file has its own handle, with the
+"root" group having the handle for the entire netCDF resource. The
+handle returned by this method is valid only for the named group.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFResource$group_handle(group_name)}\if{html}{\out{</div>}}
 }
@@ -112,7 +107,7 @@ this method is valid only for the named group.
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-The handle to the group
+The handle to the group.
 }
 }
 \if{html}{\out{<hr>}}

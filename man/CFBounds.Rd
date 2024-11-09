@@ -7,10 +7,9 @@
 \description{
 This class represents the bounds of an axis or an auxiliary
 longitude-latitude grid.
-}
-\details{
-The class manages the bounds information for an axis (2 vertices per element) or
-an auxiliary longitude-latitude grid (4 vertices per element).
+
+The class manages the bounds information for an axis (2 vertices per
+element) or an auxiliary longitude-latitude grid (4 vertices per element).
 }
 \section{Super class}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFBounds}
@@ -103,8 +102,8 @@ the \code{rng} argument.
 \describe{
 \item{\code{group}}{The group to create the new bounds in.}
 
-\item{\code{rng}}{The range of values from this bounds object to include in the returned
-object.}
+\item{\code{rng}}{The range of values from this bounds object to include in the
+returned object.}
 }
 \if{html}{\out{</div>}}
 }

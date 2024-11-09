@@ -1,14 +1,13 @@
 #' Longitude CF axis object
 #'
 #' @description This class represents a longitude axis. Its values are numeric.
-#' This class is used for axes that represent longitudes.
-#'
-#' This class adds some logic that is specific to longitudes, such as their
-#' range, orientation and their meaning. (In the near future, it will also
-#' support selecting data that crosses the 0-360 degree boundary.)
+#'   This class is used for axes that represent longitudes. This class adds some
+#'   logic that is specific to longitudes, such as their range, orientation and
+#'   their meaning. (In the near future, it will also support selecting data
+#'   that crosses the 0-360 degree boundary.)
 #'
 #' @docType class
-#'
+#' @export
 CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
   inherit = CFAxisNumeric,
   public = list(
@@ -22,19 +21,19 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
       super$initialize(grp, nc_var, nc_dim, "X", values)
     },
 
-    #' @description Return an axis spanning a smaller dimension range.
-    #'
-    #'   This method returns an axis which spans the range of indices given by
-    #'   the `rng` argument.
+    #' @description Return an axis spanning a smaller dimension range. This
+    #'   method returns an axis which spans the range of indices given by the
+    #'   `rng` argument.
     #'
     #' @param group The group to create the new axis in.
     #' @param rng The range of values from this axis to include in the returned
     #'   axis.
     #'
-    #' @return A `CFAxisLongitude` covering the indicated range of indices. If
-    #'   the `rng` argument includes only a single value, an [CFAxisScalar]
-    #'   instance is returned with the value from this axis. If the value of the
-    #'   argument is `NULL`, return the entire axis (possibly as a scalar axis).
+    #' @return A `CFAxisLongitude` instance covering the indicated range of
+    #'   indices. If the `rng` argument includes only a single value, an
+    #'   [CFAxisScalar] instance is returned with the value from this axis. If
+    #'   the value of the argument is `NULL`, return the entire axis (possibly
+    #'   as a scalar axis).
     sub_axis = function(group, rng = NULL) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
 

@@ -3,14 +3,11 @@
 \docType{class}
 \name{CFAxisDiscrete}
 \alias{CFAxisDiscrete}
-\title{Find indices in the axis domain}
+\title{CF discrete axis object}
 \description{
 This class represent discrete CF axes, i.e. those axes whose
-coordinate values do not represent a physical or categorical property. The
-coordinate values are ordinal values equal to the index into the axis.
-}
-\details{
-CF discrete axis object
+coordinate values do not represent a physical property. The coordinate
+values are ordinal values equal to the index into the axis.
 }
 \section{Super classes}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFAxis]{ncdfCF::CFAxis}} -> \code{CFAxisDiscrete}
@@ -75,7 +72,7 @@ different or unknown.}
 \if{html}{\out{<a id="method-CFAxisDiscrete-brief"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-brief}{}}}
 \subsection{Method \code{brief()}}{
-Some details of the axis
+Some details of the axis.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$brief()}\if{html}{\out{</div>}}
 }
@@ -88,9 +85,10 @@ A 1-row \code{data.frame} with some details of the axis.
 \if{html}{\out{<a id="method-CFAxisDiscrete-indexOf"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-indexOf}{}}}
 \subsection{Method \code{indexOf()}}{
-Given a vector of numerical values \code{x}, find their indices
-in the values of the axis. In effect, this returns index values into the
-axis, but outside values will be dropped.
+Find indices in the axis domain. Given a vector of numerical
+values \code{x}, find their indices in the values of the axis. In effect,
+this returns index values into the axis, but outside values will be
+dropped.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$indexOf(x, method = "constant")}\if{html}{\out{</div>}}
 }

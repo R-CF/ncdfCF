@@ -1,11 +1,10 @@
 #' CF discrete axis object
 #'
 #' @description This class represent discrete CF axes, i.e. those axes whose
-#' coordinate values do not represent a physical or categorical property. The
-#' coordinate values are ordinal values equal to the index into the axis.
+#'   coordinate values do not represent a physical property. The coordinate
+#'   values are ordinal values equal to the index into the axis.
 #'
 #' @docType class
-#'
 #' @export
 CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
   inherit = CFAxis,
@@ -20,7 +19,7 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
       super$initialize(grp, nc_var, nc_dim, orientation)
     },
 
-    #' @description Some details of the axis
+    #' @description Some details of the axis.
     #'
     #' @return A 1-row `data.frame` with some details of the axis.
     brief = function() {
@@ -37,18 +36,17 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
       out
     },
 
-    #' @title Find indices in the axis domain
-    #'
-    #' @description Given a vector of numerical values `x`, find their indices
-    #' in the values of the axis. In effect, this returns index values into the
-    #' axis, but outside values will be dropped.
+    #' @description Find indices in the axis domain. Given a vector of numerical
+    #'   values `x`, find their indices in the values of the axis. In effect,
+    #'   this returns index values into the axis, but outside values will be
+    #'   dropped.
     #'
     #' @param x Vector of numeric values to find axis indices for.
     #' @param method Ignored.
     #'
     #' @return Numeric vector of the same length as `x`. Values of `x` outside
-    #' of the range of the values in the axis are returned as `0` and
-    #' `.Machine$integer.max`, respectively.
+    #'   of the range of the values in the axis are returned as `0` and
+    #'   `.Machine$integer.max`, respectively.
     indexOf = function(x, method = "constant") {
       x[x < 1] <- 0L
       x[x > self$length] <- .Machine$integer.max

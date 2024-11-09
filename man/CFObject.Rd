@@ -9,9 +9,6 @@ This class is a basic ancestor to all classes that represent CF
 objects, specifically data variables and axes. More useful classes use this
 class as ancestor.
 }
-\details{
-The fields in this class are common among all CF objects.
-}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
@@ -28,7 +25,8 @@ The fields in this class are common among all CF objects.
 
 \item{\code{name}}{(read-only) The name of the CF object.}
 
-\item{\code{attributes}}{(read-only) A \code{data.frame} with the attributes of the CF object.}
+\item{\code{attributes}}{(read-only) A \code{data.frame} with the attributes of the
+CF object.}
 }
 \if{html}{\out{</div>}}
 }
@@ -86,18 +84,23 @@ must be "value" (default), "type" or "length".}
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A vector of values from the \code{data.frame}, named with the \code{att}
-value, \code{character(0)} if a name in \code{att} is not an attribute of this
-object.
+If the \code{field} argument is "type" or "length", a character vector
+named with the \code{att} values that were found in the attributes. If
+argument \code{field} is "value", a list with elements named with the \code{att}
+values, containing the attribute value(s), except when argument \code{att}
+names a single attribute, in which case that attribute value is
+returned as a character string. If no attribute is named with a value
+of argument \code{att} an empty list is returned, or an empty string if
+there was only one value in argument \code{att}.
 }
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFObject-print_attributes"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-print_attributes}{}}}
 \subsection{Method \code{print_attributes()}}{
-Print the attributes of the CF object.
+Print the attributes of the CF object to the console.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$print_attributes(width = 50)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFObject$print_attributes(width = 50L)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

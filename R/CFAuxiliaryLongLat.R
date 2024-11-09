@@ -4,15 +4,13 @@
 #' compose auxiliary coordinate variable axes for X-Y grids that are not
 #' longitude-latitude.
 #'
-#' @details The class provides access to the data arrays for longitude and
+#' The class provides access to the data arrays for longitude and
 #' latitude from the netCDF resource, as well as all the details that have been
 #' associated with both axes. Additionally, this class can generate the index
 #' to extract values on a long-lat grid of the associated X-Y grid data variable
 #' using a user-selectable extent and resolution.
 #'
 #' @docType class
-#'
-#' @name CFAuxiliaryLongLat
 #' @export
 CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
   inherit = CFObject,
@@ -108,12 +106,11 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     #' indicate the orientation of the latitude and longitude grids.
     axis_order = c("X", "Y"),
 
-    #' @description Creating a new instance
-    #'
-    #' @param varLong,varLat The NCVariables with the longitude and latitude
-    #' grid values, respectively.
+    #' @description Creating a new instance.
+    #' @param varLong,varLat The [NCVariable] instances with the longitude and
+    #'   latitude grid values, respectively.
     #' @param boundsLong,boundsLat The bounds of the grid cells for the
-    #' longitude and latitude, respectively, if set.
+    #'   longitude and latitude, respectively, if set.
     initialize = function(varLong, varLat, boundsLong, boundsLat) {
       self$varLong <- varLong
       self$varLat <- varLat
@@ -124,9 +121,8 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
       varLat$CF <- self
     },
 
-    #' @description Summary of the data variable
-    #'
-    #' Prints a summary of the data variable to the console.
+    #' @description Summary of the auxiliary longitude-latitude variable printed
+    #'   to the console.
     print = function() {
       cat("<", self$friendlyClassName, ">\n", sep = "")
       cat("Longitude grid :", self$varLong$name, "\n")
@@ -153,8 +149,7 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
         cat("\nAOI            : (not set)\n")
     },
 
-    #' @description Some details of the longitude-latitude grid
-    #'
+    #' @description Some details of the auxiliary longitude-latitude grid.
     #' @return A 2-row `data.frame` with some details of the grid components.
     brief = function() {
       out <- data.frame(orientation = c("longitude", "latitude"),

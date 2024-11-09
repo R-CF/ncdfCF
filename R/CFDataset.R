@@ -1,4 +1,4 @@
-#' @title CF data set
+#' CF data set
 #'
 #' @description This class represents a CF data set, the object that
 #' encapsulates a netCDF resource. You should never have to instantiate this
@@ -6,12 +6,11 @@
 #' that has all properties read from the netCDF resource. Class methods can then
 #' be called, or the base R functions called with this instance.
 #'
-#' @details
 #' The CF data set instance provides access to all the objects in the
 #' netCDF resource, organized in groups.
 #'
+#' @export
 #' @docType class
-#'
 CFDataset <- R6::R6Class("CFDataset",
   private = list(
     res       = NULL,
@@ -29,13 +28,13 @@ CFDataset <- R6::R6Class("CFDataset",
     #'   closed with `close()` after use. Note that when a data set is opened
     #'   with `keep_open = TRUE` the resource may still be closed by the
     #'   operating system or the remote server.
-    keep_open  = FALSE,
+    keep_open = FALSE,
 
     #' @field root Root of the group hierarchy through which all elements of the
     #' netCDF resource are accessed. It is **strongly discouraged** to
     #' manipulate the objects in the group hierarchy directly. Use the provided
     #' access methods instead.
-    root      = NULL,
+    root = NULL,
 
     #' @description Create an instance of this class.
     #' @param name The name that describes this instance.
@@ -52,9 +51,7 @@ CFDataset <- R6::R6Class("CFDataset",
       private$format <- format
     },
 
-    #' @description Summary of the data set
-    #'
-    #' Prints a summary of the data set to the console.
+    #' @description Summary of the data set printed to the console.
     print = function() {
       cat("<Dataset>", self$name, "\n")
       cat("Resource   :", private$res$uri, "\n")
@@ -86,30 +83,26 @@ CFDataset <- R6::R6Class("CFDataset",
       self$root$print_attributes()
     },
 
-    #' @description Print the group hierarchy to the console
+    #' @description Print the group hierarchy to the console.
     hierarchy = function() {
       cat("<NetCDF objects>", self$name, "\n")
       hier <- self$root$hierarchy(1L, 1L)
       cat(hier, sep = "")
     },
 
-    #' Get objects by standard_name
-    #'
-    #' @description Several conventions define standard vocabularies for
-    #' physical properties. The standard names from those vocabularies are
-    #' usually stored as the "standard_name" attribute with variables or
-    #' axes. This method retrieves all variables or axes that list
-    #' the specified "standard_name" in its attributes.
+    #' @description Get objects by standard_name. Several conventions define
+    #'   standard vocabularies for physical properties. The standard names from
+    #'   those vocabularies are usually stored as the "standard_name" attribute
+    #'   with variables or axes. This method retrieves all variables or axes
+    #'   that list the specified "standard_name" in its attributes.
     #'
     #' @param standard_name Optional, a character string to search for a
     #'   specific "standard_name" value in variables and axes.
     #'
-    #' @aliases standard_name
-    #'
     #' @return If argument `standard_name` is provided, a character vector of
-    #'   variable or axis names. If argument `standard_name` is missing or
-    #'   an empty string, a named list with all "standard_name" attribute values
-    #'   in the the netCDF resource; each list item is named for the variable or
+    #'   variable or axis names. If argument `standard_name` is missing or an
+    #'   empty string, a named list with all "standard_name" attribute values in
+    #'   the the netCDF resource; each list item is named for the variable or
     #'   axis.
     objects_by_standard_name = function(standard_name) {
       nm <- c(sapply(self$root$variables(), function(v) v$attribute("standard_name")),
@@ -120,27 +113,25 @@ CFDataset <- R6::R6Class("CFDataset",
         names(nm[which(nm == standard_name)])
     },
 
-    #' Does the netCDF resource have subgroups
-    #'
-    #' Newer versions of the `netcdf` library, specifically `netcdf4`, can
-    #' organize dimensions and variables in groups. This method will report if
-    #' the data set is indeed organized with subgroups.
+    #' @description Does the netCDF resource have subgroups? Newer versions of
+    #'   the `netcdf` library, specifically `netcdf4`, can organize dimensions
+    #'   and variables in groups. This method will report if the data set is
+    #'   indeed organized with subgroups.
     #'
     #' @return Logical to indicate that the netCDF resource uses subgroups.
     has_subgroups = function() {
       length(self$root$subgroups) > 0L
     },
 
-    #' Find an object by its name
-    #'
-    #' Given the name of a CF data variable or axis, possibly preceded by an
-    #' absolute group path, return the object to the caller.
+    #' @description Find an object by its name. Given the name of a CF data
+    #'   variable or axis, possibly preceded by an absolute group path, return
+    #'   the object to the caller.
     #'
     #' @param name The name of a CF data variable or axis, with an optional
     #'   absolute group path.
     #' @param scope The scope to look for the name. Either "CF" (default) to
-    #' search for CF variables or axes, or "NC" to look for groups or NC
-    #' variables.
+    #'   search for CF variables or axes, or "NC" to look for groups or NC
+    #'   variables.
     #'
     #' @return The object with the provided name. If the object is not found,
     #'   returns `NULL`.
@@ -148,33 +139,27 @@ CFDataset <- R6::R6Class("CFDataset",
       self$root$find_by_name(name, scope)
     },
 
-    #' List all the CF data variables in this netCDF resource
+    #' @description This method lists the CF data variables located in this
+    #'   netCDF resource, including those in subgroups.
     #'
-    #' This method lists the CF data variables located in this netCDF resource,
-    #' including those in subgroups.
-    #'
-    #' @return A list of `CFVariable`s.
+    #' @return A list of `CFVariable` instances.
     variables = function() {
       self$root$variables()
     },
 
-    #' List all the axes of CF data variables in this netCDF resource
-    #'
-    #' This method lists the axes located in this netCDF resource, including
-    #' axes in subgroups.
+    #' @description This method lists the axes located in this netCDF resource,
+    #'   including axes in subgroups.
     #'
     #' @return A list of `CFAxis` descendants.
     axes = function() {
       self$root$axes()
     },
 
-    #' List all the attributes of a group
-    #'
-    #' This method returns a `data.frame` containing all the attributes of the
-    #' indicated `group`.
+    #' @description List all the attributes of a group. This method returns a
+    #'   `data.frame` containing all the attributes of the indicated `group`.
     #'
     #' @param group The name of the group whose attributes to return. If the
-    #' argument is missing, the global attributes will be returned.
+    #'   argument is missing, the global attributes will be returned.
     #'
     #' @return A `data.frame` of attributes.
     attributes = function(group) {
@@ -185,6 +170,23 @@ CFDataset <- R6::R6Class("CFDataset",
         if (is.null(grp)) NULL
         else grp$attributes
       }
+    },
+
+    #' @description Retrieve global attributes of the data set.
+    #'
+    #' @param att Vector of character strings of attributes to return.
+    #' @param field The field of the attributes to return values from. This
+    #' must be "value" (default), "type" or "length".
+    #' @return If the `field` argument is "type" or "length", a character vector
+    #'   named with the `att` values that were found in the attributes. If
+    #'   argument `field` is "value", a list with elements named with the `att`
+    #'   values, containing the attribute value(s), except when argument `att`
+    #'   names a single attribute, in which case that attribute value is
+    #'   returned as a character string. If no attribute is named with a value
+    #'   of argument `att` an empty list is returned, or an empty string if
+    #'   there was only one value in argument `att`.
+    attribute = function(att, field = "value") {
+      self$root$attribute(att, field)
     }
   ),
   active = list(
@@ -194,12 +196,21 @@ CFDataset <- R6::R6Class("CFDataset",
         "Data set"
     },
 
-    #' @field resource The connection details of the netCDF resource.
+    #' @field resource (read-only) The connection details of the netCDF
+    #'   resource. This is for internal use only.
     resource = function(value) {
-      private$res
+      if (missing(value))
+        private$res
     },
 
-    #' @field conventions Returns the conventions that this netCDF resource conforms to.
+    #' @field uri (read-only) The connection string to the netCDF resource.
+    uri = function(value) {
+      if (missing(value))
+        private$res$uri
+    },
+
+    #' @field conventions (read-only) Returns the conventions that this netCDF
+    #'   resource conforms to.
     conventions = function(value) {
       if (missing(value)) {
         conv <- self$root$attribute("Conventions")
@@ -252,8 +263,8 @@ groups.CFDataset <- function(x) {
 
 #' Get a variable or axis object from a data set
 #'
-#' This method can be used to retrieve a variable or axis from the
-#' data set by name.
+#' This method can be used to retrieve a variable or axis from the data set by
+#' name.
 #'
 #' If the data set has groups, the name `i` of the variable or axis should be
 #' fully qualified with the path to the group where the object is located. This
@@ -262,10 +273,10 @@ groups.CFDataset <- function(x) {
 #'
 #' @param x An `CFDataset` to extract a variable or axis from.
 #' @param i The name of a variable or axis in `x`. If data set `x` has groups,
-#' `i` should be an absolute path to the object to retrieve.
+#'   `i` should be an absolute path to the object to retrieve.
 #'
-#' @return An instance of `CFVariable` or an `CFAxis` descendant
-#' class, or `NULL` if the name is not found.
+#' @return An instance of `CFVariable` or an `CFAxis` descendant class, or
+#'   `NULL` if the name is not found.
 #' @export
 #'
 #' @aliases [[,CFDataset-method

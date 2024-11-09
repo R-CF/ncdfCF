@@ -5,7 +5,6 @@
 #' knowledge of their nature. More specific classes descend from this class.
 #'
 #' @docType class
-#'
 #' @export
 CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
   inherit = CFAxis,
@@ -25,9 +24,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       self$values <- values
     },
 
-    #' @description Summary of the time axis
-    #'
-    #' Prints a summary of the time axis to the console.
+    #' @description Summary of the time axis printed to the console.
     print = function() {
       super$print()
 
@@ -60,7 +57,9 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       self$print_attributes()
     },
 
-    #' @description Retrieve a 1-row `data.frame` with some information on this axis.
+    #' @description Some details of the axis.
+    #'
+    #' @return A 1-row `data.frame` with some details of the axis.
     brief = function() {
       out <- super$brief()
 
@@ -108,19 +107,19 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       as.integer(idx)
     },
 
-    #' @description Return an axis spanning a smaller dimension range.
-    #'
-    #'   This method returns an axis which spans the range of indices given by
-    #'   the `rng` argument.
+    #' @description Return an axis spanning a smaller dimension range. This
+    #'   method returns an axis which spans the range of indices given by the
+    #'   `rng` argument.
     #'
     #' @param group The group to create the new axis in.
     #' @param rng The range of values from this axis to include in the returned
     #'   axis.
     #'
-    #' @return A `CFAxisNumeric` covering the indicated range of indices. If
-    #'   the `rng` argument includes only a single value, an [CFAxisScalar]
-    #'   instance is returned with the value from this axis. If the value of the
-    #'   argument is `NULL`, return the entire axis (possibly as a scalar axis).
+    #' @return A `CFAxisNumeric` instance covering the indicated range of
+    #'   indices. If the `rng` argument includes only a single value, an
+    #'   [CFAxisScalar] instance is returned with the value from this axis. If
+    #'   the value of the argument is `NULL`, return the entire axis (possibly
+    #'   as a scalar axis).
     sub_axis = function(group, rng = NULL) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
 

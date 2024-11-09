@@ -78,9 +78,7 @@ Create an instance of this class.
 \if{html}{\out{<a id="method-CFAxisScalar-print"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisScalar-print}{}}}
 \subsection{Method \code{print()}}{
-Summary of the scalar axis
-
-Prints a summary of the scalar axis to the console.
+Summary of the scalar axis printed to the console.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisScalar$print()}\if{html}{\out{</div>}}
 }
@@ -90,11 +88,14 @@ Prints a summary of the scalar axis to the console.
 \if{html}{\out{<a id="method-CFAxisScalar-brief"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisScalar-brief}{}}}
 \subsection{Method \code{brief()}}{
-Retrieve a 1-row data.frame with some information on this axis.
+Some details of the axis.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisScalar$brief()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+A 1-row \code{data.frame} with some details of the axis.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisScalar-sub_axis"></a>}}

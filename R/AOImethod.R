@@ -30,7 +30,7 @@
 #'   arguments are calculated internally and stored in the returned object, but
 #'   only after the call to `CFVariable$subset()`.
 #'
-#'   # Caching
+#'   ## Caching
 #'
 #'   In data collections that are composed of multiple variables in a single
 #'   netCDF resource, a single auxiliary longitude-latitude grid may be
@@ -56,9 +56,7 @@
 #'
 #' @export
 #' @examples
-#' aoi <- aoi(20, 60, -40, -20, 0.5)
-#' aoi
-#'
+#' (aoi <- aoi(20, 60, -40, -20, 0.5))
 aoi <- function(lonMin, lonMax, latMin, latMax, resX, resY) {
   if (missing(resX)) resolution <- c(NULL, NULL)
   else {

@@ -15,12 +15,12 @@
 \code{i} should be an absolute path to the object to retrieve.}
 }
 \value{
-An instance of \code{CFVariable} or an \code{CFAxis} descendant
-class, or \code{NULL} if the name is not found.
+An instance of \code{CFVariable} or an \code{CFAxis} descendant class, or
+\code{NULL} if the name is not found.
 }
 \description{
-This method can be used to retrieve a variable or axis from the
-data set by name.
+This method can be used to retrieve a variable or axis from the data set by
+name.
 }
 \details{
 If the data set has groups, the name \code{i} of the variable or axis should be

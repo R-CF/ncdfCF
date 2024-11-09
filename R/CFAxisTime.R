@@ -8,7 +8,6 @@ NULL
 #' by the `CFtime` package.
 #'
 #' @docType class
-#'
 #' @export
 CFAxisTime <- R6::R6Class("CFAxisTime",
   inherit = CFAxis,
@@ -26,9 +25,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       self$values <- values
     },
 
-    #' @description Summary of the time axis
-    #'
-    #' Prints a summary of the time axis to the console.
+    #' @description Summary of the time axis printed to the console.
     print = function() {
       super$print()
 
@@ -44,7 +41,9 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       self$print_attributes()
     },
 
-    #' @description Retrieve a 1-row `data.frame` with some information on this axis.
+    #' @description Some details of the axis.
+    #'
+    #' @return A 1-row `data.frame` with some details of the axis.
     brief = function() {
       out <- super$brief()
 
@@ -65,6 +64,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     },
 
     #' @description Retrieve the CFtime instance that manages this axis.
+    #' @return An instance of `CFtime`.
     time = function() {
       self$values
     },
@@ -88,20 +88,19 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       as.integer(idx)
     },
 
-    #' @description Return an axis spanning a smaller dimension range
-    #'
-    #'   This method returns an axis which spans the range of indices given by
-    #'   the `rng` argument.
+    #' @description Return an axis spanning a smaller dimension range. This
+    #'   method returns an axis which spans the range of indices given by the
+    #'   `rng` argument.
     #'
     #' @param group The group to create the new axis in.
     #' @param rng The range of values from this axis to include in the returned
     #'   axis.
     #'
-    #' @return A `CFAxisTime` covering the indicated range of indices. If the
-    #'   `rng` argument includes only a single value, an [CFAxisScalar] instance
-    #'   is returned with its value being the character timestamp of the value
-    #'   in this axis. If the value of the argument is `NULL`, return the entire
-    #'   axis (possibly as a scalar axis).
+    #' @return A `CFAxisTime` instance covering the indicated range of indices.
+    #'   If the `rng` argument includes only a single value, an [CFAxisScalar]
+    #'   instance is returned with its value being the character timestamp of
+    #'   the value in this axis. If the value of the argument is `NULL`, return
+    #'   the entire axis (possibly as a scalar axis).
     sub_axis = function(group, rng = NULL) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
 

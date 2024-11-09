@@ -3,13 +3,11 @@
 \docType{class}
 \name{CFVariable}
 \alias{CFVariable}
-\alias{CFVariable$subset}
 \title{CF data variable}
 \description{
 This class represents a CF data variable, the object that
 provides access to an array of data.
-}
-\details{
+
 The CF data variable instance provides access to the data array from
 the netCDF resource, as well as all the details that have been associated
 with the data variable, such as axis information, grid mapping parameters,
@@ -26,9 +24,9 @@ etc.
 \item{\code{axes}}{List of instances of classes descending from \link{CFAxis} that
 are the axes of the variable.}
 
-\item{\code{grid_mapping}}{The \link{CFGridMapping} of this variable. If this field
-is \code{NULL}, the horizontal component of the axes are in decimal degrees of
-longitude and latitude.}
+\item{\code{grid_mapping}}{The coordinate reference system of this variable, as
+an instance of \link{CFGridMapping}. If this field is \code{NULL}, the horizontal
+component of the axes are in decimal degrees of longitude and latitude.}
 }
 \if{html}{\out{</div>}}
 }
@@ -103,7 +101,7 @@ Print a summary of the data variable to the console.
 \if{html}{\out{<a id="method-CFVariable-brief"></a>}}
 \if{latex}{\out{\hypertarget{method-CFVariable-brief}{}}}
 \subsection{Method \code{brief()}}{
-Some details of the data variable
+Some details of the data variable.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFVariable$brief()}\if{html}{\out{</div>}}
 }
@@ -116,10 +114,9 @@ A 1-row \code{data.frame} with some details of the data variable.
 \if{html}{\out{<a id="method-CFVariable-shard"></a>}}
 \if{latex}{\out{\hypertarget{method-CFVariable-shard}{}}}
 \subsection{Method \code{shard()}}{
-Very concise information on the variable
-
-The information returned by this function is very concise and most useful
-when combined with similar information from other variables.
+The information returned by this method is very concise
+and most useful when combined with similar information from other
+variables.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFVariable$shard()}\if{html}{\out{</div>}}
 }
@@ -146,7 +143,9 @@ A \link{CFData} instance with all data from this variable.
 \if{html}{\out{<a id="method-CFVariable-subset"></a>}}
 \if{latex}{\out{\hypertarget{method-CFVariable-subset}{}}}
 \subsection{Method \code{subset()}}{
-Extract data from the variable
+This method extracts a subset of values from the array of
+the variable, with the range along each axis to extract expressed in
+values of the domain of each axis.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFVariable$subset(subset, aoi = NULL, rightmost.closed = FALSE, ...)}\if{html}{\out{</div>}}
 }
@@ -181,22 +180,18 @@ argument \code{rightmost.closed}.}
 \if{html}{\out{</div>}}
 }
 \subsection{Details}{
-The \code{subset()} method extracts a subset of values from the array of the
-variable, with the range along each axis to extract expressed in values
-of the domain of each axis.
-
-The range of values along each axis to be subset is expressed in values
-of the domain of the axis. Any axes for which no information is
+The range of values along each axis to be subset is expressed in
+values of the domain of the axis. Any axes for which no information is
 provided in the \code{subset} argument are extracted in whole. Values can be
 specified in a variety of ways that are specific to the nature of the
 axis. For numeric axes it should (resolve to) be a vector of real
-values. A range (e.g. \code{100:200}), a long vector (\verb{c(23, 46, 3, 45, 17}),
+values. A range (e.g. \code{100:200}), a vector (\verb{c(23, 46, 3, 45, 17}),
 a sequence (\verb{seq(from = 78, to = 100, by = 2}), all work. Note, however,
 that only a single range is generated from the vector so these examples
-resolve to \code{100:200}, \code{3:46}, and \code{78:100}, respectively. For time axes a
-vector of character timestamps, \code{POSIXct} or \code{Date} values must be
-specified. As with numeric values, only the two extreme values in the
-vector will be used.
+resolve to \verb{(100, 200)}, \verb{(3, 46)}, and \verb{(78, 100)}, respectively. For
+time axes a vector of character timestamps, \code{POSIXct} or \code{Date} values
+must be specified. As with numeric values, only the two extreme values in
+the vector will be used.
 
 If the range of values for an axis in argument \code{subset} extend the valid
 range of the axis in \code{x}, the extracted slab will start at the beginning
@@ -208,7 +203,8 @@ is extracted and \code{NULL} is returned.
 
 The extracted data has the same dimensional structure as the data in the
 variable, with degenerate dimensions dropped. The order of the axes in
-argument \code{subset} does not reorder the axes in the result.
+argument \code{subset} does not reorder the axes in the result; use the
+\link{CFData}$array() method for this.
 
 As an example, to extract values of a variable for Australia for the year
 2020, where the first axis in \code{x} is the longitude, the second
@@ -220,7 +216,7 @@ You could take the longitude-latitude values from \code{sf::st_bbox()} or
 extract data. Note that this works equally well for projected coordinate
 reference systems - the key is that the specification in argument \code{subset}
 uses the same domain of values as the respective axes in \code{x} use.
-\subsection{Auxiliary coordinate variables:}{
+\subsection{Auxiliary coordinate variables}{
 
 A special case exists for variables where the horizontal dimensions (X
 and Y) are not in longitude and latitude values but in some other

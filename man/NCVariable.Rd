@@ -8,8 +8,7 @@
 This class represents a netCDF variable, the object that holds
 the properties and data of elements like dimensions and variables of a
 netCDF file.
-}
-\details{
+
 Direct access to netCDF variables is usually not necessary. NetCDF
 variables are linked from CF data variables and axes and all relevant
 properties are thus made accessible.
@@ -26,21 +25,17 @@ properties are thus made accessible.
 
 \item{\code{ndims}}{Number of dimensions that this variable uses.}
 
-\item{\code{dimids}}{Vector of dimension identifiers that this variable uses. These
-are the so-called "NUG coordinate variables".}
+\item{\code{dimids}}{Vector of dimension identifiers that this variable uses.
+These are the so-called "NUG coordinate variables".}
 
-\item{\code{netcdf4}}{Additional properties for a \code{netcdf4} resource.
-Create a new netCDF variable
-
-This class should not be instantiated directly, they are created
-automatically when opening a netCDF resource.}
+\item{\code{netcdf4}}{Additional properties for a \code{netcdf4} resource.}
 }
 \if{html}{\out{</div>}}
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
-\item{\code{CF}}{List of CF objects that uses this netCDF variable.}
+\item{\code{CF}}{List of CF objects that use this netCDF variable.}
 
 \item{\code{fullname}}{(read-only) Name of the NC variable including the group
 path from the root group.}
@@ -68,6 +63,9 @@ path from the root group.}
 \if{html}{\out{<a id="method-NCVariable-new"></a>}}
 \if{latex}{\out{\hypertarget{method-NCVariable-new}{}}}
 \subsection{Method \code{new()}}{
+Create a new netCDF variable. This class should not be
+instantiated directly, they are created automatically when opening a
+netCDF resource.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{NCVariable$new(id, name, group, vtype, ndims, dimids)}\if{html}{\out{</div>}}
 }
@@ -97,7 +95,7 @@ An instance of this class.
 \if{html}{\out{<a id="method-NCVariable-print"></a>}}
 \if{latex}{\out{\hypertarget{method-NCVariable-print}{}}}
 \subsection{Method \code{print()}}{
-Summary of the NC variable.
+Summary of the NC variable printed to the console.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{NCVariable$print(...)}\if{html}{\out{</div>}}
 }
@@ -114,10 +112,9 @@ Summary of the NC variable.
 \if{html}{\out{<a id="method-NCVariable-shard"></a>}}
 \if{latex}{\out{\hypertarget{method-NCVariable-shard}{}}}
 \subsection{Method \code{shard()}}{
-Very concise information on the variable
-
-The information returned by this function is very concise and most useful
-when combined with similar information from other variables.
+Very concise information on the variable. The information
+returned by this function is very concise and most useful when combined
+with similar information from other variables.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{NCVariable$shard()}\if{html}{\out{</div>}}
 }

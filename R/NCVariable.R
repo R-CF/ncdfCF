@@ -4,7 +4,7 @@
 #'   the properties and data of elements like dimensions and variables of a
 #'   netCDF file.
 #'
-#' @details Direct access to netCDF variables is usually not necessary. NetCDF
+#' Direct access to netCDF variables is usually not necessary. NetCDF
 #'   variables are linked from CF data variables and axes and all relevant
 #'   properties are thus made accessible.
 #'
@@ -28,17 +28,16 @@ NCVariable <- R6::R6Class("NCVariable",
     #' @field ndims Number of dimensions that this variable uses.
     ndims   = -1L,
 
-    #' @field dimids Vector of dimension identifiers that this variable uses. These
-    #' are the so-called "NUG coordinate variables".
+    #' @field dimids Vector of dimension identifiers that this variable uses.
+    #'   These are the so-called "NUG coordinate variables".
     dimids  = NULL,
 
     #' @field netcdf4 Additional properties for a `netcdf4` resource.
     netcdf4 = NULL,
 
-    #' Create a new netCDF variable
-    #'
-    #' This class should not be instantiated directly, they are created
-    #' automatically when opening a netCDF resource.
+    #' @description Create a new netCDF variable. This class should not be
+    #'   instantiated directly, they are created automatically when opening a
+    #'   netCDF resource.
     #'
     #' @param id Numeric identifier of the netCDF object.
     #' @param name Character string with the name of the netCDF object.
@@ -55,7 +54,7 @@ NCVariable <- R6::R6Class("NCVariable",
       self$dimids <- dimids
     },
 
-    #' @description Summary of the NC variable.
+    #' @description Summary of the NC variable printed to the console.
     #' @param ... Passed on to other methods.
     print = function(...) {
       cat("<netCDF variable> [", self$id, "] ", self$name, "\n", sep = "")
@@ -66,10 +65,9 @@ NCVariable <- R6::R6Class("NCVariable",
       self$print_attributes()
     },
 
-    #' @description Very concise information on the variable
-    #'
-    #' The information returned by this function is very concise and most useful
-    #' when combined with similar information from other variables.
+    #' @description Very concise information on the variable. The information
+    #'   returned by this function is very concise and most useful when combined
+    #'   with similar information from other variables.
     #'
     #' @return Character string with very basic variable information.
     shard = function() {
@@ -78,12 +76,15 @@ NCVariable <- R6::R6Class("NCVariable",
     }
   ),
   active = list(
-    #' @field CF List of CF objects that uses this netCDF variable.
+    #' @field CF List of CF objects that use this netCDF variable.
     CF = function(value) {
       if (missing(value))
         private$CFobjects
       else {
-        private$CFobjects[[value$name]] <- value
+        if (inherits(value, "CFObject"))
+          private$CFobjects[[value$name]] <- value
+        else
+          warning("Can only reference an object descending from `CFObject` from an `NCVariable`.")
       }
     },
 

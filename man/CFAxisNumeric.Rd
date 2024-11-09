@@ -82,9 +82,7 @@ different or unknown.}
 \if{html}{\out{<a id="method-CFAxisNumeric-print"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisNumeric-print}{}}}
 \subsection{Method \code{print()}}{
-Summary of the time axis
-
-Prints a summary of the time axis to the console.
+Summary of the time axis printed to the console.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$print()}\if{html}{\out{</div>}}
 }
@@ -94,11 +92,14 @@ Prints a summary of the time axis to the console.
 \if{html}{\out{<a id="method-CFAxisNumeric-brief"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisNumeric-brief}{}}}
 \subsection{Method \code{brief()}}{
-Retrieve a 1-row \code{data.frame} with some information on this axis.
+Some details of the axis.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$brief()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+A 1-row \code{data.frame} with some details of the axis.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisNumeric-range"></a>}}
@@ -145,10 +146,9 @@ provided, or \code{integer(0)} if none of the \code{x} values are valid.
 \if{html}{\out{<a id="method-CFAxisNumeric-sub_axis"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisNumeric-sub_axis}{}}}
 \subsection{Method \code{sub_axis()}}{
-Return an axis spanning a smaller dimension range.
-
-This method returns an axis which spans the range of indices given by
-the \code{rng} argument.
+Return an axis spanning a smaller dimension range. This
+method returns an axis which spans the range of indices given by the
+\code{rng} argument.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$sub_axis(group, rng = NULL)}\if{html}{\out{</div>}}
 }
@@ -164,10 +164,11 @@ axis.}
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A \code{CFAxisNumeric} covering the indicated range of indices. If
-the \code{rng} argument includes only a single value, an \link{CFAxisScalar}
-instance is returned with the value from this axis. If the value of the
-argument is \code{NULL}, return the entire axis (possibly as a scalar axis).
+A \code{CFAxisNumeric} instance covering the indicated range of
+indices. If the \code{rng} argument includes only a single value, an
+\link{CFAxisScalar} instance is returned with the value from this axis. If
+the value of the argument is \code{NULL}, return the entire axis (possibly
+as a scalar axis).
 }
 }
 \if{html}{\out{<hr>}}

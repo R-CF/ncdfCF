@@ -9,10 +9,9 @@ This class is a basic ancestor to all classes that represent
 netCDF objects, specifically groups, dimensions, variables and the
 user-defined types in a netCDF file. More useful classes use this class as
 ancestor.
-}
-\details{
-The fields in this class are common among all netCDF objects. In
-addition, this class manages the attributes for its implementing classes.
+
+The fields in this class are common among all netCDF objects. In addition,
+this class manages the attributes for its descendent classes.
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -21,11 +20,7 @@ addition, this class manages the attributes for its implementing classes.
 
 \item{\code{name}}{The name of the netCDF object.}
 
-\item{\code{attributes}}{\code{data.frame} with the attributes of the netCDF object.
-Create a new netCDF object
-
-This class should not be instantiated directly, create descendant objects
-instead.}
+\item{\code{attributes}}{\code{data.frame} with the attributes of the netCDF object.}
 }
 \if{html}{\out{</div>}}
 }
@@ -42,6 +37,8 @@ instead.}
 \if{html}{\out{<a id="method-NCObject-new"></a>}}
 \if{latex}{\out{\hypertarget{method-NCObject-new}{}}}
 \subsection{Method \code{new()}}{
+Create a new netCDF object. This class should not be
+instantiated directly, create descendant objects instead.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{NCObject$new(id, name)}\if{html}{\out{</div>}}
 }
@@ -51,12 +48,7 @@ instead.}
 \describe{
 \item{\code{id}}{Numeric identifier of the netCDF object.}
 
-\item{\code{name}}{Character string with the name of the netCDF object.
-Print the attributes of the netCDF object
-
-This function prints the attributes of the netCDF object to the console.
-Through object linkages, this also applies to the CF data variables and
-axes, which each link to a netCDF object.}
+\item{\code{name}}{Character string with the name of the netCDF object.}
 }
 \if{html}{\out{</div>}}
 }
@@ -65,18 +57,18 @@ axes, which each link to a netCDF object.}
 \if{html}{\out{<a id="method-NCObject-print_attributes"></a>}}
 \if{latex}{\out{\hypertarget{method-NCObject-print_attributes}{}}}
 \subsection{Method \code{print_attributes()}}{
+This function prints the attributes of the netCDF object to
+the console. Through object linkages, this also applies to the CF data
+variables and axes, which each link to a netCDF object.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCObject$print_attributes(width = 50)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{NCObject$print_attributes(width = 50L)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{width}}{The maximum width of each column in the \code{data.frame} when
-printed to the console.
-Attributes of a netCDF object
-
-This method returns netCDF object attributes.}
+printed to the console.}
 }
 \if{html}{\out{</div>}}
 }
@@ -85,6 +77,7 @@ This method returns netCDF object attributes.}
 \if{html}{\out{<a id="method-NCObject-attribute"></a>}}
 \if{latex}{\out{\hypertarget{method-NCObject-attribute}{}}}
 \subsection{Method \code{attribute()}}{
+This method returns netCDF object attributes.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{NCObject$attribute(att, field = "value")}\if{html}{\out{</div>}}
 }
@@ -100,14 +93,14 @@ be "value" (default), "type" or "length".}
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-If the \code{field} argument is "type' or "length", a vector named
-with the \code{att} values that were found in the attributes. If argument
-\code{field} is "value", a list with elements named with the \code{att} values,
-containing the attribute value(s), except when argument \code{att} names a
-single attribute, in which case that attribute value is returned as an
-atomic object. If no attribute is named with a value of argument \code{att}
-an empty list is returned, or an empty string if there was only one
-value in argument \code{att}.
+If the \code{field} argument is "type" or "length", a character vector
+named with the \code{att} values that were found in the attributes. If
+argument \code{field} is "value", a list with elements named with the \code{att}
+values, containing the attribute value(s), except when argument \code{att}
+names a single attribute, in which case that attribute value is
+returned as a character string. If no attribute is named with a value
+of argument \code{att} an empty list is returned, or an empty string if
+there was only one value in argument \code{att}.
 }
 }
 \if{html}{\out{<hr>}}

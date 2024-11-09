@@ -641,7 +641,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
     #' @field group The [NCGroup] that this grid mapping is located in.
     group = NULL,
 
-    #' @field grid_mapping_name The formal name of the grid mapping.
+    #' @field grid_mapping_name The name of the grid mapping.
     grid_mapping_name = "",
 
     #' @description Create a new instance of this class.
@@ -667,7 +667,8 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
       self$print_attributes()
     },
 
-    #' @description Retrieve a 1-row `data.frame` with some information on this grid mapping.
+    #' @description Retrieve a 1-row `data.frame` with some information on this
+    #'   grid mapping.
     brief = function() {
       data.frame(name = self$name, grid_mapping = self$grid_mapping_name)
     },

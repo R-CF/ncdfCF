@@ -1,25 +1,25 @@
 #' Data extracted from a CF data variable
 #'
 #' @description This class holds the data that is extracted from a [CFVariable],
-#' using the `subset()` class method. The instance of this class will
-#' additionally have the axes and other relevant information such as its
-#' attributes (as well as those of the axes) and the coordinate reference system.
+#'   using the `subset()` method. The instance of this class will additionally
+#'   have the axes and other relevant information such as its attributes (as
+#'   well as those of the axes) and the coordinate reference system.
 #'
-#' The class has a number of utility functions to extract the data in specific
-#' formats:
+#'   The class has a number of utility functions to extract the data in specific
+#'   formats:
 #' * `raw()`: The data without any further processing. The axes are
-#' as they are stored in the netCDF resource; there is thus no guarantee as to
-#' how the data is organized in the array. Dimnames will be set.
+#'   as they are stored in the netCDF resource; there is thus no guarantee as to
+#'   how the data is organized in the array. Dimnames will be set.
 #' * `array()`: An array of the data which is organized as a standard R array
-#' with the axes of the data permuted to Y-X-others and Y-values in decreasing
-#' order. Dimnames will be set.
+#'   with the axes of the data permuted to Y-X-others and Y-values in decreasing
+#'   order. Dimnames will be set.
 #' * `terra()`: The data is returned as a `terra::SpatRaster` (3D) or
-#' `terra::SpatRasterDataset` (4D) object, with all relevant structural
-#' metadata set. Package `terra` must be installed for this to work.
+#'   `terra::SpatRasterDataset` (4D) object, with all relevant structural
+#'   metadata set. Package `terra` must be installed for this to work.
 #'
-#' In general, the metadata from the netCDF resource will be lost when exporting
-#' to a different format insofar as those metadata are not recognized by the
-#' different format.
+#'   In general, the metadata from the netCDF resource will be lost when
+#'   exporting to a different format insofar as those metadata are not
+#'   recognized by the different format.
 #'
 #' @docType class
 #'

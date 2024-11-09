@@ -3,7 +3,7 @@
 #' @description This class represents an netCDF dimensions. It contains the
 #'   information on a dimension that is stored in an netCDF file.
 #'
-#' @details This class is not very useful for interactive use. Use the [CFAxis]
+#' This class is not very useful for interactive use. Use the [CFAxis]
 #' descendent classes instead.
 #'
 #' @docType class
@@ -20,10 +20,9 @@ NCDimension <- R6::R6Class("NCDimension",
     #'   dimension.
     unlim  = FALSE,
 
-    #' Create a new netCDF dimension
-    #'
-    #' This class should not be instantiated directly, create CF objects
-    #' instead. This class is instantiated when opening a netCDF resource.
+    #' @description Create a new netCDF dimension. This class should not be
+    #'   instantiated directly, create CF objects instead. This class is
+    #'   instantiated when opening a netCDF resource.
     #'
     #' @param id Numeric identifier of the netCDF dimension.
     #' @param name Character string with the name of the netCDF dimension.
@@ -36,7 +35,7 @@ NCDimension <- R6::R6Class("NCDimension",
       self$unlim <- unlim
     },
 
-    #' @description Summary of the NC dimension.
+    #' @description Summary of the NC dimension printed to the console.
     #' @param ... Passed on to other methods.
     print = function(...) {
       cat("<netCDF dimension> [", self$id, "] ", self$name, "\n", sep = "")
@@ -44,10 +43,9 @@ NCDimension <- R6::R6Class("NCDimension",
       cat("Unlimited    :", self$unlim, "\n")
     },
 
-    #' @description Very concise information on the dimension
-    #'
-    #' The information returned by this function is very concise and most useful
-    #' when combined with similar information from other dimensions.
+    #' @description Very concise information on the dimension. The information
+    #'   returned by this function is very concise and most useful when combined
+    #'   with similar information from other dimensions.
     #'
     #' @return Character string with very basic dimension information.
     shard = function() {

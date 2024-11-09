@@ -1,5 +1,5 @@
 ---
-title: "Using ncdfCF"
+title: "1. Using ncdfCF"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using_ncdfCF}

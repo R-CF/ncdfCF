@@ -8,7 +8,7 @@
 #' @description This class represents a CF data variable, the object that
 #'   provides access to an array of data.
 #'
-#' @details The CF data variable instance provides access to the data array from
+#' The CF data variable instance provides access to the data array from
 #' the netCDF resource, as well as all the details that have been associated
 #' with the data variable, such as axis information, grid mapping parameters,
 #' etc.
@@ -134,9 +134,9 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   are the axes of the variable.
     axes  = list(),
 
-    #' @field grid_mapping The [CFGridMapping] of this variable. If this field
-    #' is `NULL`, the horizontal component of the axes are in decimal degrees of
-    #' longitude and latitude.
+    #' @field grid_mapping The coordinate reference system of this variable, as
+    #'   an instance of [CFGridMapping]. If this field is `NULL`, the horizontal
+    #'   component of the axes are in decimal degrees of longitude and latitude.
     grid_mapping = NULL,
 
     #' @description Create an instance of this class.
@@ -184,7 +184,7 @@ CFVariable <- R6::R6Class("CFVariable",
       self$print_attributes()
     },
 
-    #' @description Some details of the data variable
+    #' @description Some details of the data variable.
     #'
     #' @return A 1-row `data.frame` with some details of the data variable.
     brief = function() {
@@ -195,10 +195,9 @@ CFVariable <- R6::R6Class("CFVariable",
                  data_type = self$NCvar$vtype, axes = paste(ax, collapse = ", "))
     },
 
-    #' @description Very concise information on the variable
-    #'
-    #' The information returned by this function is very concise and most useful
-    #' when combined with similar information from other variables.
+    #' @description The information returned by this method is very concise
+    #'   and most useful when combined with similar information from other
+    #'   variables.
     #'
     #' @return Character string with very basic variable information.
     shard = function() {
@@ -221,25 +220,22 @@ CFVariable <- R6::R6Class("CFVariable",
       CFData$new(self$name, out_group, d, axes, self$crs, atts)
     },
 
-    #' @description Extract data from the variable
+    #' @description This method extracts a subset of values from the array of
+    #' the variable, with the range along each axis to extract expressed in
+    #' values of the domain of each axis.
     #'
-    #' @details
-    #' The `subset()` method extracts a subset of values from the array of the
-    #' variable, with the range along each axis to extract expressed in values
-    #' of the domain of each axis.
-    #'
-    #' The range of values along each axis to be subset is expressed in values
-    #' of the domain of the axis. Any axes for which no information is
+    #' @details The range of values along each axis to be subset is expressed in
+    #' values of the domain of the axis. Any axes for which no information is
     #' provided in the `subset` argument are extracted in whole. Values can be
     #' specified in a variety of ways that are specific to the nature of the
     #' axis. For numeric axes it should (resolve to) be a vector of real
-    #' values. A range (e.g. `100:200`), a long vector (`c(23, 46, 3, 45, 17`),
+    #' values. A range (e.g. `100:200`), a vector (`c(23, 46, 3, 45, 17`),
     #' a sequence (`seq(from = 78, to = 100, by = 2`), all work. Note, however,
     #' that only a single range is generated from the vector so these examples
-    #' resolve to `100:200`, `3:46`, and `78:100`, respectively. For time axes a
-    #' vector of character timestamps, `POSIXct` or `Date` values must be
-    #' specified. As with numeric values, only the two extreme values in the
-    #' vector will be used.
+    #' resolve to `(100, 200)`, `(3, 46)`, and `(78, 100)`, respectively. For
+    #' time axes a vector of character timestamps, `POSIXct` or `Date` values
+    #' must be specified. As with numeric values, only the two extreme values in
+    #' the vector will be used.
     #'
     #' If the range of values for an axis in argument `subset` extend the valid
     #' range of the axis in `x`, the extracted slab will start at the beginning
@@ -251,7 +247,8 @@ CFVariable <- R6::R6Class("CFVariable",
     #'
     #' The extracted data has the same dimensional structure as the data in the
     #' variable, with degenerate dimensions dropped. The order of the axes in
-    #' argument `subset` does not reorder the axes in the result.
+    #' argument `subset` does not reorder the axes in the result; use the
+    #' [CFData]$array() method for this.
     #'
     #' As an example, to extract values of a variable for Australia for the year
     #' 2020, where the first axis in `x` is the longitude, the second
@@ -264,7 +261,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #' reference systems - the key is that the specification in argument `subset`
     #' uses the same domain of values as the respective axes in `x` use.
     #'
-    #' ## Auxiliary coordinate variables:
+    #' ## Auxiliary coordinate variables
     #'
     #' A special case exists for variables where the horizontal dimensions (X
     #' and Y) are not in longitude and latitude values but in some other
@@ -308,9 +305,6 @@ CFVariable <- R6::R6Class("CFVariable",
     #' Note that degenerate dimensions (having `length(.) == 1`) are dropped
     #' from the array but the corresponding axis is maintained in the result as
     #' a scalar axis.
-    #'
-    #' @aliases CFVariable$subset
-    #'
     subset = function(subset, aoi = NULL, rightmost.closed = FALSE, ...) {
       num_axes <- length(self$axes)
       if (!num_axes)
@@ -452,9 +446,6 @@ CFVariable <- R6::R6Class("CFVariable",
     #' description of the variable as a WKT2 string.
     crs = function(value) {
       if (missing(value)) {
-        # Get the axis information to inform the CRS
-        info <- private$wkt2_axis_info()
-
         if (is.null(self$grid_mapping)) {
           # If no grid_mapping has been set, return the default GEOGCRS unless
           # the axis coordinates fall out of range in which case an empty string
@@ -470,7 +461,7 @@ CFVariable <- R6::R6Class("CFVariable",
             else ""
           } else ""
         } else
-          self$grid_mapping$crs(info)
+          self$grid_mapping$crs(private$wkt2_axis_info())
       }
     }
   )

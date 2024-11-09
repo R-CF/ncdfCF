@@ -3,11 +3,7 @@
 #' @description This class is a basic ancestor to all classes that represent CF
 #'   axes. More useful classes use this class as ancestor.
 #'
-#' @details The fields in this class are common among all CF axis objects.
-#'
 #' @docType class
-#'
-#' @export
 CFAxis <- R6::R6Class("CFAxis",
   inherit = CFObject,
   public = list(
@@ -29,20 +25,17 @@ CFAxis <- R6::R6Class("CFAxis",
     #' axis.
     lbls = list(),
 
-    #' Create a basic CF axis object
-    #'
-    #' Create a new CF axis instance from a dimension and a variable in a netCDF
-    #' resource. This method is called upon opening a netCDF resource by the
-    #' `initialize()` method of a descendant class suitable for the type of
-    #' axis.
+    #' @description Create a new CF axis instance from a dimension and a
+    #'   variable in a netCDF resource. This method is called upon opening a
+    #'   netCDF resource by the `initialize()` method of a descendant class
+    #'   suitable for the type of axis.
     #'
     #' @param grp The [NCGroup] that this axis is located in.
-    #' @param nc_var The [NCVariable] instance upon which this CF axis is
-    #'   based.
+    #' @param nc_var The [NCVariable] instance upon which this CF axis is based.
     #' @param nc_dim The [NCDimension] instance upon which this CF axis is
     #'   based.
-    #' @param orientation The orientation of the axis: "X", "Y", "Z" "T", or
-    #' "" when not known or relevant.
+    #' @param orientation The orientation of the axis: "X", "Y", "Z" "T", or ""
+    #'   when not known or relevant.
     #' @return A basic `CFAxis` object.
     initialize = function(grp, nc_var, nc_dim, orientation) {
       super$initialize(nc_var)
@@ -53,10 +46,8 @@ CFAxis <- R6::R6Class("CFAxis",
       nc_var$CF <- self
     },
 
-    #' @description Summary of the axis
-    #'
-    #' Prints a summary of the axis to the console. This method is typically
-    #' called by the `print()` method of descendant classes.
+    #' @description  Prints a summary of the axis to the console. This method is
+    #'   typically called by the `print()` method of descendant classes.
     print = function() {
       cat("<", self$friendlyClassName, "> [", self$dimid, "] ", self$name, "\n", sep = "")
       if (self$group$name != "/")
@@ -71,8 +62,7 @@ CFAxis <- R6::R6Class("CFAxis",
       cat("Axis     :", self$orientation, "\n")
     },
 
-    #' @description Some details of the axis
-    #'
+    #' @description Some details of the axis.
     #' @return A 1-row `data.frame` with some details of the axis.
     brief = function() {
       longname <- self$attribute("long_name")
@@ -87,56 +77,50 @@ CFAxis <- R6::R6Class("CFAxis",
                  unlim = unlim, values = "", unit = units)
     },
 
-    #' @description Very concise information on the axis
-    #'
-    #' The information returned by this function is very concise and most useful
-    #' when combined with similar information from other axes.
+    #' @description Very concise information on the axis. The information
+    #'   returned by this function is very concise and most useful when combined
+    #'   with similar information from other axes.
     #'
     #' @return Character string with very basic axis information.
     shard = function() {
       self$NCdim$shard()
     },
 
-    #' @description Return the `CFtime` instance that represents time
-    #'
-    #' This method is only useful for `CFAxisTime` instances. This stub is here
-    #' to make the call to this method succeed with no result for the other axis
-    #' descendants.
-    #'
+    #' @description Return the `CFtime` instance that represents time. This
+    #'   method is only useful for `CFAxisTime` instances. This stub is here to
+    #'   make the call to this method succeed with no result for the other axis
+    #'   descendants.
     #' @return `NULL`
     time = function() {
       NULL
     },
 
-    #' @description Return an axis spanning a smaller dimension range
-    #'
-    #' This method is "virtual" in the sense that it does not do anything other
-    #' than return `NULL`. This stub is here to make the call to this method
-    #' succeed with no result for the other axis descendants that do not
-    #' implement this method.
+    #' @description Return an axis spanning a smaller dimension range. This
+    #'   method is "virtual" in the sense that it does not do anything other
+    #'   than return `NULL`. This stub is here to make the call to this method
+    #'   succeed with no result for the other axis descendants that do not
+    #'   implement this method.
     #'
     #' @param group The group to create the new axis in.
     #' @param rng The range of values from this axis to include in the returned
-    #' axis. If the value of the argument is `NULL`, return the entire axis
-    #' (possibly as a scalar axis).
+    #'   axis. If the value of the argument is `NULL`, return the entire axis
+    #'   (possibly as a scalar axis).
     #'
     #' @return `NULL`
     sub_axis = function(group, rng = NULL) {
       NULL
     },
 
-    #' Find indices in the axis domain
+    #' @description Find indices in the axis domain. Given a vector of
+    #'   numerical, timestamp or categorical values `x`, find their indices in
+    #'   the values of the axis. With `method = "constant"` this returns the
+    #'   index of the value lower than the supplied values in `x`. With
+    #'   `method = "linear"` the return value includes any fractional part.
     #'
-    #' Given a vector of numerical, timestamp or categorical values
-    #' `x`, find their indices in the values of the axis. With
-    #' `method = "constant"` this returns the index of the value lower than the
-    #' supplied values in `x`. With `method = "linear"` the return value
-    #' includes any fractional part.
-    #'
-    #' If bounds are set on the numerical or time axis, the indices are taken
-    #' from those bounds. Returned indices may fall in between bounds if the
-    #' latter are not contiguous, with the exception of the extreme values in
-    #' `x`.
+    #'   If bounds are set on the numerical or time axis, the indices are taken
+    #'   from those bounds. Returned indices may fall in between bounds if the
+    #'   latter are not contiguous, with the exception of the extreme values in
+    #'   `x`.
     #'
     #' @param x Vector of numeric, timestamp or categorial values to find axis
     #'   indices for. The timestamps can be either character, POSIXct or Date
@@ -147,23 +131,21 @@ CFAxis <- R6::R6Class("CFAxis",
     #' @return Numeric vector of the same length as `x`. If `method = "constant"`,
     #'   return the index value for each match. If `method = "linear"`, return
     #'   the index value with any fractional value. Values of `x` outside of the
-    #'   range of the values in the axis are returned as `0` and `.Machine$integer.max`,
-    #'    respectively.
+    #'   range of the values in the axis are returned as `0` and
+    #'   `.Machine$integer.max`, respectively.
     indexOf = function(x, method = "constant") {
       stop("`indexOf()` must be implemented by descendant CFAxis class.")
     },
 
-    #' Retrieve a set of string labels for the axis elements.
-    #'
-    #' Retrieve a set of character labels corresponding to the elements of an
-    #' axis. An axis can have multiple sets of labels and by default the first
-    #' set is returned.
+    #' @description Retrieve a set of character labels corresponding to the
+    #'   elements of an axis. An axis can have multiple sets of labels and by
+    #'   default the first set is returned.
     #'
     #' @param index An integer value indicating which set of labels to retrieve.
     #'
     #' @return A character vector of string labels with as many elements as the
-    #' axis has, or `NULL` when no labels have been set or when argument `index`
-    #' is not valid.
+    #'   axis has, or `NULL` when no labels have been set or when argument
+    #'   `index` is not valid.
     label_set = function(index = 1L) {
       if (index > 0L && index <= length(self$lbls))
         self$lbls[[index]]$values
@@ -178,20 +160,20 @@ CFAxis <- R6::R6Class("CFAxis",
         "Generic CF axis"
     },
 
-    #' @field dimid The netCDF dimension id of this axis.
+    #' @field dimid (read-only) The netCDF dimension id of this axis.
     dimid = function(value) {
       if (missing(value))
         self$NCdim$id
     },
 
-    #' @field length The declared length of this axis.
+    #' @field length (read-only) The declared length of this axis.
     length = function(value) {
       if (missing(value))
         self$NCdim$length
     },
 
-    #' @field labels Set or retrieve the lables for the axis. On assignment, the
-    #' value muc=st be an instance of [CFLabel].
+    #' @field labels Set or retrieve the labels for the axis. On assignment, the
+    #' value must be an instance of [CFLabel].
     labels = function(value) {
       if (missing(value))
         self$lbls

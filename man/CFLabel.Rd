@@ -7,6 +7,7 @@
 \description{
 This class represent CF labels, i.e. an NC variable of character
 type that provides a textual label for a discrete or general numeric axis.
+See also \link{CFAxisCharacter}, which is an axis with character labels.
 }
 \section{Super class}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFLabel}
@@ -27,9 +28,9 @@ type that provides a textual label for a discrete or general numeric axis.
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{length}}{The number of labels.}
+\item{\code{length}}{(read-only) The number of labels.}
 
-\item{\code{dimid}}{The netCDF dimension id of this label.}
+\item{\code{dimid}}{(read-only) The netCDF dimension id of this label.}
 }
 \if{html}{\out{</div>}}
 }

@@ -19,14 +19,15 @@ commit](https://img.shields.io/github/last-commit/pvanlaake/ncdfCF)](https://git
 <!-- badges: end -->
 
 The `ncdfCF` package provides an easy to use interface to netCDF
-resources in R, either in local files or remotely on a THREDDS server.
-It is built on the `RNetCDF` package which, like package `ncdf4`,
-provides a basic interface to the `netcdf` library, but which lacks an
-intuitive user interface. Package `ncdfCF` provides a high-level
-interface using functions and methods that are familiar to the R user.
-It reads the structural metadata and also the attributes upon opening
-the resource. In the process, the `ncdfCF` package also applies CF
-Metadata Conventions to interpret the data. This currently applies to:
+resources in R,  
+either in local files or remotely on a THREDDS server. It is built on
+the `RNetCDF` package which, like package `ncdf4`, provides a basic
+interface to the `netcdf` library, but which lacks an intuitive user
+interface. Package `ncdfCF` provides a high-level interface using
+functions and methods that are familiar to the R user. It reads the
+structural metadata and also the attributes upon opening the resource.
+In the process, the `ncdfCF` package also applies CF Metadata
+Conventions to interpret the data. This currently applies to:
 
 - The **axis designation**. The three mechanisms to identify the axis
   each dimension represents are applied until an axis is determined.
@@ -182,20 +183,7 @@ str(ts)
 #>   ..- attr(*, "names")= chr [1:3] "longitude" "latitude" "time"
 #>  - attr(*, "time")=List of 1
 #>   ..$ time:Formal class 'CFtime' [package "CFtime"] with 4 slots
-#>   .. .. ..@ datum     :Formal class 'CFdatum' [package "CFtime"] with 5 slots
-#>   .. .. .. .. ..@ definition: chr "hours since 1900-01-01 00:00:00.0"
-#>   .. .. .. .. ..@ unit      : int 3
-#>   .. .. .. .. ..@ origin    :'data.frame':   1 obs. of  8 variables:
-#>   .. .. .. .. .. ..$ year  : int 1900
-#>   .. .. .. .. .. ..$ month : num 1
-#>   .. .. .. .. .. ..$ day   : num 1
-#>   .. .. .. .. .. ..$ hour  : num 0
-#>   .. .. .. .. .. ..$ minute: num 0
-#>   .. .. .. .. .. ..$ second: num 0
-#>   .. .. .. .. .. ..$ tz    : chr "+0000"
-#>   .. .. .. .. .. ..$ offset: num 0
-#>   .. .. .. .. ..@ calendar  : chr "gregorian"
-#>   .. .. .. .. ..@ cal_id    : int 1
+#>   .. .. ..@ datum     : hours since 1900-01-01 00:00:00.0 [ gregorian calendar ]
 #>   .. .. ..@ resolution: num 1
 #>   .. .. ..@ offsets   : num [1:24] 1016832 1016833 1016834 1016835 1016836 ...
 #>   .. .. ..@ bounds    : logi FALSE
@@ -212,20 +200,7 @@ str(ts)
 #>   ..- attr(*, "names")= chr [1:3] "longitude" "latitude" "time"
 #>  - attr(*, "time")=List of 1
 #>   ..$ time:Formal class 'CFtime' [package "CFtime"] with 4 slots
-#>   .. .. ..@ datum     :Formal class 'CFdatum' [package "CFtime"] with 5 slots
-#>   .. .. .. .. ..@ definition: chr "hours since 1900-01-01 00:00:00.0"
-#>   .. .. .. .. ..@ unit      : int 3
-#>   .. .. .. .. ..@ origin    :'data.frame':   1 obs. of  8 variables:
-#>   .. .. .. .. .. ..$ year  : int 1900
-#>   .. .. .. .. .. ..$ month : num 1
-#>   .. .. .. .. .. ..$ day   : num 1
-#>   .. .. .. .. .. ..$ hour  : num 0
-#>   .. .. .. .. .. ..$ minute: num 0
-#>   .. .. .. .. .. ..$ second: num 0
-#>   .. .. .. .. .. ..$ tz    : chr "+0000"
-#>   .. .. .. .. .. ..$ offset: num 0
-#>   .. .. .. .. ..@ calendar  : chr "gregorian"
-#>   .. .. .. .. ..@ cal_id    : int 1
+#>   .. .. ..@ datum     : hours since 1900-01-01 00:00:00.0 [ gregorian calendar ]
 #>   .. .. ..@ resolution: num NA
 #>   .. .. ..@ offsets   : num 1016843
 #>   .. .. ..@ bounds    : logi FALSE

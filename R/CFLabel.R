@@ -2,9 +2,9 @@
 #'
 #' @description This class represent CF labels, i.e. an NC variable of character
 #' type that provides a textual label for a discrete or general numeric axis.
+#' See also [CFAxisCharacter], which is an axis with character labels.
 #'
 #' @docType class
-#'
 #' @export
 CFLabel <- R6::R6Class("CFLabel",
   inherit = CFObject,
@@ -39,13 +39,13 @@ CFLabel <- R6::R6Class("CFLabel",
         "Axis labels"
     },
 
-    #' @field length The number of labels.
+    #' @field length (read-only) The number of labels.
     length = function(value) {
       if (missing(value))
         self$NCdim$length
     },
 
-    #' @field dimid The netCDF dimension id of this label.
+    #' @field dimid (read-only) The netCDF dimension id of this label.
     dimid = function(value) {
       if (missing(value))
         self$NCdim$id

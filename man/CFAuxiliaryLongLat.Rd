@@ -8,8 +8,7 @@
 This class represents the longitude and latitude variables that
 compose auxiliary coordinate variable axes for X-Y grids that are not
 longitude-latitude.
-}
-\details{
+
 The class provides access to the data arrays for longitude and
 latitude from the netCDF resource, as well as all the details that have been
 associated with both axes. Additionally, this class can generate the index
@@ -86,7 +85,7 @@ grids.}
 \if{html}{\out{<a id="method-CFAuxiliaryLongLat-new"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAuxiliaryLongLat-new}{}}}
 \subsection{Method \code{new()}}{
-Creating a new instance
+Creating a new instance.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$new(varLong, varLat, boundsLong, boundsLat)}\if{html}{\out{</div>}}
 }
@@ -94,8 +93,8 @@ Creating a new instance
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{varLong, varLat}}{The NCVariables with the longitude and latitude
-grid values, respectively.}
+\item{\code{varLong, varLat}}{The \link{NCVariable} instances with the longitude and
+latitude grid values, respectively.}
 
 \item{\code{boundsLong, boundsLat}}{The bounds of the grid cells for the
 longitude and latitude, respectively, if set.}
@@ -107,9 +106,8 @@ longitude and latitude, respectively, if set.}
 \if{html}{\out{<a id="method-CFAuxiliaryLongLat-print"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAuxiliaryLongLat-print}{}}}
 \subsection{Method \code{print()}}{
-Summary of the data variable
-
-Prints a summary of the data variable to the console.
+Summary of the auxiliary longitude-latitude variable printed
+to the console.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$print()}\if{html}{\out{</div>}}
 }
@@ -119,7 +117,7 @@ Prints a summary of the data variable to the console.
 \if{html}{\out{<a id="method-CFAuxiliaryLongLat-brief"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAuxiliaryLongLat-brief}{}}}
 \subsection{Method \code{brief()}}{
-Some details of the longitude-latitude grid
+Some details of the auxiliary longitude-latitude grid.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$brief()}\if{html}{\out{</div>}}
 }

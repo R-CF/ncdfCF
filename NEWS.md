@@ -18,7 +18,7 @@ editor_options:
     finding issues with netCDF resources.
 -   `print()` method for `NCVariable` and `NCDimension`.
 -   Minor code fixes.
--   Documentation extended, new vignette.
+-   Documentation extended and formatting fixed, new vignette.
 
 # ncdfCF 0.2.1
 

@@ -6,9 +6,9 @@
 \title{Data extracted from a CF data variable}
 \description{
 This class holds the data that is extracted from a \link{CFVariable},
-using the \code{subset()} class method. The instance of this class will
-additionally have the axes and other relevant information such as its
-attributes (as well as those of the axes) and the coordinate reference system.
+using the \code{subset()} method. The instance of this class will additionally
+have the axes and other relevant information such as its attributes (as
+well as those of the axes) and the coordinate reference system.
 
 The class has a number of utility functions to extract the data in specific
 formats:
@@ -22,11 +22,11 @@ order. Dimnames will be set.
 \item \code{terra()}: The data is returned as a \code{terra::SpatRaster} (3D) or
 \code{terra::SpatRasterDataset} (4D) object, with all relevant structural
 metadata set. Package \code{terra} must be installed for this to work.
-}
 
-In general, the metadata from the netCDF resource will be lost when exporting
-to a different format insofar as those metadata are not recognized by the
-different format.
+In general, the metadata from the netCDF resource will be lost when
+exporting to a different format insofar as those metadata are not
+recognized by the different format.
+}
 }
 \section{Super class}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFData}

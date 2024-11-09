@@ -77,9 +77,7 @@ Create a new instance of this class.
 \if{html}{\out{<a id="method-CFAxisTime-print"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisTime-print}{}}}
 \subsection{Method \code{print()}}{
-Summary of the time axis
-
-Prints a summary of the time axis to the console.
+Summary of the time axis printed to the console.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$print()}\if{html}{\out{</div>}}
 }
@@ -89,11 +87,14 @@ Prints a summary of the time axis to the console.
 \if{html}{\out{<a id="method-CFAxisTime-brief"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisTime-brief}{}}}
 \subsection{Method \code{brief()}}{
-Retrieve a 1-row \code{data.frame} with some information on this axis.
+Some details of the axis.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$brief()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+A 1-row \code{data.frame} with some details of the axis.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisTime-time"></a>}}
@@ -104,6 +105,9 @@ Retrieve the CFtime instance that manages this axis.
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$time()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+An instance of \code{CFtime}.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisTime-indexOf"></a>}}
@@ -137,10 +141,9 @@ values in \code{x}, or \code{integer(0)} if none of the values are valid.
 \if{html}{\out{<a id="method-CFAxisTime-sub_axis"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisTime-sub_axis}{}}}
 \subsection{Method \code{sub_axis()}}{
-Return an axis spanning a smaller dimension range
-
-This method returns an axis which spans the range of indices given by
-the \code{rng} argument.
+Return an axis spanning a smaller dimension range. This
+method returns an axis which spans the range of indices given by the
+\code{rng} argument.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$sub_axis(group, rng = NULL)}\if{html}{\out{</div>}}
 }
@@ -156,11 +159,11 @@ axis.}
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A \code{CFAxisTime} covering the indicated range of indices. If the
-\code{rng} argument includes only a single value, an \link{CFAxisScalar} instance
-is returned with its value being the character timestamp of the value
-in this axis. If the value of the argument is \code{NULL}, return the entire
-axis (possibly as a scalar axis).
+A \code{CFAxisTime} instance covering the indicated range of indices.
+If the \code{rng} argument includes only a single value, an \link{CFAxisScalar}
+instance is returned with its value being the character timestamp of
+the value in this axis. If the value of the argument is \code{NULL}, return
+the entire axis (possibly as a scalar axis).
 }
 }
 \if{html}{\out{<hr>}}

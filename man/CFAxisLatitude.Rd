@@ -7,7 +7,7 @@
 \description{
 This class represents a latitude axis. Its values are numeric.
 This class adds some logic that is specific to latitudes, such as their
-range, orientation and their meaning.
+range, orientation and meaning.
 }
 \section{Super classes}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFAxis]{ncdfCF::CFAxis}} -> \code{\link[ncdfCF:CFAxisNumeric]{ncdfCF::CFAxisNumeric}} -> \code{CFAxisLatitude}
@@ -69,10 +69,9 @@ Create a new instance of this class.
 \if{html}{\out{<a id="method-CFAxisLatitude-sub_axis"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisLatitude-sub_axis}{}}}
 \subsection{Method \code{sub_axis()}}{
-Return an axis spanning a smaller dimension range.
-
-This method returns an axis which spans the range of indices given by
-the \code{rng} argument.
+Return an axis spanning a smaller dimension range. This
+method returns an axis which spans the range of indices given by the
+\code{rng} argument.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisLatitude$sub_axis(group, rng = NULL)}\if{html}{\out{</div>}}
 }
@@ -88,10 +87,11 @@ axis.}
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A \code{CFAxisLatitude} covering the indicated range of indices. If
-the \code{rng} argument includes only a single value, an \link{CFAxisScalar}
-instance is returned with the value from this axis. If the value of the
-argument is \code{NULL}, return the entire axis (possibly as a scalar axis).
+A \code{CFAxisLatitude} instance covering the indicated range of
+indices. If the \code{rng} argument includes only a single value, an
+\link{CFAxisScalar} instance is returned with the value from this axis. If
+the value of the argument is \code{NULL}, return the entire axis (possibly
+as a scalar axis).
 }
 }
 \if{html}{\out{<hr>}}

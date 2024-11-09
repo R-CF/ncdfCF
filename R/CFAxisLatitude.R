@@ -2,10 +2,9 @@
 #'
 #' @description This class represents a latitude axis. Its values are numeric.
 #' This class adds some logic that is specific to latitudes, such as their
-#' range, orientation and their meaning.
+#' range, orientation and meaning.
 #'
 #' @docType class
-#'
 #' @export
 CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
   inherit = CFAxisNumeric,
@@ -20,19 +19,19 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
       super$initialize(grp, nc_var, nc_dim, "Y", values)
     },
 
-    #' @description Return an axis spanning a smaller dimension range.
-    #'
-    #'   This method returns an axis which spans the range of indices given by
-    #'   the `rng` argument.
+    #' @description Return an axis spanning a smaller dimension range. This
+    #'   method returns an axis which spans the range of indices given by the
+    #'   `rng` argument.
     #'
     #' @param group The group to create the new axis in.
     #' @param rng The range of values from this axis to include in the returned
     #'   axis.
     #'
-    #' @return A `CFAxisLatitude` covering the indicated range of indices. If
-    #'   the `rng` argument includes only a single value, an [CFAxisScalar]
-    #'   instance is returned with the value from this axis. If the value of the
-    #'   argument is `NULL`, return the entire axis (possibly as a scalar axis).
+    #' @return A `CFAxisLatitude` instance covering the indicated range of
+    #'   indices. If the `rng` argument includes only a single value, an
+    #'   [CFAxisScalar] instance is returned with the value from this axis. If
+    #'   the value of the argument is `NULL`, return the entire axis (possibly
+    #'   as a scalar axis).
     sub_axis = function(group, rng = NULL) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
 

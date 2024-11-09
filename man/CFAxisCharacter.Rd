@@ -3,13 +3,11 @@
 \docType{class}
 \name{CFAxisCharacter}
 \alias{CFAxisCharacter}
-\title{Find indices in the axis domain}
+\title{CF character axis object}
 \description{
 This class represent CF axes that use categorical character
-labels as coordinate values.
-}
-\details{
-CF character axis object
+labels as coordinate values. Note that this is different from a \link{CFLabel},
+which is associated with an axis but not an axis itself.
 }
 \section{Super classes}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFAxis]{ncdfCF::CFAxis}} -> \code{CFAxisCharacter}
@@ -83,7 +81,7 @@ different or unknown.}
 \if{html}{\out{<a id="method-CFAxisCharacter-brief"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisCharacter-brief}{}}}
 \subsection{Method \code{brief()}}{
-Some details of the axis
+Some details of the axis.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$brief()}\if{html}{\out{</div>}}
 }
@@ -96,8 +94,8 @@ A 1-row \code{data.frame} with some details of the axis.
 \if{html}{\out{<a id="method-CFAxisCharacter-indexOf"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisCharacter-indexOf}{}}}
 \subsection{Method \code{indexOf()}}{
-Given a vector of character strings \code{x}, find their indices
-in the values of the axis.
+Find indices in the axis domain. Given a vector of character
+strings \code{x}, find their indices in the values of the axis.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$indexOf(x, method = "constant")}\if{html}{\out{</div>}}
 }
@@ -112,8 +110,8 @@ in the values of the axis.
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Numeric vector of the same length as \code{x}. Values of \code{x} outside
-of the range of the values in the axis are returned as \code{NA}.
+Numeric vector of the same length as \code{x}. Values of \code{x} outside of
+the range of the values in the axis are returned as \code{NA}.
 }
 }
 \if{html}{\out{<hr>}}

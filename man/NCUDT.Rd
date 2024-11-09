@@ -5,9 +5,9 @@
 \alias{NCUDT}
 \title{NetCDF user-defined type}
 \description{
-This class represents
-user-defined types in a netCDF file. Interpretation of the UDT typically
-requires knowledge of the data set or application.
+This class represents user-defined types in a netCDF file.
+Interpretation of the UDT typically requires knowledge of the data set or
+application.
 }
 \section{Super class}{
 \code{\link[ncdfCF:NCObject]{ncdfCF::NCObject}} -> \code{NCUDT}
@@ -18,7 +18,8 @@ requires knowledge of the data set or application.
 \item{\code{clss}}{The class of the UDT, one of "builtin", "compound", "enum",
 "opaque", or "vlen".}
 
-\item{\code{size}}{Size in bytes of a single item of the type (or a single element of a "vlen").}
+\item{\code{size}}{Size in bytes of a single item of the type (or a single
+element of a "vlen").}
 
 \item{\code{basetype}}{Name of the netCDF base type of each element ("enum" and
 "vlen" only).}
@@ -33,11 +34,7 @@ the beginning of the "compound" type.}
 of a "compound" type.}
 
 \item{\code{dimsizes}}{Named list with array dimensions of each field of a
-"compound" type. A \code{NULL} length indicates a scalar.
-Create a new netCDF user-defined type
-
-This class represents a user-defined type. It is instantiated when
-opening a netCDF resource.}
+"compound" type. A \code{NULL} length indicates a scalar.}
 }
 \if{html}{\out{</div>}}
 }
@@ -60,6 +57,8 @@ opening a netCDF resource.}
 \if{html}{\out{<a id="method-NCUDT-new"></a>}}
 \if{latex}{\out{\hypertarget{method-NCUDT-new}{}}}
 \subsection{Method \code{new()}}{
+Create a new netCDF user-defined type. This class represents
+a user-defined type. It is instantiated when opening a netCDF resource.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{NCUDT$new(id, name, clss, size, basetype, value, offset, subtype, dimsizes)}\if{html}{\out{</div>}}
 }
@@ -74,7 +73,8 @@ opening a netCDF resource.}
 \item{\code{clss}}{The class of the UDT, one of "builtin", "compound", "enum",
 "opaque", or "vlen".}
 
-\item{\code{size}}{Size in bytes of a single item of the type (or a single element of a "vlen").}
+\item{\code{size}}{Size in bytes of a single item of the type (or a single
+element of a "vlen").}
 
 \item{\code{basetype}}{Name of the netCDF base type of each element ("enum" and
 "vlen" only).}

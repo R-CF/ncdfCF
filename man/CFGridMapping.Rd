@@ -16,7 +16,7 @@ system, or grid mapping in CF terms, of a data variable.
 \describe{
 \item{\code{group}}{The \link{NCGroup} that this grid mapping is located in.}
 
-\item{\code{grid_mapping_name}}{The formal name of the grid mapping.}
+\item{\code{grid_mapping_name}}{The name of the grid mapping.}
 }
 \if{html}{\out{</div>}}
 }
@@ -80,7 +80,8 @@ Prints a summary of the grid mapping to the console.
 \if{html}{\out{<a id="method-CFGridMapping-brief"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGridMapping-brief}{}}}
 \subsection{Method \code{brief()}}{
-Retrieve a 1-row \code{data.frame} with some information on this grid mapping.
+Retrieve a 1-row \code{data.frame} with some information on this
+grid mapping.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$brief()}\if{html}{\out{</div>}}
 }

@@ -1,10 +1,10 @@
 #' CF character axis object
 #'
 #' @description This class represent CF axes that use categorical character
-#' labels as coordinate values.
+#' labels as coordinate values. Note that this is different from a [CFLabel],
+#' which is associated with an axis but not an axis itself.
 #'
 #' @docType class
-#'
 #' @export
 CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
  inherit = CFAxis,
@@ -24,7 +24,7 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
      self$values <- values
    },
 
-   #' @description Some details of the axis
+   #' @description Some details of the axis.
    #'
    #' @return A 1-row `data.frame` with some details of the axis.
    brief = function() {
@@ -34,16 +34,14 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
     out
    },
 
-   #' @title Find indices in the axis domain
-   #'
-   #' @description Given a vector of character strings `x`, find their indices
-   #' in the values of the axis.
+   #' @description Find indices in the axis domain. Given a vector of character
+   #'   strings `x`, find their indices in the values of the axis.
    #'
    #' @param x Vector of character strings to find axis indices for.
    #' @param method Ignored.
    #'
-   #' @return Numeric vector of the same length as `x`. Values of `x` outside
-   #' of the range of the values in the axis are returned as `NA`.
+   #' @return Numeric vector of the same length as `x`. Values of `x` outside of
+   #'   the range of the values in the axis are returned as `NA`.
    indexOf = function(x, method = "constant") {
      match(x, self$values)
    }

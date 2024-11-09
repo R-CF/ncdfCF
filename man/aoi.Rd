@@ -53,8 +53,8 @@ Cartesian coordinate system of the variable, simply pass \code{aoi()} as an
 argument to \link[=CFVariable]{CFVariable$subset()}. Note that any missing
 arguments are calculated internally and stored in the returned object, but
 only after the call to \code{CFVariable$subset()}.
-}
-\section{Caching}{
+\subsection{Caching}{
+
 In data collections that are composed of multiple variables in a single
 netCDF resource, a single auxiliary longitude-latitude grid may be
 referenced by multiple variables, such as in \href{https://www.myroms.org}{ROMS}
@@ -64,9 +64,7 @@ performance. The successive calls to \code{CFVariable$subset()} should use the
 same object returned from a single call to this function for this caching
 to work properly.
 }
-
+}
 \examples{
-aoi <- aoi(20, 60, -40, -20, 0.5)
-aoi
-
+(aoi <- aoi(20, 60, -40, -20, 0.5))
 }

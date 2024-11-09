@@ -6,18 +6,20 @@
 \title{NetCDF group}
 \description{
 This class represents a netCDF group, the object that holds
-elements like dimensions and variables of a netCDF file. Additionally, the
-group also holds references to any CF objects based on the netCDF elements
-held by the group.
-}
-\details{
-Direct access to groups is usually not necessary. The principal
-objects held by the group, CF data variables and axes, are accessible via
-other means. Only for access to the group attributes is a reference to a
-group required.
-}
-\section{Fields}{
+elements like dimensions and variables of a netCDF file. This class also
+holds references to any CF objects based on the netCDF elements held by the
+group.
 
+Direct access to groups is usually not necessary. The principal objects
+held by the group, CF data variables and axes, are accessible via other
+means. Only for access to the group attributes is a reference to a group
+required.
+}
+\section{Super class}{
+\code{\link[ncdfCF:NCObject]{ncdfCF::NCObject}} -> \code{NCGroup}
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
 \describe{
 \item{\code{resource}}{Access to the underlying netCDF resource.}
 
@@ -25,28 +27,334 @@ group required.
 
 \item{\code{parent}}{Parent group of this group, \code{NULL} for the root group.}
 
-\item{\code{subgroups}}{List of child \code{NCGroup}s of this group.}
+\item{\code{subgroups}}{List of child \code{NCGroup} instances of this group.}
 
 \item{\code{NCvars}}{List of netCDF variables that are located in this group.}
 
 \item{\code{NCdims}}{List of netCDF dimensions that are located in this group.}
 
-\item{\code{NCUDTs}}{List of netCDF user-defined types that are located in this
+\item{\code{NCudts}}{List of netCDF user-defined types that are located in this
 group.}
 
 \item{\code{CFvars}}{List of CF data variables in this group. There must be a
 corresponding item in \code{NCvars} for each item in this list.}
 
-\item{\code{CFaxes}}{List of axes of CF data variables in this group. There must be
-a corresponding item in \code{NCvars} for each item in this list. Note that the
-CF data variable(s) that an axis is associated with may be located in a
-different group. Also, objects that further describe the basic axis
-definition, such as its bounds, labels, ancillary data, may be located in a
-different group; all such elements can be accessed directly from the
-\link{CFAxis} instances that this list holds.}
+\item{\code{CFaxes}}{List of axes of CF data variables in this group. There must
+be a corresponding item in \code{NCvars} for each item in this list. Note
+that the CF data variable(s) that an axis is associated with may be
+located in a different group. Also, objects that further describe the
+basic axis definition, such as its bounds, labels, ancillary data, may
+be located in a different group; all such elements can be accessed
+directly from the \link{CFAxis} instances that this list holds.}
 
-\item{\code{CFaux}}{List of auxiliary variables. These could be \link{CFAxisScalar} or
-\link{CFAuxiliaryLongLat} that hold longitude and latitude values for every grid
-point in the data variable that references them.}
+\item{\code{CFlabels}}{List of labels located in this group.}
+
+\item{\code{CFaux}}{List of auxiliary variables. These could be \link{CFAxisScalar}
+or \link{CFAuxiliaryLongLat} that hold longitude and latitude values for
+every grid point in the data variable that references them.}
+
+\item{\code{CFcrs}}{List of grid mappings located in this group.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+
+\item{\code{handle}}{(read-only) Get the handle to the netCDF resource for the
+group}
+}
+\if{html}{\out{</div>}}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-NCGroup-new}{\code{NCGroup$new()}}
+\item \href{#method-NCGroup-print}{\code{NCGroup$print()}}
+\item \href{#method-NCGroup-hierarchy}{\code{NCGroup$hierarchy()}}
+\item \href{#method-NCGroup-find_by_name}{\code{NCGroup$find_by_name()}}
+\item \href{#method-NCGroup-find_dim_by_id}{\code{NCGroup$find_dim_by_id()}}
+\item \href{#method-NCGroup-unused}{\code{NCGroup$unused()}}
+\item \href{#method-NCGroup-addAuxiliaryLongLat}{\code{NCGroup$addAuxiliaryLongLat()}}
+\item \href{#method-NCGroup-fullnames}{\code{NCGroup$fullnames()}}
+\item \href{#method-NCGroup-variables}{\code{NCGroup$variables()}}
+\item \href{#method-NCGroup-axes}{\code{NCGroup$axes()}}
+\item \href{#method-NCGroup-grid_mappings}{\code{NCGroup$grid_mappings()}}
+\item \href{#method-NCGroup-clone}{\code{NCGroup$clone()}}
+}
+}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-attribute'><code>ncdfCF::NCObject$attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="print_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-print_attributes'><code>ncdfCF::NCObject$print_attributes()</code></a></span></li>
+</ul>
+</details>
 }}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-new"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-new}{}}}
+\subsection{Method \code{new()}}{
+Create a new instance of this class.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$new(id, name, fullname, parent, resource)}\if{html}{\out{</div>}}
+}
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{The identifier of the group.}
+
+\item{\code{name}}{The name of the group.}
+
+\item{\code{fullname}}{The fully qualified name of the group.}
+
+\item{\code{parent}}{The parent group of this group. \code{NULL} for the root group.}
+
+\item{\code{resource}}{Reference to the \link{CFResource} instance that provides
+access to the netCDF resource.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-print"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-print}{}}}
+\subsection{Method \code{print()}}{
+Summary of the group printed to the console.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$print(...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Passed on to other methods.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-hierarchy"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-hierarchy}{}}}
+\subsection{Method \code{hierarchy()}}{
+Prints the hierarchy of the group and its subgroups to the
+console, with a summary of contained objects. Usually called from the
+root group to display the full group hierarchy.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$hierarchy(idx = 1L, total = 1L)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{idx, total}}{Arguments to control indentation. Should both be 1 (the
+default) when called interactively. The values will be updated during
+recursion when there are groups below the current group.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-find_by_name"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-find_by_name}{}}}
+\subsection{Method \code{find_by_name()}}{
+Find an object by its name. Given the name of an object,
+possibly preceded by an absolute or relative group path, return the
+object to the caller. Typically, this method is called
+programmatically; similar interactive use is provided through the
+\verb{[[.CFDataset} operator.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$find_by_name(name, scope = "CF")}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{The name of an object, with an optional absolute or relative
+group path from the calling group. The object must either an CF
+construct (data variable, axis, auxiliary axis, label, or grid mapping)
+or an NC group, dimension or variable.}
+
+\item{\code{scope}}{Either "CF" (default) for a CF construct, or "NC" for a
+netCDF group, dimension or variable.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The object with the provided name in the requested scope. If the
+object is not found, returns \code{NULL}.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-find_dim_by_id"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-find_dim_by_id}{}}}
+\subsection{Method \code{find_dim_by_id()}}{
+Find an NC dimension object by its id. Given the id of a
+dimension, return the \link{NCDimension} object to the caller. The dimension
+has to be found in the current group or any of its parents.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$find_dim_by_id(id)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{The id of the dimension.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The \link{NCDimension} object with an identifier equal to the \code{id}
+argument. If the object is not found, returns \code{NULL}.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-unused"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-unused}{}}}
+\subsection{Method \code{unused()}}{
+Find NC variables that are not referenced by CF objects. For
+debugging purposes only.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$unused()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+List of \link{NCVariable}.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-addAuxiliaryLongLat"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-addAuxiliaryLongLat}{}}}
+\subsection{Method \code{addAuxiliaryLongLat()}}{
+Add an auxiliary long-lat variable to the group. This method
+creates a \link{CFAuxiliaryLongLat} from the arguments and adds it to the
+group \code{CFaux} list, but only if the combination of \code{lon}, \code{lat} isn't
+already present.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$addAuxiliaryLongLat(lon, lat, bndsLong, bndsLat)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{lon, lat}}{Instances of \link{NCVariable} having a two-dimensional grid of
+longitude and latitude values, respectively.}
+
+\item{\code{bndsLong, bndsLat}}{Instances of \link{CFBounds} with the 2D bounds of the
+longitude and latitude grid values, respectively, or \code{NULL} when not
+set.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{self} invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-fullnames"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-fullnames}{}}}
+\subsection{Method \code{fullnames()}}{
+This method lists the fully qualified name of this group,
+optionally including names in subgroups.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$fullnames(recursive = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{recursive}}{Should subgroups be scanned for names too (default is
+\code{TRUE})?}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A character vector with group names.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-variables"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-variables}{}}}
+\subsection{Method \code{variables()}}{
+This method lists the CF data variables located in this
+group, optionally including data variables in subgroups.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$variables(recursive = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{recursive}}{Should subgroups be scanned for CF data variables too
+(default is \code{TRUE})?}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A list of \link{CFVariable}.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-axes"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-axes}{}}}
+\subsection{Method \code{axes()}}{
+This method lists the axes located in this group, optionally
+including axes in subgroups.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$axes(recursive = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{recursive}}{Should subgroups be scanned for axes too (default is
+\code{TRUE})?}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A list of \link{CFAxis} descendants.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-grid_mappings"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-grid_mappings}{}}}
+\subsection{Method \code{grid_mappings()}}{
+This method lists the grid mappings located in this group,
+optionally including grid mappings in subgroups.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$grid_mappings(recursive = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{recursive}}{Should subgroups be scanned for grid mappings too
+(default is \code{TRUE})?}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A list of \link{CFGridMapping} instances.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

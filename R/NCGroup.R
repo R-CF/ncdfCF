@@ -1,57 +1,72 @@
 #' NetCDF group
 #'
 #' @description This class represents a netCDF group, the object that holds
-#'   elements like dimensions and variables of a netCDF file. Additionally, the
-#'   group also holds references to any CF objects based on the netCDF elements
-#'   held by the group.
-#'
-#' @details Direct access to groups is usually not necessary. The principal
-#'   objects held by the group, CF data variables and axes, are accessible via
-#'   other means. Only for access to the group attributes is a reference to a
-#'   group required.
-#'
-#' @field resource Access to the underlying netCDF resource.
-#' @field fullname The fully qualified absolute path of the group.
-#' @field parent Parent group of this group, `NULL` for the root group.
-#' @field subgroups List of child `NCGroup`s of this group.
-#' @field NCvars List of netCDF variables that are located in this group.
-#' @field NCdims List of netCDF dimensions that are located in this group.
-#' @field NCUDTs List of netCDF user-defined types that are located in this
+#'   elements like dimensions and variables of a netCDF file. This class also
+#'   holds references to any CF objects based on the netCDF elements held by the
 #'   group.
-#' @field CFvars List of CF data variables in this group. There must be a
-#'   corresponding item in `NCvars` for each item in this list.
-#' @field CFaxes List of axes of CF data variables in this group. There must be
-#'   a corresponding item in `NCvars` for each item in this list. Note that the
-#'   CF data variable(s) that an axis is associated with may be located in a
-#'   different group. Also, objects that further describe the basic axis
-#'   definition, such as its bounds, labels, ancillary data, may be located in a
-#'   different group; all such elements can be accessed directly from the
-#'   [CFAxis] instances that this list holds.
-#' @field CFaux List of auxiliary variables. These could be [CFAxisScalar] or
-#'   [CFAuxiliaryLongLat] that hold longitude and latitude values for every grid
-#'   point in the data variable that references them.
+#'
+#'   Direct access to groups is usually not necessary. The principal objects
+#'   held by the group, CF data variables and axes, are accessible via other
+#'   means. Only for access to the group attributes is a reference to a group
+#'   required.
+#'
 #' @docType class
-#' @name NCGroup
-NULL
-
-#' @export
 NCGroup <- R6::R6Class("NCGroup",
   inherit = NCObject,
   public = list(
+    #' @field resource Access to the underlying netCDF resource.
     resource  = NULL,
-    fullname  = "",
-    parent    = NULL,
-    subgroups = list(), # of NCGroup
-    NCvars    = list(), # of NCVariable
-    NCdims    = list(), # of NCDimension
-    NCudts    = list(), # list of lists of UDTs in RNetCDF format
-    CFvars    = list(), # of CFVariable
-    CFaxes    = list(), # of CFAxis
-    CFlabels  = list(), # of CFLabel
-    CFaux     = list(), # of CFAuxiliaryLongLat
-    CFcrs     = list(), # of CFGridMapping
 
-    #' @noRd
+    #' @field fullname The fully qualified absolute path of the group.
+    fullname  = "",
+
+    #' @field parent Parent group of this group, `NULL` for the root group.
+    parent    = NULL,
+
+    #' @field subgroups List of child `NCGroup` instances of this group.
+    subgroups = list(),
+
+    #' @field NCvars List of netCDF variables that are located in this group.
+    NCvars    = list(),
+
+    #' @field NCdims List of netCDF dimensions that are located in this group.
+    NCdims    = list(),
+
+    #' @field NCudts List of netCDF user-defined types that are located in this
+    #'   group.
+    NCudts    = list(),
+
+    #' @field CFvars List of CF data variables in this group. There must be a
+    #'   corresponding item in `NCvars` for each item in this list.
+    CFvars    = list(),
+
+    #' @field CFaxes List of axes of CF data variables in this group. There must
+    #'   be a corresponding item in `NCvars` for each item in this list. Note
+    #'   that the CF data variable(s) that an axis is associated with may be
+    #'   located in a different group. Also, objects that further describe the
+    #'   basic axis definition, such as its bounds, labels, ancillary data, may
+    #'   be located in a different group; all such elements can be accessed
+    #'   directly from the [CFAxis] instances that this list holds.
+    CFaxes    = list(),
+
+    #' @field CFlabels List of labels located in this group.
+    CFlabels  = list(),
+
+    #' @field CFaux List of auxiliary variables. These could be [CFAxisScalar]
+    #'   or [CFAuxiliaryLongLat] that hold longitude and latitude values for
+    #'   every grid point in the data variable that references them.
+    CFaux     = list(),
+
+    #' @field CFcrs List of grid mappings located in this group.
+    CFcrs     = list(),
+
+    #' @description Create a new instance of this class.
+    #' @param id The identifier of the group.
+    #' @param name The name of the group.
+    #' @param fullname The fully qualified name of the group.
+    #' @param parent The parent group of this group. `NULL` for the root group.
+    #' @param resource Reference to the [CFResource] instance that provides
+    #' access to the netCDF resource.
     initialize = function(id, name, fullname, parent, resource) {
       super$initialize(id, name)
       self$fullname <- fullname
@@ -59,7 +74,7 @@ NCGroup <- R6::R6Class("NCGroup",
       self$resource <- resource
     },
 
-    #' @description Summary of the group
+    #' @description Summary of the group printed to the console.
     #' @param ... Passed on to other methods.
     print = function(...) {
       if (self$name != "/") {
@@ -72,10 +87,13 @@ NCGroup <- R6::R6Class("NCGroup",
       self$print_attributes()
     },
 
-    #' @description Prints the hierarchy of the group and its subgroups to the console,
-    #'   with a summary of contained objects. Usually called from the root group
-    #'   to display the full group hierarchy.
-    hierarchy = function(idx, total) {
+    #' @description Prints the hierarchy of the group and its subgroups to the
+    #'   console, with a summary of contained objects. Usually called from the
+    #'   root group to display the full group hierarchy.
+    #' @param idx,total Arguments to control indentation. Should both be 1 (the
+    #'   default) when called interactively. The values will be updated during
+    #'   recursion when there are groups below the current group.
+    hierarchy = function(idx = 1L, total = 1L) {
       if (idx == total) sep <- "   " else sep <- "|  "
       hier <- paste0("* ", self$name, "\n")
 
@@ -102,12 +120,11 @@ NCGroup <- R6::R6Class("NCGroup",
       hier
     },
 
-    #' Find an object by its name
-    #'
-    #' Given the name of an object, possibly preceded by an absolute or relative
-    #' group path, return the object to the caller. Typically, this method is
-    #' called programmatically; similar interactive use is provided through the
-    #' `[[.CFDataset()` operator.
+    #' @description Find an object by its name. Given the name of an object,
+    #'   possibly preceded by an absolute or relative group path, return the
+    #'   object to the caller. Typically, this method is called
+    #'   programmatically; similar interactive use is provided through the
+    #'   `[[.CFDataset` operator.
     #'
     #' @param name The name of an object, with an optional absolute or relative
     #'   group path from the calling group. The object must either an CF
@@ -198,11 +215,9 @@ NCGroup <- R6::R6Class("NCGroup",
       NULL
     },
 
-    #' Find an NC dimension object by its id
-    #'
-    #' Given the id of a dimension, return the [NCDimension] object to the
-    #' caller. The dimension has to be found in the current group or any of its
-    #' parents.
+    #' @description Find an NC dimension object by its id. Given the id of a
+    #'   dimension, return the [NCDimension] object to the caller. The dimension
+    #'   has to be found in the current group or any of its parents.
     #'
     #' @param id The id of the dimension.
     #'
@@ -221,9 +236,10 @@ NCGroup <- R6::R6Class("NCGroup",
         return(NULL)
     },
 
+    #' @description Find NC variables that are not referenced by CF objects. For
+    #'   debugging purposes only.
+    #' @return List of [NCVariable].
     unused = function() {
-      # Return unused NCVariables. This method is undocumented and is useful
-      # primarily for investigating issues with the netCDF resource.
       vars <- lapply(self$NCvars, function(v) { if (!length(v$CF)) v})
       vars <- vars[lengths(vars) > 0L]
 
@@ -236,16 +252,16 @@ NCGroup <- R6::R6Class("NCGroup",
       vars
     },
 
-    #' Add an auxiliary long-lat variable to the group
-    #'
-    #' This method creates a [CFAuxiliaryLongLat] from the arguments and adds it
-    #' to the group `CFaux` list, but only if the combination of `lon`, `lat`
-    #' isn't already present.
+    #' @description Add an auxiliary long-lat variable to the group. This method
+    #'   creates a [CFAuxiliaryLongLat] from the arguments and adds it to the
+    #'   group `CFaux` list, but only if the combination of `lon`, `lat` isn't
+    #'   already present.
     #'
     #' @param lon,lat Instances of [NCVariable] having a two-dimensional grid of
-    #' longitude and latitude values, respectively.
+    #'   longitude and latitude values, respectively.
     #' @param bndsLong,bndsLat Instances of [CFBounds] with the 2D bounds of the
-    #' longitude and latitude grid values, respectively, or `NULL` when not set.
+    #'   longitude and latitude grid values, respectively, or `NULL` when not
+    #'   set.
     #'
     #' @return `self` invisibly.
     addAuxiliaryLongLat = function(lon, lat, bndsLong, bndsLat) {
@@ -261,13 +277,11 @@ NCGroup <- R6::R6Class("NCGroup",
       invisible(self)
     },
 
-    #' Fully qualified name of the group
+    #' @description This method lists the fully qualified name of this group,
+    #'   optionally including names in subgroups.
     #'
-    #' This method lists the fully qualified name of this group,
-    #' optionally including names in subgroups.
-    #'
-    #' @param recursive Should subgroups be scanned for names too
-    #' (default is `TRUE`)?
+    #' @param recursive Should subgroups be scanned for names too (default is
+    #'   `TRUE`)?
     #'
     #' @return A character vector with group names.
     fullnames = function(recursive = TRUE) {
@@ -276,30 +290,26 @@ NCGroup <- R6::R6Class("NCGroup",
       else self$fullname
     },
 
-    #' List the CF data variables in this group
-    #'
-    #' This method lists the CF data variables located in this group,
-    #' optionally including data variables in subgroups.
+    #' @description This method lists the CF data variables located in this
+    #'   group, optionally including data variables in subgroups.
     #'
     #' @param recursive Should subgroups be scanned for CF data variables too
-    #' (default is `TRUE`)?
+    #'   (default is `TRUE`)?
     #'
-    #' @return A list of `CFVariable`.
+    #' @return A list of [CFVariable].
     variables = function(recursive = TRUE) {
       if (recursive && length(self$subgroups))
         c(self$CFvars, unlist(lapply(self$subgroups, function(g) g$variables(recursive))))
       else self$CFvars
     },
 
-    #' List the axes of CF data variables in this group
-    #'
-    #' This method lists the axes located in this group, optionally including
-    #' axes in subgroups.
+    #' @description This method lists the axes located in this group, optionally
+    #'   including axes in subgroups.
     #'
     #' @param recursive Should subgroups be scanned for axes too (default is
     #'   `TRUE`)?
     #'
-    #' @return A list of `CFAxis` descendants.
+    #' @return A list of [CFAxis] descendants.
     axes = function(recursive = TRUE) {
       if (recursive && length(self$subgroups))
         subaxes <- lapply(self$subgroups, function(g) g$axes(recursive))
@@ -307,15 +317,13 @@ NCGroup <- R6::R6Class("NCGroup",
       c(self$CFaxes, unlist(subaxes))
     },
 
-    #' List the grid mappings of CF data variables in this group
-    #'
-    #' This method lists the grid mappings located in this group, optionally
-    #' including grid mappings in subgroups.
+    #' @description This method lists the grid mappings located in this group,
+    #'   optionally including grid mappings in subgroups.
     #'
     #' @param recursive Should subgroups be scanned for grid mappings too
     #'   (default is `TRUE`)?
     #'
-    #' @return A list of `CFGridMapping` instances.
+    #' @return A list of [CFGridMapping] instances.
     grid_mappings = function(recursive = TRUE) {
       if (recursive && length(self$subgroups))
         subgm <- lapply(self$subgroups, function(g) g$grid_mappings(recursive))
@@ -330,7 +338,8 @@ NCGroup <- R6::R6Class("NCGroup",
         "Group"
     },
 
-    #' @field handle Get the handle to the netCDF resource for the group
+    #' @field handle (read-only) Get the handle to the netCDF resource for the
+    #'   group
     handle = function(value) {
       if (missing(value))
         self$resource$group_handle(self$fullname)

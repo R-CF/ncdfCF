@@ -3,7 +3,6 @@
 \docType{class}
 \name{CFDataset}
 \alias{CFDataset}
-\alias{standard_name}
 \title{CF data set}
 \description{
 This class represents a CF data set, the object that
@@ -11,8 +10,7 @@ encapsulates a netCDF resource. You should never have to instantiate this
 class directly; instead, call \code{\link[=open_ncdf]{open_ncdf()}} which will return an instance
 that has all properties read from the netCDF resource. Class methods can then
 be called, or the base R functions called with this instance.
-}
-\details{
+
 The CF data set instance provides access to all the objects in the
 netCDF resource, organized in groups.
 }
@@ -42,9 +40,13 @@ access methods instead.}
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{resource}}{The connection details of the netCDF resource.}
+\item{\code{resource}}{(read-only) The connection details of the netCDF
+resource. This is for internal use only.}
 
-\item{\code{conventions}}{Returns the conventions that this netCDF resource conforms to.}
+\item{\code{uri}}{(read-only) The connection string to the netCDF resource.}
+
+\item{\code{conventions}}{(read-only) Returns the conventions that this netCDF
+resource conforms to.}
 }
 \if{html}{\out{</div>}}
 }
@@ -60,6 +62,7 @@ access methods instead.}
 \item \href{#method-CFDataset-variables}{\code{CFDataset$variables()}}
 \item \href{#method-CFDataset-axes}{\code{CFDataset$axes()}}
 \item \href{#method-CFDataset-attributes}{\code{CFDataset$attributes()}}
+\item \href{#method-CFDataset-attribute}{\code{CFDataset$attribute()}}
 \item \href{#method-CFDataset-clone}{\code{CFDataset$clone()}}
 }
 }
@@ -93,9 +96,7 @@ reported by the call opening the resource.}
 \if{html}{\out{<a id="method-CFDataset-print"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-print}{}}}
 \subsection{Method \code{print()}}{
-Summary of the data set
-
-Prints a summary of the data set to the console.
+Summary of the data set printed to the console.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFDataset$print()}\if{html}{\out{</div>}}
 }
@@ -105,8 +106,7 @@ Prints a summary of the data set to the console.
 \if{html}{\out{<a id="method-CFDataset-hierarchy"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-hierarchy}{}}}
 \subsection{Method \code{hierarchy()}}{
-Print the group hierarchy to the console
-Get objects by standard_name
+Print the group hierarchy to the console.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFDataset$hierarchy()}\if{html}{\out{</div>}}
 }
@@ -116,11 +116,11 @@ Get objects by standard_name
 \if{html}{\out{<a id="method-CFDataset-objects_by_standard_name"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-objects_by_standard_name}{}}}
 \subsection{Method \code{objects_by_standard_name()}}{
-Several conventions define standard vocabularies for
-physical properties. The standard names from those vocabularies are
-usually stored as the "standard_name" attribute with variables or
-axes. This method retrieves all variables or axes that list
-the specified "standard_name" in its attributes.
+Get objects by standard_name. Several conventions define
+standard vocabularies for physical properties. The standard names from
+those vocabularies are usually stored as the "standard_name" attribute
+with variables or axes. This method retrieves all variables or axes
+that list the specified "standard_name" in its attributes.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFDataset$objects_by_standard_name(standard_name)}\if{html}{\out{</div>}}
 }
@@ -135,37 +135,35 @@ specific "standard_name" value in variables and axes.}
 }
 \subsection{Returns}{
 If argument \code{standard_name} is provided, a character vector of
-variable or axis names. If argument \code{standard_name} is missing or
-an empty string, a named list with all "standard_name" attribute values
-in the the netCDF resource; each list item is named for the variable or
+variable or axis names. If argument \code{standard_name} is missing or an
+empty string, a named list with all "standard_name" attribute values in
+the the netCDF resource; each list item is named for the variable or
 axis.
-Does the netCDF resource have subgroups
-
-Newer versions of the \code{netcdf} library, specifically \code{netcdf4}, can
-organize dimensions and variables in groups. This method will report if
-the data set is indeed organized with subgroups.
 }
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-has_subgroups"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-has_subgroups}{}}}
 \subsection{Method \code{has_subgroups()}}{
+Does the netCDF resource have subgroups? Newer versions of
+the \code{netcdf} library, specifically \code{netcdf4}, can organize dimensions
+and variables in groups. This method will report if the data set is
+indeed organized with subgroups.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFDataset$has_subgroups()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
 Logical to indicate that the netCDF resource uses subgroups.
-Find an object by its name
-
-Given the name of a CF data variable or axis, possibly preceded by an
-absolute group path, return the object to the caller.
 }
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-find_by_name"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-find_by_name}{}}}
 \subsection{Method \code{find_by_name()}}{
+Find an object by its name. Given the name of a CF data
+variable or axis, possibly preceded by an absolute group path, return
+the object to the caller.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFDataset$find_by_name(name, scope = "CF")}\if{html}{\out{</div>}}
 }
@@ -185,48 +183,42 @@ variables.}
 \subsection{Returns}{
 The object with the provided name. If the object is not found,
 returns \code{NULL}.
-List all the CF data variables in this netCDF resource
-
-This method lists the CF data variables located in this netCDF resource,
-including those in subgroups.
 }
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-variables"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-variables}{}}}
 \subsection{Method \code{variables()}}{
+This method lists the CF data variables located in this
+netCDF resource, including those in subgroups.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFDataset$variables()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
-A list of \code{CFVariable}s.
-List all the axes of CF data variables in this netCDF resource
-
-This method lists the axes located in this netCDF resource, including
-axes in subgroups.
+A list of \code{CFVariable} instances.
 }
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-axes"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-axes}{}}}
 \subsection{Method \code{axes()}}{
+This method lists the axes located in this netCDF resource,
+including axes in subgroups.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFDataset$axes()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
 A list of \code{CFAxis} descendants.
-List all the attributes of a group
-
-This method returns a \code{data.frame} containing all the attributes of the
-indicated \code{group}.
 }
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-attributes"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-attributes}{}}}
 \subsection{Method \code{attributes()}}{
+List all the attributes of a group. This method returns a
+\code{data.frame} containing all the attributes of the indicated \code{group}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFDataset$attributes(group)}\if{html}{\out{</div>}}
 }
@@ -241,6 +233,36 @@ argument is missing, the global attributes will be returned.}
 }
 \subsection{Returns}{
 A \code{data.frame} of attributes.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-attribute"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-attribute}{}}}
+\subsection{Method \code{attribute()}}{
+Retrieve global attributes of the data set.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$attribute(att, field = "value")}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{att}}{Vector of character strings of attributes to return.}
+
+\item{\code{field}}{The field of the attributes to return values from. This
+must be "value" (default), "type" or "length".}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+If the \code{field} argument is "type" or "length", a character vector
+named with the \code{att} values that were found in the attributes. If
+argument \code{field} is "value", a list with elements named with the \code{att}
+values, containing the attribute value(s), except when argument \code{att}
+names a single attribute, in which case that attribute value is
+returned as a character string. If no attribute is named with a value
+of argument \code{att} an empty list is returned, or an empty string if
+there was only one value in argument \code{att}.
 }
 }
 \if{html}{\out{<hr>}}

@@ -8,7 +8,7 @@
 #' longitude, latitude and vertical axes.
 #'
 #' @docType class
-#'
+#' @export
 CFAxisScalar <- R6::R6Class("CFAxisScalar",
   inherit = CFAxis,
   public = list(
@@ -26,9 +26,7 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
       self$value <- value
     },
 
-    #' @description Summary of the scalar axis
-    #'
-    #' Prints a summary of the scalar axis to the console.
+    #' @description Summary of the scalar axis printed to the console.
     print = function() {
       cat("<", self$friendlyClassName, "> ", self$name, "\n", sep = "")
       if (self$group$name != "/")
@@ -50,7 +48,9 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
       self$print_attributes()
     },
 
-    #' @description Retrieve a 1-row data.frame with some information on this axis.
+    #' @description Some details of the axis.
+    #'
+    #' @return A 1-row `data.frame` with some details of the axis.
     brief = function() {
       longname <- self$attribute("long_name")
       if (!nzchar(longname) || longname == self$name) longname <- ""

@@ -7,9 +7,9 @@
 \description{
 This class represents a parametric vertical axis. It is defined
 through an index value that is contained in the axis, with additional
-\link{NCVariable}s that hold ancillary data with which to calculate dimensional
-axis values. It is used in atmosphere and ocean data sets. Non-parametric
-vertical axes are stored in an \link{CFAxisNumeric}.
+\link{NCVariable} instances that hold ancillary data with which to calculate
+dimensional axis values. It is used in atmosphere and ocean data sets.
+Non-parametric vertical axes are stored in an \link{CFAxisNumeric} instance.
 }
 \references{
 https://cfconventions.org/Data/cf-conventions/cf-conventions-1.11/cf-conventions.html#parametric-vertical-coordinate
@@ -23,7 +23,8 @@ https://cfconventions.org/Data/cf-conventions/cf-conventions-1.11/cf-conventions
 \item{\code{parameter_name}}{The 'standard_name' attribute of the \link{NCVariable}
 that identifies the parametric form of this axis.}
 
-\item{\code{computed_name}}{The standard name for the computed values of the axis.}
+\item{\code{computed_name}}{The standard name for the computed values of the
+axis.}
 
 \item{\code{computed_units}}{The unit of the computed values of the axis.}
 }
@@ -34,7 +35,7 @@ that identifies the parametric form of this axis.}
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{formula_terms}}{(read-only) A \code{data.frame} with the "formula_terms"
+\item{\code{formula_terms}}{A \code{data.frame} with the "formula_terms"
 to calculate the parametric axis values.}
 
 \item{\code{dimnames}}{(read-only) The coordinates of the axis.}

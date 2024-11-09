@@ -1,15 +1,16 @@
 #' Parametric vertical CF axis object
 #'
 #' @description This class represents a parametric vertical axis. It is defined
-#' through an index value that is contained in the axis, with additional
-#' [NCVariable]s that hold ancillary data with which to calculate dimensional
-#' axis values. It is used in atmosphere and ocean data sets. Non-parametric
-#' vertical axes are stored in an [CFAxisNumeric].
+#'   through an index value that is contained in the axis, with additional
+#'   [NCVariable] instances that hold ancillary data with which to calculate
+#'   dimensional axis values. It is used in atmosphere and ocean data sets.
+#'   Non-parametric vertical axes are stored in an [CFAxisNumeric] instance.
 #'
-#' @references https://cfconventions.org/Data/cf-conventions/cf-conventions-1.11/cf-conventions.html#parametric-vertical-coordinate
+#' @references
+#'   https://cfconventions.org/Data/cf-conventions/cf-conventions-1.11/cf-conventions.html#parametric-vertical-coordinate
 #'
 #' @docType class
-#'
+#' @export
 CFAxisVertical <- R6::R6Class("CFAxisVertical",
   inherit = CFAxisNumeric,
   private = list(
@@ -31,7 +32,8 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     #' that identifies the parametric form of this axis.
     parameter_name = "",
 
-    #' @field computed_name The standard name for the computed values of the axis.
+    #' @field computed_name The standard name for the computed values of the
+    #'   axis.
     computed_name = "",
 
     #' @field computed_units The unit of the computed values of the axis.
@@ -56,7 +58,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
         "Parametric vertical axis"
     },
 
-    #' @field formula_terms (read-only) A `data.frame` with the "formula_terms"
+    #' @field formula_terms A `data.frame` with the "formula_terms"
     #' to calculate the parametric axis values.
     formula_terms = function(value) {
       if (missing(value))

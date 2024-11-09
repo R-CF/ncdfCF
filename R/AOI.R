@@ -1,11 +1,9 @@
 #' Region of Interest class
 #'
-#' @description This class represents an area of interest for analysis.
-#'
-#' @details See [aoi()] for details.
+#' @description This class represents an area of interest for analysis. See
+#'   [aoi()] for details.
 #'
 #' @docType class
-#'
 AOI <- R6::R6Class("AOI",
   private = list(
     minLon  = NULL,
@@ -18,11 +16,11 @@ AOI <- R6::R6Class("AOI",
     #' @field aux The [CFAuxiliaryLongLat] instance using this AOI.
     aux        = NULL,
 
-    #' @description Creating an instance of the class
+    #' @description Creating an instance of the class.
     #' @param lonMin,lonMax,latMin,latMax The minimum and maximum values of the
-    #'   longitude and latitude of the AOI, in decimal degrees. The longitude values
-    #'   must agree with the range of the longitude in the variable to which this
-    #'   AOI will be applied, e.g. `[-180,180]` or `[0,360]`.
+    #'   longitude and latitude of the AOI, in decimal degrees. The longitude
+    #'   values must agree with the range of the longitude in the variable to
+    #'   which this AOI will be applied, e.g. `[-180,180]` or `[0,360]`.
     #' @param resolution The separation between adjacent grid cell, in longitude
     #'   and latitude directions, in decimal degrees.
     initialize = function(lonMin, lonMax, latMin, latMax, resolution) {
@@ -33,7 +31,7 @@ AOI <- R6::R6Class("AOI",
       private$res <- resolution
     },
 
-    #' @description Summary of the area of interest
+    #' @description Summary of the area of interest printed to the console.
     print = function() {
       cat("<Area of Interest>\n")
       if (!is.null(self$aux))
