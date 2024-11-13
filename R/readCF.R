@@ -22,8 +22,7 @@
 #' fn <- system.file("extdata",
 #'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20230101-20231231_vncdfCF.nc",
 #'   package = "ncdfCF")
-#' ds <- open_ncdf(fn)
-#' ds
+#' (ds <- open_ncdf(fn))
 open_ncdf <- function(resource, keep_open = FALSE) {
   # Parameter check
   if (length(resource) != 1L && !is.character(resource))
@@ -47,12 +46,26 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   # Identify axes: NUG coordinate variables
   axes <- .buildAxes(root, list())
 
-  # Mop up any non-CV dimensions - additional to CF Conventions
+  # Find the id's of any "bounds" variables
+  bnds <- sapply(root$NCvars, function(v) {
+    nm <- v$attribute("bounds")
+    if (nzchar(nm)) {
+      obj <- v$group$find_by_name(nm, "NC")
+      if (is.null(obj)) {
+        # FIXME: warning
+        -1L
+      } else obj$dimids[1L] # By definition, bounds dimid comes first
+    } else -1L # Flag no bounds
+  })
+  if (length(bnds))
+    bnds <- unique(bnds[which(bnds > -1L)])
+
+  # Mop up any non-CV dimensions except bounds - additional to CF Conventions
   all_axis_dims <- sapply(axes, function(x) x$dimid)
   all_axis_dims <- all_axis_dims[!is.na(all_axis_dims)]
   all_var_dims <- unique(unlist(sapply(root$NCvars, function(v) v$dimids)))
   all_var_dims <- all_var_dims[!is.na(all_var_dims)]
-  add_dims <- all_var_dims[!(all_var_dims %in% all_axis_dims)]
+  add_dims <- all_var_dims[!(all_var_dims %in% c(all_axis_dims, bnds))]
   if (length(add_dims)) {
     axes <- append(axes, .addBareDimensions(root, add_dims))
     names(root$CFaxes) <- sapply(root$CFaxes, function(x) x$name)
@@ -71,6 +84,37 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 
   ds$root <- root
   ds
+}
+
+#' Examine a netCDF resource
+#'
+#' This function will read a netCDF resource and return a list of identifying
+#' information, including data variables, axes and global attributes. Upon
+#' returning the netCDF resource is closed.
+#'
+#' If you find that you need other information to be included in the result,
+#' open an issue: https://github.com/pvanlaake/ncdfCF/issues.
+#'
+#' @param resource The name of the netCDF resource to open, either a local file
+#'   name or a remote URI.
+#'
+#' @return A list with elements "variables", "axes" and global "attributes",
+#' each a `data.frame`.
+#' @export
+#' @examples
+#' fn <- system.file("extdata",
+#'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20230101-20231231_vncdfCF.nc",
+#'   package = "ncdfCF")
+#' peek_ncdf(fn)
+peek_ncdf <- function(resource) {
+  ds <- open_ncdf(resource)
+  grps <- ds$has_subgroups()
+  if (inherits(ds, "CFDataset")) {
+    list(uri = ds$uri,
+         variables  = do.call(rbind, lapply(ds$variables(), function(v) v$peek(grps))),
+         axes       = do.call(rbind, lapply(ds$axes(), function(a) a$peek(grps))),
+         attributes = ds$attributes())
+  } else list()
 }
 
 #' Read a group from a netCDF dataset
@@ -160,6 +204,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
     local_vars <- grp$NCvars[dim_names]
     local_CVs <- local_vars[lengths(local_vars) > 0L]
     axes <- lapply(local_CVs, function(v) .makeAxis(grp, v, visible_dims[[v$name]]))
+
     grp$CFaxes <- append(grp$CFaxes, unlist(axes))
   } else axes <- list()
 
@@ -446,13 +491,17 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 }
 
 # Utility function to read bounds values
+# grp - the current group being processed
+# bounds - the name of the "bounds" variable, or NULL if no bounds present
+# axis_dims - number of axes on the coordinate variable; usually 1 but could be
+# 2 on an auxiliary coordinate variable
 .readBounds <- function(grp, bounds, axis_dims = 1L) {
   if (is.null(bounds)) NULL
   else {
     NCbounds <- grp$find_by_name(bounds, "NC")
     if (is.null(NCbounds)) NULL
     else {
-      bnds <- try(RNetCDF::var.get.nc(grp$handle, bounds, collapse = FALSE), silent = TRUE)
+      bnds <- try(RNetCDF::var.get.nc(NCbounds$group$handle, bounds, collapse = FALSE), silent = TRUE)
       if (inherits(bnds, "try-error")) NULL
       else {
         if (length(dim(bnds)) == 3L && axis_dims == 1L) { # Never seen more dimensions than this

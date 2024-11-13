@@ -15,8 +15,6 @@ See also \link{CFAxisCharacter}, which is an axis with character labels.
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{group}}{The \link{NCGroup} that this axis is located in.}
-
 \item{\code{NCdim}}{The \link{NCDimension} that stores the netCDF dimension details.}
 
 \item{\code{values}}{The label values, a character vector.}

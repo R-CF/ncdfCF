@@ -4,7 +4,7 @@
 \alias{makeLongitudeAxis}
 \title{Create a longitude axis}
 \usage{
-makeLongitudeAxis(id, name, group, length, values, bounds, units)
+makeLongitudeAxis(id, name, group, length, values, bounds = NULL, units = "")
 }
 \arguments{
 \item{id}{Id of the axis.}
@@ -25,5 +25,6 @@ makeLongitudeAxis(id, name, group, length, values, bounds, units)
 A \code{CFAxisLongitude} instance.
 }
 \description{
-Create a longitude axis
+With this method you can create a longitude axis to use with new \link{CFData}
+instances.
 }

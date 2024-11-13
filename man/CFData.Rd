@@ -34,8 +34,6 @@ recognized by the different format.
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{group}}{The \link{NCGroup} that this variable is defined in.}
-
 \item{\code{value}}{The data of this object. The structure of the data depends
 on the method that produced it. Typical structures are an array or a
 \code{data.table}.}

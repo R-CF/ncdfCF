@@ -1,5 +1,10 @@
 #' Create a group in memory to hold CF objects
 #'
+#' With this function a group is created in memory, i.e. not associated with a
+#' netCDF resource on file. This can be used to prepare new CF objects before
+#' writing them to file. Extracting data from a `CFVariable` into a [CFData]
+#' instance will also create a memory group.
+#'
 #' @param id The id of the group.
 #' @param name The name of the group.
 #' @param fullname The full path and name of the group.
@@ -14,6 +19,9 @@ makeMemoryGroup <- function(id, name, fullname, title, history) {
 
 #' Create a longitude axis
 #'
+#' With this method you can create a longitude axis to use with new [CFData]
+#' instances.
+#'
 #' @param id Id of the axis.
 #' @param name Name of the axis.
 #' @param group Group to place the axis in.
@@ -24,9 +32,9 @@ makeMemoryGroup <- function(id, name, fullname, title, history) {
 #'
 #' @return A `CFAxisLongitude` instance.
 #' @export
-makeLongitudeAxis <- function(id, name, group, length, values, bounds, units) {
+makeLongitudeAxis <- function(id, name, group, length, values, bounds = NULL, units = "") {
   var <- NCVariable$new(id, name, group, "NC_DOUBLE", 1L, NULL)
-  var$attributes <- data.frame(id = 0, name = "units", type = "NC_CHAR", length = nchar(units), value = units)
+  var$attributes <- data.frame(id = 0L, name = "units", type = "NC_CHAR", length = nchar(units), value = units)
   dim <- NCDimension$new(-1L, name, length, FALSE)
   axis <- CFAxisLongitude$new(group, var, dim, values)
   if (!is.null(bounds)) {
@@ -37,6 +45,9 @@ makeLongitudeAxis <- function(id, name, group, length, values, bounds, units) {
 }
 
 #' Create a latitude axis
+#'
+#' With this method you can create a longitude axis to use with new [CFData]
+#' instances.
 #'
 #' @param id Id of the axis.
 #' @param name Name of the axis.

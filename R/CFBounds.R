@@ -22,7 +22,7 @@ CFBounds <- R6::R6Class("CFBounds",
     #' @param nc_var The NC variable that describes this instance.
     #' @param values A matrix with the bounds values.
     initialize = function(nc_var, values) {
-      super$initialize(nc_var)
+      super$initialize(nc_var, nc_var$group)
       self$values <- values
       private$dims <- as.integer(dim(values))
 

@@ -42,7 +42,6 @@ Collate:
     'CFObject.R'
     'CFResource.R'
     'CFVariable.R'
-    'CFread.R'
     'MemoryGroup.R'
     'NCDimension.R'
     'NCGroup.R'
@@ -50,6 +49,7 @@ Collate:
     'NCVariable.R'
     'makeCFObjects.R'
     'ncdfCF-package.R'
+    'readCF.R'
     'utils.R'
     'wkt2.R'
 Suggests: 

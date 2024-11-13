@@ -9,9 +9,6 @@
 CFLabel <- R6::R6Class("CFLabel",
   inherit = CFObject,
   public = list(
-    #' @field group The [NCGroup] that this axis is located in.
-    group       = NULL,
-
     #' @field NCdim The [NCDimension] that stores the netCDF dimension details.
     NCdim       = NULL,
 
@@ -24,8 +21,7 @@ CFLabel <- R6::R6Class("CFLabel",
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
     #' @param values Character vector of the label values.
     initialize = function(grp, nc_var, nc_dim, values) {
-      super$initialize(nc_var)
-      self$group <- grp
+      super$initialize(nc_var, grp)
       self$NCdim <- nc_dim
       self$values <- trimws(values)
 

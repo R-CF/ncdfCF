@@ -72,9 +72,6 @@ CFData <- R6::R6Class("CFData",
     }
   ),
   public = list(
-    #' @field group The [NCGroup] that this variable is defined in.
-    group = NULL,
-
     #' @field value The data of this object. The structure of the data depends
     #' on the method that produced it. Typical structures are an array or a
     #' `data.table`.
@@ -103,9 +100,8 @@ CFData <- R6::R6Class("CFData",
     initialize = function(name, group, value, axes, crs, attributes) {
       var <- NCVariable$new(-1L, name, group, "NC_FLOAT", 0L, NULL)
       var$attributes <- attributes
-      super$initialize(var)
+      super$initialize(var, group)
 
-      self$group <- group
       self$value <- value
       self$axes <- axes
       self$crs <- crs

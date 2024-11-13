@@ -6,6 +6,7 @@ editor_options:
 
 # ncdfCF (development version)
 
+-   Function `peek_ncdf()` returns quick-view information on a netCDF resource.
 -   String-valued labels for discrete and generic numeric axes are now
     supported, including multiple label sets per axis. The labels are
     associated with an axis rather than a data variable (as the CF
@@ -17,6 +18,10 @@ editor_options:
 -   `NCGroup::unused()` method identifies unused `NCVariable`s to aid in
     finding issues with netCDF resources.
 -   `print()` method for `NCVariable` and `NCDimension`.
+-   Method `CFObject$fullname` added, giving fully-qualified CF object name.
+-   "Axis" associated with bounds variable is no longer created.
+-   Reference to a containing `NCGroup` moved down to `CFObject` for CF 
+    objects.
 -   Minor code fixes.
 -   Documentation extended and formatting fixed, new vignette.
 

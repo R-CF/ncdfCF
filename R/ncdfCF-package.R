@@ -10,16 +10,17 @@
 #' Conventions is widely used for distributing files with climate observations
 #' or projections, including the Coupled Model Intercomparison Project (CMIP)
 #' data used by climate change scientists and the Intergovernmental Panel on
-#' Climate Change (IPCC).
+#' Climate Change (IPCC), as well as large collections of satellite imagery,
+#' including from Landsat and MODIS.
 #'
 #' This package currently supports group traversal with scoping rules, axis
 #' determination and interpretation, including auxiliary axes, time axis
 #' interpretation with all 9 defined calendars, grid mapping, use of
-#' bounds data, read and interpret attributes of groups (including global
+#' bounds data, reading and interpreting attributes of groups (including global
 #' attributes) and variables, search for and use of standard names. Some
 #' specific constructs in CF are also supported:
 #'  * Axes can be oriented to access the data in the familiar R arrangement
-#'  (CF allows any data arrangement and most data sets indeed use an arrangment
+#'  (CF allows any data arrangement and most data sets indeed use an arrangement
 #'  that is not immediately useful in R).
 #'  * The `CFVariable::subset()` function allows one to select subsets of data
 #'  using coordinate values along the axes (such as latitude values, or points
@@ -45,6 +46,9 @@
 #' a THREDDS server, or through any other means supported by the `RNetCDF`
 #' package. The return value is a `CFDataset`. Note that resources are
 #' automatically closed.
+#' * [peek_ncdf()]: Rapid inspection of objects in a netCDF resource, returning
+#' information on variables, axes and global attributes with which intelligent
+#' inferences can be made about a netCDF resource.
 #'
 #' **Data set**
 #'
@@ -62,7 +66,8 @@
 #' all objects of the specific type found in the data set.
 #' * `find_by_name()`: Find a named object in the data set. This can be a data
 #' variable, an axis, or a grid mapping object. A short-hand method to achieve
-#' the same is the `[[` operator.
+#' the same is the `[[` operator. This also supports scanning for objects in
+#' hierarchical groups in `netcdf4` resources.
 #' * `objects_by_standard_name()`: Find objects that use a specific value for
 #' the "standard_name" attribute, or return all objects that have such the
 #' "standard_name" attribute irrespective of its value.
@@ -81,8 +86,8 @@
 #' detailed information on the data variable and there are functions to access
 #' the data, with different selection methods.
 #'
-#' * `show()`, `brief()`, and `shard()`: Print (increasingly more compact)
-#' information to the console for a data variable.
+#' * `show()`, `brief()`, and `shard()`: Print to the console or return to the
+#' caller (increasingly more compact) information on a data variable.
 #' * `name`, `id`: Basic properties of the data variable.
 #' * `axes()`: List of `CFAxis` objects representing the axes that the data
 #' variable uses.
@@ -103,7 +108,7 @@
 #'
 #' * [dim()], [dimnames()]: Vector of the dimension lengths and values of the
 #' axes of the data variable.
-#' * `[]`[bracket_select]: Select the entire data variable or a part thereof
+#' * `[]` ([bracket_select]): Select the entire data variable or a part thereof
 #' using index values, returning an array of data values.
 #'
 #' **Axis**
@@ -124,7 +129,9 @@
 #' * [CFAxisCharacter] is for axes that use character labels as categorical
 #' values.
 #' * [CFAxisDiscrete] is for axes that don't have any intrinsic coordinate
-#' values, instead the ordinal values along the axis are used.
+#' values, instead the ordinal values along the axis are used. Labels can be
+#' associated with the discrete axis using a [CFLabel] instance (also works with
+#' generic numeric axes).
 #' * [CFAxisScalar] is an axis of length 1 of any type. This axis is not
 #' included in the data array of the data variable, it is mostly useful to
 #' record a specific property of the data variable, such as observation time or
@@ -132,8 +139,8 @@
 #'
 #' Methods for `CFAxis` instances:
 #'
-#' * `show()`, `brief()`, and `shard()`: Print (increasingly more compact)
-#' information to the console for an axis.
+#' * `show()`, `brief()`, and `shard()`: Print to the console or return to the
+#' caller (increasingly more compact) information on an axis.
 #' * `name`, `id`: Basic properties of the axis.
 #' * `indexOf()`: Retrieve the sub-range of the axis that encompasses the
 #' physical values passed.

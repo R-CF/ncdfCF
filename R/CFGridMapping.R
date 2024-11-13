@@ -12,8 +12,12 @@ CRS_names <- c("albers_conical_equal_area", "azimuthal_equidistant",
 #' @description This class contains the details for a coordinate reference
 #' system, or grid mapping in CF terms, of a data variable.
 #'
-#' @docType class
+#' When reporting the coordinate reference system to the caller, a character
+#' string in WKT2 format is returned, following the OGC standard.
 #'
+#' @references https://docs.ogc.org/is/18-010r11/18-010r11.pdf
+#'
+#' @docType class
 #' @export
 CFGridMapping <- R6::R6Class("CFGridMapping",
   inherit = CFObject,
@@ -638,9 +642,6 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
   ),
 
   public = list(
-    #' @field group The [NCGroup] that this grid mapping is located in.
-    group = NULL,
-
     #' @field grid_mapping_name The name of the grid mapping.
     grid_mapping_name = "",
 
@@ -649,8 +650,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param name The formal grid mapping name from the attribute.
     initialize = function(grp, nc_var, name) {
-      super$initialize(nc_var)
-      self$group <- grp
+      super$initialize(nc_var, grp)
 
       if(!(name %in% CRS_names))
         stop("Unsupported grid mapping: ", name)

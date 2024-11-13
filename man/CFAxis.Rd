@@ -14,8 +14,6 @@ axes. More useful classes use this class as ancestor.
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{group}}{The \link{NCGroup} that this axis is located in.}
-
 \item{\code{NCdim}}{The \link{NCDimension} that stores the netCDF dimension details.
 This is \code{NULL} for \link{CFAxisScalar} instances.}
 
@@ -50,6 +48,7 @@ value must be an instance of \link{CFLabel}.}
 \item \href{#method-CFAxis-print}{\code{CFAxis$print()}}
 \item \href{#method-CFAxis-brief}{\code{CFAxis$brief()}}
 \item \href{#method-CFAxis-shard}{\code{CFAxis$shard()}}
+\item \href{#method-CFAxis-peek}{\code{CFAxis$peek()}}
 \item \href{#method-CFAxis-time}{\code{CFAxis$time()}}
 \item \href{#method-CFAxis-sub_axis}{\code{CFAxis$sub_axis()}}
 \item \href{#method-CFAxis-indexOf}{\code{CFAxis$indexOf()}}
@@ -133,6 +132,28 @@ with similar information from other axes.
 
 \subsection{Returns}{
 Character string with very basic axis information.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-peek"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-peek}{}}}
+\subsection{Method \code{peek()}}{
+Retrieve interesting details of the axis.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$peek(with_groups = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{with_groups}}{Should group information be included? The save option
+is \code{TRUE} (default) when the netCDF resource has groups because names may
+be duplicated among objects in different groups.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A 1-row \code{data.frame} with details of the axis.
 }
 }
 \if{html}{\out{<hr>}}

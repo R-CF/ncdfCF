@@ -7,6 +7,12 @@
 \description{
 This class contains the details for a coordinate reference
 system, or grid mapping in CF terms, of a data variable.
+
+When reporting the coordinate reference system to the caller, a character
+string in WKT2 format is returned, following the OGC standard.
+}
+\references{
+https://docs.ogc.org/is/18-010r11/18-010r11.pdf
 }
 \section{Super class}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFGridMapping}
@@ -14,8 +20,6 @@ system, or grid mapping in CF terms, of a data variable.
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{group}}{The \link{NCGroup} that this grid mapping is located in.}
-
 \item{\code{grid_mapping_name}}{The name of the grid mapping.}
 }
 \if{html}{\out{</div>}}

@@ -7,9 +7,6 @@
 CFAxis <- R6::R6Class("CFAxis",
   inherit = CFObject,
   public = list(
-    #' @field group The [NCGroup] that this axis is located in.
-    group = NULL,
-
     #' @field NCdim The [NCDimension] that stores the netCDF dimension details.
     #' This is `NULL` for [CFAxisScalar] instances.
     NCdim = NULL,
@@ -38,8 +35,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   when not known or relevant.
     #' @return A basic `CFAxis` object.
     initialize = function(grp, nc_var, nc_dim, orientation) {
-      super$initialize(nc_var)
-      self$group <- grp
+      super$initialize(nc_var, grp)
       self$NCdim <- nc_dim
       self$orientation <- orientation
 
@@ -84,6 +80,21 @@ CFAxis <- R6::R6Class("CFAxis",
     #' @return Character string with very basic axis information.
     shard = function() {
       self$NCdim$shard()
+    },
+
+    #' @description Retrieve interesting details of the axis.
+    #' @param with_groups Should group information be included? The save option
+    #' is `TRUE` (default) when the netCDF resource has groups because names may
+    #' be duplicated among objects in different groups.
+    #' @return A 1-row `data.frame` with details of the axis.
+    peek = function(with_groups = TRUE) {
+      out <- data.frame(class = class(self)[1L], id = self$id)
+      if (with_groups) out$group <- self$group$fullname
+      out$name <- self$name
+      out$long_name <- self$attribute("long_name")
+      out$standard_name <- self$attribute("standard_name")
+      out$units <- self$attribute("units")
+      out
     },
 
     #' @description Return the `CFtime` instance that represents time. This
@@ -162,8 +173,10 @@ CFAxis <- R6::R6Class("CFAxis",
 
     #' @field dimid (read-only) The netCDF dimension id of this axis.
     dimid = function(value) {
-      if (missing(value))
-        self$NCdim$id
+      if (missing(value)) {
+        if (inherits(self$NCdim, "NCDimension")) self$NCdim$id
+        else -1L
+      }
     },
 
     #' @field length (read-only) The declared length of this axis.

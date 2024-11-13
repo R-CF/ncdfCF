@@ -21,5 +21,8 @@ makeMemoryGroup(id, name, fullname, title, history)
 A \code{MemoryGroup} instance.
 }
 \description{
-Create a group in memory to hold CF objects
+With this function a group is created in memory, i.e. not associated with a
+netCDF resource on file. This can be used to prepare new CF objects before
+writing them to file. Extracting data from a \code{CFVariable} into a \link{CFData}
+instance will also create a memory group.
 }

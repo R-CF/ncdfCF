@@ -19,8 +19,6 @@ etc.
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{group}}{The \link{NCGroup} that this variable is defined in.}
-
 \item{\code{axes}}{List of instances of classes descending from \link{CFAxis} that
 are the axes of the variable.}
 
@@ -50,6 +48,7 @@ description of the variable as a WKT2 string.}
 \item \href{#method-CFVariable-print}{\code{CFVariable$print()}}
 \item \href{#method-CFVariable-brief}{\code{CFVariable$brief()}}
 \item \href{#method-CFVariable-shard}{\code{CFVariable$shard()}}
+\item \href{#method-CFVariable-peek}{\code{CFVariable$peek()}}
 \item \href{#method-CFVariable-data}{\code{CFVariable$data()}}
 \item \href{#method-CFVariable-subset}{\code{CFVariable$subset()}}
 \item \href{#method-CFVariable-clone}{\code{CFVariable$clone()}}
@@ -123,6 +122,28 @@ variables.
 
 \subsection{Returns}{
 Character string with very basic variable information.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-peek"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-peek}{}}}
+\subsection{Method \code{peek()}}{
+Retrieve interesting details of the data variable.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$peek(with_groups = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{with_groups}}{Should group information be included? The save option
+is \code{TRUE} (default) when the netCDF resource has groups because names may
+be duplicated among objects in different groups.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A 1-row \code{data.frame} with details of the data variable.
 }
 }
 \if{html}{\out{<hr>}}

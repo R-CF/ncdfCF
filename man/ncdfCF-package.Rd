@@ -16,18 +16,19 @@ for climate and forecasting data, current version 1.11. The CF Metadata
 Conventions is widely used for distributing files with climate observations
 or projections, including the Coupled Model Intercomparison Project (CMIP)
 data used by climate change scientists and the Intergovernmental Panel on
-Climate Change (IPCC).
+Climate Change (IPCC), as well as large collections of satellite imagery,
+including from Landsat and MODIS.
 }
 \details{
 This package currently supports group traversal with scoping rules, axis
 determination and interpretation, including auxiliary axes, time axis
 interpretation with all 9 defined calendars, grid mapping, use of
-bounds data, read and interpret attributes of groups (including global
+bounds data, reading and interpreting attributes of groups (including global
 attributes) and variables, search for and use of standard names. Some
 specific constructs in CF are also supported:
 \itemize{
 \item Axes can be oriented to access the data in the familiar R arrangement
-(CF allows any data arrangement and most data sets indeed use an arrangment
+(CF allows any data arrangement and most data sets indeed use an arrangement
 that is not immediately useful in R).
 \item The \code{CFVariable::subset()} function allows one to select subsets of data
 using coordinate values along the axes (such as latitude values, or points
@@ -54,6 +55,9 @@ directed to other packages for such functionality.
 a THREDDS server, or through any other means supported by the \code{RNetCDF}
 package. The return value is a \code{CFDataset}. Note that resources are
 automatically closed.
+\item \code{\link[=peek_ncdf]{peek_ncdf()}}: Rapid inspection of objects in a netCDF resource, returning
+information on variables, axes and global attributes with which intelligent
+inferences can be made about a netCDF resource.
 }
 
 \strong{Data set}
@@ -72,7 +76,8 @@ Metadata Conventions use a "CF-1.*" label.
 all objects of the specific type found in the data set.
 \item \code{find_by_name()}: Find a named object in the data set. This can be a data
 variable, an axis, or a grid mapping object. A short-hand method to achieve
-the same is the \code{[[} operator.
+the same is the \code{[[} operator. This also supports scanning for objects in
+hierarchical groups in \code{netcdf4} resources.
 \item \code{objects_by_standard_name()}: Find objects that use a specific value for
 the "standard_name" attribute, or return all objects that have such the
 "standard_name" attribute irrespective of its value.
@@ -93,8 +98,8 @@ A \link{CFVariable} contains a single data variable from a data set. It contains
 detailed information on the data variable and there are functions to access
 the data, with different selection methods.
 \itemize{
-\item \code{show()}, \code{brief()}, and \code{shard()}: Print (increasingly more compact)
-information to the console for a data variable.
+\item \code{show()}, \code{brief()}, and \code{shard()}: Print to the console or return to the
+caller (increasingly more compact) information on a data variable.
 \item \code{name}, \code{id}: Basic properties of the data variable.
 \item \code{axes()}: List of \code{CFAxis} objects representing the axes that the data
 variable uses.
@@ -116,7 +121,7 @@ native CRS to latitude-longitude.
 \itemize{
 \item \code{\link[=dim]{dim()}}, \code{\link[=dimnames]{dimnames()}}: Vector of the dimension lengths and values of the
 axes of the data variable.
-\item \verb{[]}\link{bracket_select}: Select the entire data variable or a part thereof
+\item \verb{[]} (\link{bracket_select}): Select the entire data variable or a part thereof
 using index values, returning an array of data values.
 }
 
@@ -138,7 +143,9 @@ deals with the complexities of all of these. Functionality is provided by the
 \item \link{CFAxisCharacter} is for axes that use character labels as categorical
 values.
 \item \link{CFAxisDiscrete} is for axes that don't have any intrinsic coordinate
-values, instead the ordinal values along the axis are used.
+values, instead the ordinal values along the axis are used. Labels can be
+associated with the discrete axis using a \link{CFLabel} instance (also works with
+generic numeric axes).
 \item \link{CFAxisScalar} is an axis of length 1 of any type. This axis is not
 included in the data array of the data variable, it is mostly useful to
 record a specific property of the data variable, such as observation time or
@@ -147,8 +154,8 @@ a constant height or depth of the data.
 
 Methods for \code{CFAxis} instances:
 \itemize{
-\item \code{show()}, \code{brief()}, and \code{shard()}: Print (increasingly more compact)
-information to the console for an axis.
+\item \code{show()}, \code{brief()}, and \code{shard()}: Print to the console or return to the
+caller (increasingly more compact) information on an axis.
 \item \code{name}, \code{id}: Basic properties of the axis.
 \item \code{indexOf()}: Retrieve the sub-range of the axis that encompasses the
 physical values passed.

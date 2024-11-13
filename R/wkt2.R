@@ -1,3 +1,10 @@
+# All functions in this file return a string that describes an component of a
+# coordinate reference system, following the OGC standard available at:
+# https://docs.ogc.org/is/18-010r11/18-010r11.pdf.
+
+# The epsg_* data.frames used in the functions are contained in sysdata.rda and
+# thus automatically loaded with the package.
+
 .wkt2_id <- function(epsg_code) {
   paste0('ID["EPSG",', epsg_code, ']')
 }

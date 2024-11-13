@@ -14,8 +14,8 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
 #'
 #' @return data.frame with slim columns
 #' @noRd
-.slim.data.frame <- function(df, width = 50) {
-  maxw <- width - 3
+.slim.data.frame <- function(df, width = 50L) {
+  maxw <- width - 3L
   out <- as.data.frame(lapply(df, function(c) {
     if (is.list(c)) c <- sapply(c, paste0, collapse = ", ")
     if (!is.character(c)) c

@@ -127,9 +127,6 @@ CFVariable <- R6::R6Class("CFVariable",
     }
   ),
   public = list(
-    #' @field group The [NCGroup] that this variable is defined in.
-    group = NULL,
-
     #' @field axes List of instances of classes descending from [CFAxis] that
     #'   are the axes of the variable.
     axes  = list(),
@@ -146,8 +143,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @param axes List of [CFAxis] instances that describe the dimensions.
     #' @return An instance of this class.
     initialize = function(grp, nc_var, axes) {
-      super$initialize(nc_var)
-      self$group <- grp
+      super$initialize(nc_var, grp)
       self$axes <- axes
 
       nc_var$CF <- self
@@ -202,6 +198,25 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @return Character string with very basic variable information.
     shard = function() {
       self$NCvar$shard()
+    },
+
+    #' @description Retrieve interesting details of the data variable.
+    #' @param with_groups Should group information be included? The save option
+    #' is `TRUE` (default) when the netCDF resource has groups because names may
+    #' be duplicated among objects in different groups.
+    #' @return A 1-row `data.frame` with details of the data variable.
+    peek = function(with_groups = TRUE) {
+      out <- data.frame(id = self$id)
+      if (with_groups) out$group <- self$group$fullname
+      out$name <- self$name
+      out$long_name <- self$attribute("long_name")
+      out$standard_name <- self$attribute("standard_name")
+      out$units <- self$attribute("units")
+      if (with_groups)
+        out$axes <- paste(sapply(self$axes, function(a) a$fullname), collapse = ", ")
+      else
+        out$axes <- paste(sapply(self$axes, function(a) a$name), collapse = ", ")
+      out
     },
 
     #' @description Retrieve all data of the variable. Scalar variables are not
