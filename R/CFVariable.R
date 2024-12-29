@@ -33,7 +33,7 @@ CFVariable <- R6::R6Class("CFVariable",
     range2index = function(axis, rng, closed) {
       axl <- axis$length
       if (inherits(axis, "CFAxisTime")) {
-        idx <- axis$indexOf(rng, method = "linear", closed)
+        idx <- axis$slice(rng, closed)
         if (!length(idx)) return(NULL)
         idx <- range(idx)
       } else if (inherits(axis, "CFAxisCharacter")) {
@@ -577,13 +577,13 @@ dimnames.CFVariable <- function(x) {
       dnames <- vector("list", numaxes)
       for (d in seq_along(sc)) {
         ax <- x$axes[[d]]
+        tm <- ax$time()
         if (identical(sc[[d]], quote(expr = ))) {
           # Axis not subsetted, read the whole thing
           start[d] <- 1L
           count[d] <- NA_integer_
           dnames[[d]] <- dimnames(ax)
-          tm <- ax$time()                 # Direct assignment of NULL in last
-          if (!is.null(tm)) t[[d]] <- tm  # dimension drops t[[last]]
+          if (!is.null(tm)) t[[d]] <- tm
         } else {
           # Subset the axis
           v <- eval(sc[[d]])
@@ -591,9 +591,9 @@ dimnames.CFVariable <- function(x) {
           start[d] <- ex[1L]
           count[d] <- ex[2L] - ex[1L] + 1L
           dnames[[d]] <- dimnames(ax)[seq(ex[1], ex[2])]
-          if (!is.null(ax$time())) {
-            idx <- indexOf(ex[1L]:ex[2L], ax$time(), "constant")
-            t[[d]] <- attr(idx, "CFtime")
+          if (!is.null(tm)) {
+            idx <- tm$indexOf(ex[1L]:ex[2L], "constant")
+            t[[d]] <- attr(idx, "CFTime")
           }
         }
       }

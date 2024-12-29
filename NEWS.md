@@ -1,9 +1,3 @@
----
-editor_options: 
-  markdown: 
-    wrap: 72
----
-
 # ncdfCF (development version)
 
 -   Function `peek_ncdf()` returns quick-view information on a netCDF resource.

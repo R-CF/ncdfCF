@@ -8,6 +8,25 @@
 #' @export
 CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
   inherit = CFAxis,
+  private = list(
+    dimvalues_short = function() {
+      lbls <- self$labels
+      nv <- length(self$values)
+      if (!length(lbls)) {
+        if (nv == 1L)
+          dims <- sprintf("[%s]", gsub(" ", "", formatC(self$values[1L], digits = 8L)))
+        else {
+          vals <- trimws(formatC(c(self$values[1L], self$values[nv]), digits = 8L))
+          dims <- sprintf("[%s ... %s]", vals[1L], vals[2L])
+        }
+      } else {
+        lbls <- lbls[[1L]]$values
+        if (nv == 1L) dims <- paste0("[", lbls[1L], "]")
+        else dims <- paste0("[", lbls[1L], " ... ", lbls[length(lbls)], "]")
+      }
+      dims
+    }
+  ),
   public = list(
     #' @field values The values of the axis, usually a numeric vector.
     values     = NULL,
@@ -25,7 +44,9 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     },
 
     #' @description Summary of the time axis printed to the console.
-    print = function() {
+    #' @param ... Ignored.
+    #' @return `self`, invisibly.
+    print = function(...) {
       super$print()
 
       units <- self$attribute("units")
@@ -62,23 +83,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #' @return A 1-row `data.frame` with some details of the axis.
     brief = function() {
       out <- super$brief()
-
-      lbls <- self$labels
-      nv <- length(self$values)
-      if (!length(lbls)) {
-        if (nv == 1L)
-          dims <- sprintf("[%s]", gsub(" ", "", formatC(self$values[1L], digits = 8L)))
-        else {
-          vals <- trimws(formatC(c(self$values[1L], self$values[nv]), digits = 8L))
-          dims <- sprintf("[%s ... %s]", vals[1L], vals[2L])
-        }
-      } else {
-        lbls <- lbls[[1L]]$values
-        if (nv == 1L) dims <- paste0("[", lbls[1L], "]")
-        else dims <- paste0("[", lbls[1L], " ... ", lbls[length(lbls)], "]")
-      }
-
-      out$values <- dims
+      out$values <- private$dimvalues_short()
       out
     },
 

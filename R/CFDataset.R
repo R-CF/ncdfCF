@@ -223,6 +223,16 @@ CFDataset <- R6::R6Class("CFDataset",
 
 # Public S3 methods ------------------------------------------------------------
 
+#' Compact display of a CFDataset
+#' @param object A `CFDataset` instance.
+#' @param ... Ignored.
+#' @export
+str.CFDataset <- function(object, ...) {
+  len <- length(names(object))
+  plural <- if (len != 1L) "s" else ""
+  cat("CFDataset with", len, paste0("data variable", plural))
+}
+
 #' @rdname dimnames
 #' @export
 names.CFDataset <- function(x) {

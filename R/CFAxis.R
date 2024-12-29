@@ -44,7 +44,9 @@ CFAxis <- R6::R6Class("CFAxis",
 
     #' @description  Prints a summary of the axis to the console. This method is
     #'   typically called by the `print()` method of descendant classes.
-    print = function() {
+    #' @param ... Ignored.
+    #' @return `self`, invisibly.
+    print = function(...) {
       cat("<", self$friendlyClassName, "> [", self$dimid, "] ", self$name, "\n", sep = "")
       if (self$group$name != "/")
         cat("Group    :", self$group$fullname, "\n")
@@ -88,12 +90,16 @@ CFAxis <- R6::R6Class("CFAxis",
     #' be duplicated among objects in different groups.
     #' @return A 1-row `data.frame` with details of the axis.
     peek = function(with_groups = TRUE) {
-      out <- data.frame(class = class(self)[1L], id = self$id)
+      out <- data.frame(class = class(self)[1L], id = self$id, axis = self$orientation)
       if (with_groups) out$group <- self$group$fullname
       out$name <- self$name
       out$long_name <- self$attribute("long_name")
       out$standard_name <- self$attribute("standard_name")
       out$units <- self$attribute("units")
+      out$length <- self$NCdim$length
+      out$unlimited <- self$NCdim$unlim
+      out$values <- private$dimvalues_short()
+      out$has_bounds <- inherits(self$bounds, "CFBounds")
       out
     },
 

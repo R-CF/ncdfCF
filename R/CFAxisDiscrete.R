@@ -8,6 +8,20 @@
 #' @export
 CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
   inherit = CFAxis,
+  private = list(
+    dimvalues_short = function() {
+      lbls <- self$labels
+      if (!length(lbls)) {
+        values <- if (self$length == 1L) "[1]"
+        else paste0("[1 ... ", self$length, "]")
+      } else {
+        lbls <- lbls[[1L]]$values
+        values <- if (self$length == 1L) paste0("[", lbls[1L], "]")
+        else paste0("[", lbls[1L], " ... ", lbls[length(lbls)], "]")
+      }
+      values
+    }
+  ),
   public = list(
     #' @description Create a new instance of this class.
     #' @param grp The group that contains the netCDF variable.
@@ -24,15 +38,7 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #' @return A 1-row `data.frame` with some details of the axis.
     brief = function() {
       out <- super$brief()
-      lbls <- self$labels
-      if (!length(lbls)) {
-        out$values <- if (self$length == 1L) "[1]"
-                      else paste0("[1 ... ", self$length, "]")
-      } else {
-        lbls <- lbls[[1L]]$values
-        out$values <- if (self$length == 1L) paste0("[", lbls[1L], "]")
-                      else paste0("[", lbls[1L], " ... ", lbls[length(lbls)], "]")
-      }
+      out$values <- private$dimvalues_short()
       out
     },
 

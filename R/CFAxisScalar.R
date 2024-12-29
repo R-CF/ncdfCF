@@ -11,6 +11,11 @@
 #' @export
 CFAxisScalar <- R6::R6Class("CFAxisScalar",
   inherit = CFAxis,
+  private = list(
+    dimvalues_short = function() {
+      paste0("[", self$value, "]")
+    }
+  ),
   public = list(
     #' @field value The value of the axis.
     value = NULL,
@@ -27,7 +32,9 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     },
 
     #' @description Summary of the scalar axis printed to the console.
-    print = function() {
+    #' @param ... Ignored.
+    #' @return `self`, invisibly.
+    print = function(...) {
       cat("<", self$friendlyClassName, "> ", self$name, "\n", sep = "")
       if (self$group$name != "/")
         cat("Group    :", self$group$fullname, "\n")
@@ -59,7 +66,7 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
 
       data.frame(id = "", axis = self$orientation, group = self$group$fullname,
                  name = self$name, long_name = longname, length = 1L,
-                 unlim = "", values = paste0("[", self$value, "]"), unit = units)
+                 unlim = "", values = private$dimvalues_short(), unit = units)
     },
 
     #' @description Return the axis. This method returns a clone of this axis,

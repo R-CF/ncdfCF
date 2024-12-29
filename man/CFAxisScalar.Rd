@@ -81,9 +81,19 @@ Create an instance of this class.
 \subsection{Method \code{print()}}{
 Summary of the scalar axis printed to the console.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisScalar$print()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisScalar$print(...)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Ignored.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{self}, invisibly.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisScalar-brief"></a>}}

@@ -85,9 +85,19 @@ different or unknown.}
 \subsection{Method \code{print()}}{
 Summary of the time axis printed to the console.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$print()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$print(...)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Ignored.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{self}, invisibly.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisNumeric-brief"></a>}}

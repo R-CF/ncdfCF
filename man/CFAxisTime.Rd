@@ -6,7 +6,7 @@
 \title{Time axis object}
 \description{
 This class represents a time axis. The functionality is provided
-by the \code{CFtime} package.
+by the \link{CFTime} class in the \code{CFtime} package.
 }
 \section{Super classes}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFAxis]{ncdfCF::CFAxis}} -> \code{CFAxisTime}
@@ -14,7 +14,7 @@ by the \code{CFtime} package.
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{values}}{The CFtime instance to manage CF time.}
+\item{\code{values}}{The \code{CFTime} instance to manage CF time.}
 }
 \if{html}{\out{</div>}}
 }
@@ -36,6 +36,7 @@ vector.}
 \item \href{#method-CFAxisTime-brief}{\code{CFAxisTime$brief()}}
 \item \href{#method-CFAxisTime-time}{\code{CFAxisTime$time()}}
 \item \href{#method-CFAxisTime-indexOf}{\code{CFAxisTime$indexOf()}}
+\item \href{#method-CFAxisTime-slice}{\code{CFAxisTime$slice()}}
 \item \href{#method-CFAxisTime-sub_axis}{\code{CFAxisTime$sub_axis()}}
 \item \href{#method-CFAxisTime-clone}{\code{CFAxisTime$clone()}}
 }
@@ -69,7 +70,7 @@ Create a new instance of this class.
 
 \item{\code{nc_dim}}{The netCDF dimension that describes the dimensionality.}
 
-\item{\code{values}}{The CFtime instance that manages this axis.}
+\item{\code{values}}{The \code{CFTime} instance that manages this axis.}
 }
 \if{html}{\out{</div>}}
 }
@@ -80,9 +81,19 @@ Create a new instance of this class.
 \subsection{Method \code{print()}}{
 Summary of the time axis printed to the console.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$print()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$print(...)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Ignored.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{self}, invisibly.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisTime-brief"></a>}}
@@ -101,13 +112,13 @@ A 1-row \code{data.frame} with some details of the axis.
 \if{html}{\out{<a id="method-CFAxisTime-time"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisTime-time}{}}}
 \subsection{Method \code{time()}}{
-Retrieve the CFtime instance that manages this axis.
+Retrieve the CFTime instance that manages this axis.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$time()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
-An instance of \code{CFtime}.
+An instance of \code{CFTime}.
 }
 }
 \if{html}{\out{<hr>}}
@@ -135,6 +146,32 @@ Default is \code{FALSE}.}
 }
 \subsection{Returns}{
 An integer vector giving the indices in the time axis of valid
+values in \code{x}, or \code{integer(0)} if none of the values are valid.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisTime-slice"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisTime-slice}{}}}
+\subsection{Method \code{slice()}}{
+Retrieve the indices of the time axis falling between two
+extreme values.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$slice(x, rightmost.closed = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{x}}{A vector of two timestamps in between of which all indices into
+the time axis to extract.}
+
+\item{\code{rightmost.closed}}{Whether or not to include the upper limit.
+Default is \code{FALSE}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+An integer vector giving the indices in the time axis between
 values in \code{x}, or \code{integer(0)} if none of the values are valid.
 }
 }

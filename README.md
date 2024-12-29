@@ -154,6 +154,47 @@ ds[["pev"]]$attribute("long_name")
 #> [1] "Potential evaporation"
 ```
 
+If you just want to inspect what data is included in the netCDF
+resource, use the `peek_ncdf()` function:
+
+``` r
+(ds <- peek_ncdf(fn))
+#> $uri
+#> [1] "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc"
+#> 
+#> $variables
+#>     id name             long_name standard_name units                      axes
+#> t2m  3  t2m   2 metre temperature                   K longitude, latitude, time
+#> pev  4  pev Potential evaporation                   m longitude, latitude, time
+#> tp   5   tp   Total precipitation                   m longitude, latitude, time
+#> 
+#> $axes
+#>                     class id axis      name long_name standard_name
+#> time           CFAxisTime  0    T      time      time          time
+#> longitude CFAxisLongitude  1    X longitude longitude     longitude
+#> latitude   CFAxisLatitude  2    Y  latitude  latitude      latitude
+#>                                       units length unlimited
+#> time      hours since 1900-01-01 00:00:00.0     24      TRUE
+#> longitude                      degrees_east     31     FALSE
+#> latitude                      degrees_north     21     FALSE
+#>                                                  values
+#> time      [2016-01-01 00:00:00 ... 2016-01-01 23:00:00]
+#> longitude                                   [28 ... 31]
+#> latitude                                    [-1 ... -3]
+#> 
+#> $attributes
+#>   id        name    type length
+#> 1  0         CDI NC_CHAR     64
+#> 2  1 Conventions NC_CHAR      6
+#> 3  2     history NC_CHAR    482
+#> 4  3         CDO NC_CHAR     64
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 value
+#> 1                                                                                                                                                                                                                                                                                                                                                                                                                                    Climate Data Interface version 2.4.1 (https://mpimet.mpg.de/cdi)
+#> 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              CF-1.6
+#> 3 Tue May 28 18:39:12 2024: cdo seldate,2016-01-01,2016-01-01 /Users/patrickvanlaake/CC/ERA5land/Rwanda/ERA5land_Rwanda_t2m-pev-tp_2016-2018.nc ERA5land_Rwanda_20160101.nc\n2021-12-22 07:00:24 GMT by grib_to_netcdf-2.23.0: /opt/ecmwf/mars-client/bin/grib_to_netcdf -S param -o /cache/data5/adaptor.mars.internal-1640155821.967082-25565-12-0b19757d-da4e-4ea4-b8aa-d08ec89caf2c.nc /cache/tmp/0b19757d-da4e-4ea4-b8aa-d08ec89caf2c-adaptor.mars.internal-1640142203.3196251-25565-10-tmp.grib
+#> 4                                                                                                                                                                                                                                                                                                                                                                                                                                    Climate Data Operators version 2.4.1 (https://mpimet.mpg.de/cdo)
+```
+
 ##### Extracting data
 
 There are three ways to read data for a variable from the resource:

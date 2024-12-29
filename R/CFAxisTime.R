@@ -1,44 +1,65 @@
-#' @importMethodsFrom CFtime bounds range format indexOf
 #' @importFrom CFtime unit as_timestamp
 NULL
 
 #' Time axis object
 #'
 #' @description This class represents a time axis. The functionality is provided
-#' by the `CFtime` package.
+#' by the [CFTime] class in the `CFtime` package.
 #'
 #' @docType class
 #' @export
 CFAxisTime <- R6::R6Class("CFAxisTime",
   inherit = CFAxis,
+  private = list(
+    dimvalues_short = function() {
+      time <- self$values
+      nv <- length(time$offsets)
+      if (!nv) { # it happens...
+        vals <- "(no values)"
+      } else {
+        if (nv == 1L) vals <- paste0("[", time$format(), "]")
+        else {
+          rng <- time$range(format = "", bounds = FALSE)
+          vals <- sprintf("[%s ... %s]", rng[1L], rng[2L])
+        }
+      }
+      vals
+    }
+  ),
   public = list(
-    #' @field values The CFtime instance to manage CF time.
+    #' @field values The `CFTime` instance to manage CF time.
     values     = NULL,
 
     #' @description Create a new instance of this class.
     #' @param grp The group that contains the netCDF variable.
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
-    #' @param values The CFtime instance that manages this axis.
+    #' @param values The `CFTime` instance that manages this axis.
     initialize = function(grp, nc_var, nc_dim, values) {
       super$initialize(grp, nc_var, nc_dim, "T")
       self$values <- values
     },
 
     #' @description Summary of the time axis printed to the console.
-    print = function() {
+    #' @param ... Ignored.
+    #' @return `self`, invisibly.
+    print = function(...) {
       super$print()
 
-      len <- length(self$values)
-      rng <- paste0(range(self$values), collapse = " ... ")
-      un <- paste0("(", unit(self$values), ")")
-      bndrng <- if (!is.null(bounds(self$values)))
-        paste0(range(self$values, format = "", bounds = TRUE), collapse = " ... ")
+      time <- self$values
+      len <- length(time)
+      rng <- time$range()
+      rng <- if (rng[1L] == rng[2L]) rng[1L]
+             else rng <- paste0(paste(rng, collapse = " ... "), " (", time$unit, ")")
+      bndrng <- if (!is.null(time$get_bounds()))
+        paste0(time$range(format = "", bounds = TRUE), collapse = " ... ")
       else "(not set)"
-      cat("Range    :", rng, un, "\n")
+      cat("Calendar :", time$cal$name, "\n")
+      cat("Range    :", rng, "\n")
       cat("Bounds   :", bndrng, "\n")
 
       self$print_attributes()
+      invisible(self)
     },
 
     #' @description Some details of the axis.
@@ -46,25 +67,12 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @return A 1-row `data.frame` with some details of the axis.
     brief = function() {
       out <- super$brief()
-
-      time <- self$values
-      nv <- length(time)
-      if (!nv) { # it happens...
-        vals <- "(no values)"
-      } else {
-        if (nv == 1L) vals <- paste0("[", format(time), "]")
-        else {
-          rng <- range(time, format = "", bounds = FALSE)
-          vals <- sprintf("[%s ... %s]", rng[1L], rng[2L])
-        }
-      }
-
-      out$values <- vals
+      out$values <- private$dimvalues_short()
       out
     },
 
-    #' @description Retrieve the CFtime instance that manages this axis.
-    #' @return An instance of `CFtime`.
+    #' @description Retrieve the CFTime instance that manages this axis.
+    #' @return An instance of `CFTime`.
     time = function() {
       self$values
     },
@@ -79,13 +87,28 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @return An integer vector giving the indices in the time axis of valid
     #' values in `x`, or `integer(0)` if none of the values are valid.
     indexOf = function(x, method = "constant", rightmost.closed = FALSE) {
-      idx <- indexOf(x, self$values, method)
+      time <- self$values
+      idx <- time$indexOf(x, method)
       idx <- idx[!is.na(idx) & idx > 0 & idx < .Machine$integer.max]
       len <- length(idx)
       if (!len) return (integer(0))
       if (!rightmost.closed) # FIXME: Is this correct????
         idx[len] <- idx[len] - 1
       as.integer(idx)
+    },
+
+    #' @description Retrieve the indices of the time axis falling between two
+    #'   extreme values.
+    #' @param x A vector of two timestamps in between of which all indices into
+    #'   the time axis to extract.
+    #' @param rightmost.closed Whether or not to include the upper limit.
+    #'   Default is `FALSE`.
+    #' @return An integer vector giving the indices in the time axis between
+    #'   values in `x`, or `integer(0)` if none of the values are valid.
+    slice = function(x, rightmost.closed = FALSE) {
+      time <- self$values
+      idx <- time$slice(x, rightmost.closed)
+      (1L:length(time))[idx]
     },
 
     #' @description Return an axis spanning a smaller dimension range. This
@@ -103,10 +126,11 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #'   the entire axis (possibly as a scalar axis).
     sub_axis = function(group, rng = NULL) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
+      time <- self$values
 
       .make_scalar <- function(idx) {
         scl <- CFAxisScalar$new(group, var, "T", as_timestamp(self$values)[idx])
-        bnds <- bounds(self$values)
+        bnds <- time$get_bounds()
         if (!is.null(bnds)) scl$bounds <- bnds[, idx]
         scl
       }
@@ -123,9 +147,9 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         if (rng[1L] == rng[2L])
           .make_scalar(rng[1L])
         else {
-          idx <- indexOf(seq(from = rng[1L], to = rng[2L], by = 1L), self$values)
+          idx <- time$indexOf(seq(from = rng[1L], to = rng[2L], by = 1L))
           dim <- NCDimension$new(-1L, self$name, length(idx), FALSE)
-          CFAxisTime$new(group, var, dim, attr(idx, "CFtime"))
+          CFAxisTime$new(group, var, dim, attr(idx, "CFTime"))
         }
       }
     }

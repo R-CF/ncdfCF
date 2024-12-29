@@ -50,12 +50,12 @@ The descriptive metadata are not defined by the `netcdf` library. To ensure
 interoperability, [several "conventions"](https://www.unidata.ucar.edu/software/netcdf/conventions.html) 
 have been developed over the years such that users of netCDF data can correctly 
 interpret what data developers have put in the resource. The most important of 
-the conventions is the [CF Metadata Conventions](https://cfconventions.org). 
+these conventions is the [CF Metadata Conventions](https://cfconventions.org). 
 These conventions define a large number of standards that help interpret netCDF 
 resources.
 
 Other common conventions are related to climate prediction data, such as CMIP-5
-and CMIP-6.
+and CMIP-6, but these typically extend the CF Metadata Conventions.
 
 ## Using netCDF resources in R
 
@@ -74,7 +74,7 @@ functions that fairly directly map to the `netcdf` library functions.
 
 One would really need to understand the netCDF data model and implementation 
 details to effectively use these packages. For instance, most data describing a 
-dimension is stored as a variable. So to read the `dimnames()` of a dimension 
+*dimension* is stored as a *variable*. So to read the `dimnames()` of a dimension 
 you'd have to call `var.get.nc()` or `ncvar_get()`. Neither package loads the 
 attributes of the dimensions, variables and the data set ("global" variables), 
 which is essential to *understand* what the dimensions and variables represent.
@@ -221,16 +221,14 @@ user in a consistent manner.
 
 ```{r subset}
 # Extract a specific region, full time dimension
-ts <- t2m$subset(list(X = 29:30, Y = -1:-2))
-ts
-  
+(ts <- t2m$subset(list(X = 29:30, Y = -1:-2)))
+
 # Extract specific time slices for a specific region
 # Note that the axes are specified out of order and using alternative
 # specifications: only the extreme values are used.
-ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
-                      X = c(29.6, 28.8),
-                      Y = seq(-2, -1, by = 0.05)))
-ts
+(ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
+                       X = c(29.6, 28.8),
+                       Y = seq(-2, -1, by = 0.05))))
 ```
 
 These methods will read data from the netCDF resource, but only as much as is 
