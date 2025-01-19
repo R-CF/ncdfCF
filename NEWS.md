@@ -1,4 +1,4 @@
-# ncdfCF (development version)
+# ncdfCF 0.3.0
 
 -   Function `peek_ncdf()` returns quick-view information on a netCDF resource.
 -   String-valued labels for discrete and generic numeric axes are now
