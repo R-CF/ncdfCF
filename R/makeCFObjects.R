@@ -70,3 +70,25 @@ makeLatitudeAxis <- function(id, name, group, length, values, bounds, units) {
   }
   axis
 }
+
+#' Create a time axis
+#'
+#' With this method you can create a time axis to use with new [CFData]
+#' instances.
+#'
+#' @param id Id of the axis.
+#' @param name Name of the axis.
+#' @param group Group to place the axis in.
+#' @param values A `CFTime` instance with dimension values and bounds set.
+#'
+#' @return A `CFAxisTime` instance.
+#' @export
+makeTimeAxis <- function(id, name, group, values) {
+  var <- NCVariable$new(id, name, group, "NC_DOUBLE", 1L, NULL)
+  if (length(values) == 1L)
+    CFAxisScalar$new(group, var, "T", values)
+  else {
+    dim <- NCDimension$new(-1L, name, length(values), FALSE)
+    CFAxisTime$new(group, var, dim, values)
+  }
+}

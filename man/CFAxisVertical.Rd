@@ -12,7 +12,7 @@ dimensional axis values. It is used in atmosphere and ocean data sets.
 Non-parametric vertical axes are stored in an \link{CFAxisNumeric} instance.
 }
 \references{
-https://cfconventions.org/Data/cf-conventions/cf-conventions-1.11/cf-conventions.html#parametric-vertical-coordinate
+https://cfconventions.org/Data/cf-conventions/cf-conventions-1.12/cf-conventions.html#parametric-vertical-coordinate
 }
 \section{Super classes}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFAxis]{ncdfCF::CFAxis}} -> \code{\link[ncdfCF:CFAxisNumeric]{ncdfCF::CFAxisNumeric}} -> \code{CFAxisVertical}

@@ -1,0 +1,51 @@
+---
+title: "2. R and CF Metadata Conventions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{2. R and CF Metadata Conventions}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ncdfCF)
+```
+
+## The CF Metadata Conventions
+
+The CF Metadata Conventions ("CF" henceforth) are being developed by
+academics and practitioners in the climate and forecasting field, with
+the objective to facilitate interoperability between data producers and
+data consumers (whether human or computer systems).
+
+Reading the CF documentation can be a daunting task because it is
+written as a standards document, and not as a guideline or tutorial for
+people who want to understand the concept and the structure but who are
+not looking for all of the low-level detail.
+
+This vignette presents a view of CF from the perspective of R. The main
+elements of CF are introduced in terms that should be easily understood
+by anyone who has worked with matrices and arrays in R.
+
+By definition, a CF-compliant data set is stored in a netCDF file. The CF 
+elements and their relationship to the building blocks of the netCDF file are 
+given in the figure below:
+
+![*Figure 1: The elements of a CF data set, in blue. netCDF building blocks are
+given in yellow. Source: Hassell, et al. (2017): "A data model of the
+Climate and Forecast metadata conventions (CF-1.6) with a software
+implementation (cf-python v2.1)",*
+<https://doi.org/10.5194/gmd-10-4619-2017>](CF-elements.png){width="620"}
+
+At the end of this vignette is a feature matrix that indicates the
+support for each CF element in package `ncdfCF`.

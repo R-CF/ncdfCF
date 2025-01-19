@@ -30,8 +30,9 @@ CFData <- R6::R6Class("CFData",
     # Set dimnames on self$value
     set_dimnames = function() {
       dn <- lapply(1:length(dim(self$value)), function(ax) {
-        dimnames(self$axes[[ax]])
+        if (!inherits(ax, "CFAxisScalar")) dimnames(self$axes[[ax]])
       })
+      dn <- dn[lengths(dn) > 0L]
       names(dn) <- sapply(1:length(dim(self$value)), function(ax) {self$axes[[ax]]$name})
       dimnames(self$value) <- dn
     },

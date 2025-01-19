@@ -36,6 +36,14 @@ CFDataset <- R6::R6Class("CFDataset",
     #' access methods instead.
     root = NULL,
 
+    #' @field file_type The type of data in the netCDF resource, if
+    #'   identifiable. In terms of the CF Metadata Conventions, this includes
+    #'   discrete sampling geometries (DSG). Other file types that can be
+    #'   identified include L3b files used by NASA and NOAA for satellite
+    #'   imagery (these data sets need special processing), and CMIP5, CMIP6 and
+    #'   CORDEX climate projection data.
+    file_type = "generic netCDF data",
+
     #' @description Create an instance of this class.
     #' @param name The name that describes this instance.
     #' @param resource An instance of `CFResource` that links to the netCDF
@@ -56,6 +64,7 @@ CFDataset <- R6::R6Class("CFDataset",
       cat("<Dataset>", self$name, "\n")
       cat("Resource   :", private$res$uri, "\n")
       cat("Format     :", private$format, "\n")
+      cat("Type       :", self$file_type, "\n")
       cat("Conventions:", self$conventions, "\n")
       cat("Keep open  :", self$keep_open, "\n")
 

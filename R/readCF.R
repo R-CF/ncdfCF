@@ -78,9 +78,33 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   # Coordinate reference systems
   .makeCRS(root)
 
-  # Identify variables
-  if (length(axes) > 0L)
+  if (length(axes) > 0L) {
+    # Try to identify the type of the file
+    ft <- root$attribute("featureType")
+    if (ft %in% c("point", "timeSeries", "trajectory", "profile",
+                  "timeSeriesProfile", "trajectoryProfile"))
+      ds$file_type <- "discrete sampling geometry"
+
+    # CMIP6, CMIP5, CORDEX
+
     vars <- .buildVariables(root, axes)
+  } else {
+    # Try L3b
+    units <- root$attribute("units")
+    if (nzchar(units)) {
+      units <- strsplit(units, ":")[[1L]]
+
+      l3bgrp <- root$subgroups[["level-3_binned_data"]]
+      if (!is.null(l3bgrp)) {
+        nm <- names(l3bgrp$NCvars)
+        if (all(c("BinList", "BinIndex", units[1L]) %in% nm)) {
+          ds$file_type <- "NASA level-3 binned data"
+          l3bgrp$CFvars <- list(CFVariableL3b$new(l3bgrp, units))
+          names(l3bgrp$CFvars) <- units[1L]
+        }
+      }
+    }
+  }
 
   ds$root <- root
   ds
@@ -111,6 +135,7 @@ peek_ncdf <- function(resource) {
   grps <- ds$has_subgroups()
   if (inherits(ds, "CFDataset")) {
     list(uri = ds$uri,
+         type = ds$file_type,
          variables  = do.call(rbind, lapply(ds$variables(), function(v) v$peek(grps))),
          axes       = do.call(rbind, lapply(ds$axes(), function(a) a$peek(grps))),
          attributes = ds$attributes())
@@ -541,7 +566,7 @@ peek_ncdf <- function(resource) {
           ax[[x]] <- axes[[ndx]]
         }
         names(ax) <- sapply(ax, function(x) x$name)
-        var <- CFVariable$new(grp, v, ax)
+        var <- CFVariableGeneric$new(grp, v, ax)
 
         # Add references to any "coordinates" of the variable
         varLon <- varLat <- NULL

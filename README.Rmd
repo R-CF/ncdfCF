@@ -90,7 +90,7 @@ ds[["pev"]]$attribute("long_name")
 ```
 
 If you just want to inspect what data is included in the netCDF resource, use
-the `peek_ncdf()` function:
+the `peek_ncdf()` function: 
 
 ```{r peek}
 (ds <- peek_ncdf(fn))

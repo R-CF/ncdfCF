@@ -15,7 +15,8 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports: 
-    CFtime (>= 1.4.1),
+    abind,
+    CFtime (>= 1.5.0),
     methods,
     R6,
     RNetCDF,
@@ -42,6 +43,8 @@ Collate:
     'CFObject.R'
     'CFResource.R'
     'CFVariable.R'
+    'CFVariableGeneric.R'
+    'CFVariableL3b.R'
     'MemoryGroup.R'
     'NCDimension.R'
     'NCGroup.R'

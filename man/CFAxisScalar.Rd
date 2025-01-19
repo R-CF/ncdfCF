@@ -16,7 +16,8 @@ longitude, latitude and vertical axes.
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{value}}{The value of the axis.}
+\item{\code{value}}{The value of the axis. This could be a composite value, such
+as a \code{CFTime} instance.}
 }
 \if{html}{\out{</div>}}
 }
@@ -70,7 +71,8 @@ Create an instance of this class.
 
 \item{\code{orientation}}{The orientation of this axis, or "" if not known.}
 
-\item{\code{value}}{The value of this axis.}
+\item{\code{value}}{The value of this axis, possibly a compound type like
+\code{CFTime}.}
 }
 \if{html}{\out{</div>}}
 }

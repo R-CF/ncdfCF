@@ -168,7 +168,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     dimnames = function(value) {
       if (missing(value)) {
         if (length(self$lbls)) self$lbls[[1L]]$values
-        else self$values
+        else round(self$values, 6L)
       }
     }
   )

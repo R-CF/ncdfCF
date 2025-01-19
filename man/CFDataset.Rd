@@ -32,6 +32,13 @@ operating system or the remote server.}
 netCDF resource are accessed. It is \strong{strongly discouraged} to
 manipulate the objects in the group hierarchy directly. Use the provided
 access methods instead.}
+
+\item{\code{file_type}}{The type of data in the netCDF resource, if
+identifiable. In terms of the CF Metadata Conventions, this includes
+discrete sampling geometries (DSG). Other file types that can be
+identified include L3b files used by NASA and NOAA for satellite
+imagery (these data sets need special processing), and CMIP5, CMIP6 and
+CORDEX climate projection data.}
 }
 \if{html}{\out{</div>}}
 }

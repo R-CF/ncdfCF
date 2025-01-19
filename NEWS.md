@@ -14,6 +14,7 @@
 -   `print()` method for `NCVariable` and `NCDimension`.
 -   Method `CFObject$fullname` added, giving fully-qualified CF object name.
 -   "Axis" associated with bounds variable is no longer created.
+-   NASA level-3 binned data (L3b) is now supported.
 -   Reference to a containing `NCGroup` moved down to `CFObject` for CF 
     objects.
 -   Minor code fixes.

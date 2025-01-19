@@ -6,7 +6,7 @@
 \title{Time axis object}
 \description{
 This class represents a time axis. The functionality is provided
-by the \link{CFTime} class in the \code{CFtime} package.
+by the \code{CFTime} class in the \code{CFtime} package.
 }
 \section{Super classes}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFAxis]{ncdfCF::CFAxis}} -> \code{CFAxisTime}

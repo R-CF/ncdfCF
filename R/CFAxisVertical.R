@@ -7,7 +7,7 @@
 #'   Non-parametric vertical axes are stored in an [CFAxisNumeric] instance.
 #'
 #' @references
-#'   https://cfconventions.org/Data/cf-conventions/cf-conventions-1.11/cf-conventions.html#parametric-vertical-coordinate
+#'   https://cfconventions.org/Data/cf-conventions/cf-conventions-1.12/cf-conventions.html#parametric-vertical-coordinate
 #'
 #' @docType class
 #' @export

@@ -4,7 +4,7 @@ NULL
 #' Time axis object
 #'
 #' @description This class represents a time axis. The functionality is provided
-#' by the [CFTime] class in the `CFtime` package.
+#' by the `CFTime` class in the `CFtime` package.
 #'
 #' @docType class
 #' @export

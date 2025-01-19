@@ -66,6 +66,7 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 #> <Dataset> ERA5land_Rwanda_20160101 
 #> Resource   : /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
 #> Format     : offset64 
+#> Type       : generic netCDF data 
 #> Conventions: CF-1.6 
 #> Keep open  : FALSE 
 #> 
@@ -162,6 +163,9 @@ resource, use the `peek_ncdf()` function:
 #> $uri
 #> [1] "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc"
 #> 
+#> $type
+#> [1] "generic netCDF data"
+#> 
 #> $variables
 #>     id name             long_name standard_name units                      axes
 #> t2m  3  t2m   2 metre temperature                   K longitude, latitude, time
@@ -177,10 +181,10 @@ resource, use the `peek_ncdf()` function:
 #> time      hours since 1900-01-01 00:00:00.0     24      TRUE
 #> longitude                      degrees_east     31     FALSE
 #> latitude                      degrees_north     21     FALSE
-#>                                                  values
-#> time      [2016-01-01 00:00:00 ... 2016-01-01 23:00:00]
-#> longitude                                   [28 ... 31]
-#> latitude                                    [-1 ... -3]
+#>                                                  values has_bounds
+#> time      [2016-01-01 00:00:00 ... 2016-01-01 23:00:00]      FALSE
+#> longitude                                   [28 ... 31]      FALSE
+#> latitude                                    [-1 ... -3]      FALSE
 #> 
 #> $attributes
 #>   id        name    type length
@@ -223,11 +227,7 @@ str(ts)
 #>  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"
 #>   ..- attr(*, "names")= chr [1:3] "longitude" "latitude" "time"
 #>  - attr(*, "time")=List of 1
-#>   ..$ time:Formal class 'CFtime' [package "CFtime"] with 4 slots
-#>   .. .. ..@ datum     : hours since 1900-01-01 00:00:00.0 [ gregorian calendar ]
-#>   .. .. ..@ resolution: num 1
-#>   .. .. ..@ offsets   : num [1:24] 1016832 1016833 1016834 1016835 1016836 ...
-#>   .. .. ..@ bounds    : logi FALSE
+#>   ..$ time:Classes 'CFTime', 'R6' 2016-01-01 00:00:00 2016-01-01 01:00:00 2016-01-01 02:00:00 2016-01-01 03:00:00 2016-01-01 04:00:00 2016-01-01 05:00:00 2016-01-01 06:00:00 2016-01-01 07:00:00 2016-01-01 08:00:00 2016-01-01 09:00:00 2016-01-01 10:00:00 2016-01-01 11:00:00 2016-01-01 12:00:00 2016-01-01 13:00:00 2016-01-01 14:00:00 2016-01-01 15:00:00 2016-01-01 16:00:00 2016-01-01 17:00:00 2016-01-01 18:00:00 2016-01-01 19:00:00 2016-01-01 20:00:00 2016-01-01 21:00:00 2016-01-01 22:00:00 2016-01-01 23:00:00
 
 # Extract the full spatial extent for one time step
 ts <- t2m[, , 12]
@@ -240,11 +240,7 @@ str(ts)
 #>  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"
 #>   ..- attr(*, "names")= chr [1:3] "longitude" "latitude" "time"
 #>  - attr(*, "time")=List of 1
-#>   ..$ time:Formal class 'CFtime' [package "CFtime"] with 4 slots
-#>   .. .. ..@ datum     : hours since 1900-01-01 00:00:00.0 [ gregorian calendar ]
-#>   .. .. ..@ resolution: num NA
-#>   .. .. ..@ offsets   : num 1016843
-#>   .. .. ..@ bounds    : logi FALSE
+#>   ..$ time:Classes 'CFTime', 'R6' 2016-01-01 11:00:00
 ```
 
 Note that the results contain degenerate dimensions (of length 1). This
