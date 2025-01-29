@@ -180,22 +180,6 @@ CFVariable <- R6::R6Class("CFVariable",
       else
         out$axes <- paste(sapply(self$axes, function(a) a$name), collapse = ", ")
       out
-    },
-
-    #' @description Retrieve all data of the variable. Scalar variables are not
-    #' present in the result.
-    #'
-    #' @return A [CFData] instance with all data from this variable.
-    data = function() {
-      out_group <- MemoryGroup$new(-1L, "Memory_group", "/Memory_group", NULL,
-                                   paste("Data copy of variable", self$name),
-                                   paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::data()"))
-      axes <- lapply(self$axes, function(ax) ax$clone())
-      d <- RNetCDF::var.get.nc(self$NCvar$group$handle, self$name, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
-      atts <- self$attributes
-      atts <- atts[!(atts$name == "coordinates"), ]
-
-      CFData$new(self$name, out_group, d, axes, self$crs, atts)
     }
   ),
   active = list(

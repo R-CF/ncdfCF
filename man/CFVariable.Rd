@@ -52,7 +52,6 @@ description of the variable as a WKT2 string.}
 \item \href{#method-CFVariable-brief}{\code{CFVariable$brief()}}
 \item \href{#method-CFVariable-shard}{\code{CFVariable$shard()}}
 \item \href{#method-CFVariable-peek}{\code{CFVariable$peek()}}
-\item \href{#method-CFVariable-data}{\code{CFVariable$data()}}
 \item \href{#method-CFVariable-clone}{\code{CFVariable$clone()}}
 }
 }
@@ -146,20 +145,6 @@ be duplicated among objects in different groups.}
 }
 \subsection{Returns}{
 A 1-row \code{data.frame} with details of the data variable.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFVariable-data"></a>}}
-\if{latex}{\out{\hypertarget{method-CFVariable-data}{}}}
-\subsection{Method \code{data()}}{
-Retrieve all data of the variable. Scalar variables are not
-present in the result.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$data()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-A \link{CFData} instance with all data from this variable.
 }
 }
 \if{html}{\out{<hr>}}

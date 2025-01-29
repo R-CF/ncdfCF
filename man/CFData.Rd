@@ -6,9 +6,10 @@
 \title{Data extracted from a CF data variable}
 \description{
 This class holds the data that is extracted from a \link{CFVariable},
-using the \code{subset()} method. The instance of this class will additionally
-have the axes and other relevant information such as its attributes (as
-well as those of the axes) and the coordinate reference system.
+using the \code{data()} or \code{subset()} method. The instance of this class will
+additionally have the axes and other relevant information such as its
+attributes (as well as those of the axes) and the coordinate reference
+system.
 
 The class has a number of utility functions to extract the data in specific
 formats:
@@ -22,6 +23,10 @@ order. Dimnames will be set.
 \item \code{terra()}: The data is returned as a \code{terra::SpatRaster} (3D) or
 \code{terra::SpatRasterDataset} (4D) object, with all relevant structural
 metadata set. Package \code{terra} must be installed for this to work.
+
+The temporal dimension of the data, if present, may be summarised using the
+\code{summarise()} method. The data is returned as an array in the standard R
+format.
 
 In general, the metadata from the netCDF resource will be lost when
 exporting to a different format insofar as those metadata are not
@@ -39,9 +44,19 @@ on the method that produced it. Typical structures are an array or a
 \code{data.table}.}
 
 \item{\code{axes}}{List of instances of classes descending from \link{CFAxis} that
-are the axes of the data object.}
+are the axes of the data object. If there are any scalar axes, they are
+listed after the axes that associate with the dimensions of the data.
+(In other words, axes \verb{1..n} describe the \verb{1..n} data dimensions, while
+any axes \verb{n+1..m} are scalar axes.)}
 
 \item{\code{crs}}{Character string of the WKT2 of the CRS of the data object.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{dimnames}}{(read-only) Retrieve dimnames of the data object.}
 }
 \if{html}{\out{</div>}}
 }
@@ -53,6 +68,7 @@ are the axes of the data object.}
 \item \href{#method-CFData-raw}{\code{CFData$raw()}}
 \item \href{#method-CFData-array}{\code{CFData$array()}}
 \item \href{#method-CFData-terra}{\code{CFData$terra()}}
+\item \href{#method-CFData-summarise}{\code{CFData$summarise()}}
 \item \href{#method-CFData-clone}{\code{CFData$clone()}}
 }
 }
@@ -152,6 +168,33 @@ layers in the resulting \code{SpatRaster}, any 4th dimension the data sets.
 
 \subsection{Returns}{
 A \code{terra::SpatRaster} or \code{terra::SpatRasterDataset} instance.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFData-summarise"></a>}}
+\if{latex}{\out{\hypertarget{method-CFData-summarise}{}}}
+\subsection{Method \code{summarise()}}{
+Summarise the temporal dimension of the data, if present, to
+a lower resolution, using a user-supplied aggregation function.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFData$summarise(period, fun)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{period}}{The period to summarise to. Must be one of either "day",
+"dekad", "month", "quarter", "season", "year". A "quarter" is the
+standard calendar quarter such as January-March, April-June, etc. A
+"season" is a meteorological season, such as December-February,
+March-May, etc. (any December data is from the year preceding the
+January data). The period must be of lower resolution than the
+resolution of the time dimension.}
+
+\item{\code{fun}}{A function or a symbol or character string naming a function
+that will be applied to each grouping of data.}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}

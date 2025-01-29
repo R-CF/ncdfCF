@@ -1,9 +1,10 @@
 #' Data extracted from a CF data variable
 #'
 #' @description This class holds the data that is extracted from a [CFVariable],
-#'   using the `subset()` method. The instance of this class will additionally
-#'   have the axes and other relevant information such as its attributes (as
-#'   well as those of the axes) and the coordinate reference system.
+#'   using the `data()` or `subset()` method. The instance of this class will
+#'   additionally have the axes and other relevant information such as its
+#'   attributes (as well as those of the axes) and the coordinate reference
+#'   system.
 #'
 #'   The class has a number of utility functions to extract the data in specific
 #'   formats:
@@ -17,6 +18,10 @@
 #'   `terra::SpatRasterDataset` (4D) object, with all relevant structural
 #'   metadata set. Package `terra` must be installed for this to work.
 #'
+#'   The temporal dimension of the data, if present, may be summarised using the
+#'   `summarise()` method. The data is returned as an array in the standard R
+#'   format.
+#'
 #'   In general, the metadata from the netCDF resource will be lost when
 #'   exporting to a different format insofar as those metadata are not
 #'   recognized by the different format.
@@ -27,35 +32,29 @@
 CFData <- R6::R6Class("CFData",
   inherit = CFObject,
   private = list(
-    # Set dimnames on self$value
-    set_dimnames = function() {
-      dn <- lapply(1:length(dim(self$value)), function(ax) {
-        if (!inherits(ax, "CFAxisScalar")) dimnames(self$axes[[ax]])
-      })
-      dn <- dn[lengths(dn) > 0L]
-      names(dn) <- sapply(1:length(dim(self$value)), function(ax) {self$axes[[ax]]$name})
-      dimnames(self$value) <- dn
+    # Return the order of dimensional axes that "receive special treatment".
+    # Scalar axes are not considered here.
+    YXZT = function() {
+      orient <- sapply(1:length(dim(self$value)), function(x) self$axes[[x]]$orientation)
+      match(c("Y", "X", "Z", "T"), orient, nomatch = 0L)
     },
 
     # Orient self$value in such a way that it conforms to regular R arrays: axis
-    # order will be Y-X-others and Y values will go from the top to the bottom.
+    # order will be Y-X-Z-T-others and Y values will go from the top to the bottom.
     # Returns a new array.
     orient = function() {
-      # Drop any CFAxisScalar axes
-      axes <- lapply(self$axes, function(ax) if (!inherits(ax, "CFAxisScalar")) ax$orientation)
-      axes <- unlist(axes[lengths(axes) > 0L])
-
-      # Permute, if necessary
-      YX_order <- match(c("Y", "X"), axes, nomatch = 0L)
-      if (!all(YX_order)) {
+      order <- private$YXZT()
+      if (sum(order) == 0L) {
         warning("Cannot orient data array because axis orientation has not been set")
         return(self$value)
       }
-      if (!all(YX_order == c(1L, 2L))) {
-        all_axes <- seq(length(axes))
-        permutate <- c(YX_order, all_axes[!(all_axes %in% YX_order)])
-        out <- aperm(self$value, permutate)
-      } else out <- self$value
+      if (all(order == 1L:4L))
+        out <- self$value
+      else {
+        all_dims <- seq(length(dim(self$value)))
+        perm <- c(order[which(order > 0L)], all_dims[!(all_dims %in% order)])
+        out <- aperm(self$value, perm)
+      }
 
       # Flip Y-axis, if necessary
       ynames <- dimnames(out)[[1L]]
@@ -63,7 +62,7 @@ CFData <- R6::R6Class("CFData",
         dn <- dimnames(out)
         dims <- dim(out)
         dim(out) <- c(dims[1L], prod(dims[-1L]))
-        out <- apply(out, 2, rev)
+        out <- apply(out, 2L, rev)
         dim(out) <- dims
         dn[[1L]] <- rev(dn[[1L]])
         dimnames(out) <- dn
@@ -79,7 +78,10 @@ CFData <- R6::R6Class("CFData",
     value = NULL,
 
     #' @field axes List of instances of classes descending from [CFAxis] that
-    #'   are the axes of the data object.
+    #'   are the axes of the data object. If there are any scalar axes, they are
+    #'   listed after the axes that associate with the dimensions of the data.
+    #'   (In other words, axes `1..n` describe the `1..n` data dimensions, while
+    #'   any axes `n+1..m` are scalar axes.)
     axes  = list(),
 
     #' @field crs Character string of the WKT2 of the CRS of the data object.
@@ -141,7 +143,7 @@ CFData <- R6::R6Class("CFData",
     #' @return The data in the object. This is usually an `array` with the
     #' contents along axes varying.
     raw = function() {
-      private$set_dimnames()
+      dimnames(self$value) <- self$dimnames
       self$value
     },
 
@@ -152,7 +154,7 @@ CFData <- R6::R6Class("CFData",
       if (length(self$axes) < 2L)
         stop("Cannot create an array from data object with only one axis.", call. = FALSE)
 
-      private$set_dimnames()
+      dimnames(self$value) <- self$dimnames
       private$orient()
     },
 
@@ -166,21 +168,21 @@ CFData <- R6::R6Class("CFData",
         stop("Please install package 'terra' before using this funcionality")
 
       # Extent
-      YX_order <- match(c("Y", "X"), sapply(self$axes, function(a) a$orientation), nomatch = 0L)
-      if (!all(YX_order))
-        stop("Cannot create terra object because data does not have X and Y axes.", call. = FALSE)
+      YX <- private$YXZT()[1L:2L]
+      if (!all(YX))
+        stop("Cannot create `terra` object because data does not have X and Y axes.", call. = FALSE)
 
-      Xbnds <- self$axes[[YX_order[2L]]]$bounds
+      Xbnds <- self$axes[[YX[2L]]]$bounds
       if (inherits(Xbnds, "CFBounds")) Xbnds <- Xbnds$range()
       else {
-        vals <- self$axes[[YX_order[2L]]]$values
+        vals <- self$axes[[YX[2L]]]$values
         halfres <- (vals[2L] - vals[1L]) * 0.5 # this assumes regular spacing
         Xbnds <- c(vals[1L] - halfres, vals[length(vals)] + halfres)
       }
-      Ybnds <- self$axes[[YX_order[1L]]]$bounds
+      Ybnds <- self$axes[[YX[1L]]]$bounds
       if (inherits(Ybnds, "CFBounds")) Ybnds <- Ybnds$range()
       else {
-        vals <- self$axes[[YX_order[1L]]]$values
+        vals <- self$axes[[YX[1L]]]$values
         halfres <- (vals[2L] - vals[1L]) * 0.5 # this assumes regular spacing
         Ybnds <- c(vals[1L] - halfres, vals[length(vals)] + halfres)
       }
@@ -202,7 +204,7 @@ CFData <- R6::R6Class("CFData",
       }
 
       r
-    } #,
+    },
     # Below code works in the console but not here
     # data.table = function() {
     #   if (!requireNamespace("data.table", quietly = TRUE))
@@ -213,5 +215,61 @@ CFData <- R6::R6Class("CFData",
     #   dt[, (cols) := type.convert(.SD, as.is = TRUE), .SDcols = cols]
     #   dt[dt[, do.call(order, .SD), .SDcols = cols]]
     # }
+
+    #' @description Summarise the temporal dimension of the data, if present, to
+    #'   a lower resolution, using a user-supplied aggregation function.
+    #' @param period The period to summarise to. Must be one of either "day",
+    #'   "dekad", "month", "quarter", "season", "year". A "quarter" is the
+    #'   standard calendar quarter such as January-March, April-June, etc. A
+    #'   "season" is a meteorological season, such as December-February,
+    #'   March-May, etc. (any December data is from the year preceding the
+    #'   January data). The period must be of lower resolution than the
+    #'   resolution of the time dimension.
+    #' @param fun A function or a symbol or character string naming a function
+    #'   that will be applied to each grouping of data.
+    summarise = function(period, fun) {
+      if (missing(period) || missing(fun))
+        stop("Arguments 'period' and 'fun' ar required.", call. = FALSE)
+      if (!(period %in% c("day", "dekad", "month", "quarter", "season", "year")))
+        stop("Argument 'period' has invalid value.", call. = FALSE)
+
+      # Find the time axis, create the factor
+      tm <- which(sapply(self$axes, function(x) inherits(x, "CFAxisTime")))
+      if (!length(tm))
+        stop("No 'time' dimension found to summarise on.", call. = FALSE)
+      fac <- self$axes[[tm]]$time()$factor(period)
+      nm <- self$axes[[tm]]$name
+
+      # Summarise
+      num_dim_axes <- length(dim(self$value))
+      if (num_dim_axes == 1L) {
+        tapply(self$value, fac, fun, na.rm = TRUE)
+      } else {
+        tm <- sum(private$YXZT() > 0L) # Test which oriented axes are present, T is the last one
+        perm <- seq(num_dim_axes)
+        out <- apply(self$array(), perm[-tm], tapply, fac, fun, na.rm = TRUE)
+        perm <- c(perm[2L:tm], 1L, perm[-(1L:tm)])
+        out <- aperm(out, perm)
+
+        # Fix name of time dimension in dimnames
+        dn <- dimnames(out)
+        axn <- names(dn)
+        axn[tm] <- nm
+        names(dn) <- axn
+        dimnames(out) <- dn
+        out
+      }
+    }
+  ),
+  active = list(
+    #' @field dimnames (read-only) Retrieve dimnames of the data object.
+    dimnames = function(value) {
+      if (missing(value)) {
+        len <- length(dim(self$value))
+        dn <- lapply(1:len, function(ax) dimnames(self$axes[[ax]]))
+        names(dn) <- sapply(1:len, function(ax) self$axes[[ax]]$name)
+        dn
+      }
+    }
   )
 )

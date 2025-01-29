@@ -1,5 +1,9 @@
 # ncdfCF (development version)
 
+-   Method `CFData$summarise()` summarises the temporal dimension of a data
+    object to a lower resolution, using the specific calendar of the temporal
+    dimension.
+
 # ncdfCF 0.3.0
 
 -   Function `peek_ncdf()` returns quick-view information on a netCDF resource.
