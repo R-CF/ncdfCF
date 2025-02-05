@@ -218,8 +218,8 @@ CFVariableGeneric <- R6::R6Class("CFVariableGeneric",
     #' argument `subset` as `X` and `Y`. The resolution of the grid that is
     #' produced by this method is automatically calculated. If you want to
     #' subset those axes then specify values in decimal degrees; if you want to
-    #' extract the full extent, specify `NA`. **Note** that if
-    #' you want to extract the data in the original grid, you should use the
+    #' extract the full extent, specify `NA` for both `X` and `Y`. **Note** that
+    #' if you want to extract the data in the original grid, you should use the
     #' horizontal axis names in argument `subset`.
     #'
     #' @param subset A list with the range to extract from each axis. The

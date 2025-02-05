@@ -56,6 +56,7 @@ Collate:
     'utils.R'
     'wkt2.R'
 Suggests: 
+    data.table,
     knitr,
     rmarkdown,
     terra

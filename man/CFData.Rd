@@ -23,6 +23,9 @@ order. Dimnames will be set.
 \item \code{terra()}: The data is returned as a \code{terra::SpatRaster} (3D) or
 \code{terra::SpatRasterDataset} (4D) object, with all relevant structural
 metadata set. Package \code{terra} must be installed for this to work.
+\item \code{data.table()}: The data is returned as a \code{data.table}, with all data
+points on inidivual rows. Metadata is not maintained. Package \code{data.table}
+must be installed for this to work.
 
 The temporal dimension of the data, if present, may be summarised using the
 \code{summarise()} method. The data is returned as an array in the standard R
@@ -68,6 +71,7 @@ any axes \verb{n+1..m} are scalar axes.)}
 \item \href{#method-CFData-raw}{\code{CFData$raw()}}
 \item \href{#method-CFData-array}{\code{CFData$array()}}
 \item \href{#method-CFData-terra}{\code{CFData$terra()}}
+\item \href{#method-CFData-data.table}{\code{CFData$data.table()}}
 \item \href{#method-CFData-summarise}{\code{CFData$summarise()}}
 \item \href{#method-CFData-clone}{\code{CFData$clone()}}
 }
@@ -162,12 +166,28 @@ Convert the data to a \code{terra::SpatRaster} (3D) or a
 \code{terra::SpatRasterDataset} (4D) object. The data
 will be oriented to North-up. The 3rd dimension in the data will become
 layers in the resulting \code{SpatRaster}, any 4th dimension the data sets.
+The \code{terra} package needs to be installed for this method to work.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFData$terra()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
 A \code{terra::SpatRaster} or \code{terra::SpatRasterDataset} instance.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFData-data.table"></a>}}
+\if{latex}{\out{\hypertarget{method-CFData-data.table}{}}}
+\subsection{Method \code{data.table()}}{
+Retrieve the data in the object in the form of a
+\code{data.table}. The \code{data.table} package needs to be installed for this
+method to work.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFData$data.table()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A \code{data.table} with all data points in individual rows.
 }
 }
 \if{html}{\out{<hr>}}

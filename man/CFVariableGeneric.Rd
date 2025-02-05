@@ -246,8 +246,8 @@ they will be used automatically if, and only if, the axes are labeled in
 argument \code{subset} as \code{X} and \code{Y}. The resolution of the grid that is
 produced by this method is automatically calculated. If you want to
 subset those axes then specify values in decimal degrees; if you want to
-extract the full extent, specify \code{NA}. \strong{Note} that if
-you want to extract the data in the original grid, you should use the
+extract the full extent, specify \code{NA} for both \code{X} and \code{Y}. \strong{Note} that
+if you want to extract the data in the original grid, you should use the
 horizontal axis names in argument \code{subset}.
 }
 }

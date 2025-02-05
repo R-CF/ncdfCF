@@ -17,6 +17,9 @@
 #' * `terra()`: The data is returned as a `terra::SpatRaster` (3D) or
 #'   `terra::SpatRasterDataset` (4D) object, with all relevant structural
 #'   metadata set. Package `terra` must be installed for this to work.
+#' * `data.table()`: The data is returned as a `data.table`, with all data
+#'   points on inidivual rows. Metadata is not maintained. Package `data.table`
+#'   must be installed for this to work.
 #'
 #'   The temporal dimension of the data, if present, may be summarised using the
 #'   `summarise()` method. The data is returned as an array in the standard R
@@ -162,6 +165,7 @@ CFData <- R6::R6Class("CFData",
     #' `terra::SpatRasterDataset` (4D) object. The data
     #' will be oriented to North-up. The 3rd dimension in the data will become
     #' layers in the resulting `SpatRaster`, any 4th dimension the data sets.
+    #' The `terra` package needs to be installed for this method to work.
     #' @return A `terra::SpatRaster` or `terra::SpatRasterDataset` instance.
     terra = function() {
       if (!requireNamespace("terra", quietly = TRUE))
@@ -205,16 +209,21 @@ CFData <- R6::R6Class("CFData",
 
       r
     },
-    # Below code works in the console but not here
-    # data.table = function() {
-    #   if (!requireNamespace("data.table", quietly = TRUE))
-    #     stop("Please install package 'data.table' before using this funcionality")
-    #
-    #   dt <- data.table::as.data.table(self$raw())
-    #   cols <- c("lat", "lon")
-    #   dt[, (cols) := type.convert(.SD, as.is = TRUE), .SDcols = cols]
-    #   dt[dt[, do.call(order, .SD), .SDcols = cols]]
-    # }
+
+    #' @description Retrieve the data in the object in the form of a
+    #' `data.table`. The `data.table` package needs to be installed for this
+    #' method to work.
+    #' @return A `data.table` with all data points in individual rows.
+    data.table = function() {
+      if (!requireNamespace("data.table", quietly = TRUE))
+        stop("Please install package 'data.table' before using this funcionality")
+
+      dt <- data.table::as.data.table(self$raw())
+      long_name <- self$attribute("long_name")
+      units <- self$attribute("units")
+      data.table::setattr(dt, "value", list(name = long_name, units = units))
+      dt
+    },
 
     #' @description Summarise the temporal dimension of the data, if present, to
     #'   a lower resolution, using a user-supplied aggregation function.

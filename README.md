@@ -19,15 +19,14 @@ commit](https://img.shields.io/github/last-commit/pvanlaake/ncdfCF)](https://git
 <!-- badges: end -->
 
 The `ncdfCF` package provides an easy to use interface to netCDF
-resources in R,  
-either in local files or remotely on a THREDDS server. It is built on
-the `RNetCDF` package which, like package `ncdf4`, provides a basic
-interface to the `netcdf` library, but which lacks an intuitive user
-interface. Package `ncdfCF` provides a high-level interface using
-functions and methods that are familiar to the R user. It reads the
-structural metadata and also the attributes upon opening the resource.
-In the process, the `ncdfCF` package also applies CF Metadata
-Conventions to interpret the data. This currently applies to:
+resources in R, either in local files or remotely on a THREDDS server.
+It is built on the `RNetCDF` package which, like package `ncdf4`,
+provides a basic interface to the `netcdf` library, but which lacks an
+intuitive user interface. Package `ncdfCF` provides a high-level
+interface using functions and methods that are familiar to the R user.
+It reads the structural metadata and also the attributes upon opening
+the resource. In the process, the `ncdfCF` package also applies CF
+Metadata Conventions to interpret the data. This currently applies to:
 
 - The **axis designation**. The three mechanisms to identify the axis
   each dimension represents are applied until an axis is determined.
