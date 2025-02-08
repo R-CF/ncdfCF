@@ -40,6 +40,10 @@ CF object.}
 \item \href{#method-CFObject-new}{\code{CFObject$new()}}
 \item \href{#method-CFObject-attribute}{\code{CFObject$attribute()}}
 \item \href{#method-CFObject-print_attributes}{\code{CFObject$print_attributes()}}
+\item \href{#method-CFObject-set_attribute}{\code{CFObject$set_attribute()}}
+\item \href{#method-CFObject-append_attribute}{\code{CFObject$append_attribute()}}
+\item \href{#method-CFObject-delete_attribute}{\code{CFObject$delete_attribute()}}
+\item \href{#method-CFObject-write_attributes}{\code{CFObject$write_attributes()}}
 \item \href{#method-CFObject-clone}{\code{CFObject$clone()}}
 }
 }
@@ -116,6 +120,119 @@ Print the attributes of the CF object to the console.
 printed to the console.}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFObject-set_attribute"></a>}}
+\if{latex}{\out{\hypertarget{method-CFObject-set_attribute}{}}}
+\subsection{Method \code{set_attribute()}}{
+Add an attribute. If an attribute \code{name} already exists, it
+will be overwritten.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFObject$set_attribute(name, type, value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{The name of the attribute. The name must begin with a letter
+and be composed of letters, digits, and underscores, with a maximum
+length of 255 characters. UTF-8 characters are not supported in
+attribute names.}
+
+\item{\code{type}}{The type of the attribute, as a string value of a netCDF data
+type.}
+
+\item{\code{value}}{The value of the attribute. This can be of any supported
+type, including a vector or list of values. Matrices, arrays and like
+compound data structures should be stored as a data variable, not as an
+attribute and they are thus not allowed. In general, an attribute
+should be a character value, a numeric value, a logical value, or a
+short vector or list of any of these. Values passed in a list will be
+coerced to their common mode.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFObject-append_attribute"></a>}}
+\if{latex}{\out{\hypertarget{method-CFObject-append_attribute}{}}}
+\subsection{Method \code{append_attribute()}}{
+Append the text value of an attribute. If an attribute
+\code{name} already exists, the \code{value} will be appended to the existing
+value of the attribute. If the attribute \code{name} does not exist it will
+be created. The attribute must be of "NC_CHAR" or "NC_STRING" type; in
+the latter case having only a single string value.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFObject$append_attribute(name, value, sep = "; ", prepend = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{The name of the attribute. The name must begin with a letter
+and be composed of letters, digits, and underscores, with a maximum
+length of 255 characters. UTF-8 characters are not supported in
+attribute names.}
+
+\item{\code{value}}{The character value of the attribute to append. This must be
+a character string.}
+
+\item{\code{sep}}{The separator to use. Default is \code{"; "}.}
+
+\item{\code{prepend}}{Logical to flag if the supplied \code{value} should be placed
+before the existing value. Default is \code{FALSE}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFObject-delete_attribute"></a>}}
+\if{latex}{\out{\hypertarget{method-CFObject-delete_attribute}{}}}
+\subsection{Method \code{delete_attribute()}}{
+Delete an attribute. If an attribute \code{name} is not present
+this method simply returns.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFObject$delete_attribute(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{The name of the attribute to delete.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFObject-write_attributes"></a>}}
+\if{latex}{\out{\hypertarget{method-CFObject-write_attributes}{}}}
+\subsection{Method \code{write_attributes()}}{
+Write the attributes of this object to a netCDF file.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFObject$write_attributes(nc, nm)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{nc}}{The handle to the netCDF file opened for writing.}
+
+\item{\code{nm}}{The NC variable name or "NC_GLOBAL" to write the attributes to.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

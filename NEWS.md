@@ -2,7 +2,10 @@
 
 -   Method `CFData$summarise()` summarises the temporal dimension of a data
     object to a lower resolution, using the specific calendar of the temporal
-    dimension.
+    dimension and returns an array with the summarised data.
+-   Method `CFData$data.table()` exports a data object to a `data.table`.
+-   New attributes can be defined on any object that supports attributes, or
+    deleted.
 
 # ncdfCF 0.3.0
 

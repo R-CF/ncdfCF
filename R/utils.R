@@ -1,3 +1,9 @@
+# NetCDF data types
+# Additionally, UDTs are allowable as data type
+netcdf_data_types <- c("NC_BYTE", "NC_UBYTE", "NC_CHAR", "NC_SHORT",
+                       "NC_USHORT", "NC_INT", "NC_UINT", "NC_INT64",
+                       "NC_UINT64", "NC_FLOAT", "NC_DOUBLE", "NC_STRING")
+
 # Standard names used for parametric Z axes
 Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
   "atmosphere_sigma_coordinate", "atmosphere_hybrid_sigma_pressure_coordinate",
@@ -26,6 +32,17 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
   }))
   names(out) <- names(df)
   out
+}
+
+#' Flags if the supplied name is a valid name according to the CF Metadata
+#' Conventions.
+#'
+#' @param nm The name of a variable, group or attribute to test. Group names
+#' should be plain, i.e. no preceding path.
+#' @returns `TRUE` if `nm` is valid, `FALSE` otherwise.
+#' @noRd
+.is_valid_name <- function(nm) {
+  grepl("^[a-zA-Z][a-zA-Z0-9_]{0,254}$", nm)
 }
 
 .cache_dir <- function() {
