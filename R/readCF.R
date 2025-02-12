@@ -285,17 +285,12 @@ peek_ncdf <- function(resource) {
 
   # Orientation of the axis
   orient <- var$attribute("axis")
-  if (is.na(orient)) {
-    if (!is.na(units)) {
-      if (grepl("^degree(s?)(_?)(east|E)$", units)) orient <- "X"
-      else if (grepl("^degree(s?)(_?)(north|N)$", units)) orient <- "Y"
-    }
-  }
-  if (is.na(orient)) {
-    # Last option: standard_name, only X and Y
+  if (is.na(orient) && !is.na(units))
+    if (grepl("^degree(s?)(_?)(east|E)$", units)) orient <- "X"
+    else if (grepl("^degree(s?)(_?)(north|N)$", units)) orient <- "Y"
+  if (is.na(orient) && !is.na(standard))
     if (standard == "longitude") orient <- "X"
     else if (standard == "latitude") orient <- "Y"
-  }
   if (is.na(orient)) {
     # Desperate option: try name of NC variable - non-standard
     nm <- toupper(var$name)
