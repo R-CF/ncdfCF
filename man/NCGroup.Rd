@@ -78,6 +78,7 @@ group}
 \item \href{#method-NCGroup-unused}{\code{NCGroup$unused()}}
 \item \href{#method-NCGroup-addAuxiliaryLongLat}{\code{NCGroup$addAuxiliaryLongLat()}}
 \item \href{#method-NCGroup-fullnames}{\code{NCGroup$fullnames()}}
+\item \href{#method-NCGroup-dimensions}{\code{NCGroup$dimensions()}}
 \item \href{#method-NCGroup-variables}{\code{NCGroup$variables()}}
 \item \href{#method-NCGroup-axes}{\code{NCGroup$axes()}}
 \item \href{#method-NCGroup-grid_mappings}{\code{NCGroup$grid_mappings()}}
@@ -85,10 +86,14 @@ group}
 }
 }
 \if{html}{\out{
-<details open><summary>Inherited methods</summary>
+<details><summary>Inherited methods</summary>
 <ul>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="append_attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-append_attribute'><code>ncdfCF::NCObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-attribute'><code>ncdfCF::NCObject$attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="delete_attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-delete_attribute'><code>ncdfCF::NCObject$delete_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="print_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-print_attributes'><code>ncdfCF::NCObject$print_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="set_attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-set_attribute'><code>ncdfCF::NCObject$set_attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="write_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-write_attributes'><code>ncdfCF::NCObject$write_attributes()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -272,6 +277,21 @@ optionally including names in subgroups.
 }
 \subsection{Returns}{
 A character vector with group names.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-dimensions"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-dimensions}{}}}
+\subsection{Method \code{dimensions()}}{
+List all the dimensions that are visible from this group
+including those that are defined in parent groups (by names not defined
+by any of their child groups in direct lineage to the current group).
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$dimensions()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A vector of \link{NCDimension} objects.
 }
 }
 \if{html}{\out{<hr>}}

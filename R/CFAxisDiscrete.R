@@ -9,6 +9,10 @@
 CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
   inherit = CFAxis,
   private = list(
+    get_values = function() {
+      seq(self$length)
+    },
+
     dimvalues_short = function() {
       lbls <- self$labels
       if (!length(lbls)) {

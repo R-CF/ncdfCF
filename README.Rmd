@@ -140,7 +140,33 @@ returned as an instance of `CFData`, including axes and attributes:
 ```
 
 The latter two methods will read only as much data from the netCDF resource as 
-is requested. 
+is requested.
+
+##### Exporting and saving data
+
+A `CFData` object can be exported to a `data.table` or to a `terra::SpatRaster`
+(3D) or `terra::SpatRasterDataset` (4D) for further processing. Obviously, these 
+packages need to be installed to utilise these methods.
+
+```{r export}
+# install.packages("data.table")
+library(data.table)
+head(dt <- ts$data.table())
+
+#install.packages("terra")
+suppressMessages(library(terra))
+(r <- ts$terra())
+terra::plot(r[names(r)[1]])
+```
+
+A `CFData` object can also be written back to a netCDF file. The object will
+have all its relevant attributes and properties written together with the actual 
+data: axes, bounds, attributes, CRS.
+
+```{r save, eval=FALSE}
+# Save a CFData instance to a netCDF file on disk
+ts$save("~/path/file.nc")
+```
 
 ##### A note on Discrete Sampling Geometries
 
@@ -150,9 +176,10 @@ distinct from array-based data sets. At the moment there is no specific code for
 DSG, but the simplest layouts can currently already be read (without any 
 warranty). Various methods, such as `CFVariable::subset()` or `CFData::array()` 
 will fail miserably, and you are well-advised to try no more than the empty 
-array indexing operator `CFVariable::[]` which will yield the full data set with 
-column and row names set as an array. You can identify a DSG data set by the 
-`featureType` attribute of the `CFDataset`.
+array indexing operator `CFVariable::[]` which will yield the full data variable  
+with column and row names set as an array, of `CFVariable::data()` to get the 
+whole data variable as a `CFData` object for further processing. You can 
+identify a DSG data set by the `featureType` attribute of the `CFDataset`.
 
 More comprehensive support for DSG is in the development plan.
 
@@ -160,7 +187,8 @@ More comprehensive support for DSG is in the development plan.
 
 Package `ncdfCF` is in the early phases of development. It supports reading of 
 groups, variables, dimensions, user-defined data types, attributes and data from 
-netCDF resources in "classic" and "netcdf4" formats. From the CF Metadata 
+netCDF resources in "classic" and "netcdf4" formats; and can write single data
+variables back to a netCDF file. From the CF Metadata 
 Conventions it supports identification of dimension axes, interpretation of the 
 "time" dimension, name resolution when using groups, reading of "bounds" 
 information, parametric vertical coordinates, auxiliary coordinate variables,
@@ -170,7 +198,7 @@ Development plans for the near future focus on supporting the below features:
 
 ##### netCDF
 
- * Support for writing.
+ * Support for writing of data sets.
 
 ##### CF Metadata Conventions
 

@@ -1,3 +1,5 @@
+# FIXME: summarise() returns new CFData in same group
+
 #' Data extracted from a CF data variable
 #'
 #' @description This class holds the data that is extracted from a [CFVariable],
@@ -18,7 +20,7 @@
 #'   `terra::SpatRasterDataset` (4D) object, with all relevant structural
 #'   metadata set. Package `terra` must be installed for this to work.
 #' * `data.table()`: The data is returned as a `data.table`, with all data
-#'   points on inidivual rows. Metadata is not maintained. Package `data.table`
+#'   points on individual rows. Metadata is not maintained. Package `data.table`
 #'   must be installed for this to work.
 #'
 #'   The temporal dimension of the data, if present, may be summarised using the
@@ -87,19 +89,21 @@ CFData <- R6::R6Class("CFData",
     #'   any axes `n+1..m` are scalar axes.)
     axes  = list(),
 
-    #' @field crs Character string of the WKT2 of the CRS of the data object.
-    crs = "",
+    #' @field crs An instance of [CFGridMapping] or `NULL` when no grid mapping
+    #' is available.
+    crs = NULL,
 
     #' @description Create an instance of this class.
     #' @param name The name of the object.
     #' @param group The group that this data should live in. This is usually an
-    #' in-memory group, but it could be a regular group if the data is prepared
-    #' for writing into a new netCDF file.
+    #'   in-memory group, but it could be a regular group if the data is
+    #'   prepared for writing into a new netCDF file.
     #' @param value The data of this object. The structure of the data depends
     #'   on the method that produced it.
     #' @param axes A `list` of [CFAxis] descendant instances that describe the
     #'   axes of the argument `value`.
-    #' @param crs The WKT string of the CRS of this data object.
+    #' @param crs The [CFGridMapping] instance of this data object, or `NULL`
+    #'   when no grid mapping is available.
     #' @param attributes A `data.frame` with the attributes associated with the
     #'   data in argument `value`.
     #' @return An instance of this class.
@@ -117,7 +121,7 @@ CFData <- R6::R6Class("CFData",
     print = function() {
       cat("<Data>", self$name, "\n")
       longname <- self$attribute("long_name")
-      if (nzchar(longname) && longname != self$name)
+      if (!is.na(longname) && longname != self$name)
         cat("Long name:", longname, "\n")
 
       if (all(is.na(self$value))) {
@@ -126,6 +130,7 @@ CFData <- R6::R6Class("CFData",
       } else {
         rng <- range(self$value, na.rm = TRUE)
         units <- self$attribute("units")
+        if (is.na(units)) units <- ""
         cat("\nValues: [", rng[1L], " ... ", rng[2L], "] ", units, "\n", sep = "")
         NAs <- sum(is.na(self$value))
         cat(sprintf("    NA: %d (%.1f%%)\n", NAs, NAs * 100 / length(self$value)))
@@ -193,16 +198,18 @@ CFData <- R6::R6Class("CFData",
       if (Ybnds[1L] > Ybnds[2L]) Ybnds <- rev(Ybnds)
       ext <- round(c(Xbnds, Ybnds), 4) # Round off spurious "accuracy"
 
+      wkt <- if (is.null(self$crs)) .wkt2_crs_geo(4326L)
+             else self$crs$wkt2(.wkt2_axis_info(self))
       arr <- self$array()
       numdims <- length(dim(self$value))
       dn <- dimnames(arr)
       if (numdims == 4L) {
-        r <- terra::sds(arr, extent = ext, crs = self$crs)
+        r <- terra::sds(arr, extent = ext, crs = wkt)
         for (d4 in seq_along(dn[[4L]]))
           names(r[d4]) <- dn[[3L]]
         names(r) <- dn[[4L]]
       } else {
-        r <- terra::rast(arr, extent = ext, crs = self$crs)
+        r <- terra::rast(arr, extent = ext, crs = wkt)
         if (numdims == 3L)
           names(r) <- dn[[3L]]
       }
@@ -220,7 +227,9 @@ CFData <- R6::R6Class("CFData",
 
       dt <- data.table::as.data.table(self$raw())
       long_name <- self$attribute("long_name")
+      if (is.na(long_name)) long_name <- ""
       units <- self$attribute("units")
+      if (is.na(units)) units <- ""
       data.table::setattr(dt, "value", list(name = long_name, units = units))
       dt
     },
@@ -238,7 +247,7 @@ CFData <- R6::R6Class("CFData",
     #'   that will be applied to each grouping of data.
     summarise = function(period, fun) {
       if (missing(period) || missing(fun))
-        stop("Arguments 'period' and 'fun' ar required.", call. = FALSE)
+        stop("Arguments 'period' and 'fun' are required.", call. = FALSE)
       if (!(period %in% c("day", "dekad", "month", "quarter", "season", "year")))
         stop("Argument 'period' has invalid value.", call. = FALSE)
 
@@ -268,6 +277,41 @@ CFData <- R6::R6Class("CFData",
         dimnames(out) <- dn
         out
       }
+    },
+
+    #' @description Save the data object to a netCDF file.
+    #' @param fn The name of the netCDF file to create.
+    #' @return Self, invisibly.
+    save = function(fn) {
+      nc <- RNetCDF::create.nc(fn, prefill = FALSE, format = "netcdf4")
+      if (!inherits(nc, "NetCDF"))
+        stop("Could not create the netCDF file. Please check that the location of the supplied file name is writable.", call. = FALSE)
+
+      # Global attributes
+      self$group$set_attribute("Conventions", "NC_CHAR", "CF-1.12")
+      self$group$write_attributes(nc, "NC_GLOBAL")
+
+      # Axes
+      lapply(self$axes, function(ax) ax$write(nc))
+
+      # CRS
+      if (!is.null(self$crs)) {
+        self$crs$write(nc)
+        self$set_attribute("grid_mapping", "NC_CHAR", self$crs$name)
+      }
+
+      # Data variable
+      # FIXME: Pack data
+      dim_axes <- length(dim(self$value))
+      axis_names <- sapply(self$axes, function(ax) ax$name)
+      RNetCDF::var.def.nc(nc, self$name, self$NCvar$vtype, axis_names[1L:dim_axes])
+      if (length(self$axes) > dim_axes)
+        self$set_attribute("coordinates", "NC_CHAR", paste(axis_names[-(1L:dim_axes)]))
+      self$write_attributes(nc, self$name)
+      RNetCDF::var.put.nc(nc, self$name, self$value)
+
+      RNetCDF::close.nc(nc)
+      invisible(self)
     }
   ),
   active = list(

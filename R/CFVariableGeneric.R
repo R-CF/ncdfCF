@@ -64,11 +64,6 @@ CFVariableGeneric <- R6::R6Class("CFVariableGeneric",
     #'   are the axes of the variable.
     axes  = list(),
 
-    #' #' @field grid_mapping The coordinate reference system of this variable, as
-    #' #'   an instance of [CFGridMapping]. If this field is `NULL`, the horizontal
-    #' #'   component of the axes are in decimal degrees of longitude and latitude.
-    #' grid_mapping = NULL,
-
     #' @description Create an instance of this class.
     #'
     #' @param grp The group that this CF variable lives in.
@@ -86,12 +81,12 @@ CFVariableGeneric <- R6::R6Class("CFVariableGeneric",
         cat("Group    :", self$group$name, "\n")
 
       longname <- self$attribute("long_name")
-      if (nzchar(longname) && longname != self$name)
+      if (!is.na(longname) && longname != self$name)
         cat("Long name:", longname, "\n")
 
-      if (!is.null(self$grid_mapping)) {
+      if (!is.null(self$crs)) {
         cat("\nGrid mapping:\n")
-        print(.slim.data.frame(self$grid_mapping$brief(), 50L), right = FALSE, row.names = FALSE)
+        print(.slim.data.frame(self$crs$brief(), 50L), right = FALSE, row.names = FALSE)
       }
 
       cat("\nAxes:\n")
@@ -354,7 +349,7 @@ CFVariableGeneric <- R6::R6Class("CFVariableGeneric",
       if (is.null(aux)) crs <- self$crs
       else {
         atts <- atts[!(atts$name == "grid_mapping"), ]  # drop: warped to lat-long
-        crs <- .wkt2_crs_geo(4326L)
+        crs <- NULL
       }
 
       # Assemble the CFData instance

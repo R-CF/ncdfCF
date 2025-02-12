@@ -11,6 +11,10 @@ NULL
 CFAxisTime <- R6::R6Class("CFAxisTime",
   inherit = CFAxis,
   private = list(
+    get_values = function() {
+      self$values$offsets
+    },
+
     dimvalues_short = function() {
       time <- self$values
       nv <- length(time$offsets)

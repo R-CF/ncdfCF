@@ -12,6 +12,11 @@
 CFAxisScalar <- R6::R6Class("CFAxisScalar",
   inherit = CFAxis,
   private = list(
+    get_values = function() {
+      if (inherits(self$value, "CFTime")) self$value$offsets
+      else self$value
+    },
+
     dimvalues_short = function() {
       v <- if (inherits(self$value, "CFTime")) as_timestamp(self$value)
            else self$value
@@ -44,7 +49,7 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
         cat("Group    :", self$group$fullname, "\n")
 
       longname <- self$attribute("long_name")
-      if (nzchar(longname) && longname != self$name)
+      if (!is.na(longname) && longname != self$name)
         cat("Long name:", longname, "\n")
 
       cat("Axis     :", self$orientation, "\n")
@@ -56,7 +61,7 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
         else cat("Bounds   : ", bnds[1L, 1L], ", ", bnds[2L, 1L], "\n", sep = "")
       } else {
         units <- self$attribute("units")
-        if (!nzchar(units)) units <- ""
+        if (is.na(units)) units <- ""
         cat("Value    : ", self$value, " ", units, "\n", sep = "")
         if (inherits(self$bounds, "CFBounds"))
           self$bounds$print()
@@ -71,9 +76,9 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     #' @return A 1-row `data.frame` with some details of the axis.
     brief = function() {
       longname <- self$attribute("long_name")
-      if (!nzchar(longname) || longname == self$name) longname <- ""
+      if (is.na(longname) || longname == self$name) longname <- ""
       units <- self$attribute("units")
-      if (!nzchar(units)) units <- ""
+      if (is.na(units)) units <- ""
 
       data.frame(id = "", axis = self$orientation, group = self$group$fullname,
                  name = self$name, long_name = longname, length = 1L,

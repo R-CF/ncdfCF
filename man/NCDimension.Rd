@@ -32,14 +32,19 @@ dimension.}
 \item \href{#method-NCDimension-new}{\code{NCDimension$new()}}
 \item \href{#method-NCDimension-print}{\code{NCDimension$print()}}
 \item \href{#method-NCDimension-shard}{\code{NCDimension$shard()}}
+\item \href{#method-NCDimension-write}{\code{NCDimension$write()}}
 \item \href{#method-NCDimension-clone}{\code{NCDimension$clone()}}
 }
 }
 \if{html}{\out{
-<details open><summary>Inherited methods</summary>
+<details><summary>Inherited methods</summary>
 <ul>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="append_attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-append_attribute'><code>ncdfCF::NCObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-attribute'><code>ncdfCF::NCObject$attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="delete_attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-delete_attribute'><code>ncdfCF::NCObject$delete_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="print_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-print_attributes'><code>ncdfCF::NCObject$print_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="set_attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-set_attribute'><code>ncdfCF::NCObject$set_attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="write_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-write_attributes'><code>ncdfCF::NCObject$write_attributes()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -101,6 +106,23 @@ with similar information from other dimensions.
 
 \subsection{Returns}{
 Character string with very basic dimension information.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCDimension-write"></a>}}
+\if{latex}{\out{\hypertarget{method-NCDimension-write}{}}}
+\subsection{Method \code{write()}}{
+Write the dimension to a netCDF file.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCDimension$write(h)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{h}}{The handle to the netCDF file to write.}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}

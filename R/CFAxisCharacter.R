@@ -9,6 +9,10 @@
 CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
   inherit = CFAxis,
   private = list(
+    get_values = function() {
+      self$values
+    },
+
     dimvalues_short = function() {
       if (self$length) sprintf("[%s]", paste0(self$values, collapse = ", "))
       else "(no values)"

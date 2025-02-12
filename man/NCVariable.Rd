@@ -52,10 +52,14 @@ path from the root group.}
 }
 }
 \if{html}{\out{
-<details open><summary>Inherited methods</summary>
+<details><summary>Inherited methods</summary>
 <ul>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="append_attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-append_attribute'><code>ncdfCF::NCObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-attribute'><code>ncdfCF::NCObject$attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="delete_attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-delete_attribute'><code>ncdfCF::NCObject$delete_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="print_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-print_attributes'><code>ncdfCF::NCObject$print_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="set_attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-set_attribute'><code>ncdfCF::NCObject$set_attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="write_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-write_attributes'><code>ncdfCF::NCObject$write_attributes()</code></a></span></li>
 </ul>
 </details>
 }}

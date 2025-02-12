@@ -36,10 +36,15 @@ thus always returns \code{NULL}.
 \if{html}{\out{
 <details><summary>Inherited methods</summary>
 <ul>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="append_attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-append_attribute'><code>ncdfCF::NCObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-attribute'><code>ncdfCF::NCObject$attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="delete_attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-delete_attribute'><code>ncdfCF::NCObject$delete_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="print_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-print_attributes'><code>ncdfCF::NCObject$print_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="set_attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-set_attribute'><code>ncdfCF::NCObject$set_attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="write_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-write_attributes'><code>ncdfCF::NCObject$write_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCGroup" data-id="addAuxiliaryLongLat"><a href='../../ncdfCF/html/NCGroup.html#method-NCGroup-addAuxiliaryLongLat'><code>ncdfCF::NCGroup$addAuxiliaryLongLat()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCGroup" data-id="axes"><a href='../../ncdfCF/html/NCGroup.html#method-NCGroup-axes'><code>ncdfCF::NCGroup$axes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCGroup" data-id="dimensions"><a href='../../ncdfCF/html/NCGroup.html#method-NCGroup-dimensions'><code>ncdfCF::NCGroup$dimensions()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCGroup" data-id="find_by_name"><a href='../../ncdfCF/html/NCGroup.html#method-NCGroup-find_by_name'><code>ncdfCF::NCGroup$find_by_name()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCGroup" data-id="find_dim_by_id"><a href='../../ncdfCF/html/NCGroup.html#method-NCGroup-find_dim_by_id'><code>ncdfCF::NCGroup$find_dim_by_id()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCGroup" data-id="fullnames"><a href='../../ncdfCF/html/NCGroup.html#method-NCGroup-fullnames'><code>ncdfCF::NCGroup$fullnames()</code></a></span></li>

@@ -20,7 +20,8 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @field fullname The fully qualified absolute path of the group.
     fullname  = "",
 
-    #' @field parent Parent group of this group, `NULL` for the root group.
+    #' @field parent Parent group of this group, the owning `CFDataset` for the
+    #'   root group.
     parent    = NULL,
 
     #' @field subgroups List of child `NCGroup` instances of this group.
@@ -288,6 +289,26 @@ NCGroup <- R6::R6Class("NCGroup",
       if (recursive && length(self$subgroups))
         c(self$fullname, sapply(self$subgroups, function(g) g$fullnames(recursive)))
       else self$fullname
+    },
+
+    #' @description List all the dimensions that are visible from this group
+    #' including those that are defined in parent groups (by names not defined
+    #' by any of their child groups in direct lineage to the current group).
+    #' @return A vector of [NCDimension] objects.
+    dimensions = function() {
+      dims <- self$NCdims
+      if (self$name == "/")
+        dims
+      else {
+        pdims <- self$parent$dimensions()
+        if (length(dims)) {
+          local_names <- sapply(dims, function(d) d$name)
+          parent_names <- sapply(pdims, function(d) d$name)
+          keep <- pdims[!which(parent_names %in% local_names)]
+          append(dims, keep)
+        } else
+          pdims
+      }
     },
 
     #' @description This method lists the CF data variables located in this

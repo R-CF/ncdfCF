@@ -44,29 +44,24 @@ NCObject <- R6::R6Class("NCObject",
       }
     },
 
-    #' @description This method returns netCDF object attributes.
-    #' @param att Vector of attribute names whose values to return.
-    #' @param field The field of the attributes to return values from. This must
-    #'   be "value" (default), "type" or "length".
-    #' @return If the `field` argument is "type" or "length", a character vector
-    #'   named with the `att` values that were found in the attributes. If
-    #'   argument `field` is "value", a list with elements named with the `att`
-    #'   values, containing the attribute value(s), except when argument `att`
-    #'   names a single attribute, in which case that attribute value is
-    #'   returned as a character string. If no attribute is named with a value
-    #'   of argument `att` an empty list is returned, or an empty string if
-    #'   there was only one value in argument `att`.
+    #' @description This method returns an attribute of a netCDF object.
+    #' @param att Attribute name whose value to return.
+    #' @param field The field of the attribute to return values from. This must
+    #'   be "value" (default) or "type".
+    #' @return If the `field` argument is "type", a character string. If `field`
+    #'   is "value", a single value of the type of the attribute, or a vector
+    #'   when the attribute has multiple values. If no attribute is named with a
+    #'   value of argument `att` `NA` is returned.
     attribute = function(att, field = "value") {
-      num <- length(att)
-      atts <- self$attributes
-      if (!nrow(atts)) return(if (num == 1L) "" else list())
-      val <- atts[atts$name %in% att, ]
-      if (!nrow(val)) return(if (num == 1L) "" else list())
+      if (length(att) > 1L)
+        stop("Can extract only one attribute at a time.", call. = FALSE)
 
-      out <- val[[field]]
-      names(out) <- val[["name"]]
-      if (num == 1L && field == "value") out <- val$value[[1L]]
-      out
+      atts <- self$attributes
+      if (!nrow(atts)) return(NA)
+      val <- atts[atts$name == att, ]
+      if (!nrow(val)) return(NA)
+
+      val[[field]][[1L]]
     },
 
     #' @description Add an attribute. If an attribute `name` already exists, it
@@ -106,7 +101,7 @@ NCObject <- R6::R6Class("NCObject",
         if (is.numeric(value)) len <- length(value)
         else stop("Unsupported value for attribute.", call. = FALSE)
       }
-      if (length(value) > 1L) value <- list(value)
+      if (type != "NC_CHAR") value <- list(value)
 
       # Check if the name refers to an existing attribute
       if (nrow(self$attributes[self$attributes$name == name, ])) {
@@ -119,9 +114,10 @@ NCObject <- R6::R6Class("NCObject",
         if (!.is_valid_name(name))
           stop("Attribute name is not valid.", call. = FALSE)
 
-        id <- max(self$attributes$id) + 1L
-        self$attributes <- rbind(self$attributes,
-          data.frame(id = id, name = name, type = type, length = len, value = value))
+        id <- if (nrow(self$attributes)) max(self$attributes$id) + 1L else 0L
+        df <- data.frame(id = id, name = name, type = type, length = len)
+        df$value <- value # Preserve lists
+        self$attributes <- rbind(self$attributes, df)
       }
       # FIXME: Flag that attributes have changed so that object is dirty
       invisible(self)
@@ -151,11 +147,12 @@ NCObject <- R6::R6Class("NCObject",
       if (nchar(value) > 0L) {
         # Check if the name refers to an existing attribute
         if (nrow(self$attributes[self$attributes$name == name, ])) {
-          self$attributes[self$attributes$name == name, ]$value <-
-            if (prepend)
-              paste0(value, sep, self$attributes[self$attributes$name == name, ]$value)
-            else
-              paste0(self$attributes[self$attributes$name == name, ]$value, sep, value)
+          new_val <- if (prepend)
+                       paste0(value, sep, self$attributes[self$attributes$name == name, ]$value)
+                     else
+                       paste0(self$attributes[self$attributes$name == name, ]$value, sep, value)
+          self$attributes[self$attributes$name == name, ]$value <- new_val
+          self$attributes[self$attributes$name == name, ]$length <- nchar(new_val)
         } else # else create a new attribute
           self$set_attribute(name, "NC_STRING", value)
       }
@@ -177,10 +174,11 @@ NCObject <- R6::R6Class("NCObject",
     #' @param nm The NC variable name or "NC_GLOBAL" to write the attributes to.
     #' @return Self, invisibly.
     write_attributes = function(nc, nm) {
-      for (a in 1L:nrow(self$attributes)) {
-        attr <- self$attributes[a,]
-        RNetCDF::att.put.nc(nc, nm, attr$name, attr$type, unlist(attr$value))
-      }
+      if ((num_atts <- nrow(self$attributes)) > 0L)
+        for (a in 1L:num_atts) {
+          attr <- self$attributes[a,]
+          RNetCDF::att.put.nc(nc, nm, attr$name, attr$type, unlist(attr$value))
+        }
       invisible(self)
     }
   )

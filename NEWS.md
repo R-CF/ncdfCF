@@ -1,5 +1,6 @@
 # ncdfCF (development version)
 
+-   `CFData` objects can now be written to a netCDF file.
 -   Method `CFData$summarise()` summarises the temporal dimension of a data
     object to a lower resolution, using the specific calendar of the temporal
     dimension and returns an array with the summarised data.

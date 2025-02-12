@@ -15,14 +15,21 @@ CFBounds <- R6::R6Class("CFBounds",
     dims = NULL # The length of self$values in all dimensions
   ),
   public = list(
+    #' @field NCdim The [NCDimension] that stores the netCDF dimension details
+    #' of the bounds dimension (as opposed to the dimension of the associated
+    #' axis).
+    NCdim = NULL,
+
     #' @field values A matrix with the bounds values.
     values = NULL,
 
     #' @description Create an instance of this class.
     #' @param nc_var The NC variable that describes this instance.
+    #' @param nc_dim The NC dimension that defines the vertices of the bounds.
     #' @param values A matrix with the bounds values.
-    initialize = function(nc_var, values) {
+    initialize = function(nc_var, nc_dim, values) {
       super$initialize(nc_var, nc_var$group)
+      self$NCdim <- nc_dim
       self$values <- values
       private$dims <- as.integer(dim(values))
 
@@ -79,7 +86,20 @@ CFBounds <- R6::R6Class("CFBounds",
     #' @return A `CFBounds` instance covering the indicated range of indices.
     sub_bounds = function(group, rng) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 2L, NULL)
-      CFBounds$new(var, self$values[, rng[1L]:rng[2L], drop = FALSE])
+      CFBounds$new(var, self$NCdim, self$values[, rng[1L]:rng[2L], drop = FALSE])
+    },
+
+    #' @description Write the bounds variable to a netCDF file. This method
+    #'   should not be called directly; instead, `CFData::save()` will call this
+    #'   method automatically.
+    #' @param h The handle to a netCDF file open for writing.
+    #' @param object_name The name of the object that uses these bounds, usually
+    #' an axis but could also be an auxiliary CV or a parametric Z axis.
+    write = function(h, object_name) {
+      self$NCdim$write(h)
+      RNetCDF::var.def.nc(h, self$name, self$NCvar$vtype, c(self$NCdim$name, object_name))
+      self$write_attributes(h, self$name)
+      RNetCDF::var.put.nc(h, self$name, self$values)
     }
   ),
   active = list(

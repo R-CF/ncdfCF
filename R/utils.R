@@ -57,18 +57,6 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
   }
 }
 
-# Update or set the "history" attribute in a data.frame of attributes
-.make_history <- function(atts, history) {
-  h <- atts[atts$name == "history", "value"]
-  if (length(h)) {
-    h <- paste0(history, "; ", h)
-    atts[atts$name == "history", "value"] <- h
-    atts[atts$name == "history", "length"] <- nchar(h)
-  } else
-    atts <- rbind(atts, data.frame(id = max(atts$id) + 1L, name = "history", type = "NC_CHAR", length = nchar(h), value = h))
-  atts
-}
-
 unused_imports <- function() {
   stringr::word
 }

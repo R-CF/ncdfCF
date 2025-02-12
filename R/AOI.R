@@ -69,8 +69,10 @@ AOI <- R6::R6Class("AOI",
       lat_vals <- c(lat_vals[1:dims[1L]], lat_vals[2:(dims[1L] + 1L)])
       dim(lat_vals) <- c(2L, dims[1L])
 
-      list(lon = CFBounds$new(lon_var, lon_vals),
-           lat = CFBounds$new(lat_var, lat_vals))
+      dim <- NCDimension$new(-1L, "nv", 2L, FALSE)
+
+      list(lon = CFBounds$new(lon_var, dim, lon_vals),
+           lat = CFBounds$new(lat_var, dim, lat_vals))
     }
   ),
   active = list(

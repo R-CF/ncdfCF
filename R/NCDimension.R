@@ -51,6 +51,19 @@ NCDimension <- R6::R6Class("NCDimension",
     shard = function() {
       unlim <- if (self$unlim) "-U" else ""
       paste0("[", self$id, ": ", self$name, " (", self$length, unlim, ")]")
+    },
+
+    #' @description Write the dimension to a netCDF file.
+    #' @param h The handle to the netCDF file to write.
+    write = function(h) {
+      # Error will be thrown when trying to write a dimension that's already
+      # defined, such as when a dimension is shared between multiple objects.
+      # This error can be safely ignored.
+      try(if (self$unlim)
+            RNetCDF::dim.def.nc(h, self$name, unlim = TRUE)
+          else
+            RNetCDF::dim.def.nc(h, self$name, self$length),
+          silent = TRUE)
     }
   )
 )

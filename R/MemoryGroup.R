@@ -26,11 +26,8 @@ MemoryGroup <- R6::R6Class("MemoryGroup",
     initialize = function(id, name, fullname, parent, title, history) {
       super$initialize(id, name, fullname, parent, NULL)
 
-      self$attributes <- data.frame(id = 0L:1L,
-                                    name = c("title", "history"),
-                                    type = c("NC_CHAR", "NC_CHAR"),
-                                    length = c(nchar(title), nchar(history)),
-                                    value = c(title, history))
+      self$set_attribute("title", "NC_CHAR", title)
+      self$set_attribute("history", "NC_CHAR", history)
     }
   ),
   active = list(

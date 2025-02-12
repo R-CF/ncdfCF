@@ -73,7 +73,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       # Scalar time axis
       tc_start <- grp$parent$attribute("time_coverage_start")
       tc_end <- grp$parent$attribute("time_coverage_end")
-      if (nzchar(tc_start) && nzchar(tc_end)) {
+      if (!is.na(tc_start) && !is.na(tc_end)) {
         tc <- CFtime::CFtime("seconds since 1970-01-01", "proleptic_gregorian", c(tc_start, tc_end))
         ymd <- tc$cal$offset2date(mean(tc$offsets) / 86400)
         cft <- CFtime::CFtime("seconds since 1970-01-01", "proleptic_gregorian")
@@ -84,9 +84,17 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
 
       grp$CFaxes <- axes
 
+      # CRS
+      v <- NCVariable$new(-1L, "latitude_longitude", grp, "NC_CHAR", 0L, NULL)
+      self$crs <- CFGridMapping$new(grp, v, "latitude_longitude")
+      self$crs$set_attribute("grid_mapping_name", "NC_CHAR", "latitude_longitude")
+      self$crs$set_attribute("semi_major_axis", "NC_DOUBLE", 6378145)
+      self$crs$set_attribute("inverse_flattening", "NC_DOUBLE", 0)
+      self$crs$set_attribute("prime_meridian_name", "NC_CHAR", "Greenwich")
+
       # Construct the object
       super$initialize(grp, var, axes)
-      self$NCvar$attributes <- rbind(self$attributes, data.frame(name = "units", type = "NC_CHAR", length = nchar(units[2L]), value = units[2L]))
+      self$set_attribute("units", "NC_CHAR", units[2L])
       self$NCvar$CF <- self # the variable
       ncv[["BinIndex"]]$CF <- ncv[["BinList"]]$CF <- self
     },
@@ -156,9 +164,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
                                    paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariableL3b$data()"))
       axes <- lapply(self$axes, function(ax) ax$clone())
 
-      crs <- 'GEOGCRS["Unknown",DATUM["unknown",ELLIPSOID["unknown",6378145,0,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],CS[ellipsoidal,2],AXIS["Geodetic latitude (Lat)",north,ORDER[1]],AXIS["Geodetic longitude (Lon)",east,ORDER[2]],ANGLEUNIT["degree",0.0174532925199433]]'
-
-      CFData$new(self$name, out_group, self$as_matrix(), axes, crs, self$attributes)
+      CFData$new(self$name, out_group, self$as_matrix(), axes, self$crs, self$attributes)
     },
 
     #' @description This method extracts a subset of values from the data of the
@@ -257,10 +263,9 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       d <- drop(d)
 
       # Assemble the CFData instance
-      crs <- 'GEOGCRS["Unknown",DATUM["unknown",ELLIPSOID["unknown",6378145,0,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],CS[ellipsoidal,2],AXIS["Geodetic latitude (Lat)",north,ORDER[1]],AXIS["Geodetic longitude (Lon)",east,ORDER[2]],ANGLEUNIT["degree",0.0174532925199433]]'
       axes <- c(out_axes_dim, out_axes_other)
       names(axes) <- sapply(axes, function(a) a$name)
-      CFData$new(self$name, out_group, d, axes, crs, self$attributes)
+      CFData$new(self$name, out_group, d, axes, self$crs, self$attributes)
     }
   )
 )

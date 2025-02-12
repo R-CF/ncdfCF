@@ -22,9 +22,9 @@ CFVariable <- R6::R6Class("CFVariable",
   private = list(
     .varProperties = function() {
       unit <- self$attribute("units")
-      if (!nzchar(unit)) unit <- ""
+      if (is.na(unit)) unit <- ""
       longname <- self$attribute("long_name")
-      if (!nzchar(longname)) longname <- ""
+      if (is.na(longname)) longname <- ""
       if (longname == self$name) longname <- ""
       list(longname = longname, unit = unit)
     },
@@ -52,41 +52,6 @@ CFVariable <- R6::R6Class("CFVariable",
           idx[2L] <- idx[2L] - 1L
       }
       as.integer(idx)
-    },
-
-    # Return the axis information from this variable to construct a WKT2 string
-    # of the CRS of this variable. Returns a list with relevant information.
-    # In the EPSG database, X and Y UOMs are always the same. Hence only one UOM
-    # is reported back.
-    # Furthermore, axis order is considered important only in the context of
-    # providing coordinated tuples to a coordinate transformation engine,
-    # something this package is not concerned with. Consequently, axis order is
-    # always reported as the standard X,Y. R packages like terra and stars deal
-    # with the idiosyncracies of R arrays. This has been tested with the
-    # results of [CFData] functions.
-    # This method may be extended in the future to inject more intelligence into
-    # the WKT2 strings produced. Currently it just returns the "units" string of
-    # the X axis (the Y axis has the same unit), and the Z axis, if present, in
-    # a list.
-    wkt2_axis_info = function() {
-      # Horizontal axes unit
-      x_attributes <- c("projection_x_coordinate", "grid_longitude", "projection_x_angular_coordinate")
-      ax <- lapply(self$axes, function(x) {
-        if (x$attribute("standard_name") %in% x_attributes) x
-      })
-      ax <- ax[lengths(ax) > 0L]
-      horz <- if (length(ax) > 0L) list(LENGTHUNIT = ax[[1L]]$attribute("units"))
-              else list()
-
-      # Vertical axes unit
-      z <- sapply(self$axes, function(x) x$orientation)
-      ndx <- which(z == "Z")
-      vert <- if (length(ndx)) {
-        z <- self$axes[[ndx]]
-        if (inherits(z, "CFAxis")) list(VERTINFO = z$attribute(c("standard_name", "positive", "units")))
-        else list()
-      } else list()
-      c(horz, vert)
     }
   ),
   public = list(
@@ -94,10 +59,10 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   are the axes of the variable.
     axes  = list(),
 
-    #' @field grid_mapping The coordinate reference system of this variable, as
-    #'   an instance of [CFGridMapping]. If this field is `NULL`, the horizontal
+    #' @field crs The coordinate reference system of this variable, as an
+    #'   instance of [CFGridMapping]. If this field is `NULL`, the horizontal
     #'   component of the axes are in decimal degrees of longitude and latitude.
-    grid_mapping = NULL,
+    crs = NULL,
 
     #' @description Create an instance of this class.
     #'
@@ -119,12 +84,12 @@ CFVariable <- R6::R6Class("CFVariable",
         cat("Group    :", self$group$name, "\n")
 
       longname <- self$attribute("long_name")
-      if (nzchar(longname) && longname != self$name)
+      if (!is.na(longname) && longname != self$name)
         cat("Long name:", longname, "\n")
 
-      if (!is.null(self$grid_mapping)) {
+      if (!is.null(self$crs)) {
         cat("\nGrid mapping:\n")
-        print(.slim.data.frame(self$grid_mapping$brief(), 50L), right = FALSE, row.names = FALSE)
+        print(.slim.data.frame(self$crs$brief(), 50L), right = FALSE, row.names = FALSE)
       }
 
       cat("\nAxes:\n")
@@ -205,12 +170,12 @@ CFVariable <- R6::R6Class("CFVariable",
       }
     },
 
-    #' @field crs (read-only) Retrieve the coordinate reference system
+    #' @field crs_wkt2 (read-only) Retrieve the coordinate reference system
     #' description of the variable as a WKT2 string.
-    crs = function(value) {
+    crs_wkt2 = function(value) {
       if (missing(value)) {
-        if (is.null(self$grid_mapping)) {
-          # If no grid_mapping has been set, return the default GEOGCRS unless
+        if (is.null(self$crs)) {
+          # If no CRS has been set, return the default GEOGCRS unless
           # the axis coordinates fall out of range in which case an empty string
           # is returned.
           orient <- lapply(self$axes, function(x) x$orientation)
@@ -224,7 +189,7 @@ CFVariable <- R6::R6Class("CFVariable",
             else ""
           } else ""
         } else
-          self$grid_mapping$crs(private$wkt2_axis_info())
+          self$crs$wkt2(.wkt2_axis_info(self))
       }
     }
   )

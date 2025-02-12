@@ -36,16 +36,12 @@ CFObject <- R6::R6Class("CFObject",
     #' @description Retrieve attributes of any CF object.
     #'
     #' @param att Vector of character strings of attributes to return.
-    #' @param field The field of the `data.frame` to return values from. This
-    #' must be "value" (default), "type" or "length".
-    #' @return If the `field` argument is "type" or "length", a character vector
-    #'   named with the `att` values that were found in the attributes. If
-    #'   argument `field` is "value", a list with elements named with the `att`
-    #'   values, containing the attribute value(s), except when argument `att`
-    #'   names a single attribute, in which case that attribute value is
-    #'   returned as a character string. If no attribute is named with a value
-    #'   of argument `att` an empty list is returned, or an empty string if
-    #'   there was only one value in argument `att`.
+    #' @param field The field of the attribute to return values from. This must
+    #'   be "value" (default) or "type".
+    #' @return If the `field` argument is "type", a character string. If `field`
+    #'   is "value", a single value of the type of the attribute, or a vector
+    #'   when the attribute has multiple values. If no attribute is named with a
+    #'   value of argument `att` `NA` is returned.
     attribute = function(att, field = "value") {
       self$NCvar$attribute(att, field)
     },
