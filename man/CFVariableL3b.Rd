@@ -47,6 +47,7 @@ https://oceancolor.gsfc.nasa.gov/resources/docs/technical/ocean_level-3_binned_d
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="peek"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-peek'><code>ncdfCF::CFVariable$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="print"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-print'><code>ncdfCF::CFVariable$print()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="shard"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-shard'><code>ncdfCF::CFVariable$shard()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="time"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-time'><code>ncdfCF::CFVariable$time()</code></a></span></li>
 </ul>
 </details>
 }}

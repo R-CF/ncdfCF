@@ -56,7 +56,7 @@ unlimited dimension.}
 \item \href{#method-CFAxis-sub_axis}{\code{CFAxis$sub_axis()}}
 \item \href{#method-CFAxis-indexOf}{\code{CFAxis$indexOf()}}
 \item \href{#method-CFAxis-label_set}{\code{CFAxis$label_set()}}
-\item \href{#method-CFAxis-save}{\code{CFAxis$save()}}
+\item \href{#method-CFAxis-write}{\code{CFAxis$write()}}
 \item \href{#method-CFAxis-clone}{\code{CFAxis$clone()}}
 }
 }
@@ -281,12 +281,12 @@ axis has, or \code{NULL} when no labels have been set or when argument
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxis-save"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxis-save}{}}}
-\subsection{Method \code{save()}}{
+\if{html}{\out{<a id="method-CFAxis-write"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-write}{}}}
+\subsection{Method \code{write()}}{
 Write the axis to a netCDF file, including its attributes.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$save(nc = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$write(nc = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

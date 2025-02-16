@@ -19,7 +19,7 @@ makeLatitudeAxis(id, name, group, length, values, bounds, units)
 
 \item{bounds}{The bounds of the dimension values, or \code{NULL} if not available.}
 
-\item{units}{The name of the axis units.}
+\item{units}{A character string with the axis units.}
 }
 \value{
 A \code{CFAxisLatitude} instance.

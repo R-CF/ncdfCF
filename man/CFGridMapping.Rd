@@ -37,7 +37,8 @@ https://docs.ogc.org/is/18-010r11/18-010r11.pdf
 \item \href{#method-CFGridMapping-new}{\code{CFGridMapping$new()}}
 \item \href{#method-CFGridMapping-print}{\code{CFGridMapping$print()}}
 \item \href{#method-CFGridMapping-brief}{\code{CFGridMapping$brief()}}
-\item \href{#method-CFGridMapping-crs}{\code{CFGridMapping$crs()}}
+\item \href{#method-CFGridMapping-wkt2}{\code{CFGridMapping$wkt2()}}
+\item \href{#method-CFGridMapping-write}{\code{CFGridMapping$write()}}
 \item \href{#method-CFGridMapping-clone}{\code{CFGridMapping$clone()}}
 }
 }
@@ -96,12 +97,12 @@ grid mapping.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFGridMapping-crs"></a>}}
-\if{latex}{\out{\hypertarget{method-CFGridMapping-crs}{}}}
-\subsection{Method \code{crs()}}{
+\if{html}{\out{<a id="method-CFGridMapping-wkt2"></a>}}
+\if{latex}{\out{\hypertarget{method-CFGridMapping-wkt2}{}}}
+\subsection{Method \code{wkt2()}}{
 Retrieve the CRS string for a specific variable.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$crs(axis_info)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$wkt2(axis_info)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -114,6 +115,26 @@ Retrieve the CRS string for a specific variable.
 }
 \subsection{Returns}{
 A character string with the CRS in WKT2 format.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFGridMapping-write"></a>}}
+\if{latex}{\out{\hypertarget{method-CFGridMapping-write}{}}}
+\subsection{Method \code{write()}}{
+Write the CRS object to a netCDF file.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$write(h)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{h}}{Handle to the netCDF file opened for writing.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

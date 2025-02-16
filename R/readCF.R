@@ -215,11 +215,12 @@ peek_ncdf <- function(resource) {
   if (length(grp$NCvars) > 0L) {
     # Create axis for variables with name equal to dimension names
     dim_names <- sapply(visible_dims, function(d) d$name)
-    local_vars <- grp$NCvars[dim_names]
-    local_CVs <- local_vars[lengths(local_vars) > 0L]
-    axes <- lapply(local_CVs, function(v) .makeAxis(grp, v, visible_dims))
-
-    grp$CFaxes <- append(grp$CFaxes, unlist(axes))
+    if (length(dim_names)) {
+      local_vars <- grp$NCvars[dim_names]
+      local_CVs <- local_vars[lengths(local_vars) > 0L]
+      axes <- lapply(local_CVs, function(v) .makeAxis(grp, v, visible_dims))
+      grp$CFaxes <- append(grp$CFaxes, unlist(axes))
+    } else axes <- list()
   } else axes <- list()
 
   # Descend into subgroups

@@ -25,7 +25,8 @@ required.
 
 \item{\code{fullname}}{The fully qualified absolute path of the group.}
 
-\item{\code{parent}}{Parent group of this group, \code{NULL} for the root group.}
+\item{\code{parent}}{Parent group of this group, the owning \code{CFDataset} for the
+root group.}
 
 \item{\code{subgroups}}{List of child \code{NCGroup} instances of this group.}
 

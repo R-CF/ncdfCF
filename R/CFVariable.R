@@ -145,6 +145,16 @@ CFVariable <- R6::R6Class("CFVariable",
       else
         out$axes <- paste(sapply(self$axes, function(a) a$name), collapse = ", ")
       out
+    },
+
+    #' @description Return the time object from the axis representing time.
+    #' @return A `CFTime` instance, or `NULL` if the variable does not have a
+    #' "time" dimension.
+    time = function() {
+      ndx <- sapply(self$axes, inherits, "CFAxisTime")
+      if (any(ndx))
+        self$axes[[which(ndx)]]$time()
+      else NULL
     }
   ),
   active = list(

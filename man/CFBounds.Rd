@@ -139,7 +139,7 @@ method automatically.
 \item{\code{h}}{The handle to a netCDF file open for writing.}
 
 \item{\code{object_name}}{The name of the object that uses these bounds, usually
-an axis.}
+an axis but could also be an auxiliary CV or a parametric Z axis.}
 }
 \if{html}{\out{</div>}}
 }

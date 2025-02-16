@@ -25,8 +25,8 @@ the more specific \verb{CFVariable*} classes.
 \item{\code{axes}}{List of instances of classes descending from \link{CFAxis} that
 are the axes of the variable.}
 
-\item{\code{grid_mapping}}{The coordinate reference system of this variable, as
-an instance of \link{CFGridMapping}. If this field is \code{NULL}, the horizontal
+\item{\code{crs}}{The coordinate reference system of this variable, as an
+instance of \link{CFGridMapping}. If this field is \code{NULL}, the horizontal
 component of the axes are in decimal degrees of longitude and latitude.}
 }
 \if{html}{\out{</div>}}
@@ -39,7 +39,7 @@ component of the axes are in decimal degrees of longitude and latitude.}
 \item{\code{gridLongLat}}{The grid of longitude and latitude values of every
 grid cell when the main variable grid has a different coordinate system.}
 
-\item{\code{crs}}{(read-only) Retrieve the coordinate reference system
+\item{\code{crs_wkt2}}{(read-only) Retrieve the coordinate reference system
 description of the variable as a WKT2 string.}
 }
 \if{html}{\out{</div>}}
@@ -52,6 +52,7 @@ description of the variable as a WKT2 string.}
 \item \href{#method-CFVariable-brief}{\code{CFVariable$brief()}}
 \item \href{#method-CFVariable-shard}{\code{CFVariable$shard()}}
 \item \href{#method-CFVariable-peek}{\code{CFVariable$peek()}}
+\item \href{#method-CFVariable-time}{\code{CFVariable$time()}}
 \item \href{#method-CFVariable-clone}{\code{CFVariable$clone()}}
 }
 }
@@ -149,6 +150,20 @@ be duplicated among objects in different groups.}
 }
 \subsection{Returns}{
 A 1-row \code{data.frame} with details of the data variable.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-time"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-time}{}}}
+\subsection{Method \code{time()}}{
+Return the time object from the axis representing time.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$time()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A \code{CFTime} instance, or \code{NULL} if the variable does not have a
+"time" dimension.
 }
 }
 \if{html}{\out{<hr>}}

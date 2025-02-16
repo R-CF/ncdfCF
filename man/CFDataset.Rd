@@ -256,20 +256,16 @@ Retrieve global attributes of the data set.
 \describe{
 \item{\code{att}}{Vector of character strings of attributes to return.}
 
-\item{\code{field}}{The field of the attributes to return values from. This
-must be "value" (default), "type" or "length".}
+\item{\code{field}}{The field of the attribute to return values from. This must
+be "value" (default) or "type".}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-If the \code{field} argument is "type" or "length", a character vector
-named with the \code{att} values that were found in the attributes. If
-argument \code{field} is "value", a list with elements named with the \code{att}
-values, containing the attribute value(s), except when argument \code{att}
-names a single attribute, in which case that attribute value is
-returned as a character string. If no attribute is named with a value
-of argument \code{att} an empty list is returned, or an empty string if
-there was only one value in argument \code{att}.
+If the \code{field} argument is "type", a character string. If \code{field}
+is "value", a single value of the type of the attribute, or a vector
+when the attribute has multiple values. If no attribute is named with a
+value of argument \code{att} \code{NA} is returned.
 }
 }
 \if{html}{\out{<hr>}}

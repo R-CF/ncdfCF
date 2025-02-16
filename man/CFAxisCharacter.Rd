@@ -50,10 +50,10 @@ vector.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="label_set"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-label_set'><code>ncdfCF::CFAxis$label_set()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-peek'><code>ncdfCF::CFAxis$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="print"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-print'><code>ncdfCF::CFAxis$print()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="save"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-save'><code>ncdfCF::CFAxis$save()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="sub_axis"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-sub_axis'><code>ncdfCF::CFAxis$sub_axis()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="time"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-time'><code>ncdfCF::CFAxis$time()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="write"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-write'><code>ncdfCF::CFAxis$write()</code></a></span></li>
 </ul>
 </details>
 }}

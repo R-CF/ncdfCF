@@ -146,6 +146,16 @@ CFData <- R6::R6Class("CFData",
       self$print_attributes()
     },
 
+    #' @description Return the time object from the axis representing time.
+    #' @return A `CFTime` instance, or `NULL` if the variable does not have a
+    #' "time" dimension.
+    time = function() {
+      ndx <- sapply(self$axes, inherits, "CFAxisTime")
+      if (any(ndx))
+        self$axes[[which(ndx)]]$time()
+      else NULL
+    },
+
     #' @description Retrieve the data in the object exactly as it was produced
     #' by the operation on `CFVariable`.
     #' @return The data in the object. This is usually an `array` with the
@@ -236,6 +246,7 @@ CFData <- R6::R6Class("CFData",
 
     #' @description Summarise the temporal dimension of the data, if present, to
     #'   a lower resolution, using a user-supplied aggregation function.
+    #' @param name Character string with the name for the summarised data.
     #' @param period The period to summarise to. Must be one of either "day",
     #'   "dekad", "month", "quarter", "season", "year". A "quarter" is the
     #'   standard calendar quarter such as January-March, April-June, etc. A
@@ -245,9 +256,11 @@ CFData <- R6::R6Class("CFData",
     #'   resolution of the time dimension.
     #' @param fun A function or a symbol or character string naming a function
     #'   that will be applied to each grouping of data.
-    summarise = function(period, fun) {
-      if (missing(period) || missing(fun))
-        stop("Arguments 'period' and 'fun' are required.", call. = FALSE)
+    #' @return A new `CFData` object in the same group as `self` with the
+    #' summarised data.
+    summarise = function(name, period, fun) {
+      if (missing(name) || missing(period) || missing(fun))
+        stop("Arguments 'name', 'period' and 'fun' are required.", call. = FALSE)
       if (!(period %in% c("day", "dekad", "month", "quarter", "season", "year")))
         stop("Argument 'period' has invalid value.", call. = FALSE)
 
@@ -261,7 +274,7 @@ CFData <- R6::R6Class("CFData",
       # Summarise
       num_dim_axes <- length(dim(self$value))
       if (num_dim_axes == 1L) {
-        tapply(self$value, fac, fun, na.rm = TRUE)
+        out <- tapply(self$value, fac, fun, na.rm = TRUE)
       } else {
         tm <- sum(private$YXZT() > 0L) # Test which oriented axes are present, T is the last one
         perm <- seq(num_dim_axes)
@@ -277,6 +290,9 @@ CFData <- R6::R6Class("CFData",
         dimnames(out) <- dn
         out
       }
+
+      # Create the output
+      out
     },
 
     #' @description Save the data object to a netCDF file.

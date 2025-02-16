@@ -24,7 +24,7 @@ order. Dimnames will be set.
 \code{terra::SpatRasterDataset} (4D) object, with all relevant structural
 metadata set. Package \code{terra} must be installed for this to work.
 \item \code{data.table()}: The data is returned as a \code{data.table}, with all data
-points on inidivual rows. Metadata is not maintained. Package \code{data.table}
+points on individual rows. Metadata is not maintained. Package \code{data.table}
 must be installed for this to work.
 
 The temporal dimension of the data, if present, may be summarised using the
@@ -52,7 +52,8 @@ listed after the axes that associate with the dimensions of the data.
 (In other words, axes \verb{1..n} describe the \verb{1..n} data dimensions, while
 any axes \verb{n+1..m} are scalar axes.)}
 
-\item{\code{crs}}{Character string of the WKT2 of the CRS of the data object.}
+\item{\code{crs}}{An instance of \link{CFGridMapping} or \code{NULL} when no grid mapping
+is available.}
 }
 \if{html}{\out{</div>}}
 }
@@ -104,8 +105,8 @@ Create an instance of this class.
 \item{\code{name}}{The name of the object.}
 
 \item{\code{group}}{The group that this data should live in. This is usually an
-in-memory group, but it could be a regular group if the data is prepared
-for writing into a new netCDF file.}
+in-memory group, but it could be a regular group if the data is
+prepared for writing into a new netCDF file.}
 
 \item{\code{value}}{The data of this object. The structure of the data depends
 on the method that produced it.}
@@ -113,7 +114,8 @@ on the method that produced it.}
 \item{\code{axes}}{A \code{list} of \link{CFAxis} descendant instances that describe the
 axes of the argument \code{value}.}
 
-\item{\code{crs}}{The WKT string of the CRS of this data object.}
+\item{\code{crs}}{The \link{CFGridMapping} instance of this data object, or \code{NULL}
+when no grid mapping is available.}
 
 \item{\code{attributes}}{A \code{data.frame} with the attributes associated with the
 data in argument \code{value}.}
@@ -202,12 +204,14 @@ A \code{data.table} with all data points in individual rows.
 Summarise the temporal dimension of the data, if present, to
 a lower resolution, using a user-supplied aggregation function.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFData$summarise(period, fun)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFData$summarise(name, period, fun)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{name}}{Character string with the name for the summarised data.}
+
 \item{\code{period}}{The period to summarise to. Must be one of either "day",
 "dekad", "month", "quarter", "season", "year". A "quarter" is the
 standard calendar quarter such as January-March, April-June, etc. A
@@ -220,6 +224,10 @@ resolution of the time dimension.}
 that will be applied to each grouping of data.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A new \code{CFData} object in the same group as \code{self} with the
+summarised data.
 }
 }
 \if{html}{\out{<hr>}}

@@ -22,11 +22,7 @@ Other classes manage specific implementations of a data variable.
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
 \item{\code{axes}}{List of instances of classes descending from \link{CFAxis} that
-are the axes of the variable.
-#' @field grid_mapping The coordinate reference system of this variable, as
-#'   an instance of \link{CFGridMapping}. If this field is \code{NULL}, the horizontal
-#'   component of the axes are in decimal degrees of longitude and latitude.
-grid_mapping = NULL,}
+are the axes of the variable.}
 }
 \if{html}{\out{</div>}}
 }
@@ -60,6 +56,7 @@ grid cell when the main variable grid has a different coordinate system.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="time"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-time'><code>ncdfCF::CFVariable$time()</code></a></span></li>
 </ul>
 </details>
 }}
