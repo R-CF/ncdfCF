@@ -6,6 +6,13 @@
 #' @docType class
 CFAxis <- R6::R6Class("CFAxis",
   inherit = CFObject,
+  private = list(
+    # Get the coordinates of the axis. In most cases that is just the values
+    # but CFAxisTime overrides this method.
+    get_coordinates = function() {
+      private$get_values()
+    }
+  ),
   public = list(
     #' @field NCdim The [NCDimension] that stores the netCDF dimension details.
     #' This is `NULL` for [CFAxisScalar] instances.
@@ -103,10 +110,10 @@ CFAxis <- R6::R6Class("CFAxis",
       out
     },
 
-    #' @description Return the `CFtime` instance that represents time. This
-    #'   method is only useful for `CFAxisTime` instances. This stub is here to
-    #'   make the call to this method succeed with no result for the other axis
-    #'   descendants.
+    #' @description Return the `CFTime` instance that represents time. This
+    #'   method is only useful for `CFAxisTime` instances and `CFAxisScalar`
+    #'   instances having time information. This stub is here to make the call
+    #'   to this method succeed with no result for the other axis descendants.
     #' @return `NULL`
     time = function() {
       NULL
@@ -213,6 +220,13 @@ CFAxis <- R6::R6Class("CFAxis",
     length = function(value) {
       if (missing(value))
         self$NCdim$length
+    },
+
+    #' @field coordinates (read-only) Retrieve the coordinate values of the
+    #' axis.
+    coordinates = function(value) {
+      if (missing(value))
+        private$get_coordinates()
     },
 
     #' @field labels Set or retrieve the labels for the axis. On assignment, the

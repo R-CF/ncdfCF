@@ -16,7 +16,7 @@ longitude, latitude and vertical axes.
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{value}}{The value of the axis. This could be a composite value, such
+\item{\code{values}}{The value of the axis. This could be a composite value, such
 as a \code{CFTime} instance.}
 }
 \if{html}{\out{</div>}}
@@ -36,6 +36,7 @@ as a \code{CFTime} instance.}
 \item \href{#method-CFAxisScalar-new}{\code{CFAxisScalar$new()}}
 \item \href{#method-CFAxisScalar-print}{\code{CFAxisScalar$print()}}
 \item \href{#method-CFAxisScalar-brief}{\code{CFAxisScalar$brief()}}
+\item \href{#method-CFAxisScalar-time}{\code{CFAxisScalar$time()}}
 \item \href{#method-CFAxisScalar-sub_axis}{\code{CFAxisScalar$sub_axis()}}
 \item \href{#method-CFAxisScalar-clone}{\code{CFAxisScalar$clone()}}
 }
@@ -53,7 +54,6 @@ as a \code{CFTime} instance.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="label_set"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-label_set'><code>ncdfCF::CFAxis$label_set()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-peek'><code>ncdfCF::CFAxis$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="time"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-time'><code>ncdfCF::CFAxis$time()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="write"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-write'><code>ncdfCF::CFAxis$write()</code></a></span></li>
 </ul>
 </details>
@@ -113,6 +113,21 @@ Some details of the axis.
 
 \subsection{Returns}{
 A 1-row \code{data.frame} with some details of the axis.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisScalar-time"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisScalar-time}{}}}
+\subsection{Method \code{time()}}{
+Retrieve the \code{CFTime} instance that manages the time value
+if this scalar axis represents time.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisScalar$time()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+An instance of \code{CFTime}, or \code{NULL} if this axis does not
+represent time.
 }
 }
 \if{html}{\out{<hr>}}

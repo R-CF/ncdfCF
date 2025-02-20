@@ -8,13 +8,11 @@
 #' @param id The id of the group.
 #' @param name The name of the group.
 #' @param fullname The full path and name of the group.
-#' @param title The title attribute of the group.
-#' @param history The history attribute of the group.
 #'
-#' @return A `MemoryGroup` instance.
+#' @return A `VirtualGroup` instance.
 #' @export
-makeMemoryGroup <- function(id, name, fullname, title, history) {
-  MemoryGroup$new(id, name, fullname, NULL, title, history)
+makeVirtualGroup <- function(id, name, fullname) {
+  VirtualGroup$new(id, name, fullname, NULL)
 }
 
 #' Create a longitude axis

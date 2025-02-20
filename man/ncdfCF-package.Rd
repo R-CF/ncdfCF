@@ -97,6 +97,8 @@ group.
 A \link{CFVariable} contains a single data variable from a data set. It contains
 detailed information on the data variable and there are functions to access
 the data, with different selection methods.
+
+\emph{\strong{Properties}}
 \itemize{
 \item \code{show()}, \code{brief()}, and \code{shard()}: Print to the console or return to the
 caller (increasingly more compact) information on a data variable.
@@ -104,12 +106,15 @@ caller (increasingly more compact) information on a data variable.
 \item \code{axes()}: List of \code{CFAxis} objects representing the axes that the data
 variable uses.
 \item \code{attributes}: \code{data.frame} with the attributes of the data variable.
-\item \code{attribute()}: Retrieve the values of one or more attributes of the data
-variable.
-\item \code{grid_mapping}: The so-called grid-mapping object that contains information
+\item \code{attribute()}: Retrieve the values of an attribute of the data variable.
+\item \code{crs}: The so-called grid-mapping object that contains information
 on the coordinate reference system (CRS) of the data variable.
-\item \code{crs}: The CRS of the data variable, in WKT2 format. This is derived from
+\item \code{crs_wkt2}: The CRS of the data variable, in WKT2 format. This is derived from
 the data in the grid-mapping object.
+}
+
+\emph{\strong{Data extraction}}
+\itemize{
 \item \code{data()}: Extract all data from a data variable into a \code{CFData} object.
 \item \code{subset()}: Select a subset of data from a variable by specifying extents
 in real-world coordinates for the axes into a \code{CFData} object. This can also
@@ -137,7 +142,7 @@ classes derive from the basic numeric class to manage the specifics of
 geodetic coordinate systems. Class \link{CFAxisVertical} also derives from the
 basic class to manage depth and height axes.
 \item \link{CFAxisTime} is a specialized class to deal with time axes. Under the CF
-Metadata Conventions 9 different calendars have been defined and this class
+Metadata Conventions multiple different calendars have been defined and this class
 deals with the complexities of all of these. Functionality is provided by the
 \code{CFtime} package.
 \item \link{CFAxisCharacter} is for axes that use character labels as categorical
@@ -153,15 +158,21 @@ a constant height or depth of the data.
 }
 
 Methods for \code{CFAxis} instances:
+
+\emph{\strong{Properties}}
 \itemize{
 \item \code{show()}, \code{brief()}, and \code{shard()}: Print to the console or return to the
 caller (increasingly more compact) information on an axis.
 \item \code{name}, \code{id}: Basic properties of the axis.
+}
+
+\emph{\strong{Extraction}}
+\itemize{
 \item \code{indexOf()}: Retrieve the sub-range of the axis that encompasses the
 physical values passed.
 \item \code{sub_axis}: Create a new \code{CFAxis} instance that spans a sub-range of the
 axis.
-\item \code{time()} (\code{CFAxisTime} only): Retrieve the \code{CFtime} instance of the axis.
+\item \code{time()}: Retrieve the \code{CFTime} instance of the axis.
 }
 
 \emph{\strong{S3 methods for CFAxis}}
@@ -176,19 +187,28 @@ object to the caller. The \code{CFData} object contains the data from the netCDF
 resource, as well as important metadata from the data variable: axes, CRS and
 attributes. The data is easily accessed as a raw array, or processed to some
 other format.
+
+\emph{\strong{Properties}}
 \itemize{
 \item \code{show()}: Print information about the data object to the console, including
 axes, the CRS and its attributes.
 \item \code{axes()}: List of \code{CFAxis} objects representing the axes that the data
 object uses.
 \item \code{crs}: A WKT2-formatted string of the CRS of the data object.
-\item \code{raw()}: The array of data values from the data variable as read from the
+}
+
+\emph{\strong{Data extraction}}
+\itemize{
+\item \code{raw()}: The array of data values from the data object as read from the
 netCDF resource.
-\item \code{array()}: The array of data values from the data variable, oriented in the
+\item \code{array()}: The array of data values from the data object, oriented in the
 standard R arrangement.
 \item \code{terra()}: (requires the \code{terra} package) The data values from the data
-variable as a \code{terra::SpatRaster} (2 or 3 dimensions) or
+object as a \code{terra::SpatRaster} (2 or 3 dimensions) or
 \code{terra::SpatRasterDataset} (4 dimensions), with all relevant properties set.
+\item \code{data.table()}: (requires the \code{data.table} package) The data values from
+the data object as a \code{data.table} where every row consists of the permutation
+of the axis values and a final data value.
 }
 }
 \seealso{

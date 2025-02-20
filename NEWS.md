@@ -3,10 +3,12 @@
 -   `CFData` objects can now be written to a netCDF file.
 -   Method `CFData$summarise()` summarises the temporal dimension of a data
     object to a lower resolution, using the specific calendar of the temporal
-    dimension and returns an array with the summarised data.
+    dimension and returns a new `CFData` object with the summarised data.
 -   Method `CFData$data.table()` exports a data object to a `data.table`.
 -   `CFVariable` and `CFData` classes now have `time()` method to retrieve the
     `CFTime` instance of a "time" axis, if present.
+-   `CFAxis` has new `coordinates` field with which to retrieve the coordinates
+    along the axis.
 -   New attributes can be defined on any object that supports attributes, or
     deleted.
 

@@ -117,7 +117,8 @@ A 1-row \code{data.frame} with some details of the axis.
 \if{html}{\out{<a id="method-CFAxisTime-time"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisTime-time}{}}}
 \subsection{Method \code{time()}}{
-Retrieve the CFTime instance that manages this axis.
+Retrieve the \code{CFTime} instance that manages the values of
+this axis.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$time()}\if{html}{\out{</div>}}
 }

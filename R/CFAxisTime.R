@@ -15,6 +15,10 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       self$values$offsets
     },
 
+    get_coordinates = function() {
+      self$values$as_timestamp()
+    },
+
     dimvalues_short = function() {
       time <- self$values
       nv <- length(time$offsets)
@@ -75,7 +79,8 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       out
     },
 
-    #' @description Retrieve the CFTime instance that manages this axis.
+    #' @description Retrieve the `CFTime` instance that manages the values of
+    #' this axis.
     #' @return An instance of `CFTime`.
     time = function() {
       self$values

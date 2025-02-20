@@ -5,16 +5,13 @@
 \alias{CFVariable}
 \title{CF data variable}
 \description{
-This class represents the basic structure of a CF data variable, the object that
-provides access to an array of data.
+This class represents the basic structure of a CF data variable,
+the object that provides access to an array of data.
 
-The CF data variable instance provides access to the data array from
-the netCDF resource, as well as all the details that have been associated
-with the data variable, such as axis information, grid mapping parameters,
-etc.
-
-Do not use this class directly. Instead, use \link{CFVariableGeneric} of any of
-the more specific \verb{CFVariable*} classes.
+The CF data variable instance provides access to all the details that have
+been associated with the data variable, such as axis information, grid
+mapping parameters, etc. The actual data array can be accessed through the
+\code{data()} and \code{subset()} methods of this class.
 }
 \section{Super class}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFVariable}
@@ -53,6 +50,8 @@ description of the variable as a WKT2 string.}
 \item \href{#method-CFVariable-shard}{\code{CFVariable$shard()}}
 \item \href{#method-CFVariable-peek}{\code{CFVariable$peek()}}
 \item \href{#method-CFVariable-time}{\code{CFVariable$time()}}
+\item \href{#method-CFVariable-data}{\code{CFVariable$data()}}
+\item \href{#method-CFVariable-subset}{\code{CFVariable$subset()}}
 \item \href{#method-CFVariable-clone}{\code{CFVariable$clone()}}
 }
 }
@@ -164,6 +163,124 @@ Return the time object from the axis representing time.
 \subsection{Returns}{
 A \code{CFTime} instance, or \code{NULL} if the variable does not have a
 "time" dimension.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-data"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-data}{}}}
+\subsection{Method \code{data()}}{
+Retrieve all data of the variable.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$data()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A \link{CFData} instance with all data from this variable.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-subset"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-subset}{}}}
+\subsection{Method \code{subset()}}{
+This method extracts a subset of values from the array of
+the variable, with the range along each axis to extract expressed in
+values of the domain of each axis.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$subset(subset, aoi = NULL, rightmost.closed = FALSE, ...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{subset}}{A list with the range to extract from each axis. The
+list should have elements for the axes to extract a subset from - if an
+axis is not present in the list the entire axis will be extracted
+from the array. List element names should be the axis designator \code{X}, \code{Y},
+\code{Z} or \code{T}, or the name of the axis - axes without an axis designator
+and any additional axes beyond the four standard ones can only
+be specified by name. Axis designators and names are case-sensitive and
+can be specified in any order. If values for the range per axis fall
+outside of the extent of the axis, the range is clipped to the extent of
+the axis.}
+
+\item{\code{aoi}}{Optional, an area-of-interest instance of class \code{AOI} created
+with the \code{\link[=aoi]{aoi()}} function to indicate the horizontal area that should be
+extracted. The longitude and latitude coordinates must be included; the X
+and Y resolution will be calculated if not given. When provided, this
+argument will take precedence over the corresponding axis information for
+the X and Y axes in the \code{subset} argument.}
+
+\item{\code{rightmost.closed}}{Single logical value to indicate if the upper
+boundary of range in each axis should be included.}
+
+\item{\code{...}}{Ignored. Included to avoid "unused argument" errors on
+argument \code{rightmost.closed}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+The range of values along each axis to be subset is expressed in
+values of the domain of the axis. Any axes for which no information is
+provided in the \code{subset} argument are extracted in whole. Values can be
+specified in a variety of ways that are specific to the nature of the
+axis. For numeric axes it should (resolve to) be a vector of real
+values. A range (e.g. \code{100:200}), a vector (\verb{c(23, 46, 3, 45, 17}),
+a sequence (\verb{seq(from = 78, to = 100, by = 2}), all work. Note, however,
+that only a single range is generated from the vector so these examples
+resolve to \verb{(100, 200)}, \verb{(3, 46)}, and \verb{(78, 100)}, respectively. For
+time axes a vector of character timestamps, \code{POSIXct} or \code{Date} values
+must be specified. As with numeric values, only the two extreme values in
+the vector will be used.
+
+If the range of values for an axis in argument \code{subset} extend the valid
+range of the axis in \code{x}, the extracted slab will start at the beginning
+for smaller values and extend to the end for larger values. If the
+values envelope the valid range the entire axis will be extracted in
+the result. If the range of \code{subset} values for any axis are all either
+smaller or larger than the valid range of the axis in \code{x} then nothing
+is extracted and \code{NULL} is returned.
+
+The extracted data has the same dimensional structure as the data in the
+variable, with degenerate dimensions dropped. The order of the axes in
+argument \code{subset} does not reorder the axes in the result; use the
+\link{CFData}$array() method for this.
+
+As an example, to extract values of a variable for Australia for the year
+2020, where the first axis in \code{x} is the longitude, the second
+axis is the latitude, both in degrees, and the
+third (and final) axis is time, the values are extracted by
+\code{x$subset(list(X = c(112, 154), Y = c(-9, -44), T = c("2020-01-01", "2021-01-01")))}.
+You could take the longitude-latitude values from \code{sf::st_bbox()} or
+\code{terra::ext()} if you have specific spatial geometries for whom you want to
+extract data. Note that this works equally well for projected coordinate
+reference systems - the key is that the specification in argument \code{subset}
+uses the same domain of values as the respective axes in \code{x} use.
+\subsection{Auxiliary coordinate variables}{
+
+A special case exists for variables where the horizontal dimensions (X
+and Y) are not in longitude and latitude values but in some other
+coordinate system. In this case the netCDF resource may have so-called
+\emph{auxiliary coordinate variables} for longitude and latitude that are two
+grids with the same dimension as the horizontal axes of the data variable
+where each pixel gives the corresponding value for the longitude and
+latitude. If the variable has such \emph{auxiliary coordinate variables} then
+they will be used automatically if, and only if, the axes are labeled in
+argument \code{subset} as \code{X} and \code{Y}. The resolution of the grid that is
+produced by this method is automatically calculated. If you want to
+subset those axes then specify values in decimal degrees; if you want to
+extract the full extent, specify \code{NA} for both \code{X} and \code{Y}. \strong{Note} that
+if you want to extract the data in the original grid, you should use the
+horizontal axis names in argument \code{subset}.
+}
+}
+
+\subsection{Returns}{
+An \link{CFData} instance, having an array with its axes and
+attributes of the variable, or \code{NULL} if one or more of the elements in
+the \code{subset} argument falls entirely outside of the range of the axis.
+Note that degenerate dimensions (having \code{length(.) == 1}) are dropped
+from the array but the corresponding axis is maintained in the result as
+a scalar axis.
 }
 }
 \if{html}{\out{<hr>}}

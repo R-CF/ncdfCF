@@ -43,13 +43,12 @@ Collate:
     'CFObject.R'
     'CFResource.R'
     'CFVariable.R'
-    'CFVariableGeneric.R'
     'CFVariableL3b.R'
-    'MemoryGroup.R'
     'NCDimension.R'
     'NCGroup.R'
     'NCUDT.R'
     'NCVariable.R'
+    'VirtualGroup.R'
     'makeCFObjects.R'
     'ncdfCF-package.R'
     'readCF.R'
@@ -58,6 +57,7 @@ Collate:
 Suggests: 
     data.table,
     knitr,
+    ncdf4,
     rmarkdown,
     terra
 VignetteBuilder: knitr

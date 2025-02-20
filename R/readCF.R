@@ -551,7 +551,7 @@ peek_ncdf <- function(resource) {
           ax[[x]] <- axes[[ndx]]
         }
         names(ax) <- sapply(ax, function(x) x$name)
-        var <- CFVariableGeneric$new(grp, v, ax)
+        var <- CFVariable$new(grp, v, ax)
 
         # Add references to any "coordinates" of the variable
         varLon <- varLat <- NULL

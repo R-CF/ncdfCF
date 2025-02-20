@@ -7,7 +7,6 @@
 #' @references https://oceancolor.gsfc.nasa.gov/resources/docs/technical/ocean_level-3_binned_data_products.pdf
 #' @docType class
 #' @importFrom abind abind
-#' @export
 CFVariableL3b <- R6::R6Class("CFVariableL3b",
   inherit = CFVariable,
   private = list(
@@ -154,14 +153,14 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       abind::abind(l, along = 2)
     },
 
-
     #' @description Retrieve all data of the L3b variable.
     #'
     #' @return A [CFData] instance with all data from this L3b variable.
     data = function() {
-      out_group <- MemoryGroup$new(-1L, "Memory_group", "/Memory_group", NULL,
-                                   paste("L3b variable", self$name, "regridded to latitude-longitude"),
-                                   paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariableL3b$data()"))
+      out_group <- VirtualGroup$new(-1L, "/", "/", NULL)
+      out_group$set_attribute("title", "NC_CHAR", paste("L3b variable", self$name, "regridded to latitude-longitude"))
+      out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariableL3b$data()"))
+
       axes <- lapply(self$axes, function(ax) ax$clone())
 
       CFData$new(self$name, out_group, self$as_matrix(), axes, self$crs, self$attributes)
@@ -228,9 +227,9 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
           stop("Argument `subset` contains elements not corresponding to an axis:", paste(bad, collapse = ", "), call. = FALSE)
       }
 
-      out_group <- MemoryGroup$new(-1L, "Memory_group", "/Memory_group", NULL,
-                                   paste("Processing result of variable", self$name),
-                                   paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariableL3b$subset()"))
+      out_group <- VirtualGroup$new(-1L, "/", "/", NULL)
+      out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
+      out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariableL3b$subset()"))
 
       out_axes_dim <- list()
       out_axes_other <- list()

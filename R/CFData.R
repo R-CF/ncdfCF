@@ -147,12 +147,16 @@ CFData <- R6::R6Class("CFData",
     },
 
     #' @description Return the time object from the axis representing time.
-    #' @return A `CFTime` instance, or `NULL` if the variable does not have a
+    #' @param want Character string with value "axis" or "time", indicating
+    #' what is to be returned.
+    #' @return If `want = "axis"` the [CFAxisTime] axis; if `want = "time"` the
+    #' `CFTime` instance of the axis, or `NULL` if the variable does not have a
     #' "time" dimension.
-    time = function() {
+    time = function(want = "axis") {
       ndx <- sapply(self$axes, inherits, "CFAxisTime")
       if (any(ndx))
-        self$axes[[which(ndx)]]$time()
+        if (want == "axis") self$axes[[which(ndx)]]
+        else self$axes[[which(ndx)]]$time()
       else NULL
     },
 
@@ -228,14 +232,24 @@ CFData <- R6::R6Class("CFData",
     },
 
     #' @description Retrieve the data in the object in the form of a
-    #' `data.table`. The `data.table` package needs to be installed for this
-    #' method to work.
-    #' @return A `data.table` with all data points in individual rows.
+    #'   `data.table`. The `data.table` package needs to be installed for this
+    #'   method to work.
+    #' @return A `data.table` with all data points in individual rows. All axes,
+    #'   including scalar axes, will become columns. The `name` of this data
+    #'   variable will be used as the column that holds the data values. Two
+    #'   attributes are added: `name` indicates the long name of this data
+    #'   variable, `units` indicates the physical unit of the data values.
     data.table = function() {
       if (!requireNamespace("data.table", quietly = TRUE))
-        stop("Please install package 'data.table' before using this funcionality")
+        stop("Please install package 'data.table' before using this functionality")
+      .datatable.aware = TRUE
 
-      dt <- data.table::as.data.table(self$raw())
+      exp <- expand.grid(lapply(self$axes, function(ax) ax$coordinates),
+                         KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE)
+      dt <- as.data.table(exp)
+      nm <- names(dt)
+      dt[ , eval(self$name) := self$value]
+
       long_name <- self$attribute("long_name")
       if (is.na(long_name)) long_name <- ""
       units <- self$attribute("units")
@@ -264,35 +278,63 @@ CFData <- R6::R6Class("CFData",
       if (!(period %in% c("day", "dekad", "month", "quarter", "season", "year")))
         stop("Argument 'period' has invalid value.", call. = FALSE)
 
-      # Find the time axis, create the factor
-      tm <- which(sapply(self$axes, function(x) inherits(x, "CFAxisTime")))
-      if (!length(tm))
+      # Find the time object, create the factor
+      tax <- self$time("axis")
+      if (is.null(tax))
         stop("No 'time' dimension found to summarise on.", call. = FALSE)
-      fac <- self$axes[[tm]]$time()$factor(period)
-      nm <- self$axes[[tm]]$name
+      fac <- try(tax$time()$factor(period), silent = TRUE)
+      if (inherits(fac, "try-error"))
+        stop("The time dimension is too short to summarise on.", call. = FALSE)
+
+      # Make a new time axis for the result
+      new_tm <- attr(fac, "CFTime")
+      var <- NCVariable$new(-1L, tax$name, self$group, "NC_DOUBLE", 1L, NULL)
+      len <- length(new_tm)
+      new_ax <- if (len == 1L)
+        CFAxisScalar$new(self$group, var, "T", new_tm)
+      else {
+        dim <- NCDimension$new(-1L, tax$name, len, FALSE)
+        CFAxisTime$new(self$group, var, dim, new_tm)
+      }
 
       # Summarise
       num_dim_axes <- length(dim(self$value))
       if (num_dim_axes == 1L) {
-        out <- tapply(self$value, fac, fun, na.rm = TRUE)
+        dt <- tapply(self$value, fac, fun, na.rm = TRUE)
+        ax <- new_ax
       } else {
         tm <- sum(private$YXZT() > 0L) # Test which oriented axes are present, T is the last one
         perm <- seq(num_dim_axes)
-        out <- apply(self$array(), perm[-tm], tapply, fac, fun, na.rm = TRUE)
+        dt <- apply(self$array(), perm[-tm], tapply, fac, fun, na.rm = TRUE)
         perm <- c(perm[2L:tm], 1L, perm[-(1L:tm)])
-        out <- aperm(out, perm)
+        dt <- aperm(dt, perm)
+
+        # Organise the axes
+        ax <- self$axes
+        ax[[tm]] <- new_ax
 
         # Fix name of time dimension in dimnames
-        dn <- dimnames(out)
+        dn <- dimnames(dt)
         axn <- names(dn)
-        axn[tm] <- nm
+        axn[tm] <- tax$name
         names(dn) <- axn
-        dimnames(out) <- dn
-        out
+        dimnames(dt) <- dn
       }
 
+      # Attributes
+      atts <- self$attributes
+      # FIXME: set cell_methods
+
       # Create the output
-      out
+      out <- CFData$new(name, self$group, dt, ax, self$crs, atts)
+    },
+
+    #' @description Plot a 2D slice of data to the display.
+    #' @param ... Arguments passed to the `base::plot()` function.
+    plot = function(...) {
+      image(self$axes[["lon"]]$values, self$axes[["lat"]]$values, self$raw(),
+            xlab = "Longitude", ylab = "Latitude", useRaster = T,
+            xaxp = c(0, 360, 8), yaxp = c(-90, 90, 4))
     },
 
     #' @description Save the data object to a netCDF file.

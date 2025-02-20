@@ -69,11 +69,13 @@ is available.}
 \itemize{
 \item \href{#method-CFData-new}{\code{CFData$new()}}
 \item \href{#method-CFData-print}{\code{CFData$print()}}
+\item \href{#method-CFData-time}{\code{CFData$time()}}
 \item \href{#method-CFData-raw}{\code{CFData$raw()}}
 \item \href{#method-CFData-array}{\code{CFData$array()}}
 \item \href{#method-CFData-terra}{\code{CFData$terra()}}
 \item \href{#method-CFData-data.table}{\code{CFData$data.table()}}
 \item \href{#method-CFData-summarise}{\code{CFData$summarise()}}
+\item \href{#method-CFData-plot}{\code{CFData$plot()}}
 \item \href{#method-CFData-save}{\code{CFData$save()}}
 \item \href{#method-CFData-clone}{\code{CFData$clone()}}
 }
@@ -137,6 +139,29 @@ Print a summary of the data object to the console.
 
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFData-time"></a>}}
+\if{latex}{\out{\hypertarget{method-CFData-time}{}}}
+\subsection{Method \code{time()}}{
+Return the time object from the axis representing time.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFData$time(want = "axis")}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{want}}{Character string with value "axis" or "time", indicating
+what is to be returned.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+If \code{want = "axis"} the \link{CFAxisTime} axis; if \code{want = "time"} the
+\code{CFTime} instance of the axis, or \code{NULL} if the variable does not have a
+"time" dimension.
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFData-raw"></a>}}
 \if{latex}{\out{\hypertarget{method-CFData-raw}{}}}
 \subsection{Method \code{raw()}}{
@@ -194,7 +219,11 @@ method to work.
 }
 
 \subsection{Returns}{
-A \code{data.table} with all data points in individual rows.
+A \code{data.table} with all data points in individual rows. All axes,
+including scalar axes, will become columns. The \code{name} of this data
+variable will be used as the column that holds the data values. Two
+attributes are added: \code{name} indicates the long name of this data
+variable, \code{units} indicates the physical unit of the data values.
 }
 }
 \if{html}{\out{<hr>}}
@@ -228,6 +257,23 @@ that will be applied to each grouping of data.}
 \subsection{Returns}{
 A new \code{CFData} object in the same group as \code{self} with the
 summarised data.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFData-plot"></a>}}
+\if{latex}{\out{\hypertarget{method-CFData-plot}{}}}
+\subsection{Method \code{plot()}}{
+Plot a 2D slice of data to the display.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFData$plot(...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Arguments passed to the \code{base::plot()} function.}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}

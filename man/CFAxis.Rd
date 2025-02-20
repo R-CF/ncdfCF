@@ -36,6 +36,9 @@ axis.}
 
 \item{\code{length}}{(read-only) The declared length of this axis.}
 
+\item{\code{coordinates}}{(read-only) Retrieve the coordinate values of the
+axis.}
+
 \item{\code{labels}}{Set or retrieve the labels for the axis. On assignment, the
 value must be an instance of \link{CFLabel}.}
 
@@ -178,10 +181,10 @@ A 1-row \code{data.frame} with details of the axis.
 \if{html}{\out{<a id="method-CFAxis-time"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-time}{}}}
 \subsection{Method \code{time()}}{
-Return the \code{CFtime} instance that represents time. This
-method is only useful for \code{CFAxisTime} instances. This stub is here to
-make the call to this method succeed with no result for the other axis
-descendants.
+Return the \code{CFTime} instance that represents time. This
+method is only useful for \code{CFAxisTime} instances and \code{CFAxisScalar}
+instances having time information. This stub is here to make the call
+to this method succeed with no result for the other axis descendants.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxis$time()}\if{html}{\out{</div>}}
 }
