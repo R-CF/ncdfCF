@@ -15,8 +15,8 @@
 #'
 #' This package currently supports group traversal with scoping rules, axis
 #' determination and interpretation, including auxiliary axes, time axis
-#' interpretation with all 9 defined calendars, grid mapping, use of
-#' bounds data, reading and interpreting attributes of groups (including global
+#' interpretation with all defined calendars, grid mapping, use of
+#' bounds data, manipulating and interpreting attributes of groups (including global
 #' attributes) and variables, search for and use of standard names. Some
 #' specific constructs in CF are also supported:
 #'  * Axes can be oriented to access the data in the familiar R arrangement
@@ -37,7 +37,7 @@
 #' full support for the CF Metadata Conventions that define the data properties.
 #' This package does very little beyond that; specifically, there is no support
 #' for spatial analysis, mosaicing, changing the coordinate reference system
-#' (i.e. projection), plotting, or any form of data analysis at all. The user is
+#' (i.e. projection), or any form of data analysis at all. The user is
 #' directed to other packages for such functionality.
 #'
 #' **Global functions**
@@ -86,18 +86,22 @@
 #' detailed information on the data variable and there are functions to access
 #' the data, with different selection methods.
 #'
+#' ***Properties***
+#'
 #' * `show()`, `brief()`, and `shard()`: Print to the console or return to the
 #' caller (increasingly more compact) information on a data variable.
 #' * `name`, `id`: Basic properties of the data variable.
 #' * `axes()`: List of `CFAxis` objects representing the axes that the data
 #' variable uses.
 #' * `attributes`: `data.frame` with the attributes of the data variable.
-#' * `attribute()`: Retrieve the values of one or more attributes of the data
-#' variable.
-#' * `grid_mapping`: The so-called grid-mapping object that contains information
+#' * `attribute()`: Retrieve the values of an attribute of the data variable.
+#' * `crs`: The so-called grid-mapping object that contains information
 #' on the coordinate reference system (CRS) of the data variable.
-#' * `crs`: The CRS of the data variable, in WKT2 format. This is derived from
+#' * `crs_wkt2`: The CRS of the data variable, in WKT2 format. This is derived from
 #' the data in the grid-mapping object.
+#'
+#' ***Data extraction***
+#'
 #' * `data()`: Extract all data from a data variable into a `CFData` object.
 #' * `subset()`: Select a subset of data from a variable by specifying extents
 #' in real-world coordinates for the axes into a `CFData` object. This can also
@@ -123,7 +127,7 @@
 #' geodetic coordinate systems. Class [CFAxisVertical] also derives from the
 #' basic class to manage depth and height axes.
 #' * [CFAxisTime] is a specialized class to deal with time axes. Under the CF
-#' Metadata Conventions 9 different calendars have been defined and this class
+#' Metadata Conventions multiple different calendars have been defined and this class
 #' deals with the complexities of all of these. Functionality is provided by the
 #' `CFtime` package.
 #' * [CFAxisCharacter] is for axes that use character labels as categorical
@@ -139,14 +143,20 @@
 #'
 #' Methods for `CFAxis` instances:
 #'
+#' ***Properties***
+#'
 #' * `show()`, `brief()`, and `shard()`: Print to the console or return to the
 #' caller (increasingly more compact) information on an axis.
 #' * `name`, `id`: Basic properties of the axis.
+#' * `coordinates`: Get a vector of coordinate values of the axis.
+#'
+#' ***Extraction***
+#'
 #' * `indexOf()`: Retrieve the sub-range of the axis that encompasses the
 #' physical values passed.
 #' * `sub_axis`: Create a new `CFAxis` instance that spans a sub-range of the
 #' axis.
-#' * `time()` (`CFAxisTime` only): Retrieve the `CFtime` instance of the axis.
+#' * `time()`: Retrieve the `CFTime` instance of the axis.
 #'
 #' ***S3 methods for CFAxis***
 #'
@@ -160,18 +170,26 @@
 #' attributes. The data is easily accessed as a raw array, or processed to some
 #' other format.
 #'
+#' ***Properties***
+#'
 #' * `show()`: Print information about the data object to the console, including
 #' axes, the CRS and its attributes.
 #' * `axes()`: List of `CFAxis` objects representing the axes that the data
 #' object uses.
 #' * `crs`: A WKT2-formatted string of the CRS of the data object.
-#' * `raw()`: The array of data values from the data variable as read from the
+#'
+#' ***Data extraction***
+#'
+#' * `raw()`: The array of data values from the data object as read from the
 #' netCDF resource.
-#' * `array()`: The array of data values from the data variable, oriented in the
+#' * `array()`: The array of data values from the data object, oriented in the
 #' standard R arrangement.
 #' * `terra()`: (requires the `terra` package) The data values from the data
-#' variable as a `terra::SpatRaster` (2 or 3 dimensions) or
+#' object as a `terra::SpatRaster` (2 or 3 dimensions) or
 #' `terra::SpatRasterDataset` (4 dimensions), with all relevant properties set.
+#' * `data.table()`: (requires the `data.table` package) The data values from
+#' the data object as a `data.table` where every row consists of the permutation
+#' of the axis values and a final data value.
 #'
 #' @keywords internal
 #' @aliases ncdfCF-package
