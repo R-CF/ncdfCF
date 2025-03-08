@@ -25,6 +25,6 @@ makeLongitudeAxis(id, name, group, length, values, bounds = NULL, units = "")
 A \code{CFAxisLongitude} instance.
 }
 \description{
-With this method you can create a longitude axis to use with new \link{CFData}
+With this method you can create a longitude axis to use with new \link{CFArray}
 instances.
 }

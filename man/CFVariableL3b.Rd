@@ -13,7 +13,7 @@ imagery.
 https://oceancolor.gsfc.nasa.gov/resources/docs/technical/ocean_level-3_binned_data_products.pdf
 }
 \section{Super classes}{
-\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFVariable]{ncdfCF::CFVariable}} -> \code{CFVariableL3b}
+\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFVariableBase]{ncdfCF::CFVariableBase}} -> \code{\link[ncdfCF:CFVariable]{ncdfCF::CFVariable}} -> \code{CFVariableL3b}
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -43,11 +43,12 @@ https://oceancolor.gsfc.nasa.gov/resources/docs/technical/ocean_level-3_binned_d
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="summarise"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-summarise'><code>ncdfCF::CFVariableBase$summarise()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="time"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-time'><code>ncdfCF::CFVariableBase$time()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="brief"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-brief'><code>ncdfCF::CFVariable$brief()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="peek"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-peek'><code>ncdfCF::CFVariable$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="print"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-print'><code>ncdfCF::CFVariable$print()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="shard"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-shard'><code>ncdfCF::CFVariable$shard()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="time"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-time'><code>ncdfCF::CFVariable$time()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -111,7 +112,7 @@ Retrieve all data of the L3b variable.
 }
 
 \subsection{Returns}{
-A \link{CFData} instance with all data from this L3b variable.
+A \link{CFArray} instance with all data from this L3b variable.
 }
 }
 \if{html}{\out{<hr>}}
@@ -170,11 +171,11 @@ are all either smaller or larger than the valid range of the axis in
 The extracted data has the same dimensional structure as the data in
 the variable, with degenerate dimensions dropped. The order of the axes
 in argument \code{subset} does not reorder the axes in the result; use the
-\link{CFData}$array() method for this.
+\link{CFArray}$array() method for this.
 }
 
 \subsection{Returns}{
-An \link{CFData} instance, having an array with axes and attributes of
+A \link{CFArray} instance, having an array with axes and attributes of
 the variable, or \code{NULL} if one or more of the elements in the \code{subset}
 argument falls entirely outside of the range of the axis. Note that
 degenerate dimensions (having \code{length(.) == 1}) are dropped from the

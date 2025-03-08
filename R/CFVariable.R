@@ -10,7 +10,7 @@
 #'
 #' @docType class
 CFVariable <- R6::R6Class("CFVariable",
-  inherit = CFObject,
+  inherit = CFVariableBase,
   private = list(
     # Auxiliary coordinates reference, if the data variable uses them.
     llgrid = NULL,
@@ -84,18 +84,82 @@ CFVariable <- R6::R6Class("CFVariable",
       # aoi = the AOI that was used to index
       # box = the dim of the original index
       list(index = index, X = c(ry[1L], rows), Y = c(rx[1L], cols), aoi = private$llgrid$aoi, box = dim_index)
+    },
+
+    # Return a vector with the two names of the auxiliary coordinate variables,
+    # if they have been set.
+    aux_var_names = function() {
+      if (is.null(private$llgrid))
+        NULL
+      else
+        c(private$llgrid$varLong$name, private$llgrid$varLat$name)
+    },
+
+    # Read a chunk of data from file
+    read_chunk = function(start, count) {
+      RNetCDF::var.get.nc(self$NCvar$group$handle, self$name, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+    },
+
+    # Read all the data values from file. Note that this may overwhelm computer
+    # memory if the data is large.
+    get_values = function() {
+      RNetCDF::var.get.nc(self$NCvar$group$handle, self$name, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+    },
+
+    # Internal apply/tapply method for this class. If the size of the data
+    # variable is below a certain threshold, read the data and process in one
+    # go. Otherwise processing goes per factor level. In other words, for each
+    # factor level the data is read from file, to which the function is applied.
+    # Note that the data per factor level MUST be contiguous or else the
+    # calculation will be erroneous.
+    # This is usually applied over the temporal dimension but could be others
+    # as well (untested).
+    process_data = function(tdim, fac, fun, ...) {
+      # Read the whole data array if size is manageable
+      #if (prod(sapply(self$axes, function(x) x$length)) < 1e8) #FIXME: Make package env variable
+      #  return(.process.data(private$get_values(), tdim, fac, fun, ...))
+
+      # If data variable is large, go by individual factor levels
+      num_dims <- private$num_dim_axes()
+      start <- rep(1L, num_dims)
+      count <- rep(NA_integer_, num_dims)
+
+      lvls <- nlevels(fac)
+      d <- vector("list", lvls)
+      ndx <- as.integer(fac)
+      h <- self$NCvar$group$handle
+      nm <- self$name
+      for (l in 1L:lvls) {
+        rng <- range(which(ndx == l))
+        start[tdim] <- rng[1L]
+        count[tdim] <- rng[2L] - rng[1L] + 1L
+        values <- RNetCDF::var.get.nc(h, nm, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+        d[[l]] <- .process.data(values, tdim, FUN = fun, ...)
+        # d is a list with lvls elements, each element a list with elements for
+        # the number of function results, possibly 1; each element having an
+        # array of dimensions from self$values that are not tdim.
+      }
+      res_dim <- dim(d[[1L]][[1L]])
+      dims <- c(if ((len <- length(d)) > 1L) len, res_dim)
+
+      len <- length(d[[1L]])
+      if (len > 1L) {
+        # Multiple function result values so get all arrays for every result
+        # value and unlist those
+        lapply(1:len, function(r) {
+            x <- unlist(lapply(d, function(lvl) lvl[[r]]), recursive = FALSE, use.names = FALSE)
+            dim(x) <- dims
+            x
+          })
+      } else {
+        # Single function result so unlist
+        d <- unlist(d, recursive = FALSE, use.names = FALSE)
+        dim(d) <- dims
+        list(d)
+      }
     }
   ),
   public = list(
-    #' @field axes List of instances of classes descending from [CFAxis] that
-    #'   are the axes of the variable.
-    axes  = list(),
-
-    #' @field crs The coordinate reference system of this variable, as an
-    #'   instance of [CFGridMapping]. If this field is `NULL`, the horizontal
-    #'   component of the axes are in decimal degrees of longitude and latitude.
-    crs = NULL,
-
     #' @description Create an instance of this class.
     #'
     #' @param grp The group that this CF variable lives in.
@@ -103,14 +167,14 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @param axes List of [CFAxis] instances that describe the dimensions.
     #' @return An instance of this class.
     initialize = function(grp, nc_var, axes) {
-      super$initialize(nc_var, grp)
-      self$axes <- axes
-
+      super$initialize(nc_var, grp, axes, NULL)
       nc_var$CF <- self
     },
 
     #' @description Print a summary of the data variable to the console.
-    print = function() {
+    #' @param ... Arguments passed on to other functions. Of particular interest
+    #' is `width = ` to indicate a maximum width of attribute columns.
+    print = function(...) {
       cat("<Variable>", self$name, "\n")
       if (self$group$name != "/")
         cat("Group    :", self$group$name, "\n")
@@ -121,7 +185,7 @@ CFVariable <- R6::R6Class("CFVariable",
 
       if (!is.null(self$crs)) {
         cat("\nCoordinate reference system:\n")
-        print(.slim.data.frame(self$crs$brief(), 50L), right = FALSE, row.names = FALSE)
+        print(.slim.data.frame(self$crs$brief(), ...), right = FALSE, row.names = FALSE)
       }
 
       cat("\nAxes:\n")
@@ -129,15 +193,15 @@ CFVariable <- R6::R6Class("CFVariable",
       axes <- lapply(axes, function(c) if (all(c == "")) NULL else c)
       if (all(axes$group == "/")) axes$group <- NULL
       axes <- as.data.frame(axes[lengths(axes) > 0L])
-      print(.slim.data.frame(axes, 50L), right = FALSE, row.names = FALSE)
+      print(.slim.data.frame(axes, ...), right = FALSE, row.names = FALSE)
 
       if (!is.null(private$llgrid)) {
         cat("\nAuxiliary longitude-latitude grid:\n")
         ll <- private$llgrid$brief()
-        print(.slim.data.frame(ll, 50L), right = FALSE, row.names = FALSE)
+        print(.slim.data.frame(ll, ...), right = FALSE, row.names = FALSE)
       }
 
-      self$print_attributes()
+      self$print_attributes(...)
     },
 
     #' @description Some details of the data variable.
@@ -179,18 +243,8 @@ CFVariable <- R6::R6Class("CFVariable",
       out
     },
 
-    #' @description Return the time object from the axis representing time.
-    #' @return A `CFTime` instance, or `NULL` if the variable does not have a
-    #' "time" dimension.
-    time = function() {
-      ndx <- sapply(self$axes, inherits, "CFAxisTime")
-      if (any(ndx))
-        self$axes[[which(ndx)]]$time()
-      else NULL
-    },
-
     #' @description Retrieve all data of the variable.
-    #' @return A [CFData] instance with all data from this variable.
+    #' @return A [CFArray] instance with all data from this variable.
     data = function() {
       out_group <- VirtualGroup$new(-1L, "/", "/", NULL)
       out_group$set_attribute("title", "NC_CHAR", paste("Data copy of variable", self$name))
@@ -201,7 +255,7 @@ CFVariable <- R6::R6Class("CFVariable",
       atts <- self$attributes
       atts <- atts[!(atts$name == "coordinates"), ]
 
-      CFData$new(self$name, out_group, d, axes, self$crs, atts)
+      CFArray$new(self$name, out_group, d, axes, self$crs, atts)
     },
 
     #' @description This method extracts a subset of values from the array of
@@ -232,7 +286,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #' The extracted data has the same dimensional structure as the data in the
     #' variable, with degenerate dimensions dropped. The order of the axes in
     #' argument `subset` does not reorder the axes in the result; use the
-    #' [CFData]$array() method for this.
+    #' [CFArray]$array() method for this.
     #'
     #' As an example, to extract values of a variable for Australia for the year
     #' 2020, where the first axis in `x` is the longitude, the second
@@ -283,14 +337,14 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @param ... Ignored. Included to avoid "unused argument" errors on
     #' argument `rightmost.closed`.
     #'
-    #' @return An [CFData] instance, having an array with its axes and
+    #' @return A [CFArray] instance, having an array with its axes and
     #' attributes of the variable, or `NULL` if one or more of the elements in
     #' the `subset` argument falls entirely outside of the range of the axis.
     #' Note that degenerate dimensions (having `length(.) == 1`) are dropped
     #' from the array but the corresponding axis is maintained in the result as
     #' a scalar axis.
     subset = function(subset, aoi = NULL, rightmost.closed = FALSE, ...) {
-      num_axes <- length(self$axes)
+      num_axes <- private$num_dim_axes()
       if (!num_axes)
         stop("Cannot subset a scalar variable", call. = FALSE)
       if (!is.null(aoi) && is.null(aoi$lonMin))
@@ -378,7 +432,7 @@ CFVariable <- R6::R6Class("CFVariable",
       }
 
       # Read the data, index as required
-      d <- RNetCDF::var.get.nc(self$NCvar$group$handle, self$name, start, count, unpack = TRUE, fitnum = TRUE)
+      d <- private$read_chunk(start, count)
       if (!is.null(aux)) {
         dim(d) <- c(aux$X[2L] * aux$Y[2L], prod(ZT_dim))
         d <- d[aux$index, ]
@@ -397,10 +451,10 @@ CFVariable <- R6::R6Class("CFVariable",
         crs <- NULL
       }
 
-      # Assemble the CFData instance
+      # Assemble the CFArray instance
       axes <- c(out_axes_dim, out_axes_other)
       names(axes) <- sapply(axes, function(a) a$name)
-      CFData$new(self$name, out_group, d, axes, crs, atts)
+      CFArray$new(self$name, out_group, d, axes, crs, atts)
     }
   ),
   active = list(

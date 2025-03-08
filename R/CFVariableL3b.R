@@ -155,7 +155,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
 
     #' @description Retrieve all data of the L3b variable.
     #'
-    #' @return A [CFData] instance with all data from this L3b variable.
+    #' @return A [CFArray] instance with all data from this L3b variable.
     data = function() {
       out_group <- VirtualGroup$new(-1L, "/", "/", NULL)
       out_group$set_attribute("title", "NC_CHAR", paste("L3b variable", self$name, "regridded to latitude-longitude"))
@@ -163,7 +163,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
 
       axes <- lapply(self$axes, function(ax) ax$clone())
 
-      CFData$new(self$name, out_group, self$as_matrix(), axes, self$crs, self$attributes)
+      CFArray$new(self$name, out_group, self$as_matrix(), axes, self$crs, self$attributes)
     },
 
     #' @description This method extracts a subset of values from the data of the
@@ -190,7 +190,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
     #'   The extracted data has the same dimensional structure as the data in
     #'   the variable, with degenerate dimensions dropped. The order of the axes
     #'   in argument `subset` does not reorder the axes in the result; use the
-    #'   [CFData]$array() method for this.
+    #'   [CFArray]$array() method for this.
     #'
     #' @param subset A list with the range to extract from each axis. The list
     #'   should have elements for the axes to extract a subset from - if an axis
@@ -209,7 +209,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
     #'   boundary of range in each axis should be included.
     #' @param ... Ignored.
     #'
-    #' @return An [CFData] instance, having an array with axes and attributes of
+    #' @return A [CFArray] instance, having an array with axes and attributes of
     #'   the variable, or `NULL` if one or more of the elements in the `subset`
     #'   argument falls entirely outside of the range of the axis. Note that
     #'   degenerate dimensions (having `length(.) == 1`) are dropped from the
@@ -261,10 +261,10 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       d <- self$as_matrix(aoi)
       d <- drop(d)
 
-      # Assemble the CFData instance
+      # Assemble the CFArray instance
       axes <- c(out_axes_dim, out_axes_other)
       names(axes) <- sapply(axes, function(a) a$name)
-      CFData$new(self$name, out_group, d, axes, self$crs, self$attributes)
+      CFArray$new(self$name, out_group, d, axes, self$crs, self$attributes)
     }
   )
 )

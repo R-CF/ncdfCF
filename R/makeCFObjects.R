@@ -2,8 +2,8 @@
 #'
 #' With this function a group is created in memory, i.e. not associated with a
 #' netCDF resource on file. This can be used to prepare new CF objects before
-#' writing them to file. Extracting data from a `CFVariable` into a [CFData]
-#' instance will also create a memory group.
+#' writing them to file. Extracting data from a `CFVariable` into a [CFArray]
+#' instance will also create a virtual group.
 #'
 #' @param id The id of the group.
 #' @param name The name of the group.
@@ -17,7 +17,7 @@ makeVirtualGroup <- function(id, name, fullname) {
 
 #' Create a longitude axis
 #'
-#' With this method you can create a longitude axis to use with new [CFData]
+#' With this method you can create a longitude axis to use with new [CFArray]
 #' instances.
 #'
 #' @param id Id of the axis.
@@ -31,6 +31,7 @@ makeVirtualGroup <- function(id, name, fullname) {
 #' @return A `CFAxisLongitude` instance.
 #' @export
 makeLongitudeAxis <- function(id, name, group, length, values, bounds = NULL, units = "") {
+  # FIXME: Check domain
   var <- NCVariable$new(id, name, group, "NC_DOUBLE", 1L, NULL)
   dim <- NCDimension$new(-1L, name, length, FALSE)
   axis <- CFAxisLongitude$new(group, var, dim, values)
@@ -49,7 +50,7 @@ makeLongitudeAxis <- function(id, name, group, length, values, bounds = NULL, un
 
 #' Create a latitude axis
 #'
-#' With this method you can create a longitude axis to use with new [CFData]
+#' With this method you can create a longitude axis to use with new [CFArray]
 #' instances.
 #'
 #' @param id Id of the axis.
@@ -63,6 +64,7 @@ makeLongitudeAxis <- function(id, name, group, length, values, bounds = NULL, un
 #' @return A `CFAxisLatitude` instance.
 #' @export
 makeLatitudeAxis <- function(id, name, group, length, values, bounds, units) {
+  # FIXME: Check domain
   var <- NCVariable$new(id, name, group, "NC_DOUBLE", 1L, NULL)
   dim <- NCDimension$new(-1L, name, length, FALSE)
   axis <- CFAxisLatitude$new(group, var, dim, values)
@@ -81,7 +83,7 @@ makeLatitudeAxis <- function(id, name, group, length, values, bounds, units) {
 
 #' Create a time axis
 #'
-#' With this method you can create a time axis to use with new [CFData]
+#' With this method you can create a time axis to use with new [CFArray]
 #' instances.
 #'
 #' @param id Id of the axis.

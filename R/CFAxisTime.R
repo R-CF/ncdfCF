@@ -49,7 +49,8 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     },
 
     #' @description Summary of the time axis printed to the console.
-    #' @param ... Ignored.
+    #' @param ... Arguments passed on to other functions. Of particular interest
+    #' is `width = ` to indicate a maximum width of attribute columns.
     #' @return `self`, invisibly.
     print = function(...) {
       super$print()
@@ -66,7 +67,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       cat("Range    :", rng, "\n")
       cat("Bounds   :", bndrng, "\n")
 
-      self$print_attributes()
+      self$print_attributes(...)
       invisible(self)
     },
 

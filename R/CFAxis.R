@@ -51,7 +51,8 @@ CFAxis <- R6::R6Class("CFAxis",
 
     #' @description  Prints a summary of the axis to the console. This method is
     #'   typically called by the `print()` method of descendant classes.
-    #' @param ... Ignored.
+    #' @param ... Arguments passed on to other functions. Of particular interest
+    #' is `width = ` to indicate a maximum width of attribute columns.
     #' @return `self`, invisibly.
     print = function(...) {
       cat("<", self$friendlyClassName, "> [", self$dimid, "] ", self$name, "\n", sep = "")

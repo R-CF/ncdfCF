@@ -38,7 +38,6 @@ filename or the location of an online resource.}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFResource-new}{\code{CFResource$new()}}
-\item \href{#method-CFResource-finalize}{\code{CFResource$finalize()}}
 \item \href{#method-CFResource-close}{\code{CFResource$close()}}
 \item \href{#method-CFResource-group_handle}{\code{CFResource$group_handle()}}
 \item \href{#method-CFResource-clone}{\code{CFResource$clone()}}
@@ -65,17 +64,6 @@ call this directly.
 \subsection{Returns}{
 An instance of this class.
 }
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFResource-finalize"></a>}}
-\if{latex}{\out{\hypertarget{method-CFResource-finalize}{}}}
-\subsection{Method \code{finalize()}}{
-This method is called automatically when the instance is
-deleted, ensuring that file handles are properly closed.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFResource$finalize()}\if{html}{\out{</div>}}
-}
-
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFResource-close"></a>}}

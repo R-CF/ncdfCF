@@ -19,6 +19,6 @@ makeTimeAxis(id, name, group, values)
 A \code{CFAxisTime} instance.
 }
 \description{
-With this method you can create a time axis to use with new \link{CFData}
+With this method you can create a time axis to use with new \link{CFArray}
 instances.
 }

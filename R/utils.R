@@ -11,6 +11,79 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
   "ocean_sigma_coordinate", "ocean_s_coordinate", "ocean_s_coordinate_g1",
   "ocean_s_coordinate_g2", "ocean_sigma_z_coordinate", "ocean_double_sigma_coordinate")
 
+# This function is a bare-bones implementation of `apply(X, MARGIN, tapply, INDEX, FUN, ...)`,
+# i.e. apply a factor over a dimension of an array. There are several restrictions
+# compared to the base::apply/tapply pair (but note that function arguments are
+# named differently): (1) X must be a vector, matrix or array;
+# (2) MARGIN must have all dimensions except the one to operate on; (3) INDEX is
+# therefore a single factor; (4) MARGIN must be numeric (not dimnames); (5) FUN
+# must be a function (not a formula); and (6) FUN must return a vector of numeric
+# values, with each call generating the same number of values. In the interest of
+# speed, these restrictions are not tested. Furthermore, no dimnames
+# are set and the result is always simplified to a vector, matrix or array.
+# On the up side, this function always returns a list, with as many elements as
+# FUN returns values.
+#
+# The basic version without a factor is about 10% faster than the base::apply()
+# function. When used with a factor, this code is twice as fast as apply/tapply.
+#
+# Arguments:
+# X    - Vector, matrix or array
+# oper - The dimension to operate on
+# fac  - The factor over whose levels to apply FUN, or NULL if no levels
+# FUN  - The function to call with the data
+# ...  - Additional arguments passed on to FUN
+.process.data <- function (X, oper, fac = NULL, FUN, ...) {
+  # FUN must return a vector of atomic types. A list is explicitly not going to
+  # work. Every call over the fac levels must return the same number of values.
+  FUN <- match.fun(FUN)
+
+  # Number of distinct groups in the data, if fac is supplied
+  nl <- if (is.factor(fac)) nlevels(fac) else 1L
+
+  d <- dim(X)
+  dl <- length(d)
+  if (dl < 2L)                               # Vector, maybe a time profile
+    res <- if (nl < 2L) list(FUN(X, ...))
+           else lapply(split(X, fac), FUN, ...)
+  else {                                     # Matrix or array
+    d2 <- prod(d[-oper])
+
+    newX <- if (oper == 1L) X
+            else aperm(X, c(oper, seq_len(dl)[-oper]))
+    dim(newX) <- c(d[oper], d2)
+
+    res <- vector("list", d2)
+    if (nl < 2L)
+      for (i in 1L:d2)
+        res[[i]] <- FUN(newX[, i], ...)
+    else {
+      for (i in 1L:d2)
+        res[[i]] <- lapply(split(newX[, i], fac), FUN, ...)
+      res <- unlist(res, recursive = FALSE, use.names = FALSE)
+    }
+  }
+
+  dimres <- length(res[[1L]])
+
+  # Set dimensions. If FUN returns multiple values, FUN values are in the first
+  # dimension.
+  res <- unlist(res, recursive = FALSE, use.names = FALSE)
+  dims <- c(if(dimres > 1L) dimres, if (nl > 1L) nl, if (dl > 1L) d[-oper])
+  if (length(dims) > 1L)
+    dim(res) <- dims
+
+  if (dimres == 1L)
+    # Always return a list
+    list(res)
+  else if (dl < 2L && nl < 2L)
+    # Vector input, no factor, multiple FUN values
+    as.list(res)
+  else
+    # Separate FUN values into list elements
+    asplit(res, 1L)
+}
+
 #' Make a data.frame slimmer by shortening long strings. List elements are
 #' pasted together.
 #'

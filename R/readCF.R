@@ -441,10 +441,10 @@ peek_ncdf <- function(resource) {
                 if (!is.na(units)) {
                   if (grepl("^degree(s?)(_?)(east|E)$", units)) {
                     varLon <- aux
-                    bndsLon <- .readBounds(aux$group, bounds, 2L)
+                    bndsLon <- .readBounds(aux$group, bounds, grp$dimensions())
                   } else if (grepl("^degree(s?)(_?)(north|N)$", units)) {
                     varLat <- aux
-                    bndsLat <- .readBounds(aux$group, bounds, 2L)
+                    bndsLat <- .readBounds(aux$group, bounds, grp$dimensions())
                   }
                 }
               }

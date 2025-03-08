@@ -1,5 +1,3 @@
-# FIXME: summarise() returns new CFData in same group
-
 #' Data extracted from a CF data variable
 #'
 #' @description This class holds the data that is extracted from a [CFVariable],
@@ -24,8 +22,7 @@
 #'   must be installed for this to work.
 #'
 #'   The temporal dimension of the data, if present, may be summarised using the
-#'   `summarise()` method. The data is returned as an array in the standard R
-#'   format.
+#'   `summarise()` method. The data is returned as a new `CFArray` instance.
 #'
 #'   In general, the metadata from the netCDF resource will be lost when
 #'   exporting to a different format insofar as those metadata are not
@@ -34,31 +31,24 @@
 #' @docType class
 #'
 #' @export
-CFData <- R6::R6Class("CFData",
-  inherit = CFObject,
+CFArray <- R6::R6Class("CFArray",
+  inherit = CFVariableBase,
   private = list(
-    # Return the order of dimensional axes that "receive special treatment".
-    # Scalar axes are not considered here.
-    YXZT = function() {
-      orient <- sapply(1:length(dim(self$value)), function(x) self$axes[[x]]$orientation)
-      match(c("Y", "X", "Z", "T"), orient, nomatch = 0L)
-    },
-
-    # Orient self$value in such a way that it conforms to regular R arrays: axis
+    # Orient self$values in such a way that it conforms to regular R arrays: axis
     # order will be Y-X-Z-T-others and Y values will go from the top to the bottom.
     # Returns a new array.
     orient = function() {
       order <- private$YXZT()
       if (sum(order) == 0L) {
         warning("Cannot orient data array because axis orientation has not been set")
-        return(self$value)
+        return(self$values)
       }
       if (all(order == 1L:4L))
-        out <- self$value
+        out <- self$values
       else {
-        all_dims <- seq(length(dim(self$value)))
+        all_dims <- seq(length(dim(self$values)))
         perm <- c(order[which(order > 0L)], all_dims[!(all_dims %in% order)])
-        out <- aperm(self$value, perm)
+        out <- aperm(self$values, perm)
       }
 
       # Flip Y-axis, if necessary
@@ -74,31 +64,28 @@ CFData <- R6::R6Class("CFData",
       }
 
       out
+    },
+
+    # Get all the data values
+    get_values = function() {
+      self$values
+    },
+
+    # Internal apply/tapply over the temporal dimension.
+    process_data = function(tdim, fac, fun, ...) {
+      .process.data(self$values, tdim, fac, fun, ...)
     }
   ),
   public = list(
-    #' @field value The data of this object. The structure of the data depends
-    #' on the method that produced it. Typical structures are an array or a
-    #' `data.table`.
-    value = NULL,
-
-    #' @field axes List of instances of classes descending from [CFAxis] that
-    #'   are the axes of the data object. If there are any scalar axes, they are
-    #'   listed after the axes that associate with the dimensions of the data.
-    #'   (In other words, axes `1..n` describe the `1..n` data dimensions, while
-    #'   any axes `n+1..m` are scalar axes.)
-    axes  = list(),
-
-    #' @field crs An instance of [CFGridMapping] or `NULL` when no grid mapping
-    #' is available.
-    crs = NULL,
+    #' @field values The data of this object.
+    values = NULL,
 
     #' @description Create an instance of this class.
     #' @param name The name of the object.
     #' @param group The group that this data should live in. This is usually an
     #'   in-memory group, but it could be a regular group if the data is
     #'   prepared for writing into a new netCDF file.
-    #' @param value The data of this object. The structure of the data depends
+    #' @param values The data of this object. The structure of the data depends
     #'   on the method that produced it.
     #' @param axes A `list` of [CFAxis] descendant instances that describe the
     #'   axes of the argument `value`.
@@ -107,33 +94,31 @@ CFData <- R6::R6Class("CFData",
     #' @param attributes A `data.frame` with the attributes associated with the
     #'   data in argument `value`.
     #' @return An instance of this class.
-    initialize = function(name, group, value, axes, crs, attributes) {
+    initialize = function(name, group, values, axes, crs, attributes) {
       var <- NCVariable$new(-1L, name, group, "NC_FLOAT", 0L, NULL)
       var$attributes <- attributes
-      super$initialize(var, group)
+      super$initialize(var, group, axes, crs)
 
-      self$value <- value
-      self$axes <- axes
-      self$crs <- crs
+      self$values <- values
     },
 
     #' @description Print a summary of the data object to the console.
     print = function() {
-      cat("<Data>", self$name, "\n")
+      cat("<Data array>", self$name, "\n")
       longname <- self$attribute("long_name")
       if (!is.na(longname) && longname != self$name)
         cat("Long name:", longname, "\n")
 
-      if (all(is.na(self$value))) {
+      if (all(is.na(self$values))) {
         cat("\nValues: -\n")
-        cat(sprintf("    NA: %d (100%%)\n", length(self$value)))
+        cat(sprintf("    NA: %d (100%%)\n", length(self$values)))
       } else {
-        rng <- range(self$value, na.rm = TRUE)
+        rng <- range(self$values, na.rm = TRUE)
         units <- self$attribute("units")
         if (is.na(units)) units <- ""
         cat("\nValues: [", rng[1L], " ... ", rng[2L], "] ", units, "\n", sep = "")
-        NAs <- sum(is.na(self$value))
-        cat(sprintf("    NA: %d (%.1f%%)\n", NAs, NAs * 100 / length(self$value)))
+        NAs <- sum(is.na(self$values))
+        cat(sprintf("    NA: %d (%.1f%%)\n", NAs, NAs * 100 / length(self$values)))
       }
 
       cat("\nAxes:\n")
@@ -146,27 +131,13 @@ CFData <- R6::R6Class("CFData",
       self$print_attributes()
     },
 
-    #' @description Return the time object from the axis representing time.
-    #' @param want Character string with value "axis" or "time", indicating
-    #' what is to be returned.
-    #' @return If `want = "axis"` the [CFAxisTime] axis; if `want = "time"` the
-    #' `CFTime` instance of the axis, or `NULL` if the variable does not have a
-    #' "time" dimension.
-    time = function(want = "axis") {
-      ndx <- sapply(self$axes, inherits, "CFAxisTime")
-      if (any(ndx))
-        if (want == "axis") self$axes[[which(ndx)]]
-        else self$axes[[which(ndx)]]$time()
-      else NULL
-    },
-
     #' @description Retrieve the data in the object exactly as it was produced
     #' by the operation on `CFVariable`.
     #' @return The data in the object. This is usually an `array` with the
     #' contents along axes varying.
     raw = function() {
-      dimnames(self$value) <- self$dimnames
-      self$value
+      dimnames(self$values) <- self$dimnames
+      self$values
     },
 
     #' @description Retrieve the data in the object in the form of an R array,
@@ -176,7 +147,7 @@ CFData <- R6::R6Class("CFData",
       if (length(self$axes) < 2L)
         stop("Cannot create an array from data object with only one axis.", call. = FALSE)
 
-      dimnames(self$value) <- self$dimnames
+      dimnames(self$values) <- self$dimnames
       private$orient()
     },
 
@@ -215,7 +186,7 @@ CFData <- R6::R6Class("CFData",
       wkt <- if (is.null(self$crs)) .wkt2_crs_geo(4326L)
              else self$crs$wkt2(.wkt2_axis_info(self))
       arr <- self$array()
-      numdims <- length(dim(self$value))
+      numdims <- length(dim(self$values))
       dn <- dimnames(arr)
       if (numdims == 4L) {
         r <- terra::sds(arr, extent = ext, crs = wkt)
@@ -247,8 +218,7 @@ CFData <- R6::R6Class("CFData",
       exp <- expand.grid(lapply(self$axes, function(ax) ax$coordinates),
                          KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE)
       dt <- as.data.table(exp)
-      nm <- names(dt)
-      dt[ , eval(self$name) := self$value]
+      dt[ , eval(self$name) := self$values]
 
       long_name <- self$attribute("long_name")
       if (is.na(long_name)) long_name <- ""
@@ -256,85 +226,6 @@ CFData <- R6::R6Class("CFData",
       if (is.na(units)) units <- ""
       data.table::setattr(dt, "value", list(name = long_name, units = units))
       dt
-    },
-
-    #' @description Summarise the temporal dimension of the data, if present, to
-    #'   a lower resolution, using a user-supplied aggregation function.
-    #' @param name Character string with the name for the summarised data.
-    #' @param period The period to summarise to. Must be one of either "day",
-    #'   "dekad", "month", "quarter", "season", "year". A "quarter" is the
-    #'   standard calendar quarter such as January-March, April-June, etc. A
-    #'   "season" is a meteorological season, such as December-February,
-    #'   March-May, etc. (any December data is from the year preceding the
-    #'   January data). The period must be of lower resolution than the
-    #'   resolution of the time dimension.
-    #' @param fun A function or a symbol or character string naming a function
-    #'   that will be applied to each grouping of data.
-    #' @return A new `CFData` object in the same group as `self` with the
-    #' summarised data.
-    summarise = function(name, period, fun) {
-      if (missing(name) || missing(period) || missing(fun))
-        stop("Arguments 'name', 'period' and 'fun' are required.", call. = FALSE)
-      if (!(period %in% c("day", "dekad", "month", "quarter", "season", "year")))
-        stop("Argument 'period' has invalid value.", call. = FALSE)
-
-      # Find the time object, create the factor
-      tax <- self$time("axis")
-      if (is.null(tax))
-        stop("No 'time' dimension found to summarise on.", call. = FALSE)
-      fac <- try(tax$time()$factor(period), silent = TRUE)
-      if (inherits(fac, "try-error"))
-        stop("The time dimension is too short to summarise on.", call. = FALSE)
-
-      # Make a new time axis for the result
-      new_tm <- attr(fac, "CFTime")
-      var <- NCVariable$new(-1L, tax$name, self$group, "NC_DOUBLE", 1L, NULL)
-      len <- length(new_tm)
-      new_ax <- if (len == 1L)
-        CFAxisScalar$new(self$group, var, "T", new_tm)
-      else {
-        dim <- NCDimension$new(-1L, tax$name, len, FALSE)
-        CFAxisTime$new(self$group, var, dim, new_tm)
-      }
-
-      # Summarise
-      num_dim_axes <- length(dim(self$value))
-      if (num_dim_axes == 1L) {
-        dt <- tapply(self$value, fac, fun, na.rm = TRUE)
-        ax <- new_ax
-      } else {
-        tm <- sum(private$YXZT() > 0L) # Test which oriented axes are present, T is the last one
-        perm <- seq(num_dim_axes)
-        dt <- apply(self$array(), perm[-tm], tapply, fac, fun, na.rm = TRUE)
-        perm <- c(perm[2L:tm], 1L, perm[-(1L:tm)])
-        dt <- aperm(dt, perm)
-
-        # Organise the axes
-        ax <- self$axes
-        ax[[tm]] <- new_ax
-
-        # Fix name of time dimension in dimnames
-        dn <- dimnames(dt)
-        axn <- names(dn)
-        axn[tm] <- tax$name
-        names(dn) <- axn
-        dimnames(dt) <- dn
-      }
-
-      # Attributes
-      atts <- self$attributes
-      # FIXME: set cell_methods
-
-      # Create the output
-      out <- CFData$new(name, self$group, dt, ax, self$crs, atts)
-    },
-
-    #' @description Plot a 2D slice of data to the display.
-    #' @param ... Arguments passed to the `base::plot()` function.
-    plot = function(...) {
-      image(self$axes[["lon"]]$values, self$axes[["lat"]]$values, self$raw(),
-            xlab = "Longitude", ylab = "Latitude", useRaster = T,
-            xaxp = c(0, 360, 8), yaxp = c(-90, 90, 4))
     },
 
     #' @description Save the data object to a netCDF file.
@@ -360,13 +251,13 @@ CFData <- R6::R6Class("CFData",
 
       # Data variable
       # FIXME: Pack data
-      dim_axes <- length(dim(self$value))
+      dim_axes <- length(dim(self$values))
       axis_names <- sapply(self$axes, function(ax) ax$name)
       RNetCDF::var.def.nc(nc, self$name, self$NCvar$vtype, axis_names[1L:dim_axes])
       if (length(self$axes) > dim_axes)
         self$set_attribute("coordinates", "NC_CHAR", paste(axis_names[-(1L:dim_axes)]))
       self$write_attributes(nc, self$name)
-      RNetCDF::var.put.nc(nc, self$name, self$value)
+      RNetCDF::var.put.nc(nc, self$name, self$values)
 
       RNetCDF::close.nc(nc)
       invisible(self)
@@ -376,7 +267,7 @@ CFData <- R6::R6Class("CFData",
     #' @field dimnames (read-only) Retrieve dimnames of the data object.
     dimnames = function(value) {
       if (missing(value)) {
-        len <- length(dim(self$value))
+        len <- length(dim(self$values))
         dn <- lapply(1:len, function(ax) dimnames(self$axes[[ax]]))
         names(dn) <- sapply(1:len, function(ax) self$axes[[ax]]$name)
         dn

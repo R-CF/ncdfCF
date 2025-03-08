@@ -19,6 +19,6 @@ A \code{VirtualGroup} instance.
 \description{
 With this function a group is created in memory, i.e. not associated with a
 netCDF resource on file. This can be used to prepare new CF objects before
-writing them to file. Extracting data from a \code{CFVariable} into a \link{CFData}
-instance will also create a memory group.
+writing them to file. Extracting data from a \code{CFVariable} into a \link{CFArray}
+instance will also create a virtual group.
 }

@@ -25,6 +25,6 @@ makeLatitudeAxis(id, name, group, length, values, bounds, units)
 A \code{CFAxisLatitude} instance.
 }
 \description{
-With this method you can create a longitude axis to use with new \link{CFData}
+With this method you can create a longitude axis to use with new \link{CFArray}
 instances.
 }

@@ -30,6 +30,12 @@ CFResource <- R6::R6Class("CFResource",
         private$.handle <- NULL
       } else
         self$error <- ""
+    },
+
+    # This method is called automatically when the instance is
+    # deleted, ensuring that file handles are properly closed.
+    finalize = function() {
+      self$close()
     }
   ),
   public = list(
@@ -46,12 +52,6 @@ CFResource <- R6::R6Class("CFResource",
       private$.uri <- uri
       private$.handle <- NULL
       self$error <- ""
-    },
-
-    #' @description This method is called automatically when the instance is
-    #'   deleted, ensuring that file handles are properly closed.
-    finalize = function() {
-      self$close()
     },
 
     #' @description Closing an open netCDF resource. It should rarely be

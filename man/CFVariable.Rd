@@ -13,20 +13,8 @@ been associated with the data variable, such as axis information, grid
 mapping parameters, etc. The actual data array can be accessed through the
 \code{data()} and \code{subset()} methods of this class.
 }
-\section{Super class}{
-\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFVariable}
-}
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{axes}}{List of instances of classes descending from \link{CFAxis} that
-are the axes of the variable.}
-
-\item{\code{crs}}{The coordinate reference system of this variable, as an
-instance of \link{CFGridMapping}. If this field is \code{NULL}, the horizontal
-component of the axes are in decimal degrees of longitude and latitude.}
-}
-\if{html}{\out{</div>}}
+\section{Super classes}{
+\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFVariableBase]{ncdfCF::CFVariableBase}} -> \code{CFVariable}
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
@@ -49,7 +37,6 @@ description of the variable as a WKT2 string.}
 \item \href{#method-CFVariable-brief}{\code{CFVariable$brief()}}
 \item \href{#method-CFVariable-shard}{\code{CFVariable$shard()}}
 \item \href{#method-CFVariable-peek}{\code{CFVariable$peek()}}
-\item \href{#method-CFVariable-time}{\code{CFVariable$time()}}
 \item \href{#method-CFVariable-data}{\code{CFVariable$data()}}
 \item \href{#method-CFVariable-subset}{\code{CFVariable$subset()}}
 \item \href{#method-CFVariable-clone}{\code{CFVariable$clone()}}
@@ -64,6 +51,8 @@ description of the variable as a WKT2 string.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="summarise"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-summarise'><code>ncdfCF::CFVariableBase$summarise()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="time"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-time'><code>ncdfCF::CFVariableBase$time()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -97,9 +86,17 @@ An instance of this class.
 \subsection{Method \code{print()}}{
 Print a summary of the data variable to the console.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$print()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$print(...)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Arguments passed on to other functions. Of particular interest
+is \verb{width = } to indicate a maximum width of attribute columns.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFVariable-brief"></a>}}
@@ -152,20 +149,6 @@ A 1-row \code{data.frame} with details of the data variable.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFVariable-time"></a>}}
-\if{latex}{\out{\hypertarget{method-CFVariable-time}{}}}
-\subsection{Method \code{time()}}{
-Return the time object from the axis representing time.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$time()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-A \code{CFTime} instance, or \code{NULL} if the variable does not have a
-"time" dimension.
-}
-}
-\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFVariable-data"></a>}}
 \if{latex}{\out{\hypertarget{method-CFVariable-data}{}}}
 \subsection{Method \code{data()}}{
@@ -175,7 +158,7 @@ Retrieve all data of the variable.
 }
 
 \subsection{Returns}{
-A \link{CFData} instance with all data from this variable.
+A \link{CFArray} instance with all data from this variable.
 }
 }
 \if{html}{\out{<hr>}}
@@ -243,7 +226,7 @@ is extracted and \code{NULL} is returned.
 The extracted data has the same dimensional structure as the data in the
 variable, with degenerate dimensions dropped. The order of the axes in
 argument \code{subset} does not reorder the axes in the result; use the
-\link{CFData}$array() method for this.
+\link{CFArray}$array() method for this.
 
 As an example, to extract values of a variable for Australia for the year
 2020, where the first axis in \code{x} is the longitude, the second
@@ -275,7 +258,7 @@ horizontal axis names in argument \code{subset}.
 }
 
 \subsection{Returns}{
-An \link{CFData} instance, having an array with its axes and
+A \link{CFArray} instance, having an array with its axes and
 attributes of the variable, or \code{NULL} if one or more of the elements in
 the \code{subset} argument falls entirely outside of the range of the axis.
 Note that degenerate dimensions (having \code{length(.) == 1}) are dropped

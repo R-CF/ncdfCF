@@ -181,10 +181,10 @@ extracting the area of interest using standard R tools. That is wasteful at best
 (lots of I/O, RAM usage, CPU cycles) and practically impossible with some larger 
 netCDF resources that have variables upwards of 1GB in size.
 
-Enter `ncdfCF`. With `ncdfCF` you have three options to extract data for a 
+Enter `ncdfCF`. With `ncdfCF` you have four options to extract data for a 
 variable:
 
- * **`data()`** extracts all the data of the variable into a `CFData` object, 
+ * **`data()`** extracts all the data of the data variable into a `CFArray` object, 
  including information on axes, the coordinate reference system and attributes.
  * **`[]`**: Using R's standard extraction operator `[` you work directly with
  the index values into the array dimensions: `d <- t2m[3:5, 1:4, 1:10]`. You can
@@ -203,7 +203,15 @@ variable:
  and each item containing a vector of real-world coordinates to extract. As an 
  example, to extract values of a variable `x` for Australia for the year 2020 you call
  `x$subset(list(X = 112:154, Y = -9:-44, T = c("2020-01-01", "2021-01-01")))`.
- The result is returned in a `CFData` object.
+ The result is returned in a `CFArray` object.
+ * **`summarise()`**: The `summarise()` method summarises the temporal dimension
+ of a data variable to a lower resolution and returns a `CFArray` object with 
+ the results. For instance, you can summarise daily data to monthly summaries,
+ which greatly reduces the size of the data variable. The periods to which data
+ can be summarised are "day", "dekad" (10-day periods), "month", "quarter" (i.e.
+ JFM, AMJ, JAS, OND), "season" (the meteorological seasons: DJF, MAM, JJA, SON),
+ and "year". The `summarise()` method can also be called from a `CFArray` object.
+  
 
 ```{r extract}
 # Extract a time series for a specific location
@@ -241,10 +249,10 @@ computer, without exhausting RAM.
 
 ## Working with the data
 
-The `data()` and `subset()` functions return data from a variable in a `CFData`
-instance. The `CFData` instance holds the actual data, as well as important
+The `data()`, `subset()` and `summarise()` methods return data from a variable in a `CFArray`
+instance. The `CFArray` instance holds the actual data, as well as important
 metadata of the data, including its axes, the coordinate reference system,
-and the attributes, among others. The `CFData` instance also lets you manipulate 
+and the attributes, among others. The `CFArray` instance also lets you manipulate 
 the data in a way that is informed by the metadata. This overcomes a typical
 issue when working with netCDF data that adheres to the CF Metadata Conventions.
 
@@ -252,8 +260,8 @@ The ordering of the axes in a typical netCDF resource is different from the way
 that R orders its data. That leads to surprising results if you are not aware of
 this issue:
 
-```{r cfdata}
-# Open a file and read the data from a variable into a CFData instance
+```{r cfarray}
+# Open a file and read the data from a variable into a CFArray instance
 fn <- system.file("extdata", "tasmax_NAM-44_day_20410701-vncdfCF.nc", package = "ncdfCF")
 ds <- open_ncdf(fn)
 tx <- ds[["tasmax"]]$data()
@@ -280,7 +288,7 @@ in any order. The CF Metadata Conventions add metadata to interpret the file
 storage. The `array()` method uses that to produce an array in the familiar R
 storage arrangement:
 
-```{r cfdata2}
+```{r cfarray2}
 tx_array <- tx$array()
 str(tx_array)
 r <- terra::rast(tx_array)

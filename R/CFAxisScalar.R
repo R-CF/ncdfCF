@@ -41,7 +41,8 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     },
 
     #' @description Summary of the scalar axis printed to the console.
-    #' @param ... Ignored.
+    #' @param ... Arguments passed on to other functions. Of particular interest
+    #' is `width = ` to indicate a maximum width of attribute columns.
     #' @return `self`, invisibly.
     print = function(...) {
       cat("<", self$friendlyClassName, "> ", self$name, "\n", sep = "")
@@ -64,11 +65,11 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
         if (is.na(units)) units <- ""
         cat("Value    : ", self$values, " ", units, "\n", sep = "")
         if (inherits(self$bounds, "CFBounds"))
-          self$bounds$print()
+          self$bounds$print(...)
         else cat("Bounds   : (not set)\n")
       }
 
-      self$print_attributes()
+      self$print_attributes(...)
     },
 
     #' @description Some details of the axis.

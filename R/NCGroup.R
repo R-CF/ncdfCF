@@ -85,7 +85,7 @@ NCGroup <- R6::R6Class("NCGroup",
       if (length(self$subgroups) > 0L)
         cat("Subgroups :", paste(names(self$subgroups), collapse = ", "), "\n")
 
-      self$print_attributes()
+      self$print_attributes(...)
     },
 
     #' @description Prints the hierarchy of the group and its subgroups to the

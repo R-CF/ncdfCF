@@ -94,7 +94,8 @@ Summary of the scalar axis printed to the console.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{...}}{Ignored.}
+\item{\code{...}}{Arguments passed on to other functions. Of particular interest
+is \verb{width = } to indicate a maximum width of attribute columns.}
 }
 \if{html}{\out{</div>}}
 }

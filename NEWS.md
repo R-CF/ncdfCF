@@ -1,16 +1,28 @@
 # ncdfCF (development version)
 
--   `CFData` objects can now be written to a netCDF file.
--   Method `CFData$summarise()` summarises the temporal dimension of a data
-    object to a lower resolution, using the specific calendar of the temporal
-    dimension and returns a new `CFData` object with the summarised data.
--   Method `CFData$data.table()` exports a data object to a `data.table`.
--   `CFVariable` and `CFData` classes now have `time()` method to retrieve the
-    `CFTime` instance of a "time" axis, if present.
+-   `CFData` has been renamed `CFArray` to more accurately describe its contents.
+-   `CFArray` objects can now be written to a netCDF file.
+-   Methods `CFVariable$summarise()` and `CFArray$summarise()` summarise the 
+    temporal dimension of a data object to a lower resolution using a user-supplied
+    function, using the specific calendar of the temporal dimension and returning
+    a new `CFArray` object with the summarised data for every return value of a 
+    call to the function, i.e. the function may have multiple return values. The 
+    `CFArray` version is much faster (because all data has been read already), 
+    but the `CFVariable` version can also summarise data variables that are too 
+    big to fit into the available memory entirely. In either case, code is
+    optimized compared to the R base version so an operation over the "time"
+    dimension of a data array is about twice as fast as using the base R
+    `apply(X, MARGIN, tapply, INDEX, FUN, ...)` call.
+-   Method `CFArray$data.table()` exports a data object to a `data.table`.
+-   `CFVariable` and `CFArray` classes now have `time()` method to retrieve the
+    "time" axis or its `CFTime` instance, if present.
 -   `CFAxis` has new `coordinates` field with which to retrieve the coordinates
     along the axis.
 -   New attributes can be defined on any object that supports attributes, or
     deleted.
+-   Fixed error on reading bounds for auxiliary coordinate variables. Various 
+    other minor code fixes.
+-   `CFResource` fixed to conform to new `R6` version.
 
 # ncdfCF 0.3.0
 

@@ -17,10 +17,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(ncdfCF)
-```
-
 ## The CF Metadata Conventions
 
 The CF Metadata Conventions ("CF" henceforth) are being developed by
@@ -41,11 +37,122 @@ By definition, a CF-compliant data set is stored in a netCDF file. The CF
 elements and their relationship to the building blocks of the netCDF file are 
 given in the figure below:
 
-![*Figure 1: The elements of a CF data set, in blue. netCDF building blocks are
+![*Figure 1: The elements of a CF data set, in blue. NetCDF building blocks are
 given in yellow. Source: Hassell, et al. (2017): "A data model of the
 Climate and Forecast metadata conventions (CF-1.6) with a software
 implementation (cf-python v2.1)",*
 <https://doi.org/10.5194/gmd-10-4619-2017>](CF-elements.png){width="620"}
 
-At the end of this vignette is a feature matrix that indicates the
-support for each CF element in package `ncdfCF`.
+If you've worked with netCDF data in R before, probably using package `ncdf4`
+(but what follows is equally true when you use package `RNetCDF`),
+you should be familiar with the yellow boxes in the above figure, especially
+"NC::Variable" (the specific notation used in the figure is not important here),
+corresponding to the `ncvar4` class in `ncdf4`. CF, however, recognizes eight
+different objects that are each based on an "NC::Variable". This ranges from 
+axes, or *generic coordinate variables* in the white box in the figure (to get 
+the dimension values of your data array when not loaded upon opening the file 
+you have to call `ncdf4::ncvar_get()`, i.e. you read a variable to get the 
+values of a dimension), to *grid mapping variables* (that define the coordinate
+reference system of your data) to the actual data array in a *data variable*. 
+This is the source of all those surprising "variables" that you see when you do 
+`names(nc$var)`:
+
+```{r ncdf4}
+library(ncdf4)
+
+fn <- system.file("extdata", "tasmax_NAM-44_day_20410701-vncdfCF.nc", package = "ncdfCF")
+nc <- nc_open(fn)
+
+# The "variables"
+names(nc$var)
+
+# The dimensions
+names(nc$dim)
+```
+
+So which of these variables is the one that holds your data? And how do you tell
+it apart from the other "variables"? And why are there `x` and `y` dimensions and
+`lon` and `lat` "variables"?
+
+### Enter the attributes
+
+You may not be as familiar with the attributes in the netCDF file, the
+"NC::Attribute" object in the above figure, as `ncdf4` does not make these as
+easily accessible as the other information in the file. That is a shame because
+attributes are the thing that makes netCDF stand apart from pretty much any
+other gridded data format. CF is actually all about attributes, with some of
+them organized in "NC::Variable" objects that do not hold any other data! (Such
+as the *grid mapping variables* mentioned above.) Put the other way around, you
+are not really using a CF-compliant netCDF data set unless you read the proper
+attributes.
+
+Looking at the same netCDF file as above, but now using the `ncdfCF` package:
+
+```{r ncdfCF}
+library(ncdfCF)
+
+ds <- open_ncdf(fn)
+
+# The data variable
+names(ds)
+
+# The details of the data variable
+tmax <- ds[["tasmax"]]
+tmax$print(width = 25)
+
+# The "time" axis
+ds[["time"]]
+
+# Parameters in the grid mapping variable
+ds[["Lambert_Conformal"]]
+```
+
+Ok, that's a lot more information. Let's focus on a few important things:
+
+1.  There is only one *data variable*, called "tasmax". If we examine it's details
+we can see that it's coordinate space uses four axes `x`, `y`, `time` and 
+`height`. That is not all clear from the `ncdf4` output which lists the first
+three dimensions and excludes `height`, but includes `bnds` instead.
+2.  The data set has a *grid mapping variable* called `Lambert_Conformal` that,
+by definition, applies to the `X` and `Y` axes of the *data variable* `tasmax`.
+As suggested by CF, the data set also includes two *ancillary coordinate variables*
+`lat` and `lon`, each a matrix with the same dimension as the length of the `Y` 
+and `X` axes of the *data variable* they are associated with, where each cell 
+gives the latitude and longitude, respectively, of the corresponding cell in the 
+*data variable* (whose axes have coordinates in the Lambert Conformal coordinate 
+reference system). You can identify these two aspects by looking at the 
+attributes of `tasmax`: attribute `grid_mapping` points to the *grid mapping variable* 
+`Lambert_Conformal`, attribute `coordinates` lists both the *scalar coordinate variable* 
+`height` and the *auxiliary coordinate variables* `lat` and `lon`.
+3.  The `time` axis has an attribute `bounds` which points to `time_bnds`, a
+*boundary variable* that indicates for each coordinate along the axis its lower
+and higher values. For the `time` axis there is just one coordinate at
+`2041-07-01 12:00:00` with range values `2041-07-01 ... 2041-07-02` (midnight to
+midnight). (It is the `time_bnds` variable that uses the `bnds` dimension that
+`ncdf4` reports.) The `calendar` used by this axis is `365_day`, meaning that no
+year uses the leap day of 29 February. This is a so-called "model calendar" and
+the standard date-time functions will not work properly with this data; use the
+built-in time methods instead.
+
+It should be obvious that correctly interpreting a netCDF file requires a 
+package that not only provides easy access to the attributes of the file, but
+that also applies the CF conventions to put all the pieces together in such a
+way that the data set is presented to the user of the data - that would be you -
+as the data producers intended.
+
+The issues arising from the particularities of CF on top of the netCDF format
+are presented and discussed in the remainder of this document, seen from the 
+perspective of the R user, with examples using the `ncdfCF` package. At the end 
+of this vignette is a feature matrix that indicates the support for each CF 
+element in package `ncdfCF`.
+
+> Please note that I have nothing against `ncdf4` or `RNetCDF` packages. In fact,
+package `ncdfCF` is built on top of `RNetCDF`. My point is merely to demonstrate 
+how CF-compliant netCDF files, of which there are *very* many out there on the
+internet, require you to look beyond the basic netCDF building blocks and use
+the attributes. If your netCDF files do not use the CF conventions, then by all
+means use `ncdf4` if you prefer. I would suggest, though, to read the remainder 
+of this document to understand better how data structures in netCDF differ from
+R standard practices.
+
+*(... to be continued ...)*

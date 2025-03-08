@@ -60,7 +60,9 @@ CFDataset <- R6::R6Class("CFDataset",
     },
 
     #' @description Summary of the data set printed to the console.
-    print = function() {
+    #' @param ... Arguments passed on to other functions. Of particular interest
+    #' is `width = ` to indicate a maximum width of attribute columns.
+    print = function(...) {
       cat("<Dataset>", self$name, "\n")
       cat("Resource   :", private$res$uri, "\n")
       cat("Format     :", private$format, "\n")
@@ -79,17 +81,17 @@ CFDataset <- R6::R6Class("CFDataset",
         if (all(vars$long_name == "")) vars$long_name <- NULL
         if (all(vars$units == "")) vars$units <- NULL
         vars <- as.data.frame(vars[lengths(vars) > 0L])
-        print(.slim.data.frame(vars, 50L), right = FALSE, row.names = FALSE)
+        print(.slim.data.frame(vars, ...), right = FALSE, row.names = FALSE)
 
         cat("\nAxes:\n")
         axes <- do.call(rbind, lapply(self$root$axes(), function(a) a$brief()))
         axes <- lapply(axes, function(c) if (all(c == "")) NULL else c)
         if (all(axes$group == "/")) axes$group <- NULL
         axes <- unique(as.data.frame(axes[lengths(axes) > 0L]))
-        print(.slim.data.frame(axes, 50L), right = FALSE, row.names = FALSE)
+        print(.slim.data.frame(axes, ...), right = FALSE, row.names = FALSE)
       }
 
-      self$root$print_attributes()
+      self$root$print_attributes(...)
     },
 
     #' @description Print the group hierarchy to the console.

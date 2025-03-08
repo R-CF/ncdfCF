@@ -37,7 +37,9 @@ CFBounds <- R6::R6Class("CFBounds",
     },
 
     #' @description Print a summary of the object to the console.
-    print = function() {
+    #' @param ... Arguments passed on to other functions. Of particular interest
+    #' is `width = ` to indicate a maximum width of attribute columns.
+    print = function(...) {
       if (is.null(self$values))
         cat("Bounds   : (no values)\n")
       else {
@@ -90,7 +92,7 @@ CFBounds <- R6::R6Class("CFBounds",
     },
 
     #' @description Write the bounds variable to a netCDF file. This method
-    #'   should not be called directly; instead, `CFData::save()` will call this
+    #'   should not be called directly; instead, `CFArray::save()` will call this
     #'   method automatically.
     #' @param h The handle to a netCDF file open for writing.
     #' @param object_name The name of the object that uses these bounds, usually

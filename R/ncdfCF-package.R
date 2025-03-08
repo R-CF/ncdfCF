@@ -37,8 +37,8 @@
 #' full support for the CF Metadata Conventions that define the data properties.
 #' This package does very little beyond that; specifically, there is no support
 #' for spatial analysis, mosaicing, changing the coordinate reference system
-#' (i.e. projection), or any form of data analysis at all. The user is
-#' directed to other packages for such functionality.
+#' (i.e. projection), or any significant form of data analysis at all. The user
+#' is directed to other packages for such functionality.
 #'
 #' **Global functions**
 #'
@@ -62,7 +62,7 @@
 #' * `conventions`: The conventions that this data set complies with. There
 #' could be multiple conventions listed in a single character string. CF
 #' Metadata Conventions use a "CF-1.*" label.
-#' * `variables()`, `axes()`, `attributes()`: Return a list or `data.frame` with
+#' * `variables()`, `axes()`, `attributes()`: Return a `list` or `data.frame` with
 #' all objects of the specific type found in the data set.
 #' * `find_by_name()`: Find a named object in the data set. This can be a data
 #' variable, an axis, or a grid mapping object. A short-hand method to achieve
@@ -102,11 +102,17 @@
 #'
 #' ***Data extraction***
 #'
-#' * `data()`: Extract all data from a data variable into a `CFData` object.
+#' * `data()`: Extract all data from a data variable into a `CFArray` object.
 #' * `subset()`: Select a subset of data from a variable by specifying extents
-#' in real-world coordinates for the axes into a `CFData` object. This can also
+#' in real-world coordinates for the axes into a `CFArray` object. This can also
 #' process "auxiliary coordinate variables", if present, to warp data from its
 #' native CRS to latitude-longitude.
+#' * `summarise()`: Summarise the data in the data variable over the "time"
+#' dimension, using a user-defined function, returning a `CFArray` object. The
+#' function can be built-in (such as `min()` and `max()`) or a user-developed
+#' function. The function may also return a vector with multiple values (such
+#' as `range()`) and then a list of `CFArray` objects is returned, one for each
+#' result of the function.
 #'
 #' ***S3 methods for CFVariable***
 #'
@@ -164,8 +170,8 @@
 #'
 #' **Data**
 #'
-#' The `CFVariable::data()` and `CFVariable::subset()` methods return a [CFData]
-#' object to the caller. The `CFData` object contains the data from the netCDF
+#' The `CFVariable::data()` and `CFVariable::subset()` methods return a [CFArray]
+#' object to the caller. The `CFArray` object contains the data from the netCDF
 #' resource, as well as important metadata from the data variable: axes, CRS and
 #' attributes. The data is easily accessed as a raw array, or processed to some
 #' other format.
@@ -184,6 +190,12 @@
 #' netCDF resource.
 #' * `array()`: The array of data values from the data object, oriented in the
 #' standard R arrangement.
+#' * `summarise()`: Summarise the data in the data array over the "time"
+#' dimension, using a user-defined function, returning a new `CFArray` object. The
+#' function can be built-in (such as `min()` and `max()`) or a user-developed
+#' function. The function may also return a vector with multiple values (such
+#' as `range()`) and then a list of `CFArray` objects is returned, one for each
+#' result of the function.
 #' * `terra()`: (requires the `terra` package) The data values from the data
 #' object as a `terra::SpatRaster` (2 or 3 dimensions) or
 #' `terra::SpatRasterDataset` (4 dimensions), with all relevant properties set.

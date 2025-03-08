@@ -109,7 +109,7 @@ Retrieve the CRS string for a specific variable.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{axis_info}}{A list with information that describes the axes of the
-\code{CFVariable} or \code{CFData} instance to describe.}
+\code{CFVariable} or \code{CFArray} instance to describe.}
 }
 \if{html}{\out{</div>}}
 }

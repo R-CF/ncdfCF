@@ -82,9 +82,17 @@ Create an instance of this class.
 \subsection{Method \code{print()}}{
 Print a summary of the object to the console.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$print()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFBounds$print(...)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Arguments passed on to other functions. Of particular interest
+is \verb{width = } to indicate a maximum width of attribute columns.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFBounds-range"></a>}}
@@ -127,7 +135,7 @@ A \code{CFBounds} instance covering the indicated range of indices.
 \if{latex}{\out{\hypertarget{method-CFBounds-write}{}}}
 \subsection{Method \code{write()}}{
 Write the bounds variable to a netCDF file. This method
-should not be called directly; instead, \code{CFData::save()} will call this
+should not be called directly; instead, \code{CFArray::save()} will call this
 method automatically.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFBounds$write(h, object_name)}\if{html}{\out{</div>}}

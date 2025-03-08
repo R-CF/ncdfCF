@@ -105,9 +105,17 @@ reported by the call opening the resource.}
 \subsection{Method \code{print()}}{
 Summary of the data set printed to the console.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$print()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$print(...)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Arguments passed on to other functions. Of particular interest
+is \verb{width = } to indicate a maximum width of attribute columns.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-hierarchy"></a>}}

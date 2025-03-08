@@ -24,6 +24,7 @@ Imports:
 Collate: 
     'AOI.R'
     'AOImethod.R'
+    'CFArray.R'
     'CFAuxiliaryLongLat.R'
     'CFAxis.R'
     'CFAxisCharacter.R'
@@ -35,7 +36,6 @@ Collate:
     'CFAxisTime.R'
     'CFAxisVertical.R'
     'CFBounds.R'
-    'CFData.R'
     'CFDataset.R'
     'CFGridMapping.R'
     'CFLabel.R'
@@ -43,6 +43,7 @@ Collate:
     'CFObject.R'
     'CFResource.R'
     'CFVariable.R'
+    'CFVariableBase.R'
     'CFVariableL3b.R'
     'NCDimension.R'
     'NCGroup.R'
