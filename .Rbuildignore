@@ -8,3 +8,4 @@
 ^\.github$
 ^data-raw$
 ^revdep$
+^Local_resources$

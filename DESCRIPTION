@@ -58,7 +58,6 @@ Collate:
 Suggests: 
     data.table,
     knitr,
-    ncdf4,
     rmarkdown,
     terra
 VignetteBuilder: knitr

@@ -113,6 +113,8 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
         stop("Arguments 'name', 'period' and 'fun' are required.", call. = FALSE)
       if (!(period %in% c("day", "dekad", "month", "quarter", "season", "year")))
         stop("Argument 'period' has invalid value.", call. = FALSE)
+      if (!.is_valid_name(name))
+        stop("Not all names are valid.", call. = FALSE)
 
       # Find the time object, create the factor
       tax <- self$time("axis")

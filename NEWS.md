@@ -23,6 +23,7 @@
 -   Fixed error on reading bounds for auxiliary coordinate variables. Various 
     other minor code fixes.
 -   `CFResource` fixed to conform to new `R6` version.
+-   Documentation updated, including vignettes.
 
 # ncdfCF 0.3.0
 

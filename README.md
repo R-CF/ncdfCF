@@ -251,7 +251,7 @@ attributes:
 ``` r
 # Extract a specific region, full time dimension
 (ts <- t2m$subset(list(X = 29:30, Y = -1:-2)))
-#> <Data> t2m 
+#> <Data array> t2m 
 #> Long name: 2 metre temperature 
 #> 
 #> Values: [283.0182 ... 299.917] K
@@ -282,7 +282,7 @@ attributes:
 (ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
                        X = c(29.6, 28.8),
                        Y = seq(-2, -1, by = 0.05))))
-#> <Data> t2m 
+#> <Data array> t2m 
 #> Long name: 2 metre temperature 
 #> 
 #> Values: [288.2335 ... 299.917] K
@@ -318,15 +318,14 @@ these methods.
 # install.packages("data.table")
 library(data.table)
 head(dt <- ts$data.table())
-#> Key: <longitude, latitude, time>
-#>    longitude latitude                time    value
-#>       <char>   <char>              <char>    <num>
+#>    longitude latitude                time      t2m
+#>        <num>    <num>              <char>    <num>
 #> 1:      28.8     -1.1 2016-01-01 09:00:00 296.0753
-#> 2:      28.8     -1.1 2016-01-01 10:00:00 296.3185
-#> 3:      28.8     -1.1 2016-01-01 11:00:00 296.7739
-#> 4:      28.8     -1.1 2016-01-01 12:00:00 297.3722
-#> 5:      28.8     -1.1 2016-01-01 13:00:00 295.8131
-#> 6:      28.8     -1.1 2016-01-01 14:00:00 295.2355
+#> 2:      28.9     -1.1 2016-01-01 09:00:00 294.9227
+#> 3:      29.0     -1.1 2016-01-01 09:00:00 295.8135
+#> 4:      29.1     -1.1 2016-01-01 09:00:00 297.0929
+#> 5:      29.2     -1.1 2016-01-01 09:00:00 297.4697
+#> 6:      29.3     -1.1 2016-01-01 09:00:00 298.5419
 
 #install.packages("terra")
 suppressMessages(library(terra))

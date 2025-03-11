@@ -161,7 +161,7 @@ terra::plot(r[names(r)[1]])
 
 A `CFData` object can also be written back to a netCDF file. The object will
 have all its relevant attributes and properties written together with the actual 
-data: axes, bounds, attributes, CRS.
+data: axes, bounds, attributes, CRS. 
 
 ```{r save, eval=FALSE}
 # Save a CFData instance to a netCDF file on disk

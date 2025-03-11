@@ -110,12 +110,12 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
 #' Flags if the supplied name is a valid name according to the CF Metadata
 #' Conventions.
 #'
-#' @param nm The name of a variable, group or attribute to test. Group names
-#' should be plain, i.e. no preceding path.
-#' @returns `TRUE` if `nm` is valid, `FALSE` otherwise.
+#' @param nm A vector of names of variables, groups or attributes to test. Group
+#' names should be plain, i.e. no preceding path.
+#' @returns `TRUE` if all `nm` are valid, `FALSE` otherwise.
 #' @noRd
 .is_valid_name <- function(nm) {
-  grepl("^[a-zA-Z][a-zA-Z0-9_]{0,254}$", nm)
+  all(grepl("^[a-zA-Z][a-zA-Z0-9_]{0,254}$", nm))
 }
 
 .cache_dir <- function() {

@@ -12,6 +12,8 @@
 #' @return A `VirtualGroup` instance.
 #' @export
 makeVirtualGroup <- function(id, name, fullname) {
+  if (!.is_valid_name(name))
+    stop("Name for group is not valid", call. = FALSE)
   VirtualGroup$new(id, name, fullname, NULL)
 }
 
@@ -31,7 +33,10 @@ makeVirtualGroup <- function(id, name, fullname) {
 #' @return A `CFAxisLongitude` instance.
 #' @export
 makeLongitudeAxis <- function(id, name, group, length, values, bounds = NULL, units = "") {
+  if (!.is_valid_name(name))
+    stop("Name for axis is not valid", call. = FALSE)
   # FIXME: Check domain
+
   var <- NCVariable$new(id, name, group, "NC_DOUBLE", 1L, NULL)
   dim <- NCDimension$new(-1L, name, length, FALSE)
   axis <- CFAxisLongitude$new(group, var, dim, values)
@@ -64,7 +69,10 @@ makeLongitudeAxis <- function(id, name, group, length, values, bounds = NULL, un
 #' @return A `CFAxisLatitude` instance.
 #' @export
 makeLatitudeAxis <- function(id, name, group, length, values, bounds, units) {
+  if (!.is_valid_name(name))
+    stop("Name for axis is not valid", call. = FALSE)
   # FIXME: Check domain
+
   var <- NCVariable$new(id, name, group, "NC_DOUBLE", 1L, NULL)
   dim <- NCDimension$new(-1L, name, length, FALSE)
   axis <- CFAxisLatitude$new(group, var, dim, values)
@@ -94,6 +102,9 @@ makeLatitudeAxis <- function(id, name, group, length, values, bounds, units) {
 #' @return A `CFAxisTime` instance.
 #' @export
 makeTimeAxis <- function(id, name, group, values) {
+  if (!.is_valid_name(name))
+    stop("Name for axis is not valid", call. = FALSE)
+
   var <- NCVariable$new(id, name, group, "NC_DOUBLE", 1L, NULL)
   if (length(values) == 1L)
     axis <- CFAxisScalar$new(group, var, "T", values)

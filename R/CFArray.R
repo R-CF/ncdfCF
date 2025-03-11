@@ -95,11 +95,19 @@ CFArray <- R6::R6Class("CFArray",
     #'   data in argument `value`.
     #' @return An instance of this class.
     initialize = function(name, group, values, axes, crs, attributes) {
-      var <- NCVariable$new(-1L, name, group, "NC_FLOAT", 0L, NULL)
+      # FIXME: Various other data types
+      first <- typeof(as.vector(values)[1L])
+      dt <- if (first == "double") "NC_DOUBLE"
+            else if (first == "integer") "NC_INT"
+            else stop("Unsupported data type for the values", call. = FALSE)
+
+      var <- NCVariable$new(-1L, name, group, dt, 0L, NULL)
       var$attributes <- attributes
       super$initialize(var, group, axes, crs)
 
       self$values <- values
+      if (!all(is.na(self$values)))
+        self$set_attribute("valid_range", dt, range(values, na.rm = TRUE))
     },
 
     #' @description Print a summary of the data object to the console.
