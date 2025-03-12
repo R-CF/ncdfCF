@@ -1,3 +1,7 @@
+# ncdfCF (development version)
+
+-   Fixed `summarise()` when temporal result yields scalar time axis.
+
 # ncdfCF 0.4.0
 
 -   `CFData` has been renamed `CFArray` to more accurately describe its contents.

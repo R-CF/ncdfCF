@@ -41,11 +41,11 @@ Metadata Conventions to interpret the data. This currently applies to:
 
  * The **axis designation**. The three mechanisms to identify the axis each 
  dimension represents are applied until an axis is determined.
- * The **time dimension**. Time is usually encoded as an offset from a datum.
+ * The **time coordinate**. Time is usually encoded as an offset from an origin.
  Using the `CFtime` package these offsets can be turned into intelligible dates
- and times, for all 9 defined calendars.
+ and times, for all defined calendars.
  * **Bounds** information. When present, bounds are read and used in analyses.
- * **Discrete dimensions**, optionally with character labels. When labels are
+ * **Discrete coordinates**, optionally with character labels. When labels are
  provided, these will be used as `dimnames` for the axis. (Note that this also
  applies to generic numeric axes with labels defined.)
  * **Parametric vertical coordinates** are read, including variables listed in
@@ -142,6 +142,43 @@ returned as an instance of `CFData`, including axes and attributes:
 The latter two methods will read only as much data from the netCDF resource as 
 is requested.
 
+##### Summarising data over time
+
+With the `summarise()` method, available for both `CFVariable` and `CFArray`,
+you can apply a function over the data to generate summaries. You could, for
+instance, summarise daily data to monthly means. These methods use the specific
+calendar of the "time" dimension. The return value is a new `CFArray` object.
+
+```{r summarise}
+# Summarising hourly temperature data to calculate the daily maximum temperature
+t2m$summarise("tmax", "day", max)
+```
+
+A function may also return a vector of multiple values, in which case a list is
+returned with a new `CFArray` object for each return value of the function. This
+allows you to calculate multiple results with a single call. You could write
+your own function to tailor the calculations to your needs. Rather than just 
+calculating the daily maximum, you could get the daily maximum, minimum and
+diurnal range in one go:
+
+```{r summarise_multi}
+# Function to calculate multiple daily stats
+# It is good practice to include a `na.rm` argument in all your functions
+daily_stats <- function(x, na.rm = TRUE) {
+  # x is the vector of values for one day
+  minmax <- range(x, na.rm = na.rm)
+  diurnal <- minmax[2L] - minmax[1L]
+  c(minmax, diurnal)
+}
+
+# Call summarise() with your own function
+# The `name` argument should have as many names as the function returns results
+(stats <- t2m$summarise(c("tmin", "tmax", "diurnal_range"), "day", daily_stats))
+```
+
+Note that you may have to update some attributes after calling `summarise()`. 
+You can use the `set_attribute()` method on the `CFArray` objects to do that.
+
 ##### Exporting and saving data
 
 A `CFData` object can be exported to a `data.table` or to a `terra::SpatRaster`
@@ -155,8 +192,8 @@ head(dt <- ts$data.table())
 
 #install.packages("terra")
 suppressMessages(library(terra))
-(r <- ts$terra())
-terra::plot(r[names(r)[1]])
+(r <- stats[["diurnal_range"]]$terra())
+terra::plot(r)
 ```
 
 A `CFData` object can also be written back to a netCDF file. The object will
@@ -165,7 +202,7 @@ data: axes, bounds, attributes, CRS.
 
 ```{r save, eval=FALSE}
 # Save a CFData instance to a netCDF file on disk
-ts$save("~/path/file.nc")
+stats[["diurnal_range"]]$save("~/path/file.nc")
 ```
 
 ##### A note on Discrete Sampling Geometries

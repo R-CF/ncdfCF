@@ -121,8 +121,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
       tax <- self$time("axis")
       if (is.null(tax))
         stop("No 'time' dimension found to summarise on.", call. = FALSE)
-      #fac <- try(tax$time()$factor(period), silent = TRUE)
-      fac <- tax$time()$factor(period)
+      fac <- try(tax$time()$factor(period), silent = TRUE)
       if (inherits(fac, "try-error"))
         stop("The 'time' dimension is too short to summarise on.", call. = FALSE)
 

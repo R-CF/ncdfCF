@@ -30,14 +30,15 @@ Metadata Conventions to interpret the data. This currently applies to:
 
 - The **axis designation**. The three mechanisms to identify the axis
   each dimension represents are applied until an axis is determined.
-- The **time dimension**. Time is usually encoded as an offset from a
-  datum. Using the `CFtime` package these offsets can be turned into
-  intelligible dates and times, for all 9 defined calendars.
+- The **time coordinate**. Time is usually encoded as an offset from an
+  origin. Using the `CFtime` package these offsets can be turned into
+  intelligible dates and times, for all defined calendars.
 - **Bounds** information. When present, bounds are read and used in
   analyses.
-- **Discrete dimensions**, optionally with character labels. When labels
-  are provided, these will be used as `dimnames` for the axis. (Note
-  that this also applies to generic numeric axes with labels defined.)
+- **Discrete coordinates**, optionally with character labels. When
+  labels are provided, these will be used as `dimnames` for the axis.
+  (Note that this also applies to generic numeric axes with labels
+  defined.)
 - **Parametric vertical coordinates** are read, including variables
   listed in the `formula_terms` attribute.
 - **Auxiliary coordinates** are identified and read. This applies to
@@ -268,13 +269,14 @@ attributes:
 #>  hours since 1900-01-01 00:00:00.0
 #> 
 #> Attributes:
-#>  id name          type      length value              
-#>  0  long_name     NC_CHAR   19     2 metre temperature
-#>  1  units         NC_CHAR    1     K                  
-#>  2  add_offset    NC_DOUBLE  1     292.664569285614   
-#>  3  scale_factor  NC_DOUBLE  1     0.00045127252204996
-#>  4  _FillValue    NC_SHORT   1     -32767             
-#>  5  missing_value NC_SHORT   1     -32767
+#>  id name          type      length value                             
+#>  0  long_name     NC_CHAR   19     2 metre temperature               
+#>  1  units         NC_CHAR    1     K                                 
+#>  2  add_offset    NC_DOUBLE  1     292.664569285614                  
+#>  3  scale_factor  NC_DOUBLE  1     0.00045127252204996               
+#>  4  _FillValue    NC_SHORT   1     -32767                            
+#>  5  missing_value NC_SHORT   1     -32767                            
+#>  6  valid_range   NC_DOUBLE  2     283.018167854274, 299.916969987479
 
 # Extract specific time slices for a specific region
 # Note that the dimensions are specified out of order and using alternative
@@ -295,17 +297,139 @@ attributes:
 #>  -1 T    time       6     [2016-01-01 09:00:00 ... 2016-01-01 14:00:00]
 #> 
 #> Attributes:
-#>  id name          type      length value              
-#>  0  long_name     NC_CHAR   19     2 metre temperature
-#>  1  units         NC_CHAR    1     K                  
-#>  2  add_offset    NC_DOUBLE  1     292.664569285614   
-#>  3  scale_factor  NC_DOUBLE  1     0.00045127252204996
-#>  4  _FillValue    NC_SHORT   1     -32767             
-#>  5  missing_value NC_SHORT   1     -32767
+#>  id name          type      length value                             
+#>  0  long_name     NC_CHAR   19     2 metre temperature               
+#>  1  units         NC_CHAR    1     K                                 
+#>  2  add_offset    NC_DOUBLE  1     292.664569285614                  
+#>  3  scale_factor  NC_DOUBLE  1     0.00045127252204996               
+#>  4  _FillValue    NC_SHORT   1     -32767                            
+#>  5  missing_value NC_SHORT   1     -32767                            
+#>  6  valid_range   NC_DOUBLE  2     288.233524391605, 299.916969987479
 ```
 
 The latter two methods will read only as much data from the netCDF
 resource as is requested.
+
+##### Summarising data over time
+
+With the `summarise()` method, available for both `CFVariable` and
+`CFArray`, you can apply a function over the data to generate summaries.
+You could, for instance, summarise daily data to monthly means. These
+methods use the specific calendar of the “time” dimension. The return
+value is a new `CFArray` object.
+
+``` r
+# Summarising hourly temperature data to calculate the daily maximum temperature
+t2m$summarise("tmax", "day", max)
+#> <Data array> tmax 
+#> Long name: 2 metre temperature 
+#> 
+#> Values: [290.0364 ... 302.0447] K
+#>     NA: 0 (0.0%)
+#> 
+#> Axes:
+#>  id axis name      length values                unit         
+#>  1  X    longitude 31     [28 ... 31]           degrees_east 
+#>  2  Y    latitude  21     [-1 ... -3]           degrees_north
+#>     T    time       1     [2016-01-01 12:00:00]              
+#> 
+#> Attributes:
+#>  id name          type      length value                             
+#>  0  long_name     NC_CHAR   19     2 metre temperature               
+#>  1  units         NC_CHAR    1     K                                 
+#>  4  _FillValue    NC_SHORT   1     -32767                            
+#>  5  missing_value NC_SHORT   1     -32767                            
+#>  6  valid_range   NC_DOUBLE  2     290.036358117195, 302.044719928944
+```
+
+A function may also return a vector of multiple values, in which case a
+list is returned with a new `CFArray` object for each return value of
+the function. This allows you to calculate multiple results with a
+single call. You could write your own function to tailor the
+calculations to your needs. Rather than just calculating the daily
+maximum, you could get the daily maximum, minimum and diurnal range in
+one go:
+
+``` r
+# Function to calculate multiple daily stats
+# It is good practice to include a `na.rm` argument in all your functions
+daily_stats <- function(x, na.rm = TRUE) {
+  # x is the vector of values for one day
+  minmax <- range(x, na.rm = na.rm)
+  diurnal <- minmax[2L] - minmax[1L]
+  c(minmax, diurnal)
+}
+
+# Call summarise() with your own function
+# The `name` argument should have as many names as the function returns results
+(stats <- t2m$summarise(c("tmin", "tmax", "diurnal_range"), "day", daily_stats))
+#> $tmin
+#> <Data array> tmin 
+#> Long name: 2 metre temperature 
+#> 
+#> Values: [283.0182 ... 293.8659] K
+#>     NA: 0 (0.0%)
+#> 
+#> Axes:
+#>  id axis name      length values                unit         
+#>  1  X    longitude 31     [28 ... 31]           degrees_east 
+#>  2  Y    latitude  21     [-1 ... -3]           degrees_north
+#>     T    time       1     [2016-01-01 12:00:00]              
+#> 
+#> Attributes:
+#>  id name          type      length value                             
+#>  0  long_name     NC_CHAR   19     2 metre temperature               
+#>  1  units         NC_CHAR    1     K                                 
+#>  4  _FillValue    NC_SHORT   1     -32767                            
+#>  5  missing_value NC_SHORT   1     -32767                            
+#>  6  valid_range   NC_DOUBLE  2     283.018167854274, 293.865856739311
+#> 
+#> $tmax
+#> <Data array> tmax 
+#> Long name: 2 metre temperature 
+#> 
+#> Values: [290.0364 ... 302.0447] K
+#>     NA: 0 (0.0%)
+#> 
+#> Axes:
+#>  id axis name      length values                unit         
+#>  1  X    longitude 31     [28 ... 31]           degrees_east 
+#>  2  Y    latitude  21     [-1 ... -3]           degrees_north
+#>     T    time       1     [2016-01-01 12:00:00]              
+#> 
+#> Attributes:
+#>  id name          type      length value                             
+#>  0  long_name     NC_CHAR   19     2 metre temperature               
+#>  1  units         NC_CHAR    1     K                                 
+#>  4  _FillValue    NC_SHORT   1     -32767                            
+#>  5  missing_value NC_SHORT   1     -32767                            
+#>  6  valid_range   NC_DOUBLE  2     290.036358117195, 302.044719928944
+#> 
+#> $diurnal_range
+#> <Data array> diurnal_range 
+#> Long name: 2 metre temperature 
+#> 
+#> Values: [1.819982 ... 11.27369] K
+#>     NA: 0 (0.0%)
+#> 
+#> Axes:
+#>  id axis name      length values                unit         
+#>  1  X    longitude 31     [28 ... 31]           degrees_east 
+#>  2  Y    latitude  21     [-1 ... -3]           degrees_north
+#>     T    time       1     [2016-01-01 12:00:00]              
+#> 
+#> Attributes:
+#>  id name          type      length value                            
+#>  0  long_name     NC_CHAR   19     2 metre temperature              
+#>  1  units         NC_CHAR    1     K                                
+#>  4  _FillValue    NC_SHORT   1     -32767                           
+#>  5  missing_value NC_SHORT   1     -32767                           
+#>  6  valid_range   NC_DOUBLE  2     1.8199820814275, 11.2736901458521
+```
+
+Note that you may have to update some attributes after calling
+`summarise()`. You can use the `set_attribute()` method on the `CFArray`
+objects to do that.
 
 ##### Exporting and saving data
 
@@ -329,17 +453,17 @@ head(dt <- ts$data.table())
 
 #install.packages("terra")
 suppressMessages(library(terra))
-(r <- ts$terra())
+(r <- stats[["diurnal_range"]]$terra())
 #> class       : SpatRaster 
-#> dimensions  : 10, 8, 6  (nrow, ncol, nlyr)
+#> dimensions  : 21, 31, 1  (nrow, ncol, nlyr)
 #> resolution  : 0.1, 0.1  (x, y)
-#> extent      : 28.75, 29.55, -2.05, -1.05  (xmin, xmax, ymin, ymax)
+#> extent      : 27.95, 31.05, -3.05, -0.95  (xmin, xmax, ymin, ymax)
 #> coord. ref. : lon/lat WGS 84 (EPSG:4326) 
 #> source(s)   : memory
-#> names       : 2016-~00:00, 2016-~00:00, 2016-~00:00, 2016-~00:00, 2016-~00:00, 2016-~00:00 
-#> min values  :    290.0364,    288.9316,    288.7990,    288.3621,    288.3680,    288.2335 
-#> max values  :    299.8894,    299.8691,    299.9066,    299.9170,    299.7626,    299.5948
-terra::plot(r[names(r)[1]])
+#> name        : 2016-01-01 12:00:00 
+#> min value   :            1.819982 
+#> max value   :           11.273690
+terra::plot(r)
 ```
 
 <img src="man/figures/README-export-1.png" width="100%" />
@@ -350,7 +474,7 @@ with the actual data: axes, bounds, attributes, CRS.
 
 ``` r
 # Save a CFData instance to a netCDF file on disk
-ts$save("~/path/file.nc")
+stats[["diurnal_range"]]$save("~/path/file.nc")
 ```
 
 ##### A note on Discrete Sampling Geometries
