@@ -1,4 +1,4 @@
-# ncdfCF (development version)
+# ncdfCF 0.4.0
 
 -   `CFData` has been renamed `CFArray` to more accurately describe its contents.
 -   `CFArray` objects can now be written to a netCDF file.

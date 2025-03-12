@@ -17,6 +17,11 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
       else self$values
     },
 
+    get_coordinates = function() {
+      if (inherits(self$values, "CFTime")) self$values$as_timestamp()
+      else self$values
+    },
+
     dimvalues_short = function() {
       v <- if (inherits(self$values, "CFTime")) as_timestamp(self$values)
            else self$values

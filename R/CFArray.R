@@ -205,6 +205,8 @@ CFArray <- R6::R6Class("CFArray",
         r <- terra::rast(arr, extent = ext, crs = wkt)
         if (numdims == 3L)
           names(r) <- dn[[3L]]
+        else if (length(self$axes) > 2L) # Use coordinate of a scalar axis
+          names(r) <- self$axes[[3L]]$coordinates
       }
 
       r

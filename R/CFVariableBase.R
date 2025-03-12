@@ -105,10 +105,11 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
     #'   user-defined so you could write a wrapper around a function like `lm()`
     #'   to return values like the intercept or any coefficients from the object
     #'   returned by calling that function.
+    #' @param ... Additional parameters passed on to `fun`.
     #' @return A `CFData` object, or a list thereof with as many `CFData`
     #'   objects as `fun` returns values, created in the same group as `self`
     #'   with the summarised data.
-    summarise = function(name, period, fun) {
+    summarise = function(name, period, fun, ...) {
       if (missing(name) || missing(period) || missing(fun))
         stop("Arguments 'name', 'period' and 'fun' are required.", call. = FALSE)
       if (!(period %in% c("day", "dekad", "month", "quarter", "season", "year")))
@@ -120,7 +121,8 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
       tax <- self$time("axis")
       if (is.null(tax))
         stop("No 'time' dimension found to summarise on.", call. = FALSE)
-      fac <- try(tax$time()$factor(period), silent = TRUE)
+      #fac <- try(tax$time()$factor(period), silent = TRUE)
+      fac <- tax$time()$factor(period)
       if (inherits(fac, "try-error"))
         stop("The 'time' dimension is too short to summarise on.", call. = FALSE)
 
@@ -137,11 +139,16 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
 
       # Summarise
       tm <- sum(private$YXZT() > 0L) # Test which oriented axes are present, T is the last one
-      dt <- private$process_data(tm, fac, fun, na.rm = TRUE)
+      dt <- private$process_data(tm, fac, fun, ...)
 
       # Organise the axes
-      ax <- c(new_ax, self$axes[-tm])
-      names(ax) <- c("time", names(self$axes[-tm]))
+      if (new_ax$length == 1L) {
+        ax <- c(self$axes[-tm], new_ax)
+        names(ax) <- c(names(self$axes[-tm]), "time")
+      } else {
+        ax <- c(new_ax, self$axes[-tm])
+        names(ax) <- c("time", names(self$axes[-tm]))
+      }
 
       # Attributes
       atts <- self$attributes
@@ -166,7 +173,9 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
       else {
         if (length(name) < len)
           name <- c(name, paste0("result_", (length(name)+1L):len))
-        lapply(1:len, function(i) CFArray$new(name[i], self$group, dt[[i]], ax, self$crs, atts))
+        out <- lapply(1:len, function(i) CFArray$new(name[i], self$group, dt[[i]], ax, self$crs, atts))
+        names(out) <- name
+        out
       }
     }
   )

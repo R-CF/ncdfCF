@@ -116,8 +116,8 @@ CFVariable <- R6::R6Class("CFVariable",
     # as well (untested).
     process_data = function(tdim, fac, fun, ...) {
       # Read the whole data array if size is manageable
-      #if (prod(sapply(self$axes, function(x) x$length)) < 1e8) #FIXME: Make package env variable
-      #  return(.process.data(private$get_values(), tdim, fac, fun, ...))
+      if (prod(sapply(self$axes, function(x) x$length)) < 1e8) #FIXME: Make package env variable
+        return(.process.data(private$get_values(), tdim, fac, fun, ...))
 
       # If data variable is large, go by individual factor levels
       num_dims <- private$num_dim_axes()
@@ -153,7 +153,7 @@ CFVariable <- R6::R6Class("CFVariable",
           })
       } else {
         # Single function result so unlist
-        d <- unlist(d, recursive = FALSE, use.names = FALSE)
+        d <- unlist(d, recursive = TRUE, use.names = FALSE)
         dim(d) <- dims
         list(d)
       }
