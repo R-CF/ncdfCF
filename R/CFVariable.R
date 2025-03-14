@@ -169,6 +169,19 @@ CFVariable <- R6::R6Class("CFVariable",
     initialize = function(grp, nc_var, axes) {
       super$initialize(nc_var, grp, axes, NULL)
       nc_var$CF <- self
+
+      # Sanitize attributes for valid range, missing values and packing
+      private$values_type <- self$attribute("scale_factor", "type")
+      if (is.na(private$values_type))
+        private$values_type <- self$attribute("add_offset", "type")
+      if (!is.na(private$values_type))
+        # Data is packed in the netCDF file, throw away the attributes and let
+        # RNetCDF deal with unpacking when reading the data.
+        self$delete_attribute(c("_FillValue", "scale_factor", "add_offset",
+                                "valid_range", "valid_min", "valid_max",
+                                "missing_value"))
+      else
+        private$values_type <- nc_var$vtype
     },
 
     #' @description Print a summary of the data variable to the console.
@@ -255,7 +268,7 @@ CFVariable <- R6::R6Class("CFVariable",
       atts <- self$attributes
       atts <- atts[!(atts$name == "coordinates"), ]
 
-      CFArray$new(self$name, out_group, d, axes, self$crs, atts)
+      CFArray$new(self$name, out_group, d, private$values_type, axes, self$crs, atts)
     },
 
     #' @description This method extracts a subset of values from the array of
@@ -454,7 +467,7 @@ CFVariable <- R6::R6Class("CFVariable",
       # Assemble the CFArray instance
       axes <- c(out_axes_dim, out_axes_other)
       names(axes) <- sapply(axes, function(a) a$name)
-      CFArray$new(self$name, out_group, d, axes, crs, atts)
+      CFArray$new(self$name, out_group, d, private$values_type, axes, crs, atts)
     }
   ),
   active = list(

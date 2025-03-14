@@ -85,7 +85,7 @@ recognized by the different format.
 \subsection{Method \code{new()}}{
 Create an instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFArray$new(name, group, values, axes, crs, attributes)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFArray$new(name, group, values, values_type, axes, crs, attributes)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -99,6 +99,8 @@ prepared for writing into a new netCDF file.}
 
 \item{\code{values}}{The data of this object. The structure of the data depends
 on the method that produced it.}
+
+\item{\code{values_type}}{The unpacked netCDF data type for this object.}
 
 \item{\code{axes}}{A \code{list} of \link{CFAxis} descendant instances that describe the
 axes of the argument \code{value}.}
@@ -196,13 +198,17 @@ variable, \code{units} indicates the physical unit of the data values.
 \subsection{Method \code{save()}}{
 Save the data object to a netCDF file.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFArray$save(fn)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFArray$save(fn, pack = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{fn}}{The name of the netCDF file to create.}
+
+\item{\code{pack}}{Logical to indicate if the data should be packed. Packing is
+only useful for numeric data; packing is not performed on integer values.
+Packing is always to the "NC_SHORT" data type, i.e. 16-bits per value.}
 }
 \if{html}{\out{</div>}}
 }

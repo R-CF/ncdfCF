@@ -334,6 +334,8 @@ When opening a netCDF resource, axes are scanned for using the `units` or `axis`
 attribute, then the `standard_name`, and finally, as an extension to CF, by its
 `name` attribute.
 
+Upon writing, the `axis` attribute is added, if defined and not already present.
+
 ##### 4.1. Latitude coordinate
 
 Fully implemented.
@@ -356,6 +358,9 @@ The time coordinate is managed by the [CFtime](https://cran.r-project.org/packag
 package. All defined calendars, including the recently added `utc` and `tai`
 calendars, are supported, with some restrictions. Leap seconds are fully
 supported in notation and arithmetic when using the `utc` calendar.
+
+Upon writing, the deprecated `gregorian` calendar is replaced by the equivalent
+`standard` calendar.
 
 Time coordinates with no annual cycle and explicitly defined calendars are not
 supported.

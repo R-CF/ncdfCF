@@ -38,6 +38,7 @@ vector.}
 \item \href{#method-CFAxisTime-indexOf}{\code{CFAxisTime$indexOf()}}
 \item \href{#method-CFAxisTime-slice}{\code{CFAxisTime$slice()}}
 \item \href{#method-CFAxisTime-sub_axis}{\code{CFAxisTime$sub_axis()}}
+\item \href{#method-CFAxisTime-write}{\code{CFAxisTime$write()}}
 \item \href{#method-CFAxisTime-clone}{\code{CFAxisTime$clone()}}
 }
 }
@@ -53,7 +54,6 @@ vector.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="label_set"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-label_set'><code>ncdfCF::CFAxis$label_set()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-peek'><code>ncdfCF::CFAxis$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="write"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-write'><code>ncdfCF::CFAxis$write()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -209,6 +209,31 @@ If the \code{rng} argument includes only a single value, an \link{CFAxisScalar}
 instance is returned with its value being the character timestamp of
 the value in this axis. If the value of the argument is \code{NULL}, return
 the entire axis (possibly as a scalar axis).
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisTime-write"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisTime-write}{}}}
+\subsection{Method \code{write()}}{
+Write the axis to a netCDF file, including its attributes.
+If the calendar name is "gregorian", it will be set to the functionally
+identical calendar "standard" as the former is deprecated.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$write(nc = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{nc}}{The handle of the netCDF file opened for writing or a group in
+the netCDF file. If \code{NULL}, write to the file or group where the axis
+was read from (the file must have been opened for writing). If not
+\code{NULL}, the handle to a netCDF file or a group therein.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

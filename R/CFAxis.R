@@ -192,7 +192,11 @@ CFAxis <- R6::R6Class("CFAxis",
         self$NCdim$write(h)
         RNetCDF::var.def.nc(h, self$name, self$NCvar$vtype, self$name)
       }
+
+      if (self$orientation %in% c("X", "Y", "Z", "T"))
+        self$set_attribute("axis", "NC_CHAR", self$orientation)
       self$write_attributes(h, self$name)
+
       RNetCDF::var.put.nc(h, self$name, private$get_values())
 
       if (!is.null(self$bounds))

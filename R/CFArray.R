@@ -34,6 +34,9 @@
 CFArray <- R6::R6Class("CFArray",
   inherit = CFVariableBase,
   private = list(
+    # The range of the values.
+    actual_range = c(NA_real_, NA_real_),
+
     # Orient self$values in such a way that it conforms to regular R arrays: axis
     # order will be Y-X-Z-T-others and Y values will go from the top to the bottom.
     # Returns a new array.
@@ -87,6 +90,7 @@ CFArray <- R6::R6Class("CFArray",
     #'   prepared for writing into a new netCDF file.
     #' @param values The data of this object. The structure of the data depends
     #'   on the method that produced it.
+    #' @param values_type The unpacked netCDF data type for this object.
     #' @param axes A `list` of [CFAxis] descendant instances that describe the
     #'   axes of the argument `value`.
     #' @param crs The [CFGridMapping] instance of this data object, or `NULL`
@@ -94,20 +98,17 @@ CFArray <- R6::R6Class("CFArray",
     #' @param attributes A `data.frame` with the attributes associated with the
     #'   data in argument `value`.
     #' @return An instance of this class.
-    initialize = function(name, group, values, axes, crs, attributes) {
-      # FIXME: Various other data types
-      first <- typeof(as.vector(values)[1L])
-      dt <- if (first == "double") "NC_DOUBLE"
-            else if (first == "integer") "NC_INT"
-            else stop("Unsupported data type for the values", call. = FALSE)
-
+    initialize = function(name, group, values, values_type, axes, crs, attributes) {
       var <- NCVariable$new(-1L, name, group, dt, 0L, NULL)
       var$attributes <- attributes
       super$initialize(var, group, axes, crs)
 
       self$values <- values
-      if (!all(is.na(self$values)))
-        self$set_attribute("valid_range", dt, range(values, na.rm = TRUE))
+      private$values_type <- values_type
+      if (!all(is.na(self$values))) {
+        private$actual_range <- round(range(values, na.rm = TRUE), 8)
+        self$set_attribute("actual_range", values_type, private$actual_range)
+      }
     },
 
     #' @description Print a summary of the data object to the console.
@@ -117,14 +118,13 @@ CFArray <- R6::R6Class("CFArray",
       if (!is.na(longname) && longname != self$name)
         cat("Long name:", longname, "\n")
 
-      if (all(is.na(self$values))) {
+      if (is.na(private$actual_range[1L])) {
         cat("\nValues: -\n")
         cat(sprintf("    NA: %d (100%%)\n", length(self$values)))
       } else {
-        rng <- range(self$values, na.rm = TRUE)
         units <- self$attribute("units")
         if (is.na(units)) units <- ""
-        cat("\nValues: [", rng[1L], " ... ", rng[2L], "] ", units, "\n", sep = "")
+        cat("\nValues: [", private$actual_range[1L], " ... ", private$actual_range[2L], "] ", units, "\n", sep = "")
         NAs <- sum(is.na(self$values))
         cat(sprintf("    NA: %d (%.1f%%)\n", NAs, NAs * 100 / length(self$values)))
       }
@@ -240,8 +240,11 @@ CFArray <- R6::R6Class("CFArray",
 
     #' @description Save the data object to a netCDF file.
     #' @param fn The name of the netCDF file to create.
+    #' @param pack Logical to indicate if the data should be packed. Packing is
+    #' only useful for numeric data; packing is not performed on integer values.
+    #' Packing is always to the "NC_SHORT" data type, i.e. 16-bits per value.
     #' @return Self, invisibly.
-    save = function(fn) {
+    save = function(fn, pack = FALSE) {
       nc <- RNetCDF::create.nc(fn, prefill = FALSE, format = "netcdf4")
       if (!inherits(nc, "NetCDF"))
         stop("Could not create the netCDF file. Please check that the location of the supplied file name is writable.", call. = FALSE)
@@ -259,17 +262,27 @@ CFArray <- R6::R6Class("CFArray",
         self$set_attribute("grid_mapping", "NC_CHAR", self$crs$name)
       }
 
+      # Packing
+      pack <- pack && !is.na(private$actual_range[1L]) && private$values_type %in% c("NC_FLOAT", "NC_DOUBLE")
+      if (pack) {
+        self$set_attribute("add_offset", private$values_type, (private$actual_range[1L] + private$actual_range[2L]) * 0.5)
+        self$set_attribute("scale_factor", private$values_type, (private$actual_range[2L] - private$actual_range[1L]) / 65534)
+        self$set_attribute("missing_value", "NC_SHORT", -32767)
+      }
+
       # Data variable
-      # FIXME: Pack data
       dim_axes <- length(dim(self$values))
       axis_names <- sapply(self$axes, function(ax) ax$name)
-      RNetCDF::var.def.nc(nc, self$name, self$NCvar$vtype, axis_names[1L:dim_axes])
+      RNetCDF::var.def.nc(nc, self$name, if (pack) "NC_SHORT" else private$values_type, axis_names[1L:dim_axes])
       if (length(self$axes) > dim_axes)
         self$set_attribute("coordinates", "NC_CHAR", paste(axis_names[-(1L:dim_axes)]))
       self$write_attributes(nc, self$name)
-      RNetCDF::var.put.nc(nc, self$name, self$values)
-
+      RNetCDF::var.put.nc(nc, self$name, self$values, pack = pack, na.mode = 2)
       RNetCDF::close.nc(nc)
+
+      if (pack)
+        self$delete_attribute(c("scale_factor", "add_offset", "missing_value"))
+
       invisible(self)
     }
   ),

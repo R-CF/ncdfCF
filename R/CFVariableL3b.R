@@ -163,7 +163,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
 
       axes <- lapply(self$axes, function(ax) ax$clone())
 
-      CFArray$new(self$name, out_group, self$as_matrix(), axes, self$crs, self$attributes)
+      CFArray$new(self$name, out_group, self$as_matrix(), private$values_type, axes, self$crs, self$attributes)
     },
 
     #' @description This method extracts a subset of values from the data of the
@@ -264,7 +264,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       # Assemble the CFArray instance
       axes <- c(out_axes_dim, out_axes_other)
       names(axes) <- sapply(axes, function(a) a$name)
-      CFArray$new(self$name, out_group, d, axes, self$crs, self$attributes)
+      CFArray$new(self$name, out_group, d, private$values_type, axes, self$crs, self$attributes)
     }
   )
 )

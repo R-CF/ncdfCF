@@ -119,7 +119,7 @@ but the appropriate new values are not known to this method. Use
 \code{CFArray$set_attribute()} on the result of this method to set or update
 attributes as appropriate.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariableBase$summarise(name, period, fun)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariableBase$summarise(name, period, fun, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -148,6 +148,8 @@ somewhere, most probably in unexpected ways. The function may also be
 user-defined so you could write a wrapper around a function like \code{lm()}
 to return values like the intercept or any coefficients from the object
 returned by calling that function.}
+
+\item{\code{...}}{Additional parameters passed on to \code{fun}.}
 }
 \if{html}{\out{</div>}}
 }

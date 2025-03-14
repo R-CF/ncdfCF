@@ -160,12 +160,12 @@ NCObject <- R6::R6Class("NCObject",
       invisible(self)
     },
 
-    #' @description Delete an attribute. If an attribute `name` is not present
+    #' @description Delete attributes. If an attribute `name` is not present
     #' this method simply returns.
-    #' @param name The name of the attribute to delete.
+    #' @param name Vector of names of the attributes to delete.
     #' @return Self, invisibly.
     delete_attribute = function(name) {
-      self$attributes <- self$attributes[!self$attributes$name == name, ]
+      self$attributes <- self$attributes[!self$attributes$name %in% name, ]
       invisible(self)
     },
 

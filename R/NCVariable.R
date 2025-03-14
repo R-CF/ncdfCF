@@ -22,7 +22,9 @@ NCVariable <- R6::R6Class("NCVariable",
     #' @field group NetCDF group where this variable is located.
     group   = NULL,
 
-    #' @field vtype The netCDF data type of this variable.
+    #' @field vtype The netCDF data type of this variable. This could be the
+    #' packed type. Don't check this field but use the appropriate method in the
+    #' class of the object whose data type you are looking for.
     vtype   = NULL,
 
     #' @field ndims Number of dimensions that this variable uses.

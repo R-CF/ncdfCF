@@ -1,6 +1,8 @@
 # ncdfCF (development version)
 
 -   Fixed `summarise()` when temporal result yields scalar time axis.
+-   Fixed saving a packed `CFArray` when the original netCDF file was packed as
+well.
 
 # ncdfCF 0.4.0
 

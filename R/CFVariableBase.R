@@ -10,6 +10,9 @@
 CFVariableBase <- R6::R6Class("CFVariableBase",
   inherit = CFObject,
   private = list(
+    # The netCDF type of the unpacked data of the variable.
+    values_type = NA_character_,
+
     # Return the R order of dimensional axes that "receive special treatment".
     # Scalar axes are not considered here.
     YXZT = function() {
@@ -168,11 +171,11 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
       # Create the output
       len <- length(dt)
       if (len == 1L)
-        CFArray$new(name[1L], self$group, dt[[1L]], ax, self$crs, atts)
+        CFArray$new(name[1L], self$group, dt[[1L]], private$values_type, ax, self$crs, atts)
       else {
         if (length(name) < len)
           name <- c(name, paste0("result_", (length(name)+1L):len))
-        out <- lapply(1:len, function(i) CFArray$new(name[i], self$group, dt[[i]], ax, self$crs, atts))
+        out <- lapply(1:len, function(i) CFArray$new(name[i], self$group, dt[[i]], private$values_type, ax, self$crs, atts))
         names(out) <- name
         out
       }

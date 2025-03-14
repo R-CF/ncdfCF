@@ -21,7 +21,9 @@ properties are thus made accessible.
 \describe{
 \item{\code{group}}{NetCDF group where this variable is located.}
 
-\item{\code{vtype}}{The netCDF data type of this variable.}
+\item{\code{vtype}}{The netCDF data type of this variable. This could be the
+packed type. Don't check this field but use the appropriate method in the
+class of the object whose data type you are looking for.}
 
 \item{\code{ndims}}{Number of dimensions that this variable uses.}
 

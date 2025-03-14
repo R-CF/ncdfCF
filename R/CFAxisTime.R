@@ -162,6 +162,20 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
           CFAxisTime$new(group, var, dim, attr(idx, "CFTime"))
         }
       }
+    },
+
+    #' @description Write the axis to a netCDF file, including its attributes.
+    #' If the calendar name is "gregorian", it will be set to the functionally
+    #' identical calendar "standard" as the former is deprecated.
+    #' @param nc The handle of the netCDF file opened for writing or a group in
+    #'   the netCDF file. If `NULL`, write to the file or group where the axis
+    #'   was read from (the file must have been opened for writing). If not
+    #'   `NULL`, the handle to a netCDF file or a group therein.
+    #' @return Self, invisibly.
+    write = function(nc = NULL) {
+      if (self$values$cal$name == "gregorian")
+        self$set_attribute("calendar", "NC_CHAR", "standard")
+      super$write(nc)
     }
   ),
   active = list(

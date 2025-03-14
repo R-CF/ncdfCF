@@ -177,7 +177,7 @@ Self, invisibly.
 \if{html}{\out{<a id="method-NCObject-delete_attribute"></a>}}
 \if{latex}{\out{\hypertarget{method-NCObject-delete_attribute}{}}}
 \subsection{Method \code{delete_attribute()}}{
-Delete an attribute. If an attribute \code{name} is not present
+Delete attributes. If an attribute \code{name} is not present
 this method simply returns.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{NCObject$delete_attribute(name)}\if{html}{\out{</div>}}
@@ -186,7 +186,7 @@ this method simply returns.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{name}}{The name of the attribute to delete.}
+\item{\code{name}}{Vector of names of the attributes to delete.}
 }
 \if{html}{\out{</div>}}
 }
