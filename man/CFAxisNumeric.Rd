@@ -79,7 +79,7 @@ Create a new instance of this class.
 \item{\code{orientation}}{The orientation (\code{X}, \code{Y}, \code{Z}, or \code{T}) or \code{""} if
 different or unknown.}
 
-\item{\code{values}}{The dimension values of this axis.}
+\item{\code{values}}{The coordinates of this axis.}
 }
 \if{html}{\out{</div>}}
 }
@@ -163,7 +163,7 @@ provided, or \code{integer(0)} if none of the \code{x} values are valid.
 \if{html}{\out{<a id="method-CFAxisNumeric-sub_axis"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisNumeric-sub_axis}{}}}
 \subsection{Method \code{sub_axis()}}{
-Return an axis spanning a smaller dimension range. This
+Return an axis spanning a smaller coordinate range. This
 method returns an axis which spans the range of indices given by the
 \code{rng} argument.
 \subsection{Usage}{

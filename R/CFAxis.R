@@ -120,7 +120,7 @@ CFAxis <- R6::R6Class("CFAxis",
       NULL
     },
 
-    #' @description Return an axis spanning a smaller dimension range. This
+    #' @description Return an axis spanning a smaller coordinate range. This
     #'   method is "virtual" in the sense that it does not do anything other
     #'   than return `NULL`. This stub is here to make the call to this method
     #'   succeed with no result for the other axis descendants that do not
@@ -262,7 +262,7 @@ CFAxis <- R6::R6Class("CFAxis",
 #'
 #' @param x The `CFVariable` or a descendant of `CFAxis`.
 #'
-#' @return Vector of dimension lengths.
+#' @return Vector of axis lengths.
 #' @export
 #'
 #' @examples

@@ -108,7 +108,7 @@
 #' process "auxiliary coordinate variables", if present, to warp data from its
 #' native CRS to latitude-longitude.
 #' * `summarise()`: Summarise the data in the data variable over the "time"
-#' dimension, using a user-defined function, returning a `CFArray` object. The
+#' axis, using a user-defined function, returning a `CFArray` object. The
 #' function can be built-in (such as `min()` and `max()`) or a user-developed
 #' function. The function may also return a vector with multiple values (such
 #' as `range()`) and then a list of `CFArray` objects is returned, one for each
@@ -116,7 +116,7 @@
 #'
 #' ***S3 methods for CFVariable***
 #'
-#' * [dim()], [dimnames()]: Vector of the dimension lengths and values of the
+#' * [dim()], [dimnames()]: Vector of the lengths and coordinate values of the
 #' axes of the data variable.
 #' * `[]` ([bracket_select]): Select the entire data variable or a part thereof
 #' using index values, returning an array of data values.
@@ -127,7 +127,7 @@
 #' represent specific types of axes. These sub-classes are the ones that are
 #' actually returned when retrieving an axis. These classes are:
 #'
-#' * [CFAxisNumeric] is a basic numeric axis, where the dimension values
+#' * [CFAxisNumeric] is a basic numeric axis, where the coordinate values
 #' represent some physical property. The [CFAxisLongitude] and [CFAxisLatitude]
 #' classes derive from the basic numeric class to manage the specifics of
 #' geodetic coordinate systems. Class [CFAxisVertical] also derives from the
@@ -166,7 +166,7 @@
 #'
 #' ***S3 methods for CFAxis***
 #'
-#' * [dim()], [dimnames()]: The dimension length and values of the axis.
+#' * [dim()], [dimnames()]: The length and coordinate values of the axis.
 #'
 #' **Data**
 #'
@@ -191,7 +191,7 @@
 #' * `array()`: The array of data values from the data object, oriented in the
 #' standard R arrangement.
 #' * `summarise()`: Summarise the data in the data array over the "time"
-#' dimension, using a user-defined function, returning a new `CFArray` object. The
+#' axis, using a user-defined function, returning a new `CFArray` object. The
 #' function can be built-in (such as `min()` and `max()`) or a user-developed
 #' function. The function may also return a vector with multiple values (such
 #' as `range()`) and then a list of `CFArray` objects is returned, one for each

@@ -78,7 +78,7 @@ Create a new instance of this class.
 \item{\code{orientation}}{The orientation (\code{X}, \code{Y}, \code{Z}, or \code{T}) or \code{""} if
 different or unknown.}
 
-\item{\code{values}}{The character dimension values of this axis.}
+\item{\code{values}}{The character coordinates of this axis.}
 }
 \if{html}{\out{</div>}}
 }

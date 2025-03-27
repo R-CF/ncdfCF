@@ -29,8 +29,8 @@ class as ancestor.
 
 \item{\code{fullname}}{(read-only) The fully-qualified name of the CF object.}
 
-\item{\code{attributes}}{(read-only) A \code{data.frame} with the attributes of the
-CF object.}
+\item{\code{attributes}}{Set or retrieve a \code{data.frame} with the attributes of
+the CF object.}
 }
 \if{html}{\out{</div>}}
 }

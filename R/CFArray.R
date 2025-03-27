@@ -21,7 +21,7 @@
 #'   points on individual rows. Metadata is not maintained. Package `data.table`
 #'   must be installed for this to work.
 #'
-#'   The temporal dimension of the data, if present, may be summarised using the
+#'   The temporal axis of the data, if present, may be summarised using the
 #'   `summarise()` method. The data is returned as a new `CFArray` instance.
 #'
 #'   In general, the metadata from the netCDF resource will be lost when
@@ -74,7 +74,7 @@ CFArray <- R6::R6Class("CFArray",
       self$values
     },
 
-    # Internal apply/tapply over the temporal dimension.
+    # Internal apply/tapply over the temporal axis.
     process_data = function(tdim, fac, fun, ...) {
       .process.data(self$values, tdim, fac, fun, ...)
     }
@@ -191,8 +191,11 @@ CFArray <- R6::R6Class("CFArray",
       if (Ybnds[1L] > Ybnds[2L]) Ybnds <- rev(Ybnds)
       ext <- round(c(Xbnds, Ybnds), 4) # Round off spurious "accuracy"
 
+      # CRS
       wkt <- if (is.null(self$crs)) .wkt2_crs_geo(4326L)
              else self$crs$wkt2(.wkt2_axis_info(self))
+
+      # Create the object
       arr <- self$array()
       numdims <- length(dim(self$values))
       dn <- dimnames(arr)
@@ -227,8 +230,8 @@ CFArray <- R6::R6Class("CFArray",
 
       exp <- expand.grid(lapply(self$axes, function(ax) ax$coordinates),
                          KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE)
-      dt <- as.data.table(exp)
-      dt[ , eval(self$name) := self$values]
+      dt <- data.table::as.data.table(exp)
+      suppressWarnings(dt[ , eval(self$name) := self$values])
 
       long_name <- self$attribute("long_name")
       if (is.na(long_name)) long_name <- ""

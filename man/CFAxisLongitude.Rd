@@ -68,7 +68,7 @@ Create a new instance of this class.
 
 \item{\code{nc_dim}}{The netCDF dimension that describes the dimensionality.}
 
-\item{\code{values}}{The dimension values of this axis.}
+\item{\code{values}}{The coordinates of this axis.}
 }
 \if{html}{\out{</div>}}
 }
@@ -77,7 +77,7 @@ Create a new instance of this class.
 \if{html}{\out{<a id="method-CFAxisLongitude-sub_axis"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisLongitude-sub_axis}{}}}
 \subsection{Method \code{sub_axis()}}{
-Return an axis spanning a smaller dimension range. This
+Return an axis spanning a smaller coordinate range. This
 method returns an axis which spans the range of indices given by the
 \code{rng} argument.
 \subsection{Usage}{

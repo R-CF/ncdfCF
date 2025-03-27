@@ -108,7 +108,7 @@ Retrieve the lowest and highest value in the bounds.
 \if{html}{\out{<a id="method-CFBounds-sub_bounds"></a>}}
 \if{latex}{\out{\hypertarget{method-CFBounds-sub_bounds}{}}}
 \subsection{Method \code{sub_bounds()}}{
-Return bounds spanning a smaller dimension range.
+Return bounds spanning a smaller coordinate range.
 
 This method returns bounds which spans the range of indices given by
 the \code{rng} argument.

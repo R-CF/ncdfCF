@@ -8,13 +8,15 @@
 #' @param id The id of the group.
 #' @param name The name of the group.
 #' @param fullname The full path and name of the group.
+#' @param parent Optionally, a parent group to which the new group will be added
+#' as a child.
 #'
-#' @return A `VirtualGroup` instance.
+#' @return A `NCGroup` instance.
 #' @export
-makeVirtualGroup <- function(id, name, fullname) {
+makeGroup <- function(id, name, fullname, parent = NULL) {
   if (!.is_valid_name(name))
     stop("Name for group is not valid", call. = FALSE)
-  VirtualGroup$new(id, name, fullname, NULL)
+  NCGroup$new(id, name, fullname, parent, NULL)
 }
 
 #' Create a longitude axis
@@ -25,9 +27,9 @@ makeVirtualGroup <- function(id, name, fullname) {
 #' @param id Id of the axis.
 #' @param name Name of the axis.
 #' @param group Group to place the axis in.
-#' @param length Length of the dimension of the axis.
-#' @param values The dimension values.
-#' @param bounds The bounds of the dimension values, or `NULL` if not available.
+#' @param length Length of the axis.
+#' @param values The coordinate values.
+#' @param bounds The bounds of the coordinate values, or `NULL` if not available.
 #' @param units A character string with the axis units.
 #'
 #' @return A `CFAxisLongitude` instance.
@@ -55,15 +57,15 @@ makeLongitudeAxis <- function(id, name, group, length, values, bounds = NULL, un
 
 #' Create a latitude axis
 #'
-#' With this method you can create a longitude axis to use with new [CFArray]
+#' With this method you can create a latitude axis to use with new [CFArray]
 #' instances.
 #'
 #' @param id Id of the axis.
 #' @param name Name of the axis.
 #' @param group Group to place the axis in.
-#' @param length Length of the dimension of the axis.
-#' @param values The dimension values.
-#' @param bounds The bounds of the dimension values, or `NULL` if not available.
+#' @param length Length of the the axis.
+#' @param values The coordinate values.
+#' @param bounds The bounds of the coordinate values, or `NULL` if not available.
 #' @param units A character string with the axis units.
 #'
 #' @return A `CFAxisLatitude` instance.
@@ -97,7 +99,7 @@ makeLatitudeAxis <- function(id, name, group, length, values, bounds, units) {
 #' @param id Id of the axis.
 #' @param name Name of the axis.
 #' @param group Group to place the axis in.
-#' @param values A `CFTime` instance with dimension values and bounds set.
+#' @param values A `CFTime` instance with time values and bounds set.
 #'
 #' @return A `CFAxisTime` instance.
 #' @export

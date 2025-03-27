@@ -274,14 +274,23 @@ peek_ncdf <- function(resource) {
   if (!is.na(units)) {
     cal <- var$attribute("calendar")
     if (is.na(cal)) cal <- "standard"
-    cf <- try(CFtime::CFtime(units, cal, vals), silent = TRUE)
-    if (!inherits(cf, "try-error")) {
-      if (!is.null(CFbounds))
-        CFtime::bounds(cf) <- CFbounds$values
-      timeaxis <- CFAxisTime$new(grp, var, dims[[var$name]], cf)
-      timeaxis$bounds <- CFbounds
-      return(timeaxis)
+    if (!is.null(CFbounds)) {
+      # Time with bounds
+      t <- try(CFtime::CFTime$new(units, cal, vals), silent = TRUE)
+      if (!inherits(t, "try-error"))
+        t$bounds <- CFbounds$bounds
+    } else {
+      # Climatology must have bounds
+      clim <- .readBounds(grp, var$attribute("climatology"), dims)
+      if (!is.null(clim))
+        t <- try(CFtime::CFClimatology$new(units, cal, vals, clim$bounds), silent = TRUE)
+      else
+        # Time without bounds
+        t <- try(CFtime::CFTime$new(units, cal, vals), silent = TRUE)
+
     }
+    if (!inherits(t, "try-error"))
+      return(CFAxisTime$new(grp, var, dims[[var$name]], t))
   }
 
   # Orientation of the axis

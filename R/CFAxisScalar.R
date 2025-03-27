@@ -38,7 +38,7 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param orientation The orientation of this axis, or "" if not known.
     #' @param value The value of this axis, possibly a compound type like
-    #' `CFTime`.
+    #' `CFTime` or `CFClimatology`.
     initialize = function(grp, nc_var, orientation, value) {
       dim <- NCDimension$new(-1L, nc_var$name, 1L, FALSE)
       super$initialize(grp, nc_var, dim, orientation)
@@ -111,6 +111,18 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
       ax <- self$clone()
       ax$group <- group
       ax
+    },
+
+    #' @description Write the axis to a netCDF file, including its attributes.
+    #' @param nc The handle of the netCDF file opened for writing or a group in
+    #'   the netCDF file. If `NULL`, write to the file or group where the axis
+    #'   was read from (the file must have been opened for writing). If not
+    #'   `NULL`, the handle to a netCDF file or a group therein.
+    #' @return Self, invisibly.
+    write = function(nc = NULL) {
+      super$write(nc)
+      if (inherits(self$values, "CFTime"))
+        .writeTimeBounds(nc, self$name, self$values)
     }
   ),
   active = list(

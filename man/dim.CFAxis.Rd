@@ -10,7 +10,7 @@
 \item{x}{The \code{CFVariable} or a descendant of \code{CFAxis}.}
 }
 \value{
-Vector of dimension lengths.
+Vector of axis lengths.
 }
 \description{
 This method returns the lengths of the axes of a variable or axis.

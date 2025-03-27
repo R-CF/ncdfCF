@@ -13,11 +13,11 @@ makeLongitudeAxis(id, name, group, length, values, bounds = NULL, units = "")
 
 \item{group}{Group to place the axis in.}
 
-\item{length}{Length of the dimension of the axis.}
+\item{length}{Length of the axis.}
 
-\item{values}{The dimension values.}
+\item{values}{The coordinate values.}
 
-\item{bounds}{The bounds of the dimension values, or \code{NULL} if not available.}
+\item{bounds}{The bounds of the coordinate values, or \code{NULL} if not available.}
 
 \item{units}{A character string with the axis units.}
 }

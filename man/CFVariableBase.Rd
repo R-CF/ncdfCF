@@ -98,14 +98,14 @@ what is to be returned.}
 \subsection{Returns}{
 If \code{want = "axis"} the \link{CFAxisTime} axis; if \code{want = "time"} the
 \code{CFTime} instance of the axis, or \code{NULL} if the variable does not have a
-"time" dimension.
+"time" axis.
 }
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFVariableBase-summarise"></a>}}
 \if{latex}{\out{\hypertarget{method-CFVariableBase-summarise}{}}}
 \subsection{Method \code{summarise()}}{
-Summarise the temporal dimension of the data, if present, to
+Summarise the temporal domain of the data, if present, to
 a lower resolution, using a user-supplied aggregation function.
 
 Attributes are copied from the input data variable or data array. Note
@@ -119,7 +119,7 @@ but the appropriate new values are not known to this method. Use
 \code{CFArray$set_attribute()} on the result of this method to set or update
 attributes as appropriate.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariableBase$summarise(name, period, fun, ...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariableBase$summarise(name, fun, period, era = NULL, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -129,14 +129,6 @@ attributes as appropriate.
 \code{fun} returns. So if \code{fun} has 2 return values, this should be a vector
 of length 2. Any missing values are assigned a default name of
 "result_#" (with '#' being replaced with an ordinal number).}
-
-\item{\code{period}}{The period to summarise to. Must be one of either "day",
-"dekad", "month", "quarter", "season", "year". A "quarter" is the
-standard calendar quarter such as January-March, April-June, etc. A
-"season" is a meteorological season, such as December-February,
-March-May, etc. (any December data is from the year preceding the
-January data). The period must be of lower resolution than the
-resolution of the time dimension.}
 
 \item{\code{fun}}{A function or a symbol or character string naming a function
 that will be applied to each grouping of data. The function must return
@@ -148,6 +140,19 @@ somewhere, most probably in unexpected ways. The function may also be
 user-defined so you could write a wrapper around a function like \code{lm()}
 to return values like the intercept or any coefficients from the object
 returned by calling that function.}
+
+\item{\code{period}}{The period to summarise to. Must be one of either "day",
+"dekad", "month", "quarter", "season", "year". A "quarter" is the
+standard calendar quarter such as January-March, April-June, etc. A
+"season" is a meteorological season, such as December-February,
+March-May, etc. (any December data is from the year preceding the
+January data). The period must be of lower resolution than the
+resolution of the time axis.}
+
+\item{\code{era}}{Optional, integer vector of years to summarise over by the
+specified \code{period}. The extreme values of the years will be used. This
+can also be a list of multiple such  vectors. The elements in the list,
+if used, should have names as these will be used to label the results.}
 
 \item{\code{...}}{Additional parameters passed on to \code{fun}.}
 }

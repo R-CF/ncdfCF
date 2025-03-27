@@ -145,11 +145,13 @@ CFObject <- R6::R6Class("CFObject",
       }
     },
 
-    #' @field attributes (read-only) A `data.frame` with the attributes of the
-    #'   CF object.
+    #' @field attributes Set or retrieve a `data.frame` with the attributes of
+    #'   the CF object.
     attributes = function(value) {
       if (missing(value))
         self$NCvar$attributes
+      else
+        self$NCvar$attributes <- value
     }
   )
 )

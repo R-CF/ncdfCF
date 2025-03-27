@@ -16,12 +16,12 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
     #' @param grp The group that contains the netCDF variable.
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
-    #' @param values The dimension values of this axis.
+    #' @param values The coordinates of this axis.
     initialize = function(grp, nc_var, nc_dim, values) {
       super$initialize(grp, nc_var, nc_dim, "X", values)
     },
 
-    #' @description Return an axis spanning a smaller dimension range. This
+    #' @description Return an axis spanning a smaller coordinate range. This
     #'   method returns an axis which spans the range of indices given by the
     #'   `rng` argument.
     #'

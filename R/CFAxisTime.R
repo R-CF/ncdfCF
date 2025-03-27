@@ -121,7 +121,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       (1L:length(time))[idx]
     },
 
-    #' @description Return an axis spanning a smaller dimension range. This
+    #' @description Return an axis spanning a smaller coordinate range. This
     #'   method returns an axis which spans the range of indices given by the
     #'   `rng` argument.
     #'
@@ -176,6 +176,8 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       if (self$values$cal$name == "gregorian")
         self$set_attribute("calendar", "NC_CHAR", "standard")
       super$write(nc)
+
+      .writeTimeBounds(nc, self$name, self$values)
     }
   ),
   active = list(
@@ -193,3 +195,21 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     }
   )
 )
+
+# ==============================================================================
+
+# Helper function to write time axis bounds. These are maintained by the CFTime
+# or CFClimatology instance referenced by the axis. This is a function so that
+# CFAxisScalar can also access it for scalar time axes.
+# nc - Handle to the netCDF file open for writing
+# name - The name of the axis to write the bounds for
+# time - The CFTime or CFClimatology instance whose bounds to write
+.writeTimeBounds <- function(nc, name, time) {
+  bnds <- time$get_bounds()
+  if (!is.null(bnds)) {
+    try(RNetCDF::dim.def.nc(nc, "nv2", 2L), silent = TRUE) # FIXME: nv2 could already exist with a different length
+    nm <- if (inherits(time, "CFClimatology")) "climatology_bnds" else "time_bnds"
+    RNetCDF::var.def.nc(nc, nm, "NC_DOUBLE", c("nv2", name))
+    RNetCDF::var.put.nc(nc, nm, bnds)
+  }
+}

@@ -1,6 +1,8 @@
 # ncdfCF (development version)
 
+-   `summarise()` can now summarise over eras.
 -   Fixed `summarise()` when temporal result yields scalar time axis.
+-   Fixed writing bounds for a "time" axis.
 -   Fixed saving a packed `CFArray` when the original netCDF file was packed as
 well.
 
@@ -81,8 +83,8 @@ well.
 -   Data is read into the most compact form possible. This saves a
     significant amount of memory when large integer variables are read
     as they would remain integers rather than the default numeric type.
--   Data is returned from CFVariable\$subset() as an instance of the
-    CFData class, with associated objects such as axes and the
+-   Data is returned from `CFVariable$subset()` as an instance of the
+    `CFData` class, with associated objects such as axes and the
     attributes from the variable. Data can be read out in a variety of
     forms, currently as a raw array, an oriented array or as a
     `terra::SpatRaster` or `terra::SpatRasterDataset`.

@@ -38,6 +38,7 @@ as a \code{CFTime} instance.}
 \item \href{#method-CFAxisScalar-brief}{\code{CFAxisScalar$brief()}}
 \item \href{#method-CFAxisScalar-time}{\code{CFAxisScalar$time()}}
 \item \href{#method-CFAxisScalar-sub_axis}{\code{CFAxisScalar$sub_axis()}}
+\item \href{#method-CFAxisScalar-write}{\code{CFAxisScalar$write()}}
 \item \href{#method-CFAxisScalar-clone}{\code{CFAxisScalar$clone()}}
 }
 }
@@ -54,7 +55,6 @@ as a \code{CFTime} instance.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="label_set"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-label_set'><code>ncdfCF::CFAxis$label_set()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-peek'><code>ncdfCF::CFAxis$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="write"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-write'><code>ncdfCF::CFAxis$write()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -77,7 +77,7 @@ Create an instance of this class.
 \item{\code{orientation}}{The orientation of this axis, or "" if not known.}
 
 \item{\code{value}}{The value of this axis, possibly a compound type like
-\code{CFTime}.}
+\code{CFTime} or \code{CFClimatology}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -152,6 +152,29 @@ given that a scalar axis cannot be subset.
 }
 \subsection{Returns}{
 A \code{CFAxisScalar} cloned from this axis.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisScalar-write"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisScalar-write}{}}}
+\subsection{Method \code{write()}}{
+Write the axis to a netCDF file, including its attributes.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisScalar$write(nc = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{nc}}{The handle of the netCDF file opened for writing or a group in
+the netCDF file. If \code{NULL}, write to the file or group where the axis
+was read from (the file must have been opened for writing). If not
+\code{NULL}, the handle to a netCDF file or a group therein.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

@@ -12,16 +12,15 @@
 CFBounds <- R6::R6Class("CFBounds",
   inherit = CFObject,
   private = list(
-    dims = NULL # The length of self$values in all dimensions
+    values = NULL, # A matrix with the bounds values.
+
+    dims = NULL    # The length of self$values in all dimensions
   ),
   public = list(
     #' @field NCdim The [NCDimension] that stores the netCDF dimension details
     #' of the bounds dimension (as opposed to the dimension of the associated
     #' axis).
     NCdim = NULL,
-
-    #' @field values A matrix with the bounds values.
-    values = NULL,
 
     #' @description Create an instance of this class.
     #' @param nc_var The NC variable that describes this instance.
@@ -30,8 +29,9 @@ CFBounds <- R6::R6Class("CFBounds",
     initialize = function(nc_var, nc_dim, values) {
       super$initialize(nc_var, nc_var$group)
       self$NCdim <- nc_dim
-      self$values <- values
+      private$values <- values
       private$dims <- as.integer(dim(values))
+      self$set_attribute("actual_range", "NC_DOUBLE", range(values))
 
       nc_var$CF <- self
     },
@@ -40,19 +40,19 @@ CFBounds <- R6::R6Class("CFBounds",
     #' @param ... Arguments passed on to other functions. Of particular interest
     #' is `width = ` to indicate a maximum width of attribute columns.
     print = function(...) {
-      if (is.null(self$values))
+      if (is.null(private$values))
         cat("Bounds   : (no values)\n")
       else {
         if (private$dims[1L] == 2L) {
-          len <- dim(self$values)[2L]
+          len <- dim(private$values)[2L]
           if (len < 7L) {
-            from_vals <- trimws(formatC(self$values[1L, ], digits = 8L))
-            to_vals   <- trimws(formatC(self$values[2L, ], digits = 8L))
+            from_vals <- trimws(formatC(private$values[1L, ], digits = 8L))
+            to_vals   <- trimws(formatC(private$values[2L, ], digits = 8L))
             cat("Bounds   :", paste(from_vals, collapse = ", "), "\n")
             cat("         :", paste(to_vals, collapse = ", "), "\n")
           } else {
-            vals <- trimws(formatC(c(self$values[1L, 1L:3L], self$values[1L, (len-2L):len],
-                                     self$values[2L, 1L:3L], self$values[2L, (len-2L):len]), digits = 8L))
+            vals <- trimws(formatC(c(private$values[1L, 1L:3L], private$values[1L, (len-2L):len],
+                                     private$values[2L, 1L:3L], private$values[2L, (len-2L):len]), digits = 8L))
             cat("Bounds   : ", vals[1L], ", ", vals[2L], ", ", vals[3L], " ... ", vals[4L], ", ", vals[5L], ", ", vals[6L], "\n", sep = "")
             cat("         : ", vals[7L], ", ", vals[8L], ", ", vals[9L], " ... ", vals[10L], ", ", vals[11L], ", ", vals[12L], "\n", sep = "")
           }
@@ -65,18 +65,13 @@ CFBounds <- R6::R6Class("CFBounds",
 
     #' @description Retrieve the lowest and highest value in the bounds.
     range = function() {
-      if (is.null(self$values))
+      if (is.null(private$values))
         NULL
-      else {
-        if (private$dims[1L] == 2L)
-          c(self$values[1L, 1L], self$values[2L, private$dims[2L]])
-        else if (private$dims[1L] == 4L)
-          range(self$values)
-        else c(0, 0) # FIXME
-      }
+      else
+        self$attribute(`actual_range`)
     },
 
-    #' @description Return bounds spanning a smaller dimension range.
+    #' @description Return bounds spanning a smaller coordinate range.
     #'
     #'   This method returns bounds which spans the range of indices given by
     #'   the `rng` argument.
@@ -88,7 +83,7 @@ CFBounds <- R6::R6Class("CFBounds",
     #' @return A `CFBounds` instance covering the indicated range of indices.
     sub_bounds = function(group, rng) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 2L, NULL)
-      CFBounds$new(var, self$NCdim, self$values[, rng[1L]:rng[2L], drop = FALSE])
+      CFBounds$new(var, self$NCdim, private$values[, rng[1L]:rng[2L], drop = FALSE])
     },
 
     #' @description Write the bounds variable to a netCDF file. This method
@@ -101,7 +96,7 @@ CFBounds <- R6::R6Class("CFBounds",
       self$NCdim$write(h)
       RNetCDF::var.def.nc(h, self$name, self$NCvar$vtype, c(self$NCdim$name, object_name))
       self$write_attributes(h, self$name)
-      RNetCDF::var.put.nc(h, self$name, self$values)
+      RNetCDF::var.put.nc(h, self$name, private$values)
     }
   ),
   active = list(
@@ -109,6 +104,12 @@ CFBounds <- R6::R6Class("CFBounds",
     friendlyClassName = function(value) {
       if (missing(value))
         "Bounds object"
+    },
+
+    #' @field bounds (read-only) Retrieve the boundary values.
+    bounds = function(value) {
+      if (missing(value))
+        private$values
     }
   )
 )

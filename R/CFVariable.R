@@ -110,13 +110,11 @@ CFVariable <- R6::R6Class("CFVariable",
     # variable is below a certain threshold, read the data and process in one
     # go. Otherwise processing goes per factor level. In other words, for each
     # factor level the data is read from file, to which the function is applied.
-    # Note that the data per factor level MUST be contiguous or else the
-    # calculation will be erroneous.
-    # This is usually applied over the temporal dimension but could be others
+    # This is usually applied over the temporal domain but could be others
     # as well (untested).
     process_data = function(tdim, fac, fun, ...) {
       # Read the whole data array if size is manageable
-      if (prod(sapply(self$axes, function(x) x$length)) < 1e8) #FIXME: Make package env variable
+      if (prod(sapply(self$axes, function(x) x$length)) < CF$memory_cell_limit)
         return(.process.data(private$get_values(), tdim, fac, fun, ...))
 
       # If data variable is large, go by individual factor levels
@@ -130,32 +128,51 @@ CFVariable <- R6::R6Class("CFVariable",
       h <- self$NCvar$group$handle
       nm <- self$name
       for (l in 1L:lvls) {
-        rng <- range(which(ndx == l))
-        start[tdim] <- rng[1L]
-        count[tdim] <- rng[2L] - rng[1L] + 1L
-        values <- RNetCDF::var.get.nc(h, nm, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+        indices <- which(ndx == l)
+        dff <- diff(indices)
+        if (all(dff == 1L)) {       # Data is contiguous per factor level
+          rng <- range(indices)
+          start[tdim] <- rng[1L]
+          count[tdim] <- rng[2L] - rng[1L] + 1L
+          values <- RNetCDF::var.get.nc(h, nm, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+        } else {                    # Era factors have disparate indices
+          cutoffs <- c(0L, which(c(dff, 2L) > 1L))
+          values <- lapply(2L:length(cutoffs), function(i) {
+            start[tdim] <- indices[cutoffs[i - 1L] + 1L]
+            count[tdim] <- cutoffs[i] - cutoffs[i - 1L]
+            RNetCDF::var.get.nc(h, nm, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+          })
+          values <- abind::abind(values, along = num_dims)
+        }
         d[[l]] <- .process.data(values, tdim, FUN = fun, ...)
         # d is a list with lvls elements, each element a list with elements for
         # the number of function results, possibly 1; each element having an
         # array of dimensions from self$values that are not tdim.
       }
       res_dim <- dim(d[[1L]][[1L]])
-      dims <- c(if ((len <- length(d)) > 1L) len, res_dim)
+      tdim_len <- length(d)
+      if (tdim_len > 1L) {
+        dims <- c(res_dim,  tdim_len)
+        perm <- c(num_dims, 1L:(num_dims - 1L))
+      } else
+        dims <- res_dim
 
-      len <- length(d[[1L]])
-      if (len > 1L) {
+      fun_len <- length(d[[1L]])
+      out <- if (fun_len > 1L) {
         # Multiple function result values so get all arrays for every result
         # value and unlist those
-        lapply(1:len, function(r) {
+        lapply(1:fun_len, function(r) {
             x <- unlist(lapply(d, function(lvl) lvl[[r]]), recursive = FALSE, use.names = FALSE)
             dim(x) <- dims
-            x
+            if (tdim_len > 1L)
+              aperm(x, perm)
+            else x
           })
       } else {
         # Single function result so unlist
         d <- unlist(d, recursive = TRUE, use.names = FALSE)
         dim(d) <- dims
-        list(d)
+        list(if (tdim_len > 1L) aperm(d, perm) else d)
       }
     }
   ),
@@ -259,7 +276,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @description Retrieve all data of the variable.
     #' @return A [CFArray] instance with all data from this variable.
     data = function() {
-      out_group <- VirtualGroup$new(-1L, "/", "/", NULL)
+      out_group <- NCGroup$new(-1L, "/", "/", NULL, NULL)
       out_group$set_attribute("title", "NC_CHAR", paste("Data copy of variable", self$name))
       out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), "): CFVariable::data()"))
 
@@ -379,7 +396,7 @@ CFVariable <- R6::R6Class("CFVariable",
       if (length(bad))
         stop("Argument `subset` contains elements not corresponding to an axis:", paste(bad, collapse = ", "), call. = FALSE)
 
-      out_group <- VirtualGroup$new(-1L, "/", "/", NULL)
+      out_group <- NCGroup$new(-1L, "/", "/", NULL, NULL)
       out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
       out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariable$subset()"))
 

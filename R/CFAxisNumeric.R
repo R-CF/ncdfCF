@@ -41,7 +41,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
     #' @param orientation The orientation (`X`, `Y`, `Z`, or `T`) or `""` if
     #' different or unknown.
-    #' @param values The dimension values of this axis.
+    #' @param values The coordinates of this axis.
     initialize = function(grp, nc_var, nc_dim, orientation, values) {
       super$initialize(grp, nc_var, nc_dim, orientation)
       self$values <- values
@@ -110,14 +110,14 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #' provided, or `integer(0)` if none of the `x` values are valid.
     indexOf = function(x, method = "constant") {
       if (length(self$bounds))
-        vals <- c(self$bounds$values[1L, 1L], self$bounds$values[2L, ])
+        vals <- c(self$bounds$bounds[1L, 1L], self$bounds$bounds[2L, ])
       else vals <- self$values
       idx <- stats::approx(vals, 1L:length(vals), x, method = method, yleft = 0L, yright = .Machine$integer.max)$y
       idx <- idx[!is.na(idx) & idx > 0 & idx < .Machine$integer.max]
       as.integer(idx)
     },
 
-    #' @description Return an axis spanning a smaller dimension range. This
+    #' @description Return an axis spanning a smaller coordinate range. This
     #'   method returns an axis which spans the range of indices given by the
     #'   `rng` argument.
     #'

@@ -157,7 +157,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
     #'
     #' @return A [CFArray] instance with all data from this L3b variable.
     data = function() {
-      out_group <- VirtualGroup$new(-1L, "/", "/", NULL)
+      out_group <- NCGroup$new(-1L, "/", "/", NULL, NULL)
       out_group$set_attribute("title", "NC_CHAR", paste("L3b variable", self$name, "regridded to latitude-longitude"))
       out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariableL3b$data()"))
 
@@ -227,7 +227,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
           stop("Argument `subset` contains elements not corresponding to an axis:", paste(bad, collapse = ", "), call. = FALSE)
       }
 
-      out_group <- VirtualGroup$new(-1L, "/", "/", NULL)
+      out_group <- NCGroup$new(-1L, "/", "/", NULL, NULL)
       out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
       out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariableL3b$subset()"))
 

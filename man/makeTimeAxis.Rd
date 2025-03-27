@@ -13,7 +13,7 @@ makeTimeAxis(id, name, group, values)
 
 \item{group}{Group to place the axis in.}
 
-\item{values}{A \code{CFTime} instance with dimension values and bounds set.}
+\item{values}{A \code{CFTime} instance with time values and bounds set.}
 }
 \value{
 A \code{CFAxisTime} instance.

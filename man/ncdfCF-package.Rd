@@ -121,7 +121,7 @@ in real-world coordinates for the axes into a \code{CFArray} object. This can al
 process "auxiliary coordinate variables", if present, to warp data from its
 native CRS to latitude-longitude.
 \item \code{summarise()}: Summarise the data in the data variable over the "time"
-dimension, using a user-defined function, returning a \code{CFArray} object. The
+axis, using a user-defined function, returning a \code{CFArray} object. The
 function can be built-in (such as \code{min()} and \code{max()}) or a user-developed
 function. The function may also return a vector with multiple values (such
 as \code{range()}) and then a list of \code{CFArray} objects is returned, one for each
@@ -130,7 +130,7 @@ result of the function.
 
 \emph{\strong{S3 methods for CFVariable}}
 \itemize{
-\item \code{\link[=dim]{dim()}}, \code{\link[=dimnames]{dimnames()}}: Vector of the dimension lengths and values of the
+\item \code{\link[=dim]{dim()}}, \code{\link[=dimnames]{dimnames()}}: Vector of the lengths and coordinate values of the
 axes of the data variable.
 \item \verb{[]} (\link{bracket_select}): Select the entire data variable or a part thereof
 using index values, returning an array of data values.
@@ -142,7 +142,7 @@ The \code{CFAxis} class is the common ancestor of specialized classes that
 represent specific types of axes. These sub-classes are the ones that are
 actually returned when retrieving an axis. These classes are:
 \itemize{
-\item \link{CFAxisNumeric} is a basic numeric axis, where the dimension values
+\item \link{CFAxisNumeric} is a basic numeric axis, where the coordinate values
 represent some physical property. The \link{CFAxisLongitude} and \link{CFAxisLatitude}
 classes derive from the basic numeric class to manage the specifics of
 geodetic coordinate systems. Class \link{CFAxisVertical} also derives from the
@@ -184,7 +184,7 @@ axis.
 
 \emph{\strong{S3 methods for CFAxis}}
 \itemize{
-\item \code{\link[=dim]{dim()}}, \code{\link[=dimnames]{dimnames()}}: The dimension length and values of the axis.
+\item \code{\link[=dim]{dim()}}, \code{\link[=dimnames]{dimnames()}}: The length and coordinate values of the axis.
 }
 
 \strong{Data}
@@ -211,7 +211,7 @@ netCDF resource.
 \item \code{array()}: The array of data values from the data object, oriented in the
 standard R arrangement.
 \item \code{summarise()}: Summarise the data in the data array over the "time"
-dimension, using a user-defined function, returning a new \code{CFArray} object. The
+axis, using a user-defined function, returning a new \code{CFArray} object. The
 function can be built-in (such as \code{min()} and \code{max()}) or a user-developed
 function. The function may also return a vector with multiple values (such
 as \code{range()}) and then a list of \code{CFArray} objects is returned, one for each

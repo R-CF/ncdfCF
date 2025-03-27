@@ -13,11 +13,11 @@ makeLatitudeAxis(id, name, group, length, values, bounds, units)
 
 \item{group}{Group to place the axis in.}
 
-\item{length}{Length of the dimension of the axis.}
+\item{length}{Length of the the axis.}
 
-\item{values}{The dimension values.}
+\item{values}{The coordinate values.}
 
-\item{bounds}{The bounds of the dimension values, or \code{NULL} if not available.}
+\item{bounds}{The bounds of the coordinate values, or \code{NULL} if not available.}
 
 \item{units}{A character string with the axis units.}
 }
@@ -25,6 +25,6 @@ makeLatitudeAxis(id, name, group, length, values, bounds, units)
 A \code{CFAxisLatitude} instance.
 }
 \description{
-With this method you can create a longitude axis to use with new \link{CFArray}
+With this method you can create a latitude axis to use with new \link{CFArray}
 instances.
 }

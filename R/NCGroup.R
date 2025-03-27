@@ -14,7 +14,8 @@
 NCGroup <- R6::R6Class("NCGroup",
   inherit = NCObject,
   public = list(
-    #' @field resource Access to the underlying netCDF resource.
+    #' @field resource Access to the underlying netCDF resource. This can be
+    #' `NULL` for instances created in memory.
     resource  = NULL,
 
     #' @field fullname The fully qualified absolute path of the group.
@@ -67,7 +68,7 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @param fullname The fully qualified name of the group.
     #' @param parent The parent group of this group. `NULL` for the root group.
     #' @param resource Reference to the [CFResource] instance that provides
-    #' access to the netCDF resource.
+    #' access to the netCDF resource. For in-memory groups this can be `NULL`.
     initialize = function(id, name, fullname, parent, resource) {
       super$initialize(id, name)
       self$fullname <- fullname
@@ -363,7 +364,8 @@ NCGroup <- R6::R6Class("NCGroup",
     #'   group
     handle = function(value) {
       if (missing(value))
-        self$resource$group_handle(self$fullname)
+        if (is.null(self$resource)) NULL
+        else self$resource$group_handle(self$fullname)
       else
         stop("Can't assign a value to a netCDF resource handle", call. = FALSE)
     }

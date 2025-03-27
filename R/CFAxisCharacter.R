@@ -28,7 +28,7 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
     #' @param orientation The orientation (`X`, `Y`, `Z`, or `T`) or `""` if
     #' different or unknown.
-    #' @param values The character dimension values of this axis.
+    #' @param values The character coordinates of this axis.
     initialize = function(grp, nc_var, nc_dim, orientation, values) {
       super$initialize(grp, nc_var, nc_dim, orientation)
       self$values <- values

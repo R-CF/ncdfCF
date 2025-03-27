@@ -186,7 +186,7 @@ values in \code{x}, or \code{integer(0)} if none of the values are valid.
 \if{html}{\out{<a id="method-CFAxisTime-sub_axis"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisTime-sub_axis}{}}}
 \subsection{Method \code{sub_axis()}}{
-Return an axis spanning a smaller dimension range. This
+Return an axis spanning a smaller coordinate range. This
 method returns an axis which spans the range of indices given by the
 \code{rng} argument.
 \subsection{Usage}{

@@ -318,7 +318,9 @@ Supported for all objects that have this attribute.
 ##### 3.3 Standard name
 
 The `standard_name` attribute is read but not checked against the standard name
-table.
+table. Objects with a `standard_name` attribute can be identified with the
+`CFDataset$objects_by_standard_name()` method, either for presence of the attribute
+or using a specific standard name.
 
 ##### 3.4. Ancillary data
 
@@ -448,7 +450,12 @@ Not implemented.
 
 ##### 7.4. Climatological statistics
 
-Not implemented.
+Climatological time series and their `climatology` bounds can be read from file.
+
+Climatological statistics can be generated using the `CFVariable` or `CFArray`
+`summarise()` method and written to file, including its bounds.
+
+The corresponding `cell_methods` are not yet supported.
 
 ##### 7.5. Geometries
 

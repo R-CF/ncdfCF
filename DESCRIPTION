@@ -49,12 +49,12 @@ Collate:
     'NCGroup.R'
     'NCUDT.R'
     'NCVariable.R'
-    'VirtualGroup.R'
     'makeCFObjects.R'
     'ncdfCF-package.R'
     'readCF.R'
     'utils.R'
     'wkt2.R'
+    'zzz.R'
 Suggests: 
     data.table,
     knitr,

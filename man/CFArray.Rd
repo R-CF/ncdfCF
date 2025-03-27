@@ -27,7 +27,7 @@ metadata set. Package \code{terra} must be installed for this to work.
 points on individual rows. Metadata is not maintained. Package \code{data.table}
 must be installed for this to work.
 
-The temporal dimension of the data, if present, may be summarised using the
+The temporal axis of the data, if present, may be summarised using the
 \code{summarise()} method. The data is returned as a new \code{CFArray} instance.
 
 In general, the metadata from the netCDF resource will be lost when

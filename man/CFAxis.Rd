@@ -198,7 +198,7 @@ to this method succeed with no result for the other axis descendants.
 \if{html}{\out{<a id="method-CFAxis-sub_axis"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-sub_axis}{}}}
 \subsection{Method \code{sub_axis()}}{
-Return an axis spanning a smaller dimension range. This
+Return an axis spanning a smaller coordinate range. This
 method is "virtual" in the sense that it does not do anything other
 than return \code{NULL}. This stub is here to make the call to this method
 succeed with no result for the other axis descendants that do not

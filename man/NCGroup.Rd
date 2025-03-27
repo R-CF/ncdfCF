@@ -21,7 +21,8 @@ required.
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{resource}}{Access to the underlying netCDF resource.}
+\item{\code{resource}}{Access to the underlying netCDF resource. This can be
+\code{NULL} for instances created in memory.}
 
 \item{\code{fullname}}{The fully qualified absolute path of the group.}
 
@@ -119,7 +120,7 @@ Create a new instance of this class.
 \item{\code{parent}}{The parent group of this group. \code{NULL} for the root group.}
 
 \item{\code{resource}}{Reference to the \link{CFResource} instance that provides
-access to the netCDF resource.}
+access to the netCDF resource. For in-memory groups this can be \code{NULL}.}
 }
 \if{html}{\out{</div>}}
 }

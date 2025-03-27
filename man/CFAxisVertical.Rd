@@ -89,7 +89,7 @@ Create a new instance of this class.
 
 \item{\code{nc_dim}}{The netCDF dimension that describes the dimensionality.}
 
-\item{\code{values}}{The dimension values of this axis.}
+\item{\code{values}}{The coordinates of this axis.}
 
 \item{\code{standard_name}}{Character string with the "standard_name" that
 defines the meaning, and processing of coordinates, of this axis.}

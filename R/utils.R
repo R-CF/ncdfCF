@@ -29,7 +29,7 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
 #
 # Arguments:
 # X    - Vector, matrix or array
-# oper - The dimension to operate on
+# oper - The ordinal number of the axis to operate on
 # fac  - The factor over whose levels to apply FUN, or NULL if no levels
 # FUN  - The function to call with the data
 # ...  - Additional arguments passed on to FUN
