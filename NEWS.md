@@ -1,5 +1,9 @@
 # ncdfCF (development version)
 
+-   `CFAxis` has several methods added to work with multiple sets of labels
+associated with the axis.
+-   `CFLabel` has `print()` and `write()` methods.
+-   `CFVariable::subset()` can subset over a discrete axis with labels.
 -   `summarise()` can now summarise over eras.
 -   Fixed `summarise()` when temporal result yields scalar time axis.
 -   Fixed writing bounds for a "time" axis.

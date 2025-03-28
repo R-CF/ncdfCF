@@ -41,6 +41,7 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
         scl <- CFAxisScalar$new(group, var, "X", idx)
         bnds <- self$bounds
         if (inherits(bnds, "CFBounds")) scl$bounds <- bnds$sub_bounds(group, idx)
+        private$copy_label_subset_to(scl, idx)
         scl
       }
 
@@ -59,6 +60,7 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
           lon <- CFAxisLongitude$new(group, var, dim, self$values[rng[1L]:rng[2L]])
           bnds <- self$bounds
           if (inherits(bnds, "CFBounds")) lon$bounds <- bnds$sub_bounds(group, rng)
+          private$copy_label_subset_to(lon, idx)
           lon
         }
       }

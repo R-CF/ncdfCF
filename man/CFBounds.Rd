@@ -20,8 +20,6 @@ element) or an auxiliary longitude-latitude grid (4 vertices per element).
 \item{\code{NCdim}}{The \link{NCDimension} that stores the netCDF dimension details
 of the bounds dimension (as opposed to the dimension of the associated
 axis).}
-
-\item{\code{values}}{A matrix with the bounds values.}
 }
 \if{html}{\out{</div>}}
 }
@@ -29,6 +27,8 @@ axis).}
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+
+\item{\code{bounds}}{(read-only) Retrieve the boundary values.}
 }
 \if{html}{\out{</div>}}
 }

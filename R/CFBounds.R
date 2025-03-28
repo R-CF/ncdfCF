@@ -67,8 +67,13 @@ CFBounds <- R6::R6Class("CFBounds",
     range = function() {
       if (is.null(private$values))
         NULL
-      else
-        self$attribute(`actual_range`)
+      else {
+        rng <- self$attribute("actual_range")
+        if (any(is.na(rng)))
+          range(private$values)
+        else
+          rng
+      }
     },
 
     #' @description Return bounds spanning a smaller coordinate range.

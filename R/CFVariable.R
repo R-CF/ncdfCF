@@ -36,7 +36,7 @@ CFVariable <- R6::R6Class("CFVariable",
       } else {
         if (length(rng) == 1L) closed <- TRUE
         rng <- range(rng)
-        vals <- axis$values
+        vals <- axis$coordinates
         idx <- if (closed)
           which(vals >= rng[1L] & vals <= rng[2L], arr.ind = TRUE)
         else

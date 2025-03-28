@@ -28,6 +28,7 @@ vector, or labels for every axis element if they have been set.}
 \item \href{#method-CFAxisDiscrete-new}{\code{CFAxisDiscrete$new()}}
 \item \href{#method-CFAxisDiscrete-brief}{\code{CFAxisDiscrete$brief()}}
 \item \href{#method-CFAxisDiscrete-indexOf}{\code{CFAxisDiscrete$indexOf()}}
+\item \href{#method-CFAxisDiscrete-sub_axis}{\code{CFAxisDiscrete$sub_axis()}}
 \item \href{#method-CFAxisDiscrete-clone}{\code{CFAxisDiscrete$clone()}}
 }
 }
@@ -40,11 +41,11 @@ vector, or labels for every axis element if they have been set.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="create_label_set"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-create_label_set'><code>ncdfCF::CFAxis$create_label_set()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="label_set"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-label_set'><code>ncdfCF::CFAxis$label_set()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-peek'><code>ncdfCF::CFAxis$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="print"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-print'><code>ncdfCF::CFAxis$print()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="sub_axis"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-sub_axis'><code>ncdfCF::CFAxis$sub_axis()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="time"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-time'><code>ncdfCF::CFAxis$time()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="write"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-write'><code>ncdfCF::CFAxis$write()</code></a></span></li>
 </ul>
@@ -112,6 +113,35 @@ dropped.
 Numeric vector of the same length as \code{x}. Values of \code{x} outside
 of the range of the values in the axis are returned as \code{0} and
 \code{.Machine$integer.max}, respectively.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisDiscrete-sub_axis"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisDiscrete-sub_axis}{}}}
+\subsection{Method \code{sub_axis()}}{
+Return an axis spanning a smaller coordinate range. This
+method returns an axis which spans the range of indices given by the
+\code{rng} argument.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$sub_axis(group, rng = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{group}}{The group to create the new axis in.}
+
+\item{\code{rng}}{The range of indices from this axis to include in the returned
+axis.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A \code{CFAxisDiscrete} instance covering the indicated range of
+indices. If the \code{rng} argument includes only a single value, an
+\link{CFAxisScalar} instance is returned with the value from this axis. If
+the value of the argument is \code{NULL}, return the entire axis (possibly
+as a scalar axis).
 }
 }
 \if{html}{\out{<hr>}}

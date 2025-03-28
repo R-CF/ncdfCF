@@ -29,6 +29,14 @@ component of the axes are in decimal degrees of longitude and latitude.}
 }
 \if{html}{\out{</div>}}
 }
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{axis_labels}}{(read-only) Retrieve the names of any axes that have
+labels associated with them.}
+}
+\if{html}{\out{</div>}}
+}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{

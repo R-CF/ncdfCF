@@ -8,12 +8,13 @@
 #' @export
 CFLabel <- R6::R6Class("CFLabel",
   inherit = CFObject,
+  private = list(
+    # The label values, a character vector.
+    values = NULL
+  ),
   public = list(
     #' @field NCdim The [NCDimension] that stores the netCDF dimension details.
-    NCdim       = NULL,
-
-    #' @field values The label values, a character vector.
-    values     = NULL,
+    NCdim = NULL,
 
     #' @description Create a new instance of this class.
     #' @param grp The group that contains the netCDF variable.
@@ -23,25 +24,73 @@ CFLabel <- R6::R6Class("CFLabel",
     initialize = function(grp, nc_var, nc_dim, values) {
       super$initialize(nc_var, grp)
       self$NCdim <- nc_dim
-      self$values <- trimws(values)
+      private$values <- trimws(values)
 
       nc_var$CF <- self
+    },
+
+    #' @description  Prints a summary of the labels to the console.
+    #' @param ... Arguments passed on to other functions. Of particular interest
+    #' is `width = ` to indicate a maximum width of attribute columns.
+    #' @return `self`, invisibly.
+    print = function(...) {
+      cat("<Label set> ", self$name, "\n", sep = "")
+      if (self$group$name != "/")
+        cat("Group    :", self$group$fullname, "\n")
+
+      longname <- self$attribute("long_name")
+      if (!is.na(longname) && longname != self$name)
+        cat("Long name:", longname, "\n")
+
+      cat("Length   :", self$NCdim$length, "\n")
+      self$print_attributes(...)
+    },
+
+    #' @description Retrieve a subset of the labels.
+    #' @param rng The range of indices to retrieve.
+    #' @return A character vector, or `NULL` if the `rng` values are invalid.
+    subset = function(rng) {
+      rng <- range(rng)
+      if (rng[1L] < 1L || rng[2L] > length(private$values))
+        NULL
+      else
+        private$values[rng[1L]:rng[2L]]
+    },
+
+    #' @description Write the labels to a netCDF file, including its attributes.
+    #' @param nc The handle of the netCDF file opened for writing or a group in
+    #'   the netCDF file. If `NULL`, write to the file or group where the labels
+    #'   were read from (the file must have been opened for writing). If not
+    #'   `NULL`, the handle to a netCDF file or a group therein.
+    #' @return Self, invisibly.
+    write = function(nc) {
+      h <- if (inherits(nc, "NetCDF")) nc else self$group$handle
+      self$NCdim$write(h)
+      RNetCDF::var.def.nc(h, self$name, self$NCvar$vtype, self$name)
+      self$write_attributes(h, self$name)
+      RNetCDF::var.put.nc(h, self$name, private$values)
     }
   ),
   active = list(
     #' @field friendlyClassName (read-only) A nice description of the class.
     friendlyClassName = function(value) {
       if (missing(value))
-        "Axis labels"
+        "Label set"
     },
 
-    #' @field length (read-only) The number of labels.
+    #' @field labels (read-only) The label set as a character vector.
+    labels = function(value) {
+      if (missing(value))
+        private$values
+    },
+
+    #' @field length (read-only) The number of labels in the set.
     length = function(value) {
       if (missing(value))
         self$NCdim$length
     },
 
-    #' @field dimid (read-only) The netCDF dimension id of this label.
+    #' @field dimid (read-only) The netCDF dimension id of this label set.
     dimid = function(value) {
       if (missing(value))
         self$NCdim$id

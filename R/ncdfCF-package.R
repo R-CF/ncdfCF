@@ -139,13 +139,16 @@
 #' * [CFAxisCharacter] is for axes that use character labels as categorical
 #' values.
 #' * [CFAxisDiscrete] is for axes that don't have any intrinsic coordinate
-#' values, instead the ordinal values along the axis are used. Labels can be
-#' associated with the discrete axis using a [CFLabel] instance (also works with
-#' generic numeric axes).
+#' values, instead the ordinal values along the axis are used.
 #' * [CFAxisScalar] is an axis of length 1 of any type. This axis is not
 #' included in the data array of the data variable, it is mostly useful to
 #' record a specific property of the data variable, such as observation time or
 #' a constant height or depth of the data.
+#'
+#' Any of the axis classes can have one or more label sets associated with them.
+#' This is most useful for `CFAxisDiscrete`. Labels of the active label set are
+#' used for display of axis properties, as well as for selection in e.g.
+#' `CFVariable$subset()`.
 #'
 #' Methods for `CFAxis` instances:
 #'
@@ -163,6 +166,20 @@
 #' * `sub_axis`: Create a new `CFAxis` instance that spans a sub-range of the
 #' axis.
 #' * `time()`: Retrieve the `CFTime` instance of the axis.
+#'
+#' ***Labels***
+#'
+#' * `create_label_set`: Create a label set for the axis for a vector of
+#' character labels.
+#' * `has_labels`: The number of label sets associated with the axis. There may
+#' be more than 1 of such label sets.
+#' * `label_set_names`: Set or retrieve the names of the label sets (not the
+#' labels themselves).
+#' * `active_label_set`: Set or retrieve the label set that is currently active
+#' and used for display and selection.
+#' * `labels`: Set or retrieve the CF object that manages the active label set,
+#' or a list of all such label sets.
+#' * `label_set()`: Set or retrieve the labels of the active label set.
 #'
 #' ***S3 methods for CFAxis***
 #'

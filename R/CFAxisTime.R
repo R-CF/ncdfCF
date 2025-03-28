@@ -142,6 +142,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         scl <- CFAxisScalar$new(group, var, "T", as_timestamp(self$values)[idx])
         bnds <- time$get_bounds()
         if (!is.null(bnds)) scl$bounds <- bnds[, idx]
+        private$copy_label_subset_to(scl, idx)
         scl
       }
 
@@ -159,7 +160,9 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         else {
           idx <- time$indexOf(seq(from = rng[1L], to = rng[2L], by = 1L))
           dim <- NCDimension$new(-1L, self$name, length(idx), FALSE)
-          CFAxisTime$new(group, var, dim, attr(idx, "CFTime"))
+          t <- CFAxisTime$new(group, var, dim, attr(idx, "CFTime"))
+          private$copy_label_subset_to(t, idx)
+          t
         }
       }
     },

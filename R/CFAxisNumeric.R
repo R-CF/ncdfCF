@@ -137,6 +137,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
         scl <- CFAxisScalar$new(group, var, self$orientation, idx)
         bnds <- self$bounds
         if (inherits(bnds, "CFBounds")) scl$bounds <- bnds$sub_bounds(group, idx)
+        private$copy_label_subset_to(scl, idx)
         scl
       }
 
@@ -155,6 +156,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
           ax <- CFAxisNumeric$new(group, var, dim, self$orientation, self$values[rng[1L]:rng[2L]])
           bnds <- self$bounds
           if (inherits(bnds, "CFBounds")) ax$bounds <- bnds$sub_bounds(group, rng)
+          private$copy_label_subset_to(ax, idx)
           ax
         }
       }

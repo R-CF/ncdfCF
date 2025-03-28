@@ -19,13 +19,13 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
 
     get_coordinates = function() {
       if (inherits(self$values, "CFTime")) self$values$as_timestamp()
+      else if (self$has_labels)
+        self$label_set()
       else self$values
     },
 
     dimvalues_short = function() {
-      v <- if (inherits(self$values, "CFTime")) as_timestamp(self$values)
-           else self$values
-      paste0("[", v, "]")
+      paste0("[", private$get_coordinates(), "]")
     }
   ),
   public = list(

@@ -7,10 +7,27 @@
 CFAxis <- R6::R6Class("CFAxis",
   inherit = CFObject,
   private = list(
+    # A list of [CFLabel] instances, if any are defined for the axis.
+    lbls = list(),
+
+    # The active label set. Either an integer or a name. `NULL` if there are no
+    # labels or when underlying axis coordinates should be used.
+    active_label = NULL,
+
     # Get the coordinates of the axis. In most cases that is just the values
-    # but CFAxisTime overrides this method.
+    # but CFAxisTime and CFAxisDiscrete override this method.
     get_coordinates = function() {
       private$get_values()
+    },
+
+    # Copy a subset of all the label sets to another axis. Argument ax will
+    # receive the label sets subsetted by argument rng.
+    copy_label_subset_to = function(ax, rng) {
+      if (!length(private$lbls)) return(NULL)
+      act <- private$active_label
+      private$active_label <- NULL
+      lapply(private$lbls, function(l) ax$create_label_set(l$name, l$subset(rng)))
+      private$active_label <- act
     }
   ),
   public = list(
@@ -24,10 +41,6 @@ CFAxis <- R6::R6Class("CFAxis",
 
     #' @field bounds The boundary values of this axis, if set.
     bounds = NULL,
-
-    #' @field lbls A list of [CFLabel] instances, if any are defined for the
-    #' axis.
-    lbls = list(),
 
     #' @description Create a new CF axis instance from a dimension and a
     #'   variable in a netCDF resource. This method is called upon opening a
@@ -66,6 +79,8 @@ CFAxis <- R6::R6Class("CFAxis",
       cat("Length   :", self$NCdim$length)
       if (self$NCdim$unlim) cat(" (unlimited)\n") else cat("\n")
       cat("Axis     :", self$orientation, "\n")
+      if (self$has_labels)
+      cat("Labels   :", paste(self$label_set_names, collapse = ", "), "\n")
     },
 
     #' @description Some details of the axis.
@@ -108,6 +123,7 @@ CFAxis <- R6::R6Class("CFAxis",
       out$unlimited <- self$NCdim$unlim
       out$values <- private$dimvalues_short()
       out$has_bounds <- inherits(self$bounds, "CFBounds")
+      out$label_sets <- self$has_labels
       out
     },
 
@@ -162,19 +178,41 @@ CFAxis <- R6::R6Class("CFAxis",
       stop("`indexOf()` must be implemented by descendant CFAxis class.")
     },
 
-    #' @description Retrieve a set of character labels corresponding to the
-    #'   elements of an axis. An axis can have multiple sets of labels and by
-    #'   default the first set is returned.
+    #' @description Retrieve a set of character labels from the active label
+    #'   set, corresponding to the elements of an axis.
     #'
-    #' @param index An integer value indicating which set of labels to retrieve.
+    #' @param n An integer value indicating which set of labels to retrieve.
+    #'   Alternatively, this can be the name of the label set. When `NULL`
+    #'   (default), the labels from the active label set are returned.
     #'
     #' @return A character vector of string labels with as many elements as the
     #'   axis has, or `NULL` when no labels have been set or when argument
-    #'   `index` is not valid.
-    label_set = function(index = 1L) {
-      if (index > 0L && index <= length(self$lbls))
-        self$lbls[[index]]$values
-      else NULL
+    #'   `n` is not valid.
+    label_set = function(n = NULL) {
+      if (!length(private$lbls) ||
+          (is.numeric(n) && (n < 1L || n > length(private$lbls)))) return(NULL)
+
+      if (is.null(n))
+        n <- private$active_label
+
+      if (is.null(n)) NULL
+      else private$lbls[[n]]$labels
+    },
+
+    #' @description Create a new label set for the axis from the vector of
+    #' supplied labels. The [CFLabel] instance will be created in the group of
+    #' this axis.
+    #' @param name A name for this label set.
+    #' @param labels Character vector of labels. The vector must have the same
+    #' length as the axis.
+    #' @return Self, invisibly.
+    create_label_set = function(name, labels) {
+      if (length(labels) != self$length)
+        stop("Labels vector not the same length as the axis.", call. = FALSE)
+
+      var <- NCVariable$new(-1L, name, self$group, "NC_STRING", 1L, NULL)
+      self$labels <- CFLabel$new(self$group, var, self$NCdim, labels)
+      invisible(self)
     },
 
     #' @description Write the axis to a netCDF file, including its attributes.
@@ -201,6 +239,8 @@ CFAxis <- R6::R6Class("CFAxis",
 
       if (!is.null(self$bounds))
         self$bounds$write(h, self$name)
+
+      lapply(private$lbls, function(l) l$write(nc))
 
       invisible(self)
     }
@@ -235,13 +275,59 @@ CFAxis <- R6::R6Class("CFAxis",
     },
 
     #' @field labels Set or retrieve the labels for the axis. On assignment, the
-    #' value must be an instance of [CFLabel].
+    #'   value must be an instance of [CFLabel], which is added to the end of
+    #'   the list of label sets. On retrieval, the active `CFLabel` instance or
+    #'   a `list` of all associated `CFLabel` instances is returned. (If there
+    #'   is a label set active and you want to retrieve all label sets, call
+    #'   `active_label_set <- NULL` on your axis object before calling this
+    #'   method.)
     labels = function(value) {
+      if (missing(value)) {
+        if (is.null(private$active_label)) private$lbls
+        else private$lbls[[private$active_label]]
+      } else {
+        if (inherits(value, "CFLabel") && value$length == self$length) {
+          private$lbls <- append(private$lbls, value)
+          names(private$lbls) <- sapply(private$lbls, function(l) l$name)
+          if (length(private$lbls) == 1L)
+            private$active_label <- 1L
+        }
+      }
+    },
+
+    #' @field has_labels (read-only) Number of label sets associated with the
+    #'   axis. The labels can be retrieved with the `label_set()` method.
+    has_labels = function(value) {
       if (missing(value))
-        self$lbls
+        length(private$lbls)
+    },
+
+    #' @field label_set_names Set or retrieve the names of the label sets
+    #'   defined for the axis. Note that the label sets need to have been
+    #'   registered with the axis before you can change any names.
+    label_set_names = function(value) {
+      if (missing(value))
+        names(private$lbls)
       else {
-        if (inherits(value, "CFLabel") && value$length == self$length)
-          self$lbls <- append(self$lbls, value)
+        if (!is.character(value) || length(value) != length(private$lbls))
+          stop("Vector of label set names must have same length as number of label sets.", call. = FALSE)
+        names(private$lbls) <- value
+      }
+    },
+
+    #' @field active_label_set Set or retrieve the label set to use with the
+    #'   axis for printing to the console as well as for processing methods such
+    #'   as `subset()`. On assignment, either an integer value or a name of a
+    #'   label set. If `NULL`, suppress use of labels. On retrieval, the value
+    #'   that the label set was set with, so either an integer value or a name.
+    active_label_set = function(value) {
+      if (missing(value))
+        private$active_label
+      else {
+        if (is.null(value) || (is.numeric(value) && (value < 1L || value > length(private$lbls))))
+          private$active_label <- NULL
+        else
+          private$active_label <- value
       }
     },
 

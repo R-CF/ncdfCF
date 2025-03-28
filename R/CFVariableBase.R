@@ -199,5 +199,15 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
         res
       }
     }
+  ),
+  active = list(
+    #' @field axis_labels (read-only) Retrieve the names of any axes that have
+    #'   labels associated with them.
+    axis_labels = function(value) {
+      ax <- sapply(self$axes, function(x) if (x$has_labels) x$name)
+      ax <- unlist(ax[lengths(ax) > 0L])
+      names(ax) <- NULL
+      ax
+    }
   )
 )

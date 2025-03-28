@@ -16,8 +16,6 @@ See also \link{CFAxisCharacter}, which is an axis with character labels.
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
 \item{\code{NCdim}}{The \link{NCDimension} that stores the netCDF dimension details.}
-
-\item{\code{values}}{The label values, a character vector.}
 }
 \if{html}{\out{</div>}}
 }
@@ -26,9 +24,11 @@ See also \link{CFAxisCharacter}, which is an axis with character labels.
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{length}}{(read-only) The number of labels.}
+\item{\code{labels}}{(read-only) The label set as a character vector.}
 
-\item{\code{dimid}}{(read-only) The netCDF dimension id of this label.}
+\item{\code{length}}{(read-only) The number of labels in the set.}
+
+\item{\code{dimid}}{(read-only) The netCDF dimension id of this label set.}
 }
 \if{html}{\out{</div>}}
 }
@@ -36,6 +36,9 @@ See also \link{CFAxisCharacter}, which is an axis with character labels.
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFLabel-new}{\code{CFLabel$new()}}
+\item \href{#method-CFLabel-print}{\code{CFLabel$print()}}
+\item \href{#method-CFLabel-subset}{\code{CFLabel$subset()}}
+\item \href{#method-CFLabel-write}{\code{CFLabel$write()}}
 \item \href{#method-CFLabel-clone}{\code{CFLabel$clone()}}
 }
 }
@@ -72,6 +75,70 @@ Create a new instance of this class.
 \item{\code{values}}{Character vector of the label values.}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFLabel-print"></a>}}
+\if{latex}{\out{\hypertarget{method-CFLabel-print}{}}}
+\subsection{Method \code{print()}}{
+Prints a summary of the labels to the console.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFLabel$print(...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Arguments passed on to other functions. Of particular interest
+is \verb{width = } to indicate a maximum width of attribute columns.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{self}, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFLabel-subset"></a>}}
+\if{latex}{\out{\hypertarget{method-CFLabel-subset}{}}}
+\subsection{Method \code{subset()}}{
+Retrieve a subset of the labels.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFLabel$subset(rng)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{rng}}{The range of indices to retrieve.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A character vector, or \code{NULL} if the \code{rng} values are invalid.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFLabel-write"></a>}}
+\if{latex}{\out{\hypertarget{method-CFLabel-write}{}}}
+\subsection{Method \code{write()}}{
+Write the labels to a netCDF file, including its attributes.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFLabel$write(nc)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{nc}}{The handle of the netCDF file opened for writing or a group in
+the netCDF file. If \code{NULL}, write to the file or group where the labels
+were read from (the file must have been opened for writing). If not
+\code{NULL}, the handle to a netCDF file or a group therein.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}
