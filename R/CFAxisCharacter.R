@@ -4,6 +4,9 @@
 #' labels as coordinate values. Note that this is different from a [CFLabel],
 #' which is associated with an axis but not an axis itself.
 #'
+#' This is an extension to the CF Metadata Conventions. As per CF, axes are
+#' required to have numerical values, which is relaxed here.
+#'
 #' @docType class
 #' @export
 CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
@@ -32,6 +35,7 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
     initialize = function(grp, nc_var, nc_dim, orientation, values) {
       super$initialize(grp, nc_var, nc_dim, orientation)
       self$values <- values
+      self$set_attribute("actual_range", nc_var$vtype, range(values))
     },
 
     #' @description Some details of the axis.

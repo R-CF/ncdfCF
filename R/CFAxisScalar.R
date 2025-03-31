@@ -43,6 +43,7 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
       dim <- NCDimension$new(-1L, nc_var$name, 1L, FALSE)
       super$initialize(grp, nc_var, dim, orientation)
       self$values <- value
+      self$set_attribute("actual_range", nc_var$vtype, c(value, value))
     },
 
     #' @description Summary of the scalar axis printed to the console.

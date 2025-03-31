@@ -8,6 +8,9 @@
 This class represent CF axes that use categorical character
 labels as coordinate values. Note that this is different from a \link{CFLabel},
 which is associated with an axis but not an axis itself.
+
+This is an extension to the CF Metadata Conventions. As per CF, axes are
+required to have numerical values, which is relaxed here.
 }
 \section{Super classes}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFAxis]{ncdfCF::CFAxis}} -> \code{CFAxisCharacter}

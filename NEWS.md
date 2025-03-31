@@ -5,6 +5,7 @@ associated with the axis.
 -   `CFLabel` has `print()` and `write()` methods.
 -   `CFVariable::subset()` can subset over a discrete axis with labels.
 -   `summarise()` can now summarise over eras.
+-   `actual_range` attribute is set on data arrays, axes and bounds.
 -   Fixed `summarise()` when temporal result yields scalar time axis.
 -   Fixed writing bounds for a "time" axis.
 -   Fixed saving a packed `CFArray` when the original netCDF file was packed as

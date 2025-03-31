@@ -38,6 +38,16 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #' different or unknown.
     initialize = function(grp, nc_var, nc_dim, orientation) {
       super$initialize(grp, nc_var, nc_dim, orientation)
+      self$set_attribute("actual_range", "NC_INT", c(1L,self$length))
+    },
+
+    #' @description Summary of the axis printed to the console.
+    #' @param ... Arguments passed on to other functions. Of particular interest
+    #' is `width = ` to indicate a maximum width of attribute columns.
+    #' @return `self`, invisibly.
+    print = function(...) {
+      super$print()
+      self$print_attributes(...)
     },
 
     #' @description Some details of the axis.

@@ -46,7 +46,6 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   variable in a netCDF resource. This method is called upon opening a
     #'   netCDF resource by the `initialize()` method of a descendant class
     #'   suitable for the type of axis.
-    #'
     #' @param grp The [NCGroup] that this axis is located in.
     #' @param nc_var The [NCVariable] instance upon which this CF axis is based.
     #' @param nc_dim The [NCDimension] instance upon which this CF axis is
@@ -101,7 +100,6 @@ CFAxis <- R6::R6Class("CFAxis",
     #' @description Very concise information on the axis. The information
     #'   returned by this function is very concise and most useful when combined
     #'   with similar information from other axes.
-    #'
     #' @return Character string with very basic axis information.
     shard = function() {
       self$NCdim$shard()
@@ -141,12 +139,10 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   than return `NULL`. This stub is here to make the call to this method
     #'   succeed with no result for the other axis descendants that do not
     #'   implement this method.
-    #'
     #' @param group The group to create the new axis in.
     #' @param rng The range of values from this axis to include in the returned
     #'   axis. If the value of the argument is `NULL`, return the entire axis
     #'   (possibly as a scalar axis).
-    #'
     #' @return `NULL`
     sub_axis = function(group, rng = NULL) {
       NULL
@@ -162,13 +158,11 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   from those bounds. Returned indices may fall in between bounds if the
     #'   latter are not contiguous, with the exception of the extreme values in
     #'   `x`.
-    #'
     #' @param x Vector of numeric, timestamp or categorial values to find axis
     #'   indices for. The timestamps can be either character, POSIXct or Date
     #'   vectors. The type of the vector has to correspond to the type of the
     #'   axis.
     #' @param method Single character value of "constant" or "linear".
-    #'
     #' @return Numeric vector of the same length as `x`. If `method = "constant"`,
     #'   return the index value for each match. If `method = "linear"`, return
     #'   the index value with any fractional value. Values of `x` outside of the
@@ -180,11 +174,9 @@ CFAxis <- R6::R6Class("CFAxis",
 
     #' @description Retrieve a set of character labels from the active label
     #'   set, corresponding to the elements of an axis.
-    #'
     #' @param n An integer value indicating which set of labels to retrieve.
     #'   Alternatively, this can be the name of the label set. When `NULL`
     #'   (default), the labels from the active label set are returned.
-    #'
     #' @return A character vector of string labels with as many elements as the
     #'   axis has, or `NULL` when no labels have been set or when argument
     #'   `n` is not valid.
@@ -347,10 +339,8 @@ CFAxis <- R6::R6Class("CFAxis",
 #' This method returns the lengths of the axes of a variable or axis.
 #'
 #' @param x The `CFVariable` or a descendant of `CFAxis`.
-#'
 #' @return Vector of axis lengths.
 #' @export
-#'
 #' @examples
 #' fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 #' ds <- open_ncdf(fn)
@@ -364,4 +354,3 @@ dim.CFAxis <- function(x) {
 dimnames.CFAxis <- function(x) {
   x$dimnames
 }
-

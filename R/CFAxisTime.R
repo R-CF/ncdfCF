@@ -46,6 +46,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     initialize = function(grp, nc_var, nc_dim, values) {
       super$initialize(grp, nc_var, nc_dim, "T")
       self$values <- values
+      self$set_attribute("actual_range", nc_var$vtype, range(values$offsets))
     },
 
     #' @description Summary of the time axis printed to the console.

@@ -89,7 +89,7 @@ different or unknown.}
 \if{html}{\out{<a id="method-CFAxisNumeric-print"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisNumeric-print}{}}}
 \subsection{Method \code{print()}}{
-Summary of the time axis printed to the console.
+Summary of the axis printed to the console.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$print(...)}\if{html}{\out{</div>}}
 }

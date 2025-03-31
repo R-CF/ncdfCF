@@ -49,6 +49,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     initialize = function(grp, nc_var, nc_dim, values, standard_name) {
       super$initialize(grp, nc_var, nc_dim, "Z", values)
       self$parameter_name <- standard_name
+      self$set_attribute("actual_range", nc_var$vtype, range(values))
     }
   ),
   active = list(

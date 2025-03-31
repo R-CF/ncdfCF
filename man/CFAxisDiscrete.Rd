@@ -26,6 +26,7 @@ vector, or labels for every axis element if they have been set.}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFAxisDiscrete-new}{\code{CFAxisDiscrete$new()}}
+\item \href{#method-CFAxisDiscrete-print}{\code{CFAxisDiscrete$print()}}
 \item \href{#method-CFAxisDiscrete-brief}{\code{CFAxisDiscrete$brief()}}
 \item \href{#method-CFAxisDiscrete-indexOf}{\code{CFAxisDiscrete$indexOf()}}
 \item \href{#method-CFAxisDiscrete-sub_axis}{\code{CFAxisDiscrete$sub_axis()}}
@@ -44,7 +45,6 @@ vector, or labels for every axis element if they have been set.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="create_label_set"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-create_label_set'><code>ncdfCF::CFAxis$create_label_set()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="label_set"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-label_set'><code>ncdfCF::CFAxis$label_set()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-peek'><code>ncdfCF::CFAxis$peek()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="print"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-print'><code>ncdfCF::CFAxis$print()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="time"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-time'><code>ncdfCF::CFAxis$time()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="write"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-write'><code>ncdfCF::CFAxis$write()</code></a></span></li>
@@ -73,6 +73,27 @@ Create a new instance of this class.
 different or unknown.}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisDiscrete-print"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisDiscrete-print}{}}}
+\subsection{Method \code{print()}}{
+Summary of the axis printed to the console.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$print(...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Arguments passed on to other functions. Of particular interest
+is \verb{width = } to indicate a maximum width of attribute columns.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{self}, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

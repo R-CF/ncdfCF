@@ -45,9 +45,10 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     initialize = function(grp, nc_var, nc_dim, orientation, values) {
       super$initialize(grp, nc_var, nc_dim, orientation)
       self$values <- values
+      self$set_attribute("actual_range", nc_var$vtype, range(values))
     },
 
-    #' @description Summary of the time axis printed to the console.
+    #' @description Summary of the axis printed to the console.
     #' @param ... Arguments passed on to other functions. Of particular interest
     #' is `width = ` to indicate a maximum width of attribute columns.
     #' @return `self`, invisibly.
