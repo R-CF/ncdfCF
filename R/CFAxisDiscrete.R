@@ -9,6 +9,10 @@
 CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
   inherit = CFAxis,
   private = list(
+    # Flag if this axis is constructed from a bare dimension, i.e. there is no
+    # NC variable associated with this axis in the netCDF file.
+    dim_only = FALSE,
+
     # The values of the axis: just an integer sequence
     get_values = function() {
       seq(self$length)
@@ -36,9 +40,12 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
     #' @param orientation The orientation (`X`, `Y`, `Z`, or `T`) or `""` if
     #' different or unknown.
-    initialize = function(grp, nc_var, nc_dim, orientation) {
+    #' @param dim_only Flag if this axis only has a dimension on file but no
+    #' NC variable.
+    initialize = function(grp, nc_var, nc_dim, orientation, dim_only = FALSE) {
       super$initialize(grp, nc_var, nc_dim, orientation)
       self$set_attribute("actual_range", "NC_INT", c(1L,self$length))
+      private$dim_only <- dim_only
     },
 
     #' @description Summary of the axis printed to the console.
@@ -115,6 +122,24 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
           discr
         }
       }
+    },
+
+    #' @description Write the axis to a netCDF file, including its attributes,
+    #' but only if it has an associated NC variable in the file.
+    #' @param nc The handle of the netCDF file opened for writing or a group in
+    #'   the netCDF file. If `NULL`, write to the file or group where the axis
+    #'   was read from (the file must have been opened for writing). If not
+    #'   `NULL`, the handle to a netCDF file or a group therein.
+    #' @return Self, invisibly.
+    write = function(nc = NULL) {
+      if (private$dim_only) {
+        # Write the dimension and any labels. No values or attributes to write.
+        h <- if (inherits(nc, "NetCDF")) nc else self$group$handle
+        self$NCdim$write(h)
+        lapply(private$lbls, function(l) l$write(nc))
+      } else
+        super$write(nc)
+      invisible(self)
     }
   ),
   active = list(

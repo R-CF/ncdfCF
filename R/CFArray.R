@@ -39,31 +39,44 @@ CFArray <- R6::R6Class("CFArray",
 
     # Orient self$values in such a way that it conforms to regular R arrays: axis
     # order will be Y-X-Z-T-others and Y values will go from the top to the bottom.
-    # Returns a new array.
-    orient = function() {
-      order <- private$YXZT()
+    # Alternatively, order self$values in the CF canonical order.
+    # Argument ordering must be "R" or "CF".
+    # Returns a new array with an attribute "axes" that lists axis names in the
+    # order of the new array.
+    orient = function(ordering = "R") {
+      if (ordering == "R")
+        order <- private$YXZT()
+      else if (ordering == "CF")
+        order <- private$XYZT()
+      else
+        stop("Invalid argument for ordering.", call. = FALSE)
+
       if (sum(order) == 0L) {
         warning("Cannot orient data array because axis orientation has not been set")
         return(self$values)
       }
-      if (all(order == 1L:4L))
+      if (all(diff(order[which(order > 0L)]) > 0L)) {
         out <- self$values
-      else {
+        attr(out, "axes") <- private$dim_names()
+      } else {
         all_dims <- seq(length(dim(self$values)))
         perm <- c(order[which(order > 0L)], all_dims[!(all_dims %in% order)])
         out <- aperm(self$values, perm)
+        attr(out, "axes") <- private$dim_names()[perm]
       }
 
-      # Flip Y-axis, if necessary
-      ynames <- dimnames(out)[[1L]]
-      if (length(ynames) > 1L && as.numeric(ynames[2L]) > as.numeric(ynames[1L])) {
-        dn <- dimnames(out)
-        dims <- dim(out)
-        dim(out) <- c(dims[1L], prod(dims[-1L]))
-        out <- apply(out, 2L, rev)
-        dim(out) <- dims
-        dn[[1L]] <- rev(dn[[1L]])
-        dimnames(out) <- dn
+      if (ordering == "R") {
+        # Flip Y-axis, if necessary
+        ynames <- dimnames(out)[[1L]]
+        if (length(ynames) > 1L && as.numeric(ynames[2L]) > as.numeric(ynames[1L])) {
+          dn <- dimnames(out)
+          dims <- dim(out)
+          dim(out) <- c(dims[1L], prod(dims[-1L]))
+          out <- apply(out, 2L, rev)
+          dim(out) <- dims
+          dn[[1L]] <- rev(dn[[1L]])
+          dimnames(out) <- dn
+        }
       }
 
       out
@@ -156,7 +169,7 @@ CFArray <- R6::R6Class("CFArray",
         stop("Cannot create an array from data object with only one axis.", call. = FALSE)
 
       dimnames(self$values) <- self$dimnames
-      private$orient()
+      private$orient("R")
     },
 
     #' @description Convert the data to a `terra::SpatRaster` (3D) or a
@@ -257,7 +270,7 @@ CFArray <- R6::R6Class("CFArray",
       self$group$write_attributes(nc, "NC_GLOBAL")
 
       # Axes
-      lapply(self$axes, function(ax) ax$write(nc))
+      lbls <- unlist(sapply(self$axes, function(ax) {ax$write(nc); ax$label_set_names}))
 
       # CRS
       if (!is.null(self$crs)) {
@@ -274,13 +287,16 @@ CFArray <- R6::R6Class("CFArray",
       }
 
       # Data variable
-      dim_axes <- length(dim(self$values))
-      axis_names <- sapply(self$axes, function(ax) ax$name)
-      RNetCDF::var.def.nc(nc, self$name, if (pack) "NC_SHORT" else private$values_type, axis_names[1L:dim_axes])
-      if (length(self$axes) > dim_axes)
-        self$set_attribute("coordinates", "NC_CHAR", paste(axis_names[-(1L:dim_axes)]))
+      dt <- private$orient("CF")
+      axes <- attr(dt, "axes")
+      dim_axes <- length(axes)
+      RNetCDF::var.def.nc(nc, self$name, if (pack) "NC_SHORT" else private$values_type, axes)
+      if (length(self$axes) > dim_axes || length(lbls)) {
+        non_dim_axis_names <- sapply(self$axes, function(ax) ax$name)[-(1L:dim_axes)]
+        self$set_attribute("coordinates", "NC_CHAR", paste(c(non_dim_axis_names, lbls), collapse = " "))
+      }
       self$write_attributes(nc, self$name)
-      RNetCDF::var.put.nc(nc, self$name, self$values, pack = pack, na.mode = 2)
+      RNetCDF::var.put.nc(nc, self$name, dt, pack = pack, na.mode = 2)
       RNetCDF::close.nc(nc)
 
       if (pack)

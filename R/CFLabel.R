@@ -66,7 +66,7 @@ CFLabel <- R6::R6Class("CFLabel",
     write = function(nc) {
       h <- if (inherits(nc, "NetCDF")) nc else self$group$handle
       self$NCdim$write(h)
-      RNetCDF::var.def.nc(h, self$name, self$NCvar$vtype, self$name)
+      RNetCDF::var.def.nc(h, self$name, self$NCvar$vtype, self$NCdim$name)
       self$write_attributes(h, self$name)
       RNetCDF::var.put.nc(h, self$name, private$values)
     }

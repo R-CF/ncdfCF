@@ -20,11 +20,23 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
       match(c("Y", "X", "Z", "T"), orient, nomatch = 0L)
     },
 
+    # Return the CF canonical order of dimensional axes that "receive special
+    # treatment". Scalar axes are not considered here.
+    XYZT = function() {
+      orient <- sapply(self$axes, function(x) if (!inherits(x, "CFAxisScalar")) x$orientation)
+      match(c("X", "Y", "Z", "T"), orient, nomatch = 0L)
+    },
+
     # Return the number of "dimensional" axes, i.e. axes that are associated
     # with a dimension of the data of the variable. This may include dimensions
     # with length 1, but it excludes scalar axes.
     num_dim_axes = function() {
       sum(sapply(self$axes, function(x) !inherits(x, "CFAxisScalar")))
+    },
+
+    # Return the names of the dimensional axes.
+    dim_names = function() {
+      sapply(1:private$num_dim_axes(), function(i) self$axes[[i]]$name)
     },
 
     # Return the lengths of the dimensional axes.

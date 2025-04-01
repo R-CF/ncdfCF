@@ -46,6 +46,10 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     initialize = function(grp, nc_var, nc_dim, values) {
       super$initialize(grp, nc_var, nc_dim, "T")
       self$values <- values
+      self$set_attribute("units", "NC_CHAR", values$cal$definition)
+      self$set_attribute("calendar", "NC_CHAR", values$cal$name)
+      self$set_attribute("standard_name", "NC_CHAR", "time")
+      self$set_attribute("axis", "NC_CHAR", "T")
       self$set_attribute("actual_range", nc_var$vtype, range(values$offsets))
     },
 
@@ -213,6 +217,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
   if (!is.null(bnds)) {
     try(RNetCDF::dim.def.nc(nc, "nv2", 2L), silent = TRUE) # FIXME: nv2 could already exist with a different length
     nm <- if (inherits(time, "CFClimatology")) "climatology_bnds" else "time_bnds"
+    RNetCDF::att.put.nc(nc, name, "bounds", "NC_CHAR", nm)
     RNetCDF::var.def.nc(nc, nm, "NC_DOUBLE", c("nv2", name))
     RNetCDF::var.put.nc(nc, nm, bnds)
   }

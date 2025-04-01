@@ -331,8 +331,8 @@ peek_ncdf <- function(resource) {
   if (length(grp$NCdims) > 0L) {
     axes <- lapply(grp$NCdims, function(d) {
       if (d$id %in% add_dims) {
-        v <- NCVariable$new(-2L, d$name, grp, "NC_INTEGER", 1L, d$id)
-        axis <- CFAxisDiscrete$new(grp, v, d, "")
+        v <- NCVariable$new(-2L, d$name, grp, "NC_INT", 1L, d$id)
+        axis <- CFAxisDiscrete$new(grp, v, d, "", dim_only = TRUE)
         v$CF <- axis
         grp$NCvars <- append(grp$NCvars, v)
         grp$CFaxes <- append(grp$CFaxes, axis)

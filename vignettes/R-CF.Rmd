@@ -232,7 +232,7 @@ bottom-right, just like a standard R array.
 The netCDF file format is very flexible, as well as CF, and the `ncdfCF`
 package uses a layered structure to capture it all.
 
-![Figure 2: The ncdfCF data model](datamodel-0.4.png){width="680"} This
+![Figure 2: The ncdfCF data model](ncdfCF-datamodel-0.4.png){width="680"} This
 structure enables a full support of the features provided by the
 `netcdf` library and the CF Conventions.
 
@@ -266,7 +266,8 @@ scalar coordinate variable, thus avoiding the use of a dimension.
 ##### 2.5. Variables
 
 The `valid_range` attribute is determined when a `CFArray` is created or
-its values modified.
+its values modified. The attribute is also attached to all axes and their
+boundaries.
 
 Upon saving a `CFArray` to a netCDF file, data may be packed and the
 appropriate attributes will be written along with the data.

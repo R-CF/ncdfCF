@@ -1,10 +1,13 @@
 # ncdfCF (development version)
 
+-   Writing a `CFArray` instance to file automatically orients the data into the
+canonical axis order of X - Y - Z - T - others.
 -   `CFAxis` has several methods added to work with multiple sets of labels
 associated with the axis.
 -   `CFLabel` has `print()` and `write()` methods.
 -   `CFVariable::subset()` can subset over a discrete axis with labels.
--   `summarise()` can now summarise over eras.
+-   `summarise()` can now summarise over eras. This yields a climatological
+statistic which is now supported with the appropriate "time" axis description.
 -   `actual_range` attribute is set on data arrays, axes and bounds.
 -   Fixed `summarise()` when temporal result yields scalar time axis.
 -   Fixed writing bounds for a "time" axis.

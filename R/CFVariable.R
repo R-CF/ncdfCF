@@ -482,7 +482,8 @@ CFVariable <- R6::R6Class("CFVariable",
       }
 
       # Assemble the CFArray instance
-      axes <- c(out_axes_dim, out_axes_other)
+      scalars <- self$axes[-(1L:num_axes)]
+      axes <- c(out_axes_dim, out_axes_other, scalars)
       names(axes) <- sapply(axes, function(a) a$name)
       CFArray$new(self$name, out_group, d, private$values_type, axes, crs, atts)
     }

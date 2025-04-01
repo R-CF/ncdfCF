@@ -57,6 +57,7 @@ CFAxis <- R6::R6Class("CFAxis",
       super$initialize(nc_var, grp)
       self$NCdim <- nc_dim
       self$orientation <- orientation
+      self$delete_attribute("_FillValue")
 
       nc_var$CF <- self
     },
