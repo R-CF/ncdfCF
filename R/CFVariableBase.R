@@ -63,6 +63,10 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
     #'   component of the axes are in decimal degrees of longitude and latitude.
     crs = NULL,
 
+    #' @field cell_measure The [CFCellMeasure] object of this variable, if
+    #'   defined.
+    cell_measure = NULL,
+
     #' @description Create an instance of this class.
     #' @param var The NC variable that describes this data object.
     #' @param group The group that this data object should live in.

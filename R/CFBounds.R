@@ -14,7 +14,7 @@ CFBounds <- R6::R6Class("CFBounds",
   private = list(
     values = NULL, # A matrix with the bounds values.
 
-    dims = NULL    # The length of self$values in all dimensions
+    dims = NULL    # The length of private$values in all dimensions
   ),
   public = list(
     #' @field NCdim The [NCDimension] that stores the netCDF dimension details

@@ -260,6 +260,13 @@ CFAxis <- R6::R6Class("CFAxis",
         self$NCdim$length
     },
 
+    #' @field values (read-only) Retrieve the raw values of the axis. In general
+    #'   you should use the `coordinates` field rather than this one.
+    values = function(value) {
+      if (missing(value))
+        private$get_values()
+    },
+
     #' @field coordinates (read-only) Retrieve the coordinate values of the
     #' axis.
     coordinates = function(value) {

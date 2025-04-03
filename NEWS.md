@@ -1,5 +1,6 @@
 # ncdfCF (development version)
 
+-   Cell measure variables fully supported.
 -   Writing a `CFArray` instance to file automatically orients the data into the
 canonical axis order of X - Y - Z - T - others.
 -   `CFAxis` has several methods added to work with multiple sets of labels
@@ -9,6 +10,10 @@ associated with the axis.
 -   `summarise()` can now summarise over eras. This yields a climatological
 statistic which is now supported with the appropriate "time" axis description.
 -   `actual_range` attribute is set on data arrays, axes and bounds.
+-   Check for duplicate object names at group level added.
+-   Axis `values` fields made private. Read-only access provided through 
+`CFAxis$values` and `CFAxis$coordinates` (preferred) for consistent access
+patterns throughout the axis class hierarchy.
 -   Fixed `summarise()` when temporal result yields scalar time axis.
 -   Fixed writing bounds for a "time" axis.
 -   Fixed saving a packed `CFArray` when the original netCDF file was packed as

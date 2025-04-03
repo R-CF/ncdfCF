@@ -55,6 +55,8 @@ directly from the \link{CFAxis} instances that this list holds.}
 or \link{CFAuxiliaryLongLat} that hold longitude and latitude values for
 every grid point in the data variable that references them.}
 
+\item{\code{CFmeasures}}{List of cell measures variables in this group.}
+
 \item{\code{CFcrs}}{List of grid mappings located in this group.}
 }
 \if{html}{\out{</div>}}
@@ -66,6 +68,11 @@ every grid point in the data variable that references them.}
 
 \item{\code{handle}}{(read-only) Get the handle to the netCDF resource for the
 group}
+
+\item{\code{root}}{(read-only) Retrieve the root group.}
+
+\item{\code{data_set}}{(read-only) Retrieve the \link{CFDataset} that the group
+belongs to.}
 }
 \if{html}{\out{</div>}}
 }
@@ -77,8 +84,10 @@ group}
 \item \href{#method-NCGroup-hierarchy}{\code{NCGroup$hierarchy()}}
 \item \href{#method-NCGroup-find_by_name}{\code{NCGroup$find_by_name()}}
 \item \href{#method-NCGroup-find_dim_by_id}{\code{NCGroup$find_dim_by_id()}}
+\item \href{#method-NCGroup-has_name}{\code{NCGroup$has_name()}}
 \item \href{#method-NCGroup-unused}{\code{NCGroup$unused()}}
 \item \href{#method-NCGroup-addAuxiliaryLongLat}{\code{NCGroup$addAuxiliaryLongLat()}}
+\item \href{#method-NCGroup-addCellMeasure}{\code{NCGroup$addCellMeasure()}}
 \item \href{#method-NCGroup-fullnames}{\code{NCGroup$fullnames()}}
 \item \href{#method-NCGroup-dimensions}{\code{NCGroup$dimensions()}}
 \item \href{#method-NCGroup-variables}{\code{NCGroup$variables()}}
@@ -218,6 +227,30 @@ argument. If the object is not found, returns \code{NULL}.
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-has_name"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-has_name}{}}}
+\subsection{Method \code{has_name()}}{
+Has a given name been defined in this group already?
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$has_name(name, scope = "both")}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{Character string. The name will be searched for, regardless
+of case.}
+
+\item{\code{scope}}{Either "CF" for a CF construct, "NC" for a
+netCDF variable, or "both" (default) to test both scopes.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{TRUE} if \code{name} is present in the group, \code{FALSE} otherwise.
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCGroup-unused"></a>}}
 \if{latex}{\out{\hypertarget{method-NCGroup-unused}{}}}
 \subsection{Method \code{unused()}}{
@@ -252,6 +285,26 @@ longitude and latitude values, respectively.}
 \item{\code{bndsLong, bndsLat}}{Instances of \link{CFBounds} with the 2D bounds of the
 longitude and latitude grid values, respectively, or \code{NULL} when not
 set.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{self} invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-addCellMeasure"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-addCellMeasure}{}}}
+\subsection{Method \code{addCellMeasure()}}{
+Add a cell measure variable to the group.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$addCellMeasure(cm)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{cm}}{Instance of \link{CFCellMeasure}.}
 }
 \if{html}{\out{</div>}}
 }

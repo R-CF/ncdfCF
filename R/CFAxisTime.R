@@ -11,16 +11,19 @@ NULL
 CFAxisTime <- R6::R6Class("CFAxisTime",
   inherit = CFAxis,
   private = list(
+    # The `CFTime` instance to manage CF time.
+    tm = NULL,
+
     get_values = function() {
-      self$values$offsets
+      private$tm$offsets
     },
 
     get_coordinates = function() {
-      self$values$as_timestamp()
+      private$tm$as_timestamp()
     },
 
     dimvalues_short = function() {
-      time <- self$values
+      time <- private$tm
       nv <- length(time$offsets)
       if (!nv) { # it happens...
         vals <- "(no values)"
@@ -35,9 +38,6 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     }
   ),
   public = list(
-    #' @field values The `CFTime` instance to manage CF time.
-    values     = NULL,
-
     #' @description Create a new instance of this class.
     #' @param grp The group that contains the netCDF variable.
     #' @param nc_var The netCDF variable that describes this instance.
@@ -45,7 +45,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @param values The `CFTime` instance that manages this axis.
     initialize = function(grp, nc_var, nc_dim, values) {
       super$initialize(grp, nc_var, nc_dim, "T")
-      self$values <- values
+      private$tm <- values
       self$set_attribute("units", "NC_CHAR", values$cal$definition)
       self$set_attribute("calendar", "NC_CHAR", values$cal$name)
       self$set_attribute("standard_name", "NC_CHAR", "time")
@@ -60,7 +60,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     print = function(...) {
       super$print()
 
-      time <- self$values
+      time <- private$tm
       len <- length(time)
       rng <- time$range()
       rng <- if (rng[1L] == rng[2L]) rng[1L]
@@ -89,7 +89,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' this axis.
     #' @return An instance of `CFTime`.
     time = function() {
-      self$values
+      private$tm
     },
 
     #' @description Retrieve the indices of supplied values on the time axis.
@@ -102,7 +102,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @return An integer vector giving the indices in the time axis of valid
     #' values in `x`, or `integer(0)` if none of the values are valid.
     indexOf = function(x, method = "constant", rightmost.closed = FALSE) {
-      time <- self$values
+      time <- private$tm
       idx <- time$indexOf(x, method)
       idx <- idx[!is.na(idx) & idx > 0 & idx < .Machine$integer.max]
       len <- length(idx)
@@ -121,7 +121,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @return An integer vector giving the indices in the time axis between
     #'   values in `x`, or `integer(0)` if none of the values are valid.
     slice = function(x, rightmost.closed = FALSE) {
-      time <- self$values
+      time <- private$tm
       idx <- time$slice(x, rightmost.closed)
       (1L:length(time))[idx]
     },
@@ -141,10 +141,10 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #'   the entire axis (possibly as a scalar axis).
     sub_axis = function(group, rng = NULL) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
-      time <- self$values
+      time <- private$tm
 
       .make_scalar <- function(idx) {
-        scl <- CFAxisScalar$new(group, var, "T", as_timestamp(self$values)[idx])
+        scl <- CFAxisScalar$new(group, var, "T", as_timestamp(time)[idx])
         bnds <- time$get_bounds()
         if (!is.null(bnds)) scl$bounds <- bnds[, idx]
         private$copy_label_subset_to(scl, idx)
@@ -152,7 +152,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       }
 
       if (is.null(rng)) {
-        if (length(self$values) > 1L) {
+        if (length(time) > 1L) {
           ax <- self$clone()
           ax$group <- group
           ax
@@ -181,11 +181,11 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #'   `NULL`, the handle to a netCDF file or a group therein.
     #' @return Self, invisibly.
     write = function(nc = NULL) {
-      if (self$values$cal$name == "gregorian")
+      if (private$tm$cal$name == "gregorian")
         self$set_attribute("calendar", "NC_CHAR", "standard")
       super$write(nc)
 
-      .writeTimeBounds(nc, self$name, self$values)
+      .writeTimeBounds(nc, self$name, private$tm)
     }
   ),
   active = list(
@@ -199,7 +199,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' vector.
     dimnames = function(value) {
       if (missing(value))
-        format(self$values)
+        format(private$tm)
     }
   )
 )

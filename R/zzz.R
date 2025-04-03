@@ -4,5 +4,6 @@ CF <- new.env(parent = emptyenv())
 
 .onLoad <- function(libname, pkgname) {
   assign("memory_cell_limit", 1e8, envir = CF)
+  assign("eps", .Machine$double.eps^0.5, envir = CF)
 }
 #nocov end

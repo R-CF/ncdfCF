@@ -44,7 +44,7 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
       }
 
       if (is.null(rng)) {
-        if (length(self$values) > 1L) {
+        if (length(private$values) > 1L) {
           ax <- self$clone()
           ax$group <- group
           ax
@@ -52,10 +52,10 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
           .make_scalar(1L)
       } else {
         if (rng[1L] == rng[2L])
-          .make_scalar(self$values[rng[1L]])
+          .make_scalar(private$values[rng[1L]])
         else {
           dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
-          lat <- CFAxisLatitude$new(group, var, dim, self$values[rng[1L]:rng[2L]])
+          lat <- CFAxisLatitude$new(group, var, dim, private$values[rng[1L]:rng[2L]])
           bnds <- self$bounds
           if (inherits(bnds, "CFBounds")) lat$bounds <- bnds$sub_bounds(group, rng)
           private$copy_label_subset_to(lat, idx)

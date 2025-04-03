@@ -34,12 +34,15 @@
 CFArray <- R6::R6Class("CFArray",
   inherit = CFVariableBase,
   private = list(
+    # The data of this object.
+    values = NULL,
+
     # The range of the values.
     actual_range = c(NA_real_, NA_real_),
 
-    # Orient self$values in such a way that it conforms to regular R arrays: axis
+    # Orient private$values in such a way that it conforms to regular R arrays: axis
     # order will be Y-X-Z-T-others and Y values will go from the top to the bottom.
-    # Alternatively, order self$values in the CF canonical order.
+    # Alternatively, order private$values in the CF canonical order.
     # Argument ordering must be "R" or "CF".
     # Returns a new array with an attribute "axes" that lists axis names in the
     # order of the new array.
@@ -53,15 +56,15 @@ CFArray <- R6::R6Class("CFArray",
 
       if (sum(order) == 0L) {
         warning("Cannot orient data array because axis orientation has not been set")
-        return(self$values)
+        return(private$values)
       }
       if (all(diff(order[which(order > 0L)]) > 0L)) {
-        out <- self$values
+        out <- private$values
         attr(out, "axes") <- private$dim_names()
       } else {
-        all_dims <- seq(length(dim(self$values)))
+        all_dims <- seq(length(dim(private$values)))
         perm <- c(order[which(order > 0L)], all_dims[!(all_dims %in% order)])
-        out <- aperm(self$values, perm)
+        out <- aperm(private$values, perm)
         attr(out, "axes") <- private$dim_names()[perm]
       }
 
@@ -84,18 +87,15 @@ CFArray <- R6::R6Class("CFArray",
 
     # Get all the data values
     get_values = function() {
-      self$values
+      private$values
     },
 
     # Internal apply/tapply over the temporal axis.
     process_data = function(tdim, fac, fun, ...) {
-      .process.data(self$values, tdim, fac, fun, ...)
+      .process.data(private$values, tdim, fac, fun, ...)
     }
   ),
   public = list(
-    #' @field values The data of this object.
-    values = NULL,
-
     #' @description Create an instance of this class.
     #' @param name The name of the object.
     #' @param group The group that this data should live in. This is usually an
@@ -116,16 +116,18 @@ CFArray <- R6::R6Class("CFArray",
       var$attributes <- attributes
       super$initialize(var, group, axes, crs)
 
-      self$values <- values
+      private$values <- values
       private$values_type <- values_type
-      if (!all(is.na(self$values))) {
+      if (!all(is.na(private$values))) {
         private$actual_range <- round(range(values, na.rm = TRUE), 8)
         self$set_attribute("actual_range", values_type, private$actual_range)
       }
     },
 
     #' @description Print a summary of the data object to the console.
-    print = function() {
+    #' @param ... Arguments passed on to other functions. Of particular interest
+    #' is `width = ` to indicate a maximum width of attribute columns.
+    print = function(...) {
       cat("<Data array>", self$name, "\n")
       longname <- self$attribute("long_name")
       if (!is.na(longname) && longname != self$name)
@@ -133,13 +135,13 @@ CFArray <- R6::R6Class("CFArray",
 
       if (is.na(private$actual_range[1L])) {
         cat("\nValues: -\n")
-        cat(sprintf("    NA: %d (100%%)\n", length(self$values)))
+        cat(sprintf("    NA: %d (100%%)\n", length(private$values)))
       } else {
         units <- self$attribute("units")
         if (is.na(units)) units <- ""
         cat("\nValues: [", private$actual_range[1L], " ... ", private$actual_range[2L], "] ", units, "\n", sep = "")
-        NAs <- sum(is.na(self$values))
-        cat(sprintf("    NA: %d (%.1f%%)\n", NAs, NAs * 100 / length(self$values)))
+        NAs <- sum(is.na(private$values))
+        cat(sprintf("    NA: %d (%.1f%%)\n", NAs, NAs * 100 / length(private$values)))
       }
 
       cat("\nAxes:\n")
@@ -149,7 +151,7 @@ CFArray <- R6::R6Class("CFArray",
       axes <- as.data.frame(axes[lengths(axes) > 0L])
       print(.slim.data.frame(axes, 50L), right = FALSE, row.names = FALSE)
 
-      self$print_attributes()
+      self$print_attributes(...)
     },
 
     #' @description Retrieve the data in the object exactly as it was produced
@@ -157,8 +159,8 @@ CFArray <- R6::R6Class("CFArray",
     #' @return The data in the object. This is usually an `array` with the
     #' contents along axes varying.
     raw = function() {
-      dimnames(self$values) <- self$dimnames
-      self$values
+      dimnames(private$values) <- self$dimnames
+      private$values
     },
 
     #' @description Retrieve the data in the object in the form of an R array,
@@ -168,7 +170,7 @@ CFArray <- R6::R6Class("CFArray",
       if (length(self$axes) < 2L)
         stop("Cannot create an array from data object with only one axis.", call. = FALSE)
 
-      dimnames(self$values) <- self$dimnames
+      dimnames(private$values) <- self$dimnames
       private$orient("R")
     },
 
@@ -210,7 +212,7 @@ CFArray <- R6::R6Class("CFArray",
 
       # Create the object
       arr <- self$array()
-      numdims <- length(dim(self$values))
+      numdims <- length(dim(private$values))
       dn <- dimnames(arr)
       if (numdims == 4L) {
         r <- terra::sds(arr, extent = ext, crs = wkt)
@@ -244,7 +246,7 @@ CFArray <- R6::R6Class("CFArray",
       exp <- expand.grid(lapply(self$axes, function(ax) ax$coordinates),
                          KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE)
       dt <- data.table::as.data.table(exp)
-      suppressWarnings(dt[ , eval(self$name) := self$values])
+      suppressWarnings(dt[ , eval(self$name) := private$values])
 
       long_name <- self$attribute("long_name")
       if (is.na(long_name)) long_name <- ""
@@ -309,7 +311,7 @@ CFArray <- R6::R6Class("CFArray",
     #' @field dimnames (read-only) Retrieve dimnames of the data object.
     dimnames = function(value) {
       if (missing(value)) {
-        len <- length(dim(self$values))
+        len <- length(dim(private$values))
         dn <- lapply(1:len, function(ax) dimnames(self$axes[[ax]]))
         names(dn) <- sapply(1:len, function(ax) self$axes[[ax]]$name)
         dn

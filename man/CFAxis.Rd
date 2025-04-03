@@ -33,6 +33,9 @@ orientation of the axis, or an empty string if not known or different.}
 
 \item{\code{length}}{(read-only) The declared length of this axis.}
 
+\item{\code{values}}{(read-only) Retrieve the raw values of the axis. In general
+you should use the \code{coordinates} field rather than this one.}
+
 \item{\code{coordinates}}{(read-only) Retrieve the coordinate values of the
 axis.}
 

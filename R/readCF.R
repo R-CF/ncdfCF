@@ -75,6 +75,9 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   # Auxiliary CVs and scalar CVs
   .makeCoordinates(root)
 
+  # Cell measure variables
+  .makeCellMeasures(root, axes)
+
   # Coordinate reference systems
   .makeCRS(root)
 
@@ -409,7 +412,7 @@ peek_ncdf <- function(resource) {
 #' @noRd
 .makeCoordinates <- function(grp) {
   if (length(grp$NCvars) > 0L) {
-    # Scan each unused NCVariable for the "coordinates" property and process.
+    # Scan each unused NCVariable for the "coordinates" attribute and process.
     # The NCVariable must have dimensional axes.
     for (refid in seq_along(grp$NCvars)) {
       v <- grp$NCvars[[refid]]
@@ -474,6 +477,62 @@ peek_ncdf <- function(resource) {
   # Descend into subgroups
   if (length(grp$subgroups))
     lapply(grp$subgroups, function(g) .makeCoordinates(g))
+}
+
+#' Make CF constructs for "cell_measures" references
+#'
+#' NC variables are scanned for a "cell_measures" attribute (which must be a
+#' data variable or domain variable). The NC variable referenced is converted
+#' into a `CFCellMeasure` instance, in the group of that NC variable.
+#'
+#' The "cell_measures" may also be located in an external file. It is up to the
+#' caller to link to any such external file.
+#'
+#' @param grp The group to scan.
+#' @param axes List of available CF axes to use with the cell measure variables.
+#'
+#' @return Nothing. `CFCellMeasure` instances are created in the group where
+#'   the referenced NC variable is found. These will later be picked up when
+#'   CFvariables are created.
+#' @noRd
+.makeCellMeasures <- function(grp, axes) {
+  if (length(grp$NCvars) > 0L) {
+    # Scan each unused NCVariable for the "cell_measures" attribute and process.
+    for (refid in seq_along(grp$NCvars)) {
+      v <- grp$NCvars[[refid]]
+      if (!length(v$CF) && !is.na(meas <- v$attribute("cell_measures"))) {
+        meas <- trimws(strsplit(meas, " ", fixed = TRUE)[[1L]], whitespace = "[ \t\r\n\\:]")
+        meas <- meas[which(nzchar(meas))]
+        m <- grp$find_by_name(meas[2L], "NC")
+        if (is.null(m)) {
+          # External variable
+          root <- grp$root
+          ev <- root$attribute("external_variables")
+          if (is.na(ev) || !(meas[2L] %in% trimws(strsplit(ev, " ", fixed = TRUE)[[1L]]))) {
+            # FIXME: warning
+            warning("Unmatched `cell_measures` value '", meas[2L], "' found in variable '", v$name, "'", call. = FALSE)
+            next
+          }
+          # If it exists, move on, else create a cell measure variable
+          cmv <- grp$find_by_name(meas[2L])
+          if (inherits(cmv, "CFCellMeasure")) next
+          cm <- CFCellMeasure$new(root, meas[1L], meas[2L])
+          root$addCellMeasure(cm)
+        } else {
+          # Cell measures variable is internal. If it already exists, simply
+          # continue with the next iteration.
+          if (length(m$CF)) next
+          ax <- .buildVariableAxisList(m, axes)
+          cm <- CFCellMeasure$new(m$group, meas[1L], meas[2L], m, ax)
+          m$group$addCellMeasure(cm)
+        }
+      }
+    }
+  }
+
+  # Descend into subgroups
+  if (length(grp$subgroups))
+    lapply(grp$subgroups, function(g) .makeCellMeasures(g, axes))
 }
 
 #' Make CRS instances for "grid_mapping" references
@@ -548,18 +607,7 @@ peek_ncdf <- function(resource) {
     # Create variable for each unused NCVariable with dimensions
     vars <- lapply(grp$NCvars, function(v) {
       if (!length(v$CF) && v$ndims > 0L) {
-        xids <- lapply(axes, function(x) x$dimid)
-        ax <- vector("list", v$ndims)
-        for (x in 1:v$ndims) {
-          ndx <- which(sapply(xids, function(e) v$dimids[x] %in% e))
-          if (!length(ndx)) {
-            warning(paste0("Possible variable '", v$name, "' cannot be constructed because of unknown axis identifier ", v$dimids[x]))
-            # FIXME
-            return(NULL)
-          }
-          ax[[x]] <- axes[[ndx]]
-        }
-        names(ax) <- sapply(ax, function(x) x$name)
+        ax <- .buildVariableAxisList(v, axes)
         var <- CFVariable$new(grp, v, ax)
 
         # Add references to any "coordinates" of the variable
@@ -598,6 +646,16 @@ peek_ncdf <- function(resource) {
           }
         }
 
+        # Add cell_measures
+        if (!is.na(cm <- v$attribute("cell_measures"))) {
+          meas <- trimws(strsplit(cm, " ", fixed = TRUE)[[1L]][2L])
+          cmv <- v$group$find_by_name(meas, "CF")
+          if (inherits(cmv, "CFCellMeasure")) {
+            var$cell_measure <- cmv
+            cmv$register(var)
+          }
+        }
+
         # Add grid mapping
         gm <- v$attribute("grid_mapping")
         if (!is.na(gm)) {
@@ -619,6 +677,28 @@ peek_ncdf <- function(resource) {
     vars <- append(vars, unlist(lapply(grp$subgroups, function(g) .buildVariables(g, axes))))
 
   vars
+}
+
+#' Build a list of axes that a NC variable references.
+#'
+#' @param ncvar The NC variable to build the axis list for.
+#' @param axes List of available CF axes to use with the CF variables.
+#' @return List of axes for the NC variable.
+#' @noRd
+.buildVariableAxisList <- function(ncvar, axes) {
+  xids <- lapply(axes, function(x) x$dimid)
+  ax <- vector("list", ncvar$ndims)
+  for (x in 1:ncvar$ndims) {
+    ndx <- which(sapply(xids, function(e) ncvar$dimids[x] %in% e))
+    if (!length(ndx)) {
+      warning(paste0("Possible variable '", ncvar$name, "' cannot be constructed because of unknown axis identifier ", ncvar$dimids[x]))
+      # FIXME
+      return(NULL)
+    }
+    ax[[x]] <- axes[[ndx]]
+  }
+  names(ax) <- sapply(ax, function(x) x$name)
+  ax
 }
 
 # Read the attributes for a group or a variable

@@ -9,18 +9,21 @@
 CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
   inherit = CFAxis,
   private = list(
+    # The values of the axis, usually a numeric vector.
+    values = NULL,
+
     get_values = function() {
-      self$values
+      private$values
     },
 
     dimvalues_short = function() {
       lbls <- self$labels
-      nv <- length(self$values)
+      nv <- length(private$values)
       if (!length(lbls)) {
         if (nv == 1L)
-          dims <- sprintf("[%s]", gsub(" ", "", formatC(self$values[1L], digits = 8L)))
+          dims <- sprintf("[%s]", gsub(" ", "", formatC(private$values[1L], digits = 8L)))
         else {
-          vals <- trimws(formatC(c(self$values[1L], self$values[nv]), digits = 8L))
+          vals <- trimws(formatC(c(private$values[1L], private$values[nv]), digits = 8L))
           dims <- sprintf("[%s ... %s]", vals[1L], vals[2L])
         }
       } else {
@@ -32,9 +35,6 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     }
   ),
   public = list(
-    #' @field values The values of the axis, usually a numeric vector.
-    values     = NULL,
-
     #' @description Create a new instance of this class.
     #' @param grp The group that contains the netCDF variable.
     #' @param nc_var The netCDF variable that describes this instance.
@@ -44,7 +44,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #' @param values The coordinates of this axis.
     initialize = function(grp, nc_var, nc_dim, orientation, values) {
       super$initialize(grp, nc_var, nc_dim, orientation)
-      self$values <- values
+      private$values <- values
       self$set_attribute("actual_range", nc_var$vtype, range(values))
     },
 
@@ -60,7 +60,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       if (units == "1") units <- ""
 
       lbls <- self$labels
-      len <- length(self$values)
+      len <- length(private$values)
       if (length(lbls)) {
         lbls <- lbls[[1L]]$values
         if (len < 5L)
@@ -69,10 +69,10 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
           cat("Values   : ", lbls[1L], ", ", lbls[2L], " ... ", lbls[len - 1L], ", ", lbls[len], "\n", sep = "")
       } else {
         if (len < 7L) {
-          vals <- trimws(formatC(self$values, digits = 8L))
+          vals <- trimws(formatC(private$values, digits = 8L))
           cat("Values   : ", paste(vals, collapse = ", "), " ", units, "\n", sep = "")
         } else {
-          vals <- trimws(formatC(c(self$values[1L:3L], self$values[(len-2):len], digits = 8L)))
+          vals <- trimws(formatC(c(private$values[1L:3L], private$values[(len-2):len], digits = 8L)))
           cat("Values   : ", vals[1L], ", ", vals[2L], ", ", vals[3L], " ... ", vals[4L], ", ", vals[5L], ", ", vals[6L], " ", units, "\n", sep = "")
         }
       }
@@ -97,7 +97,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #' @return A numeric vector with two elements with the minimum and maximum
     #' values in the axis, respectively.
     range = function() {
-      range(self$values)
+      range(private$values)
     },
 
     #' @description Retrieve the indices of supplied values on the axis. If the
@@ -112,7 +112,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     indexOf = function(x, method = "constant") {
       if (length(self$bounds))
         vals <- c(self$bounds$bounds[1L, 1L], self$bounds$bounds[2L, ])
-      else vals <- self$values
+      else vals <- private$values
       idx <- stats::approx(vals, 1L:length(vals), x, method = method, yleft = 0L, yright = .Machine$integer.max)$y
       idx <- idx[!is.na(idx) & idx > 0 & idx < .Machine$integer.max]
       as.integer(idx)
@@ -143,7 +143,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       }
 
       if (is.null(rng)) {
-        if (length(self$values) > 1L) {
+        if (length(private$values) > 1L) {
           ax <- self$clone()
           ax$group <- group
           ax
@@ -151,10 +151,10 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
           .make_scalar(1L)
       } else {
         if (rng[1L] == rng[2L])
-          .make_scalar(self$values[rng[1L]])
+          .make_scalar(private$values[rng[1L]])
         else {
           dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
-          ax <- CFAxisNumeric$new(group, var, dim, self$orientation, self$values[rng[1L]:rng[2L]])
+          ax <- CFAxisNumeric$new(group, var, dim, self$orientation, private$values[rng[1L]:rng[2L]])
           bnds <- self$bounds
           if (inherits(bnds, "CFBounds")) ax$bounds <- bnds$sub_bounds(group, rng)
           private$copy_label_subset_to(ax, idx)
@@ -176,7 +176,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     dimnames = function(value) {
       if (missing(value)) {
         if (length(self$lbls)) self$lbls[[1L]]$values
-        else round(self$values, 6L)
+        else round(private$values, 6L)
       }
     }
   )

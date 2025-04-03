@@ -12,16 +12,20 @@
 CFAxisScalar <- R6::R6Class("CFAxisScalar",
   inherit = CFAxis,
   private = list(
+    # The value of the axis. This could be a composite value, such
+    # as a `CFTime` instance.
+    value = NULL,
+
     get_values = function() {
-      if (inherits(self$values, "CFTime")) self$values$offsets
-      else self$values
+      if (inherits(private$value, "CFTime")) private$value$offsets
+      else private$value
     },
 
     get_coordinates = function() {
-      if (inherits(self$values, "CFTime")) self$values$as_timestamp()
+      if (inherits(private$value, "CFTime")) private$value$as_timestamp()
       else if (self$has_labels)
         self$label_set()
-      else self$values
+      else private$value
     },
 
     dimvalues_short = function() {
@@ -29,10 +33,6 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     }
   ),
   public = list(
-    #' @field values The value of the axis. This could be a composite value, such
-    #' as a `CFTime` instance.
-    values = NULL,
-
     #' @description Create an instance of this class.
     #' @param grp The group that contains the netCDF variable.
     #' @param nc_var The netCDF variable that describes this instance.
@@ -42,7 +42,7 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     initialize = function(grp, nc_var, orientation, value) {
       dim <- NCDimension$new(-1L, nc_var$name, 1L, FALSE)
       super$initialize(grp, nc_var, dim, orientation)
-      self$values <- value
+      private$value <- value
       self$set_attribute("actual_range", nc_var$vtype, c(value, value))
     },
 
@@ -61,15 +61,15 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
 
       cat("Axis     :", self$orientation, "\n")
 
-      if (inherits(self$values, "CFTime")) {
-        cat("Value    :", as_timestamp(self$values), "\n")
-        bnds <- self$values$get_bounds("timestamp")
+      if (inherits(private$value, "CFTime")) {
+        cat("Value    :", as_timestamp(private$value), "\n")
+        bnds <- private$value$get_bounds("timestamp")
         if (is.null(bnds)) cat("Bounds   : (not set)\n")
         else cat("Bounds   : ", bnds[1L, 1L], ", ", bnds[2L, 1L], "\n", sep = "")
       } else {
         units <- self$attribute("units")
         if (is.na(units)) units <- ""
-        cat("Value    : ", self$values, " ", units, "\n", sep = "")
+        cat("Value    : ", private$value, " ", units, "\n", sep = "")
         if (inherits(self$bounds, "CFBounds"))
           self$bounds$print(...)
         else cat("Bounds   : (not set)\n")
@@ -97,7 +97,7 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     #' @return An instance of `CFTime`, or `NULL` if this axis does not
     #' represent time.
     time = function() {
-      if (inherits(self$values, "CFTime")) self$values
+      if (inherits(private$value, "CFTime")) private$value
       else NULL
     },
 
@@ -122,8 +122,8 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     #' @return Self, invisibly.
     write = function(nc = NULL) {
       super$write(nc)
-      if (inherits(self$values, "CFTime"))
-        .writeTimeBounds(nc, self$name, self$values)
+      if (inherits(private$value, "CFTime"))
+        .writeTimeBounds(nc, self$name, private$value)
     }
   ),
   active = list(
@@ -136,8 +136,8 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     #' @field dimnames (read-only) The coordinate of the axis.
     dimnames = function(value) {
       if (missing(value))
-        if (inherits(self$values, "CFTime")) as_timestamp(self$values)
-        else self$values
+        if (inherits(private$value, "CFTime")) as_timestamp(private$value)
+        else private$value
     }
   )
 )

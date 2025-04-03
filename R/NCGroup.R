@@ -59,6 +59,9 @@ NCGroup <- R6::R6Class("NCGroup",
     #'   every grid point in the data variable that references them.
     CFaux     = list(),
 
+    #' @field CFmeasures List of cell measures variables in this group.
+    CFmeasures = list(),
+
     #' @field CFcrs List of grid mappings located in this group.
     CFcrs     = list(),
 
@@ -185,6 +188,9 @@ NCGroup <- R6::R6Class("NCGroup",
           idx <- which(names(g$CFlabels) == nm)
           if (length(idx)) return(g$CFlabels[[idx]])
 
+          idx <- which(names(g$CFmeasures) == nm)
+          if (length(idx)) return(g$CFmeasures[[idx]])
+
           idx <- which(names(g$CFcrs) == nm)
           if (length(idx)) return(g$CFcrs[[idx]])
         } else {
@@ -238,6 +244,32 @@ NCGroup <- R6::R6Class("NCGroup",
         return(NULL)
     },
 
+    #' @description Has a given name been defined in this group already?
+    #'
+    #' @param name Character string. The name will be searched for, regardless
+    #' of case.
+    #' @param scope Either "CF" for a CF construct, "NC" for a
+    #'   netCDF variable, or "both" (default) to test both scopes.
+    #'
+    #' @return `TRUE` if `name` is present in the group, `FALSE` otherwise.
+    has_name = function(name, scope = "both") {
+      name <- tolower(name)
+      res <- if (scope %in% c("NC", "both")) name %in% tolower(names(self$NCvars))
+             else FALSE
+      if (scope %in% c("CF", "both"))
+        res <- res ||
+               name %in% tolower(c(names(self$CFvars),
+                                   names(self$CFaxes),
+                                   names(self$CFaux),
+                                   names(self$CFlabels),
+                                   names(self$CFcrs),
+                                   names(self$CFmeasures)))
+      else
+        stop("Invalid 'scope' argument supplied.", call. = FALSE)
+
+      res
+    },
+
     #' @description Find NC variables that are not referenced by CF objects. For
     #'   debugging purposes only.
     #' @return List of [NCVariable].
@@ -258,13 +290,11 @@ NCGroup <- R6::R6Class("NCGroup",
     #'   creates a [CFAuxiliaryLongLat] from the arguments and adds it to the
     #'   group `CFaux` list, but only if the combination of `lon`, `lat` isn't
     #'   already present.
-    #'
     #' @param lon,lat Instances of [NCVariable] having a two-dimensional grid of
     #'   longitude and latitude values, respectively.
     #' @param bndsLong,bndsLat Instances of [CFBounds] with the 2D bounds of the
     #'   longitude and latitude grid values, respectively, or `NULL` when not
     #'   set.
-    #'
     #' @return `self` invisibly.
     addAuxiliaryLongLat = function(lon, lat, bndsLong, bndsLat) {
       nm <- paste(lon$name, lat$name, sep = "_")
@@ -276,6 +306,15 @@ NCGroup <- R6::R6Class("NCGroup",
         if (!any(sapply(known, function(k) k[1L] == lon$id && k[2L] == lat$id)))
           self$CFaux[[nm]] <- CFAuxiliaryLongLat$new(lon, lat, bndsLong, bndsLat)
       }
+      invisible(self)
+    },
+
+    #' @description Add a cell measure variable to the group.
+    #' @param cm Instance of [CFCellMeasure].
+    #' @return `self` invisibly.
+    addCellMeasure = function(cm) {
+      self$CFmeasures <- append(self$CFmeasures, cm)
+      names(self$CFmeasures) <- sapply(self$CFmeasures, function(m) m$name)
       invisible(self)
     },
 
@@ -368,6 +407,25 @@ NCGroup <- R6::R6Class("NCGroup",
         else self$resource$group_handle(self$fullname)
       else
         stop("Can't assign a value to a netCDF resource handle", call. = FALSE)
+    },
+
+    #' @field root (read-only) Retrieve the root group.
+    root = function(value) {
+      if (missing(value)) {
+        g <- self
+        while (g$name != "/") g <- g$parent
+        g
+      }
+    },
+
+    #' @field data_set (read-only) Retrieve the [CFDataset] that the group
+    #' belongs to.
+    data_set = function(value) {
+      if (missing(value)) {
+        g <- self
+        while (inherits(g, "NCGroup")) g <- g$parent
+        g
+      }
     }
   )
 )

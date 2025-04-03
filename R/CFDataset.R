@@ -83,6 +83,10 @@ CFDataset <- R6::R6Class("CFDataset",
         vars <- as.data.frame(vars[lengths(vars) > 0L])
         print(.slim.data.frame(vars, ...), right = FALSE, row.names = FALSE)
 
+        ev <- self$attribute("external_variables")
+        if (!is.na(ev))
+          cat("\nExternal variable", if (length(ev) > 1L) "s", ": ", ev, "\n", sep = "")
+
         cat("\nAxes:\n")
         axes <- do.call(rbind, lapply(self$root$axes(), function(a) a$brief()))
         axes <- lapply(axes, function(c) if (all(c == "")) NULL else c)

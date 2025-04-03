@@ -229,17 +229,13 @@ bottom-right, just like a standard R array.
 
 ## ncdfCF data model in a nutshell
 
-The netCDF file format is very flexible, as well as CF, and the `ncdfCF`
-package uses a layered structure to capture it all.
+The netCDF file format is very flexible, as well as CF, and the `ncdfCF` package uses a layered structure to capture it all. This structure enables a full support of the features provided by the `netcdf` library and the CF Conventions.
 
-![Figure 2: The ncdfCF data model](ncdfCF-datamodel-0.4.png){width="680"} This
-structure enables a full support of the features provided by the
-`netcdf` library and the CF Conventions.
+![Figure 2: The ncdfCF data model](ncdfCF-datamodel-0.4.png){width="680"} 
 
 ## Feature matrix
 
-This section provides an overview of how this package implements the
-various elements of the CF Conventions.
+This section provides an overview of how this package implements the various elements of the CF Conventions.
 
 #### 2. NetCDF files and components
 
@@ -249,43 +245,33 @@ Any filename extension is allowed.
 
 ##### 2.2. Data types
 
-Any allowable data type can be read to and written from a netCDF file.
-In R, only the standard data types are used.
+Any allowable data type can be read to and written from a netCDF file. In R, only the standard data types are used.
 
 ##### 2.3. Naming conventions
 
-It is *required* that variable, dimension, attribute and group names
-begin with a letter and be composed of letters, digits, and underscores.
-The maximum length of a name is 255 characters.
+It is *required* that variable, dimension, attribute and group names begin with a letter and be composed of letters, digits, and underscores. The maximum length of a name is 255 characters.
+
+Names of NC variables - thus the names of CF objects built on top of them as well - must be unique, disregarding the case of the name, *within the group* in which the NC variable is defined. Scoping at group level is not mentioned in the CF conventions and this is thus an extension of the conventions.
 
 ##### 2.4. Dimensions
 
-Fully implemented. Axes of length 1 are automatically encoded as a
-scalar coordinate variable, thus avoiding the use of a dimension.
+Fully implemented. Axes of length 1 are automatically encoded as a scalar coordinate variable, thus avoiding the use of a dimension.
 
 ##### 2.5. Variables
 
-The `valid_range` attribute is determined when a `CFArray` is created or
-its values modified. The attribute is also attached to all axes and their
-boundaries.
+The `actual_range` attribute is determined when a `CFArray` is created or its values modified. The attribute is also attached to all axes and their boundaries.
 
-Upon saving a `CFArray` to a netCDF file, data may be packed and the
-appropriate attributes will be written along with the data.
+Upon saving a `CFArray` to a netCDF file, data may be packed and the appropriate attributes will be written along with the data.
 
 ##### 2.6. Attributes
 
-This package only interprets attributes that are defined by CF to have a
-special meaning that is relevant to reading, processing or writing data.
-Other attributes are read and presented to the user.
+This package only interprets attributes that are defined by CF to have a special meaning that is relevant to reading, processing or writing data. Other attributes are read and presented to the user.
 
 The attribute `Conventions` is written to file with value "CF-1.12".
 
-The attribute `history` is created in the group of the data variable or
-prepended with information on any processing that has been applied to
-the data.
+The attribute `history` is created in the group of the data variable or prepended with information on any processing that has been applied to the data.
 
-Other global, group or data variable attributes are not written to file
-automatically; the user has to add to amend these attributes explicitly.
+Other global, group or data variable attributes are not written to file automatically; the user has to add to amend these attributes explicitly.
 
 ##### 2.7. Groups
 
@@ -295,19 +281,13 @@ Fully implemented.
 
 ##### 3.1. Units
 
-The package does not use the UDUNITS library to manage units or convert
-between them.
+The package does not use the UDUNITS library to manage units or convert between them.
 
-The `units` attribute is interpreted for axes and effectively required
-for the dimensions "that receive special treatment" (see sections 4.1 -
-4.4) or they will not be recognized as such. Otherwise presence or
-contents of the attribute is not tested.
+The `units` attribute is interpreted for axes and effectively required for the dimensions "that receive special treatment" (see sections 4.1 - 4.4) or they will not be recognized as such. Otherwise presence or contents of the attribute is not tested.
 
-The `units_metadata` attribute is not managed by this package. It is the
-responsibility of the user to set the appropriate value.
+The `units_metadata` attribute is not managed by this package. It is the responsibility of the user to set the appropriate value.
 
-Attributes `scale_factor` and `add_offset` are only used for packing
-data (section 8.1).
+Attributes `scale_factor` and `add_offset` are only used for packing data (section 8.1).
 
 ##### 3.2 Long name
 
@@ -315,10 +295,7 @@ Supported for all objects that have this attribute.
 
 ##### 3.3 Standard name
 
-The `standard_name` attribute is read but not checked against the
-standard name table. Objects with a `standard_name` attribute can be
-identified with the `CFDataset$objects_by_standard_name()` method,
-either for presence of the attribute or using a specific standard name.
+The `standard_name` attribute is read but not checked against the standard name table. Objects with a `standard_name` attribute can be identified with the `CFDataset$objects_by_standard_name()` method, either for presence of the attribute or using a specific standard name.
 
 ##### 3.4. Ancillary data
 
@@ -330,12 +307,9 @@ Not supported.
 
 #### 4. Coordinate types
 
-When opening a netCDF resource, axes are scanned for using the `units`
-or `axis` attribute, then the `standard_name`, and finally, as an
-extension to CF, by its `name` attribute.
+When opening a netCDF resource, axes are scanned for using the `units` or `axis` attribute, then the `standard_name`, and finally, as an extension to CF, by its `name` attribute.
 
-Upon writing, the `axis` attribute is added, if defined and not already
-present.
+Upon writing, the `axis` attribute is added, if defined and not already present.
 
 ##### 4.1. Latitude coordinate
 
@@ -347,25 +321,17 @@ Fully implemented.
 
 ##### 4.3. Vertical (heigth or depth) coordinate
 
-A vertical coordinate will be read but there is no complete support. The
-`positive` and `standard_name` attributes are not yet interpreted, nor
-is the `units` attribute assessed for a pressure or length unit.
+A vertical coordinate will be read but there is no complete support. The `positive` and `standard_name` attributes are not yet interpreted, nor is the `units` attribute assessed for a pressure or length unit.
 
 Parametric vertical coordinates are not yet supported.
 
 ##### 4.4. Time coordinate
 
-The time coordinate is managed by the
-[CFtime](https://cran.r-project.org/package=CFtime) package. All defined
-calendars, including the recently added `utc` and `tai` calendars, are
-supported, with some restrictions. Leap seconds are fully supported in
-notation and arithmetic when using the `utc` calendar.
+The time coordinate is managed by the [CFtime](https://cran.r-project.org/package=CFtime) package. All defined calendars, including the recently added `utc` and `tai` calendars, are supported, with some restrictions. Leap seconds are fully supported in notation and arithmetic when using the `utc` calendar.
 
-Upon writing, the deprecated `gregorian` calendar is replaced by the
-equivalent `standard` calendar.
+Upon writing, the deprecated `gregorian` calendar is replaced by the equivalent `standard` calendar.
 
-Time coordinates with no annual cycle and explicitly defined calendars
-are not supported.
+Time coordinates with no annual cycle and explicitly defined calendars are not supported.
 
 ##### 4.5. Discrete axis
 
@@ -373,12 +339,9 @@ Fully supported.
 
 #### 5. Coordinate systems and domain
 
-The `coordinates` attribute is interpreted, both for *coordinate
-variables* and *auxiliary coordinate variables*.
+The `coordinates` attribute is interpreted, both for *coordinate variables* and *auxiliary coordinate variables*.
 
-In `ncdfCF`, *auxiliary coordinate variables* will have axis
-orientations attached to them for ease-of-use and identification. This
-orientation will not be written to file as an `axis` attribute.
+In `ncdfCF`, *auxiliary coordinate variables* will have axis orientations attached to them for ease-of-use and identification. This orientation will not be written to file as an `axis` attribute.
 
 ##### 5.1. Independent latitude, longitude, vertical, and time axes
 
@@ -390,23 +353,13 @@ Fully supported.
 
 ##### 5.3. Reduced horizontal grid
 
-Not supported. But do note that one significant data collection of
-netCDF files using a reduced horizontal grid, MODIS level-3 binned
-format, uses a different format than the CF arrangement. `ncdfCF` does
-read this format without problem (extending CF by also supporting netCDF
-user-defined types).
+Not supported. But do note that one significant data collection of netCDF files using a reduced horizontal grid, MODIS level-3 binned format, uses a different format than the CF arrangement. `ncdfCF` does read this format without problem (extending CF by also supporting netCDF user-defined types).
 
 ##### 5.6. Horizontal coordinate reference systems, grid mappings, and projections
 
-The simple `grid_mapping` format is fully supported. The extended,
-second format is not supported. The `standard_name` on coordinate
-variables is not used; instead use is made of the axis orientation
-(either through the `axis` attribute or through another supported
-mechanism; see section 4.).
+The simple `grid_mapping` format is fully supported. The extended, second format is not supported. The `standard_name` on coordinate variables is not used; instead use is made of the axis orientation (either through the `axis` attribute or through another supported mechanism; see section 4.).
 
-`ncdfCF` uses OGC WKT2 strings to report on coordinate reference
-systems, rather than the stock-old and obsolete PROJ format as is
-suggested by CF.
+`ncdfCF` uses OGC WKT2 strings to report on coordinate reference systems, rather than the stock-old and obsolete PROJ format as is suggested by CF.
 
 The `crs_wkt` attribute is used when found.
 
@@ -426,15 +379,11 @@ Not implemented.
 
 ##### 6.1. Labels
 
-Generic labels are supported. This includes multiple sets of labels per
-axis. Labels can be used for display as well as in selection.
+Generic labels are supported. This includes multiple sets of labels per axis. Labels can be used for display as well as in selection.
 
-Geographic regions are also supported but not referenced against the
-list of *standardized region names* and neither is the `standard_name`
-attribute referenced in this context.
+Geographic regions are also supported but not referenced against the list of *standardized region names* and neither is the `standard_name` attribute referenced in this context.
 
-Taxon names and identifiers and their specific attributes are not
-specifically interpreted.
+Taxon names and identifiers and their specific attributes are not specifically interpreted.
 
 ##### 6.2. Alternative coordinates
 
@@ -444,11 +393,11 @@ These are not specifically supported but they will be read correctly.
 
 ##### 7.1. Cell boundaries
 
-Fully supported for 1D and 2D coordinate variables.
+Fully supported for 1D and 2D coordinate variables. Higher dimension coordinate variables are not yet supported.
 
 ##### 7.2. Cell measures
 
-Not implemented.
+Fully supported.
 
 ##### 7.3. Cell methods
 
@@ -456,12 +405,9 @@ Not implemented.
 
 ##### 7.4. Climatological statistics
 
-Climatological time series and their `climatology` bounds can be read
-from file.
+Climatological time series and their `climatology` bounds can be read from file.
 
-Climatological statistics can be generated using the `CFVariable` or
-`CFArray` `summarise()` method and written to file, including its
-bounds.
+Climatological statistics can be generated using the `CFVariable` or `CFArray` `summarise()` method and written to file, including its bounds.
 
 The corresponding `cell_methods` are not yet supported.
 

@@ -36,6 +36,7 @@ Collate:
     'CFAxisTime.R'
     'CFAxisVertical.R'
     'CFBounds.R'
+    'CFCellMeasure.R'
     'CFDataset.R'
     'CFGridMapping.R'
     'CFLabel.R'

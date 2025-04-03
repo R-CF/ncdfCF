@@ -147,7 +147,7 @@ CFVariable <- R6::R6Class("CFVariable",
         d[[l]] <- .process.data(values, tdim, FUN = fun, ...)
         # d is a list with lvls elements, each element a list with elements for
         # the number of function results, possibly 1; each element having an
-        # array of dimensions from self$values that are not tdim.
+        # array of dimensions from private$values that are not tdim.
       }
       res_dim <- dim(d[[1L]][[1L]])
       tdim_len <- length(d)
@@ -224,6 +224,10 @@ CFVariable <- R6::R6Class("CFVariable",
       if (all(axes$group == "/")) axes$group <- NULL
       axes <- as.data.frame(axes[lengths(axes) > 0L])
       print(.slim.data.frame(axes, ...), right = FALSE, row.names = FALSE)
+
+      if (!is.null(self$cell_measure)) {
+        cat("\nCell measure: ", self$cell_measure$name, " (", self$cell_measure$measure, ")\n", sep = "")
+      }
 
       if (!is.null(private$llgrid)) {
         cat("\nAuxiliary longitude-latitude grid:\n")

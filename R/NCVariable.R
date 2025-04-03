@@ -49,6 +49,9 @@ NCVariable <- R6::R6Class("NCVariable",
     #' @param dimids The identifiers of the dimensions this variable uses.
     #' @return An instance of this class.
     initialize = function(id, name, group, vtype, ndims, dimids) {
+      if (group$has_name(name))
+        stop("Object with 'name' already exists in the group.", call. = FALSE)
+
       super$initialize(id, name)
       self$group <- group
       self$vtype <- vtype

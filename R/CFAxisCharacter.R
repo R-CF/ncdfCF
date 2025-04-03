@@ -12,19 +12,19 @@
 CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
   inherit = CFAxis,
   private = list(
+    # The character labels of this axis.
+    values = NULL,
+
     get_values = function() {
-      self$values
+      private$values
     },
 
     dimvalues_short = function() {
-      if (self$length) sprintf("[%s]", paste0(self$values, collapse = ", "))
+      if (self$length) sprintf("[%s]", paste0(private$values, collapse = ", "))
       else "(no values)"
     }
   ),
   public = list(
-    #' @field values The character labels of this axis.
-    values     = NULL,
-
     #' @description Create a new instance of this class.
     #' @param grp The group that contains the netCDF variable.
     #' @param nc_var The netCDF variable that describes this instance.
@@ -34,7 +34,7 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
     #' @param values The character coordinates of this axis.
     initialize = function(grp, nc_var, nc_dim, orientation, values) {
       super$initialize(grp, nc_var, nc_dim, orientation)
-      self$values <- values
+      private$values <- values
       self$set_attribute("actual_range", nc_var$vtype, range(values))
     },
 
@@ -56,7 +56,7 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
     #' @return Numeric vector of the same length as `x`. Values of `x` outside of
     #'   the range of the values in the axis are returned as `NA`.
     indexOf = function(x, method = "constant") {
-      match(x, self$values)
+      match(x, private$values)
     }
   ),
   active = list(
@@ -69,7 +69,7 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
     #' vector.
     dimnames = function(value) {
     if (missing(value))
-      self$values
+      private$values
     }
   )
 )
