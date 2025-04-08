@@ -14,7 +14,7 @@
 #' @return A `NCGroup` instance.
 #' @export
 makeGroup <- function(id, name, fullname, parent = NULL) {
-  if (!.is_valid_name(name))
+  if (name != "/" && !.is_valid_name(name))
     stop("Name for group is not valid", call. = FALSE)
   NCGroup$new(id, name, fullname, parent, NULL)
 }

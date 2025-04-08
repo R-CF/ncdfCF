@@ -24,7 +24,7 @@ See also \link{CFAxisCharacter}, which is an axis with character labels.
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{labels}}{(read-only) The label set as a character vector.}
+\item{\code{coordinates}}{(read-only) The label set as a vector.}
 
 \item{\code{length}}{(read-only) The number of labels in the set.}
 
@@ -115,7 +115,7 @@ Retrieve a subset of the labels.
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A character vector, or \code{NULL} if the \code{rng} values are invalid.
+A \code{CFLabel} instance, or \code{NULL} if the \code{rng} values are invalid.
 }
 }
 \if{html}{\out{<hr>}}

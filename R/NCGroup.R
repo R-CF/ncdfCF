@@ -51,19 +51,20 @@ NCGroup <- R6::R6Class("NCGroup",
     #'   directly from the [CFAxis] instances that this list holds.
     CFaxes    = list(),
 
-    #' @field CFlabels List of labels located in this group.
-    CFlabels  = list(),
+    #' @field CFaux List of auxiliary coordinates located in this group. These
+    #' could be [CFLabel] instances or an axis.
+    CFaux  = list(),
 
-    #' @field CFaux List of auxiliary variables. These could be [CFAxisScalar]
-    #'   or [CFAuxiliaryLongLat] that hold longitude and latitude values for
-    #'   every grid point in the data variable that references them.
-    CFaux     = list(),
+    #' @field CFlonglat List of [CFAuxiliaryLongLat] that hold longitude and
+    #'   latitude values for every grid point in the data variable that
+    #'   references them.
+    CFlonglat = list(),
 
     #' @field CFmeasures List of cell measures variables in this group.
     CFmeasures = list(),
 
     #' @field CFcrs List of grid mappings located in this group.
-    CFcrs     = list(),
+    CFcrs = list(),
 
     #' @description Create a new instance of this class.
     #' @param id The identifier of the group.
@@ -80,9 +81,12 @@ NCGroup <- R6::R6Class("NCGroup",
     },
 
     #' @description Summary of the group printed to the console.
+    #' @param stand_alone Logical to indicate if the group should be printed as
+    #' an object separate from other objects (`TRUE`, default), or print as part
+    #' of an enclosing object (`FALSE`).
     #' @param ... Passed on to other methods.
-    print = function(...) {
-      if (self$name != "/") {
+    print = function(stand_alone = TRUE, ...) {
+      if (stand_alone || self$name != "/") {
         cat("<", self$friendlyClassName, "> [", self$id, "] ", self$name, "\n", sep = "")
         cat("Path      :", self$fullname, "\n")
       }
@@ -182,11 +186,11 @@ NCGroup <- R6::R6Class("NCGroup",
           idx <- which(names(g$CFaxes) == nm)
           if (length(idx)) return(g$CFaxes[[idx]])
 
+          idx <- which(names(g$CFlonglat) == nm)
+          if (length(idx)) return(g$CFlonglat[[idx]])
+
           idx <- which(names(g$CFaux) == nm)
           if (length(idx)) return(g$CFaux[[idx]])
-
-          idx <- which(names(g$CFlabels) == nm)
-          if (length(idx)) return(g$CFlabels[[idx]])
 
           idx <- which(names(g$CFmeasures) == nm)
           if (length(idx)) return(g$CFmeasures[[idx]])
@@ -260,8 +264,8 @@ NCGroup <- R6::R6Class("NCGroup",
         res <- res ||
                name %in% tolower(c(names(self$CFvars),
                                    names(self$CFaxes),
+                                   names(self$CFlonglat),
                                    names(self$CFaux),
-                                   names(self$CFlabels),
                                    names(self$CFcrs),
                                    names(self$CFmeasures)))
       else
@@ -288,7 +292,7 @@ NCGroup <- R6::R6Class("NCGroup",
 
     #' @description Add an auxiliary long-lat variable to the group. This method
     #'   creates a [CFAuxiliaryLongLat] from the arguments and adds it to the
-    #'   group `CFaux` list, but only if the combination of `lon`, `lat` isn't
+    #'   group `CFlonglat` list, but only if the combination of `lon`, `lat` isn't
     #'   already present.
     #' @param lon,lat Instances of [NCVariable] having a two-dimensional grid of
     #'   longitude and latitude values, respectively.
@@ -298,13 +302,13 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @return `self` invisibly.
     addAuxiliaryLongLat = function(lon, lat, bndsLong, bndsLat) {
       nm <- paste(lon$name, lat$name, sep = "_")
-      if (!length(self$CFaux)) {
-        self$CFaux <- list(CFAuxiliaryLongLat$new(lon, lat, bndsLong, bndsLat))
-        names(self$CFaux) <- nm
+      if (!length(self$CFlonglat)) {
+        self$CFlonglat <- list(CFAuxiliaryLongLat$new(lon, lat, bndsLong, bndsLat))
+        names(self$CFlonglat) <- nm
       } else {
-        known <- lapply(self$CFaux, function(a) c(a$varLong$id, a$varLat$id))
+        known <- lapply(self$CFlonglat, function(a) c(a$varLong$id, a$varLat$id))
         if (!any(sapply(known, function(k) k[1L] == lon$id && k[2L] == lat$id)))
-          self$CFaux[[nm]] <- CFAuxiliaryLongLat$new(lon, lat, bndsLong, bndsLat)
+          self$CFlonglat[[nm]] <- CFAuxiliaryLongLat$new(lon, lat, bndsLong, bndsLat)
       }
       invisible(self)
     },

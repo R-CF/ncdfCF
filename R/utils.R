@@ -86,11 +86,9 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
 
 #' Make a data.frame slimmer by shortening long strings. List elements are
 #' pasted together.
-#'
 #' @param df A data.frame
 #' @param width Maximum width of character entries. If entries are longer than
 #' width - 3, they are truncated and then '...' added.
-#'
 #' @return data.frame with slim columns
 #' @noRd
 .slim.data.frame <- function(df, width = 50L) {

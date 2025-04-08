@@ -19,22 +19,21 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     },
 
     get_coordinates = function() {
-      private$tm$as_timestamp()
+      if (private$active_coords == 1L)
+        private$tm$as_timestamp()
+      else
+        private$aux[[private$active_coords - 1L]]$coordinates
     },
 
     dimvalues_short = function() {
-      time <- private$tm
-      nv <- length(time$offsets)
-      if (!nv) { # it happens...
-        vals <- "(no values)"
-      } else {
-        if (nv == 1L) vals <- paste0("[", time$format(), "]")
-        else {
-          rng <- time$range(format = "", bounds = FALSE)
-          vals <- sprintf("[%s ... %s]", rng[1L], rng[2L])
-        }
-      }
-      vals
+      crds <- self$coordinates
+      nv <- length(crds)
+      if (!nv) # it happens...
+        "(no values)"
+      else if (nv == 1L)
+        paste0("[", crds[1L], "]")
+      else
+        sprintf("[%s ... %s]", crds[1L], crds[nv])
     }
   ),
   public = list(
@@ -61,16 +60,16 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       super$print()
 
       time <- private$tm
-      len <- length(time)
-      rng <- time$range()
-      rng <- if (rng[1L] == rng[2L]) rng[1L]
-             else rng <- paste0(paste(rng, collapse = " ... "), " (", time$unit, ")")
+      crds <- self$coordinates
+      len <- length(crds)
+      rng <- if (len == 1L) crds[1L]
+             else paste0(crds[1L], " ... ", crds[len], " (", time$unit, ")")
       bndrng <- if (!is.null(time$get_bounds()))
         paste0(time$range(format = "", bounds = TRUE), collapse = " ... ")
       else "(not set)"
-      cat("Calendar :", time$cal$name, "\n")
-      cat("Range    :", rng, "\n")
-      cat("Bounds   :", bndrng, "\n")
+      cat("Calendar   :", time$cal$name, "\n")
+      cat("Range      :", rng, "\n")
+      cat("Bounds     :", bndrng, "\n")
 
       self$print_attributes(...)
       invisible(self)
@@ -139,7 +138,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #'   instance is returned with its value being the character timestamp of
     #'   the value in this axis. If the value of the argument is `NULL`, return
     #'   the entire axis (possibly as a scalar axis).
-    sub_axis = function(group, rng = NULL) {
+    subset = function(group, rng = NULL) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
       time <- private$tm
 
@@ -147,7 +146,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         scl <- CFAxisScalar$new(group, var, "T", as_timestamp(time)[idx])
         bnds <- time$get_bounds()
         if (!is.null(bnds)) scl$bounds <- bnds[, idx]
-        private$copy_label_subset_to(scl, idx)
+        private$subset_coordinates(scl, idx)
         scl
       }
 
@@ -166,7 +165,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
           idx <- time$indexOf(seq(from = rng[1L], to = rng[2L], by = 1L))
           dim <- NCDimension$new(-1L, self$name, length(idx), FALSE)
           t <- CFAxisTime$new(group, var, dim, attr(idx, "CFTime"))
-          private$copy_label_subset_to(t, idx)
+          private$subset_coordinates(t, idx)
           t
         }
       }

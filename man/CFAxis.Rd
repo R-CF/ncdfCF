@@ -7,6 +7,12 @@
 \description{
 This class is a basic ancestor to all classes that represent CF
 axes. More useful classes use this class as ancestor.
+
+This super-class does manage the "coordinates" of the axis, i.e. the values
+along the axis. This could be the values of the axis as stored on file, but
+it can also be the values from an auxiliary coordinate set, in the form of
+a \link{CFLabel} instance. The coordinate set to use in display, selection and
+processing is selectable through methods and fields in this class.
 }
 \section{Super class}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFAxis}
@@ -37,28 +43,23 @@ orientation of the axis, or an empty string if not known or different.}
 you should use the \code{coordinates} field rather than this one.}
 
 \item{\code{coordinates}}{(read-only) Retrieve the coordinate values of the
-axis.}
+active coordinate set from the axis.}
 
-\item{\code{labels}}{Set or retrieve the labels for the axis. On assignment, the
-value must be an instance of \link{CFLabel}, which is added to the end of
-the list of label sets. On retrieval, the active \code{CFLabel} instance or
-a \code{list} of all associated \code{CFLabel} instances is returned. (If there
-is a label set active and you want to retrieve all label sets, call
-\code{active_label_set <- NULL} on your axis object before calling this
-method.)}
+\item{\code{auxiliary}}{Set or retrieve auxiliary coordinates for the axis. On
+assignment, the value must be an instance of \link{CFLabel} or a \link{CFAxis}
+descendant, which is added to the end of the list of coordinate sets.
+On retrieval, the active \code{CFLabel} or \code{CFAxis} instance or \code{NULL} when
+the active coordinate set is the primary axis coordinates.}
 
-\item{\code{has_labels}}{(read-only) Number of label sets associated with the
-axis. The labels can be retrieved with the \code{label_set()} method.}
+\item{\code{coordinate_names}}{Retrieve the names of the coordinates
+defined for the axis, as a character vector. The first element in the
+vector is the name of the axis and it refers to the values of the
+coordinates as stored in the netCDF file. Following elements refer to
+auxiliary coordinates.}
 
-\item{\code{label_set_names}}{Set or retrieve the names of the label sets
-defined for the axis. Note that the label sets need to have been
-registered with the axis before you can change any names.}
-
-\item{\code{active_label_set}}{Set or retrieve the label set to use with the
-axis for printing to the console as well as for processing methods such
-as \code{subset()}. On assignment, either an integer value or a name of a
-label set. If \code{NULL}, suppress use of labels. On retrieval, the value
-that the label set was set with, so either an integer value or a name.}
+\item{\code{active_coordinates}}{Set or retrieve the name of the coordinate set
+to use with the axis for printing to the console as well as for
+processing methods such as \code{subset()}.}
 
 \item{\code{unlimited}}{(read-only) Logical to indicate if the axis has an
 unlimited dimension.}
@@ -76,8 +77,6 @@ unlimited dimension.}
 \item \href{#method-CFAxis-time}{\code{CFAxis$time()}}
 \item \href{#method-CFAxis-sub_axis}{\code{CFAxis$sub_axis()}}
 \item \href{#method-CFAxis-indexOf}{\code{CFAxis$indexOf()}}
-\item \href{#method-CFAxis-label_set}{\code{CFAxis$label_set()}}
-\item \href{#method-CFAxis-create_label_set}{\code{CFAxis$create_label_set()}}
 \item \href{#method-CFAxis-write}{\code{CFAxis$write()}}
 \item \href{#method-CFAxis-clone}{\code{CFAxis$clone()}}
 }
@@ -277,56 +276,6 @@ return the index value for each match. If \code{method = "linear"}, return
 the index value with any fractional value. Values of \code{x} outside of the
 range of the values in the axis are returned as \code{0} and
 \code{.Machine$integer.max}, respectively.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxis-label_set"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxis-label_set}{}}}
-\subsection{Method \code{label_set()}}{
-Retrieve a set of character labels from the active label
-set, corresponding to the elements of an axis.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$label_set(n = NULL)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{n}}{An integer value indicating which set of labels to retrieve.
-Alternatively, this can be the name of the label set. When \code{NULL}
-(default), the labels from the active label set are returned.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A character vector of string labels with as many elements as the
-axis has, or \code{NULL} when no labels have been set or when argument
-\code{n} is not valid.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxis-create_label_set"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxis-create_label_set}{}}}
-\subsection{Method \code{create_label_set()}}{
-Create a new label set for the axis from the vector of
-supplied labels. The \link{CFLabel} instance will be created in the group of
-this axis.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$create_label_set(name, labels)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{A name for this label set.}
-
-\item{\code{labels}}{Character vector of labels. The vector must have the same
-length as the axis.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

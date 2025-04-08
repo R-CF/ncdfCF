@@ -32,14 +32,14 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
     #'   [CFAxisScalar] instance is returned with the value from this axis. If
     #'   the value of the argument is `NULL`, return the entire axis (possibly
     #'   as a scalar axis).
-    sub_axis = function(group, rng = NULL) {
+    subset = function(group, rng = NULL) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
 
       .make_scalar <- function(idx) {
         scl <- CFAxisScalar$new(group, var, "Y", idx)
         bnds <- self$bounds
         if (inherits(bnds, "CFBounds")) scl$bounds <- bnds$sub_bounds(group, idx)
-        private$copy_label_subset_to(scl, idx)
+        private$subset_coordinates(scl, idx)
         scl
       }
 
@@ -58,7 +58,7 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
           lat <- CFAxisLatitude$new(group, var, dim, private$values[rng[1L]:rng[2L]])
           bnds <- self$bounds
           if (inherits(bnds, "CFBounds")) lat$bounds <- bnds$sub_bounds(group, rng)
-          private$copy_label_subset_to(lat, idx)
+          private$subset_coordinates(lat, idx)
           lat
         }
       }

@@ -10,7 +10,12 @@ CFLabel <- R6::R6Class("CFLabel",
   inherit = CFObject,
   private = list(
     # The label values, a character vector.
-    values = NULL
+    values = NULL,
+
+    # Method to be consistent with CFAxis retrieval patterns.
+    get_values = function() {
+      private$values
+    }
   ),
   public = list(
     #' @field NCdim The [NCDimension] that stores the netCDF dimension details.
@@ -24,7 +29,10 @@ CFLabel <- R6::R6Class("CFLabel",
     initialize = function(grp, nc_var, nc_dim, values) {
       super$initialize(nc_var, grp)
       self$NCdim <- nc_dim
-      private$values <- trimws(values)
+
+      private$values <- values
+      if(nc_var$vtype %in% c("NC_CHAR", "NC_STRING"))
+        private$values <- trimws(private$values)
 
       nc_var$CF <- self
     },
@@ -43,18 +51,23 @@ CFLabel <- R6::R6Class("CFLabel",
         cat("Long name:", longname, "\n")
 
       cat("Length   :", self$NCdim$length, "\n")
+      cat("Data type:", self$NCvar$vtype, "\n")
       self$print_attributes(...)
     },
 
     #' @description Retrieve a subset of the labels.
+    #' @param grp The group to create the new label object in.
     #' @param rng The range of indices to retrieve.
-    #' @return A character vector, or `NULL` if the `rng` values are invalid.
-    subset = function(rng) {
+    #' @return A `CFLabel` instance, or `NULL` if the `rng` values are invalid.
+    subset = function(grp, rng) {
       rng <- range(rng)
       if (rng[1L] < 1L || rng[2L] > length(private$values))
         NULL
-      else
-        private$values[rng[1L]:rng[2L]]
+      else {
+        dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
+        var <- NCVariable$new(-1L, self$name, grp, "NC_STRING", 1L, NULL)
+        CFLabel$new(grp, var, dim, private$values[rng[1L]:rng[2L]])
+      }
     },
 
     #' @description Write the labels to a netCDF file, including its attributes.
@@ -64,6 +77,7 @@ CFLabel <- R6::R6Class("CFLabel",
     #'   `NULL`, the handle to a netCDF file or a group therein.
     #' @return Self, invisibly.
     write = function(nc) {
+      # FIXME: Does this work with non-character labels? Conventions require NC_STRING or NC_CHAR
       h <- if (inherits(nc, "NetCDF")) nc else self$group$handle
       self$NCdim$write(h)
       RNetCDF::var.def.nc(h, self$name, self$NCvar$vtype, self$NCdim$name)
@@ -78,8 +92,8 @@ CFLabel <- R6::R6Class("CFLabel",
         "Label set"
     },
 
-    #' @field labels (read-only) The label set as a character vector.
-    labels = function(value) {
+    #' @field coordinates (read-only) The label set as a vector.
+    coordinates = function(value) {
       if (missing(value))
         private$values
     },

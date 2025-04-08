@@ -399,9 +399,13 @@ Fully supported for 1D and 2D coordinate variables. Higher dimension coordinate 
 
 Fully supported.
 
+External variables can be linked to the `CFCellMeasure` instances that are created upon reading a netCDF resource and will then automatically be available to any referring data variables.
+
 ##### 7.3. Cell methods
 
-Not implemented.
+The `cell_methods` attribute is read, as all other attributes are, but it is not parsed or interpreted.
+
+Interactive users and packages built on top of `ncdfCF` should update the attribute after applying an operation to any data variable as the package does not have enough information to do so programmatically. A case in point is the `CFVariable` and `CFArray` `summarise()` method: the function to apply in summarising is user-supplied and this package has no knowledge of what that function does or results in: apart from built-in functions like `mean()` or `max()`, users can supply a custom-made function with multiple results and thus multiple resulting `CFArray` instances that each need a specific update to the `cell_methods` attribute copied from the object being summarised.
 
 ##### 7.4. Climatological statistics
 

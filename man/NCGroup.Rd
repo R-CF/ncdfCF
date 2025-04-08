@@ -49,11 +49,12 @@ basic axis definition, such as its bounds, labels, ancillary data, may
 be located in a different group; all such elements can be accessed
 directly from the \link{CFAxis} instances that this list holds.}
 
-\item{\code{CFlabels}}{List of labels located in this group.}
+\item{\code{CFaux}}{List of auxiliary coordinates located in this group. These
+could be \link{CFLabel} instances or an axis.}
 
-\item{\code{CFaux}}{List of auxiliary variables. These could be \link{CFAxisScalar}
-or \link{CFAuxiliaryLongLat} that hold longitude and latitude values for
-every grid point in the data variable that references them.}
+\item{\code{CFlonglat}}{List of \link{CFAuxiliaryLongLat} that hold longitude and
+latitude values for every grid point in the data variable that
+references them.}
 
 \item{\code{CFmeasures}}{List of cell measures variables in this group.}
 
@@ -140,12 +141,16 @@ access to the netCDF resource. For in-memory groups this can be \code{NULL}.}
 \subsection{Method \code{print()}}{
 Summary of the group printed to the console.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$print(...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$print(stand_alone = TRUE, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{stand_alone}}{Logical to indicate if the group should be printed as
+an object separate from other objects (\code{TRUE}, default), or print as part
+of an enclosing object (\code{FALSE}).}
+
 \item{\code{...}}{Passed on to other methods.}
 }
 \if{html}{\out{</div>}}
@@ -270,7 +275,7 @@ List of \link{NCVariable}.
 \subsection{Method \code{addAuxiliaryLongLat()}}{
 Add an auxiliary long-lat variable to the group. This method
 creates a \link{CFAuxiliaryLongLat} from the arguments and adds it to the
-group \code{CFaux} list, but only if the combination of \code{lon}, \code{lat} isn't
+group \code{CFlonglat} list, but only if the combination of \code{lon}, \code{lat} isn't
 already present.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{NCGroup$addAuxiliaryLongLat(lon, lat, bndsLong, bndsLat)}\if{html}{\out{</div>}}

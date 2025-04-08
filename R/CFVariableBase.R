@@ -135,8 +135,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
     #'   if used, should have names as these will be used to label the results.
     #' @param ... Additional parameters passed on to `fun`.
     #' @return A `CFData` object, or a list thereof with as many `CFData`
-    #'   objects as `fun` returns values, created in the same group as `self`
-    #'   with the summarised data.
+    #'   objects as `fun` returns values.
     summarise = function(name, fun, period, era = NULL, ...) {
       if (missing(name) || missing(period) || missing(fun))
         stop("Arguments 'name', 'period' and 'fun' are required.", call. = FALSE)
@@ -171,19 +170,22 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
       }
 
       res <- lapply(f, function(fac) {
+        # Create a new group for the result
+        grp <- makeGroup(-1L, "/", "/")
+
         # Make a new time axis for the result
         new_tm <- attr(fac, "CFTime")
-        var <- NCVariable$new(-1L, tax$name, self$group, "NC_DOUBLE", 1L, NULL)
+        var <- NCVariable$new(-1L, tax$name, grp, tax$NCvar$vtype, 1L, NULL)
         len <- length(new_tm)
         if (len == 1L) {
-          new_ax <- CFAxisScalar$new(self$group, var, "T", new_tm)
+          new_ax <- CFAxisScalar$new(grp, var, "T", new_tm)
           ax <- c(self$axes[-tm], new_ax)
-          names(ax) <- c(names(self$axes[-tm]), "time")
+          names(ax) <- c(names(self$axes[-tm]), tax$name)
         } else {
           dim <- NCDimension$new(-1L, tax$name, len, FALSE)
-          new_ax <- CFAxisTime$new(self$group, var, dim, new_tm)
+          new_ax <- CFAxisTime$new(grp, var, dim, new_tm)
           ax <- c(new_ax, self$axes[-tm])
-          names(ax) <- c("time", names(self$axes[-tm]))
+          names(ax) <- c(tax$name, names(self$axes[-tm]))
         }
         new_ax$attributes <- tax$attributes
         if (inherits(new_tm, "CFClimatology")) {
@@ -194,16 +196,14 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
         # Summarise
         dt <- private$process_data(tm, fac, fun, ...)
 
-        # FIXME: set cell_methods
-
         # Create the output
         len <- length(dt)
         if (len == 1L)
-          CFArray$new(name[1L], self$group, dt[[1L]], private$values_type, ax, self$crs, atts)
+          CFArray$new(name[1L], grp, dt[[1L]], private$values_type, ax, self$crs, atts)
         else {
           if (length(name) < len)
             name <- c(name, paste0("result_", (length(name)+1L):len))
-          out <- lapply(1:len, function(i) CFArray$new(name[i], self$group, dt[[i]], private$values_type, ax, self$crs, atts))
+          out <- lapply(1:len, function(i) CFArray$new(name[i], grp, dt[[i]], private$values_type, ax, self$crs, atts))
           names(out) <- name
           out
         }
@@ -217,13 +217,13 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
     }
   ),
   active = list(
-    #' @field axis_labels (read-only) Retrieve the names of any axes that have
-    #'   labels associated with them.
-    axis_labels = function(value) {
-      ax <- sapply(self$axes, function(x) if (x$has_labels) x$name)
-      ax <- unlist(ax[lengths(ax) > 0L])
-      names(ax) <- NULL
-      ax
-    }
+    # #' @field axis_labels (read-only) Retrieve the names of any axes that have
+    # #'   labels associated with them.
+    # axis_labels = function(value) {
+    #   ax <- sapply(self$axes, function(x) if (x$has_labels) x$name)
+    #   ax <- unlist(ax[lengths(ax) > 0L])
+    #   names(ax) <- NULL
+    #   ax
+    # }
   )
 )

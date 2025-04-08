@@ -41,24 +41,24 @@ CFBounds <- R6::R6Class("CFBounds",
     #' is `width = ` to indicate a maximum width of attribute columns.
     print = function(...) {
       if (is.null(private$values))
-        cat("Bounds   : (no values)\n")
+        cat("Bounds     : (no values)\n")
       else {
         if (private$dims[1L] == 2L) {
           len <- dim(private$values)[2L]
-          if (len < 7L) {
+          if (len < 8L) {
             from_vals <- trimws(formatC(private$values[1L, ], digits = 8L))
             to_vals   <- trimws(formatC(private$values[2L, ], digits = 8L))
-            cat("Bounds   :", paste(from_vals, collapse = ", "), "\n")
-            cat("         :", paste(to_vals, collapse = ", "), "\n")
+            cat("Bounds     :", paste(from_vals, collapse = ", "), "\n")
+            cat("           :", paste(to_vals, collapse = ", "), "\n")
           } else {
             vals <- trimws(formatC(c(private$values[1L, 1L:3L], private$values[1L, (len-2L):len],
                                      private$values[2L, 1L:3L], private$values[2L, (len-2L):len]), digits = 8L))
-            cat("Bounds   : ", vals[1L], ", ", vals[2L], ", ", vals[3L], " ... ", vals[4L], ", ", vals[5L], ", ", vals[6L], "\n", sep = "")
-            cat("         : ", vals[7L], ", ", vals[8L], ", ", vals[9L], " ... ", vals[10L], ", ", vals[11L], ", ", vals[12L], "\n", sep = "")
+            cat("Bounds     : ", vals[1L], ", ", vals[2L], ", ", vals[3L], " ... ", vals[4L], ", ", vals[5L], ", ", vals[6L], "\n", sep = "")
+            cat("           : ", vals[7L], ", ", vals[8L], ", ", vals[9L], " ... ", vals[10L], ", ", vals[11L], ", ", vals[12L], "\n", sep = "")
           }
         } else {
           # FIXME
-          cat("Bounds   : (can't print multi-dimensional bounds just yet...)\n")
+          cat("Bounds     : (can't print multi-dimensional bounds just yet...)\n")
         }
       }
     },

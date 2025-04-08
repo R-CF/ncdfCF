@@ -22,10 +22,11 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     },
 
     get_coordinates = function() {
-      if (inherits(private$value, "CFTime")) private$value$as_timestamp()
-      else if (self$has_labels)
-        self$label_set()
-      else private$value
+      if (private$active_coords == 1L) {
+        if (inherits(private$value, "CFTime")) private$value$as_timestamp()
+        else private$value
+      } else
+        private$aux[[private$active_coords - 1L]]$coordinates
     },
 
     dimvalues_short = function() {
@@ -43,7 +44,10 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
       dim <- NCDimension$new(-1L, nc_var$name, 1L, FALSE)
       super$initialize(grp, nc_var, dim, orientation)
       private$value <- value
-      self$set_attribute("actual_range", nc_var$vtype, c(value, value))
+      if (inherits(value, "CFTime"))
+        self$set_attribute("actual_range", nc_var$vtype, c(value$offsets, value$offsets))
+      else
+        self$set_attribute("actual_range", nc_var$vtype, c(value, value))
     },
 
     #' @description Summary of the scalar axis printed to the console.
@@ -108,7 +112,7 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     #' @param rng Ignored.
     #'
     #' @return A `CFAxisScalar` cloned from this axis.
-    sub_axis = function(group, rng = NULL) {
+    subset = function(group, rng = NULL) {
       ax <- self$clone()
       ax$group <- group
       ax

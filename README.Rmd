@@ -30,38 +30,21 @@ colorize <- function(x, color) {
 [![R-CMD-check](https://github.com/pvanlaake/ncdfCF/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pvanlaake/ncdfCF/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The `ncdfCF` package provides an easy to use interface to netCDF resources in R,
-either in local files or remotely on a THREDDS server. It is built on the 
-`RNetCDF` package which, like package `ncdf4`, provides a basic interface to the 
-`netcdf` library, but which lacks an intuitive user interface. Package `ncdfCF` 
-provides a high-level interface using functions and methods that are familiar to 
-the R user. It reads the structural metadata and also the attributes upon 
-opening the resource. In the process, the `ncdfCF` package also applies CF 
-Metadata Conventions to interpret the data. This currently applies to:
+The `ncdfCF` package provides an easy to use interface to netCDF resources in R, either in local files or remotely on a THREDDS server. It is built on the `RNetCDF` package which, like package `ncdf4`, provides a basic interface to the `netcdf` library, but which lacks an intuitive user interface. Package `ncdfCF` provides a high-level interface using functions and methods that are familiar to the R user. It reads the structural metadata and also the attributes upon opening the resource. In the process, the `ncdfCF` package also applies CF Metadata Conventions to interpret the data. This currently applies to:
 
- * The **axis designation**. The three mechanisms to identify the axis each 
- dimension represents are applied until an axis is determined.
- * The **time coordinate**. Time is usually encoded as an offset from an origin.
- Using the `CFtime` package these offsets can be turned into intelligible dates
- and times, for all defined calendars.
+ * The **axis designation**. The three mechanisms to identify the axis each dimension represents are applied until an axis is determined.
+ * The **time coordinate**. Time is usually encoded as an offset from an origin. Using the `CFtime` package these offsets can be turned into intelligible dates and times, for all defined calendars.
  * **Bounds** information. When present, bounds are read and used in analyses.
- * **Discrete coordinates**, optionally with character labels. When labels are
- provided, these will be used as `dimnames` for the axis. (Note that this also
- applies to generic numeric axes with labels defined.)
- * **Parametric vertical coordinates** are read, including variables listed in
- the `formula_terms` attribute.
- * **Auxiliary coordinates** are identified and read. This applies to both 
- **scalar axes** and **auxiliary longitude-latitude grids**. Data on non-Cartesian 
- grids can be automatically rectified to a longitude-latitude grid if an auxiliary
- grid is present in the resource.
- * The **grid_mapping** variables, providing the coordinate reference system 
- (CRS) of the data, with support for all defined objects in the latest EPSG 
- database as well as "manual" construction of CRSs.
+ * **Discrete coordinates**, optionally with character labels. When labels are provided, these will be used as `dimnames` for the axis. (Note that this also applies to generic numeric axes with labels defined.)
+ * **Parametric vertical coordinates** are read, including variables listed in the `formula_terms` attribute.
+ * **Auxiliary coordinates** are identified and read. This applies also to **scalar axes** and **auxiliary longitude-latitude grids**. Auxiliary coordinates can be activated by the user and then used in display, selection and processing. Data on non-Cartesian grids can be automatically rectified to a longitude-latitude grid if an auxiliary grid is present in the resource.
+ * The **cell measure variables** are read and linked to any data variables referencing them. Cell measure variables that are external to the netCDF resource with the referring data variable can be linked to the data set and then they are immediately available to the referring data variables.
+ * **Labels**, as separate variables identified through the `coordinates` attribute of axes, are read, including when multiple sets of labels are defined for a single axis. Users can select which set of labels to make active for display, selection and processing.
+ * The **grid_mapping** variables, providing the coordinate reference system (CRS) of the data, with support for all defined objects in the latest EPSG database as well as "manual" construction of CRSs.
 
 ##### Basic usage
 
-Opening and inspecting the contents of a netCDF resource is very 
-straightforward:
+Opening and inspecting the contents of a netCDF resource is very straightforward:
 
 ```{r basic_example}
 library(ncdfCF)
@@ -89,28 +72,19 @@ dimnames(ds[["longitude"]]) # A dimension: vector of dimension element values
 ds[["pev"]]$attribute("long_name")
 ```
 
-If you just want to inspect what data is included in the netCDF resource, use
-the `peek_ncdf()` function: 
+If you just want to inspect what data is included in the netCDF resource, use the `peek_ncdf()` function: 
 
 ```{r peek}
-(ds <- peek_ncdf(fn))
+peek_ncdf(fn)
 ```
 
 ##### Extracting data
 
 There are three ways to read data for a variable from the resource:
 
- * **`data():`** The `data()` method returns all data of a variable, including 
- its metadata, in a `CFData` instance.
- * **`[]`:** The usual R array operator gives you access to the raw, non-interpreted
- data in the netCDF resource. This uses index values into the
- dimensions and requires you to know the order in which the dimensions are 
- specified for the variable. With a bit of tinkering and some helper functions
- in `ncdfCF` this is still very easy to do.
- * **`subset()`:** The `subset()` method lets you specify what you want to
- extract from each dimension in real-world coordinates and timestamps, in 
- whichever order. This can also rectify non-Cartesian grids to regular
- longitude-latitude grids.
+ * **`data():`** The `data()` method returns all data of a variable, including its metadata, in a `CFData` instance.
+ * **`[]`:** The usual R array operator gives you access to the raw, non-interpreted data in the netCDF resource. This uses index values into the dimensions and requires you to know the order in which the dimensions are specified for the variable. With a bit of tinkering and some helper functions in `ncdfCF` this is still very easy to do.
+ * **`subset()`:** The `subset()` method lets you specify what you want to extract from each dimension in real-world coordinates and timestamps, in whichever order. This can also rectify non-Cartesian grids to regular longitude-latitude grids.
  
 ```{r extract}
 # Extract a timeseries for a specific location
@@ -122,10 +96,7 @@ ts <- t2m[, , 12]
 str(ts)
 ```
 
-Note that the results contain degenerate dimensions (of length 1). This by 
-design when using basic `[]` data access because it allows attributes to be 
-attached in a consistent manner. When using the `subset()` method, the data is 
-returned as an instance of `CFData`, including axes and attributes:
+Note that the results contain degenerate dimensions (of length 1). This by design when using basic `[]` data access because it allows attributes to be attached in a consistent manner. When using the `subset()` method, the data is returned as an instance of `CFData`, including axes and attributes:
 
 ```{r subset}
 # Extract a specific region, full time dimension
@@ -139,27 +110,18 @@ returned as an instance of `CFData`, including axes and attributes:
                        Y = seq(-2, -1, by = 0.05))))
 ```
 
-The latter two methods will read only as much data from the netCDF resource as 
-is requested.
+The latter two methods will read only as much data from the netCDF resource as is requested.
 
 ##### Summarising data over time
 
-With the `summarise()` method, available for both `CFVariable` and `CFArray`,
-you can apply a function over the data to generate summaries. You could, for
-instance, summarise daily data to monthly means. These methods use the specific
-calendar of the "time" dimension. The return value is a new `CFArray` object.
+With the `summarise()` method, available for both `CFVariable` and `CFArray`, you can apply a function over the data to generate summaries. You could, for instance, summarise daily data to monthly means. These methods use the specific calendar of the "time" axis. The return value is a new `CFArray` object.
 
 ```{r summarise}
 # Summarising hourly temperature data to calculate the daily maximum temperature
-t2m$summarise("tmax", "day", max)
+t2m$summarise("tmax", max, "day")
 ```
 
-A function may also return a vector of multiple values, in which case a list is
-returned with a new `CFArray` object for each return value of the function. This
-allows you to calculate multiple results with a single call. You could write
-your own function to tailor the calculations to your needs. Rather than just 
-calculating the daily maximum, you could get the daily maximum, minimum and
-diurnal range in one go:
+A function may also return a vector of multiple values, in which case a list is returned with a new `CFArray` object for each return value of the function. This allows you to calculate multiple results with a single call. You could write your own function to tailor the calculations to your needs. Rather than just calculating the daily maximum, you could get the daily maximum, minimum and diurnal range in one go:
 
 ```{r summarise_multi}
 # Function to calculate multiple daily stats
@@ -173,17 +135,14 @@ daily_stats <- function(x, na.rm = TRUE) {
 
 # Call summarise() with your own function
 # The `name` argument should have as many names as the function returns results
-(stats <- t2m$summarise(c("tmin", "tmax", "diurnal_range"), "day", daily_stats))
+(stats <- t2m$summarise(c("tmin", "tmax", "diurnal_range"), daily_stats, "day"))
 ```
 
-Note that you may have to update some attributes after calling `summarise()`. 
-You can use the `set_attribute()` method on the `CFArray` objects to do that.
+Note that you may have to update some attributes after calling `summarise()`. You can use the `set_attribute()` method on the `CFArray` objects to do that.
 
 ##### Exporting and saving data
 
-A `CFData` object can be exported to a `data.table` or to a `terra::SpatRaster`
-(3D) or `terra::SpatRasterDataset` (4D) for further processing. Obviously, these 
-packages need to be installed to utilise these methods.
+A `CFData` object can be exported to a `data.table` or to a `terra::SpatRaster` (3D) or `terra::SpatRasterDataset` (4D) for further processing. Obviously, these packages need to be installed to utilise these methods.
 
 ```{r export}
 # install.packages("data.table")
@@ -196,9 +155,7 @@ suppressMessages(library(terra))
 terra::plot(r)
 ```
 
-A `CFData` object can also be written back to a netCDF file. The object will
-have all its relevant attributes and properties written together with the actual 
-data: axes, bounds, attributes, CRS. 
+A `CFData` object can also be written back to a netCDF file. The object will have all its relevant attributes and properties written together with the actual data: axes, bounds, attributes, CRS. 
 
 ```{r save, eval=FALSE}
 # Save a CFData instance to a netCDF file on disk
@@ -207,29 +164,13 @@ stats[["diurnal_range"]]$save("~/path/file.nc")
 
 ##### A note on Discrete Sampling Geometries
 
-Discrete Sampling Geometries (DSG) map almost directly to the venerable 
-`data.frame` in R (with several exceptions). In that sense, they are rather
-distinct from array-based data sets. At the moment there is no specific code for
-DSG, but the simplest layouts can currently already be read (without any 
-warranty). Various methods, such as `CFVariable::subset()` or `CFData::array()` 
-will fail miserably, and you are well-advised to try no more than the empty 
-array indexing operator `CFVariable::[]` which will yield the full data variable  
-with column and row names set as an array, of `CFVariable::data()` to get the 
-whole data variable as a `CFData` object for further processing. You can 
-identify a DSG data set by the `featureType` attribute of the `CFDataset`.
+Discrete Sampling Geometries (DSG) map almost directly to the venerable `data.frame` in R (with several exceptions). In that sense, they are rather distinct from array-based data sets. At the moment there is no specific code for DSG, but the simplest layouts can currently already be read (without any warranty). Various methods, such as `CFVariable::subset()` or `CFData::array()` will fail miserably, and you are well-advised to try no more than the empty array indexing operator `CFVariable::[]` which will yield the full data variable with column and row names set as an array, of `CFVariable::data()` to get the whole data variable as a `CFData` object for further processing. You can identify a DSG data set by the `featureType` attribute of the `CFDataset`.
 
 More comprehensive support for DSG is in the development plan.
 
 ## Development plan
 
-Package `ncdfCF` is in the early phases of development. It supports reading of 
-groups, variables, dimensions, user-defined data types, attributes and data from 
-netCDF resources in "classic" and "netcdf4" formats; and can write single data
-variables back to a netCDF file. From the CF Metadata 
-Conventions it supports identification of dimension axes, interpretation of the 
-"time" dimension, name resolution when using groups, reading of "bounds" 
-information, parametric vertical coordinates, auxiliary coordinate variables,
-labels, and grid mapping information.
+Package `ncdfCF` is in the early phases of development. It supports reading of groups, variables, dimensions, user-defined data types, attributes and data from netCDF resources in "classic" and "netcdf4" formats; and can write single data variables back to a netCDF file. From the CF Metadata Conventions it supports identification of axes, interpretation of the "time" axis, name resolution when using groups, reading of "bounds" information, parametric vertical coordinates, auxiliary coordinate variables, labels, cell measures and grid mapping information.
 
 Development plans for the near future focus on supporting the below features:
 
@@ -247,10 +188,7 @@ Development plans for the near future focus on supporting the below features:
 
 ## Installation
 
-**`r colorize("CAUTION:", "red")`** Package `ncdfCF` is still in the early 
-phases of development. While extensively tested on multiple well-structured 
-datasets, errors may still occur, particularly in datasets that do not adhere to 
-the CF Metadata Conventions.
+**`r colorize("CAUTION:", "red")`** Package `ncdfCF` is still in the early phases of development. While extensively tested on multiple well-structured datasets, errors may still occur, particularly in datasets that do not adhere to the CF Metadata Conventions.
 
 Installation from CRAN of the latest release:
 

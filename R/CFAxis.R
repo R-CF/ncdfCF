@@ -3,31 +3,41 @@
 #' @description This class is a basic ancestor to all classes that represent CF
 #'   axes. More useful classes use this class as ancestor.
 #'
+#'   This super-class does manage the "coordinates" of the axis, i.e. the values
+#'   along the axis. This could be the values of the axis as stored on file, but
+#'   it can also be the values from an auxiliary coordinate set, in the form of
+#'   a [CFLabel] instance. The coordinate set to use in display, selection and
+#'   processing is selectable through methods and fields in this class.
+#'
 #' @docType class
 CFAxis <- R6::R6Class("CFAxis",
   inherit = CFObject,
   private = list(
-    # A list of [CFLabel] instances, if any are defined for the axis.
-    lbls = list(),
+    # A list of auxiliary coordinate instances, if any are defined for the axis.
+    aux = list(),
 
-    # The active label set. Either an integer or a name. `NULL` if there are no
-    # labels or when underlying axis coordinates should be used.
-    active_label = NULL,
+    # The active coordinates set. Either an integer or a name. If there are no
+    # auxiliary coordinates or when underlying axis coordinates should be used,
+    # it should be 1L.
+    active_coords = 1L,
 
-    # Get the coordinates of the axis. In most cases that is just the values
-    # but CFAxisTime and CFAxisDiscrete override this method.
+    # Get the values of the active coordinate set. In most cases that is just
+    # the values but it could be a label set. Most sub-classes override or
+    # extend this method.
     get_coordinates = function() {
-      private$get_values()
+      if (private$active_coords == 1L)
+        private$get_values()
+      else
+        private$aux[[private$active_coords - 1L]]$coordinates
     },
 
-    # Copy a subset of all the label sets to another axis. Argument ax will
-    # receive the label sets subsetted by argument rng.
-    copy_label_subset_to = function(ax, rng) {
-      if (!length(private$lbls)) return(NULL)
-      act <- private$active_label
-      private$active_label <- NULL
-      lapply(private$lbls, function(l) ax$create_label_set(l$name, l$subset(rng)))
-      private$active_label <- act
+    # Copy a subset of all the auxiliary coordinates to another axis. Argument
+    # ax will receive the auxiliary coordinates subsetted by argument rng.
+    subset_coordinates = function(ax, rng) {
+      if (length(private$aux)) {
+        grp <- makeGroup(-1L, "/", "/")
+        lapply(private$aux, function(x) ax$auxiliary <- x$subset(grp, rng))
+      }
     }
   ),
   public = list(
@@ -70,17 +80,17 @@ CFAxis <- R6::R6Class("CFAxis",
     print = function(...) {
       cat("<", self$friendlyClassName, "> [", self$dimid, "] ", self$name, "\n", sep = "")
       if (self$group$name != "/")
-        cat("Group    :", self$group$fullname, "\n")
+        cat("Group      :", self$group$fullname, "\n")
 
       longname <- self$attribute("long_name")
       if (!is.na(longname) && longname != self$name)
-        cat("Long name:", longname, "\n")
+        cat("Long name  :", longname, "\n")
 
-      cat("Length   :", self$NCdim$length)
+      cat("Length     :", self$NCdim$length)
       if (self$NCdim$unlim) cat(" (unlimited)\n") else cat("\n")
-      cat("Axis     :", self$orientation, "\n")
-      if (self$has_labels)
-      cat("Labels   :", paste(self$label_set_names, collapse = ", "), "\n")
+      cat("Axis       :", self$orientation, "\n")
+      if (length(private$aux))
+        cat("Coordinates:", paste(self$coordinate_names, collapse = ", "), "\n")
     },
 
     #' @description Some details of the axis.
@@ -122,7 +132,7 @@ CFAxis <- R6::R6Class("CFAxis",
       out$unlimited <- self$NCdim$unlim
       out$values <- private$dimvalues_short()
       out$has_bounds <- inherits(self$bounds, "CFBounds")
-      out$label_sets <- self$has_labels
+      out$coordinate_sets <- length(private$aux) + 1L
       out
     },
 
@@ -145,7 +155,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   axis. If the value of the argument is `NULL`, return the entire axis
     #'   (possibly as a scalar axis).
     #' @return `NULL`
-    sub_axis = function(group, rng = NULL) {
+    subset = function(group, rng = NULL) {
       NULL
     },
 
@@ -173,41 +183,6 @@ CFAxis <- R6::R6Class("CFAxis",
       stop("`indexOf()` must be implemented by descendant CFAxis class.")
     },
 
-    #' @description Retrieve a set of character labels from the active label
-    #'   set, corresponding to the elements of an axis.
-    #' @param n An integer value indicating which set of labels to retrieve.
-    #'   Alternatively, this can be the name of the label set. When `NULL`
-    #'   (default), the labels from the active label set are returned.
-    #' @return A character vector of string labels with as many elements as the
-    #'   axis has, or `NULL` when no labels have been set or when argument
-    #'   `n` is not valid.
-    label_set = function(n = NULL) {
-      if (!length(private$lbls) ||
-          (is.numeric(n) && (n < 1L || n > length(private$lbls)))) return(NULL)
-
-      if (is.null(n))
-        n <- private$active_label
-
-      if (is.null(n)) NULL
-      else private$lbls[[n]]$labels
-    },
-
-    #' @description Create a new label set for the axis from the vector of
-    #' supplied labels. The [CFLabel] instance will be created in the group of
-    #' this axis.
-    #' @param name A name for this label set.
-    #' @param labels Character vector of labels. The vector must have the same
-    #' length as the axis.
-    #' @return Self, invisibly.
-    create_label_set = function(name, labels) {
-      if (length(labels) != self$length)
-        stop("Labels vector not the same length as the axis.", call. = FALSE)
-
-      var <- NCVariable$new(-1L, name, self$group, "NC_STRING", 1L, NULL)
-      self$labels <- CFLabel$new(self$group, var, self$NCdim, labels)
-      invisible(self)
-    },
-
     #' @description Write the axis to a netCDF file, including its attributes.
     #' @param nc The handle of the netCDF file opened for writing or a group in
     #'   the netCDF file. If `NULL`, write to the file or group where the axis
@@ -233,7 +208,7 @@ CFAxis <- R6::R6Class("CFAxis",
       if (!is.null(self$bounds))
         self$bounds$write(h, self$name)
 
-      lapply(private$lbls, function(l) l$write(nc))
+      lapply(private$aux, function(l) l$write(nc))
 
       invisible(self)
     }
@@ -268,66 +243,49 @@ CFAxis <- R6::R6Class("CFAxis",
     },
 
     #' @field coordinates (read-only) Retrieve the coordinate values of the
-    #' axis.
+    #' active coordinate set from the axis.
     coordinates = function(value) {
       if (missing(value))
         private$get_coordinates()
     },
 
-    #' @field labels Set or retrieve the labels for the axis. On assignment, the
-    #'   value must be an instance of [CFLabel], which is added to the end of
-    #'   the list of label sets. On retrieval, the active `CFLabel` instance or
-    #'   a `list` of all associated `CFLabel` instances is returned. (If there
-    #'   is a label set active and you want to retrieve all label sets, call
-    #'   `active_label_set <- NULL` on your axis object before calling this
-    #'   method.)
-    labels = function(value) {
+    #' @field auxiliary Set or retrieve auxiliary coordinates for the axis. On
+    #'   assignment, the value must be an instance of [CFLabel] or a [CFAxis]
+    #'   descendant, which is added to the end of the list of coordinate sets.
+    #'   On retrieval, the active `CFLabel` or `CFAxis` instance or `NULL` when
+    #'   the active coordinate set is the primary axis coordinates.
+    auxiliary = function(value) {
       if (missing(value)) {
-        if (is.null(private$active_label)) private$lbls
-        else private$lbls[[private$active_label]]
+        if (private$active_coords == 1L) NULL
+        else private$aux[[private$active_coords - 1L]]
       } else {
-        if (inherits(value, "CFLabel") && value$length == self$length) {
-          private$lbls <- append(private$lbls, value)
-          names(private$lbls) <- sapply(private$lbls, function(l) l$name)
-          if (length(private$lbls) == 1L)
-            private$active_label <- 1L
+        if ((inherits(value, "CFLabel") || inherits(value, "CFAxis")) && value$length == self$length) {
+          private$aux <- append(private$aux, value)
+          names(private$aux) <- sapply(private$aux, function(l) l$name)
         }
       }
     },
 
-    #' @field has_labels (read-only) Number of label sets associated with the
-    #'   axis. The labels can be retrieved with the `label_set()` method.
-    has_labels = function(value) {
+    #' @field coordinate_names Retrieve the names of the coordinates
+    #'   defined for the axis, as a character vector. The first element in the
+    #'   vector is the name of the axis and it refers to the values of the
+    #'   coordinates as stored in the netCDF file. Following elements refer to
+    #'   auxiliary coordinates.
+    coordinate_names = function(value) {
       if (missing(value))
-        length(private$lbls)
+        c(self$name, names(private$aux))
     },
 
-    #' @field label_set_names Set or retrieve the names of the label sets
-    #'   defined for the axis. Note that the label sets need to have been
-    #'   registered with the axis before you can change any names.
-    label_set_names = function(value) {
+    #' @field active_coordinates Set or retrieve the name of the coordinate set
+    #'   to use with the axis for printing to the console as well as for
+    #'   processing methods such as `subset()`.
+    active_coordinates = function(value) {
       if (missing(value))
-        names(private$lbls)
+        self$coordinate_names[private$active_coords]
       else {
-        if (!is.character(value) || length(value) != length(private$lbls))
-          stop("Vector of label set names must have same length as number of label sets.", call. = FALSE)
-        names(private$lbls) <- value
-      }
-    },
-
-    #' @field active_label_set Set or retrieve the label set to use with the
-    #'   axis for printing to the console as well as for processing methods such
-    #'   as `subset()`. On assignment, either an integer value or a name of a
-    #'   label set. If `NULL`, suppress use of labels. On retrieval, the value
-    #'   that the label set was set with, so either an integer value or a name.
-    active_label_set = function(value) {
-      if (missing(value))
-        private$active_label
-      else {
-        if (is.null(value) || (is.numeric(value) && (value < 1L || value > length(private$lbls))))
-          private$active_label <- NULL
-        else
-          private$active_label <- value
+        ndx <- match(value, self$coordinate_names, nomatch = 0L)
+        if (ndx > 0L)
+          private$active_coords <- ndx
       }
     },
 

@@ -447,14 +447,14 @@ CFVariable <- R6::R6Class("CFVariable",
           if (is.null(rng)) rng <- subset[[ orientations[ax] ]]
           if (is.null(rng)) {
             ZT_dim <- c(ZT_dim, axis$length)
-            out_axis <- axis$sub_axis(out_group, NULL)
+            out_axis <- axis$subset(out_group, NULL)
           } else {
             idx <- private$range2index(axis, rng, rightmost.closed)
             if (is.null(idx)) return(NULL)
             start[ax] <- idx[1L]
             count[ax] <- idx[2L] - idx[1L] + 1L
             ZT_dim <- c(ZT_dim, count[ax])
-            out_axis <- axis$sub_axis(out_group, idx)
+            out_axis <- axis$subset(out_group, idx)
           }
         }
 

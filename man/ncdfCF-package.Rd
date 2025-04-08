@@ -161,8 +161,8 @@ record a specific property of the data variable, such as observation time or
 a constant height or depth of the data.
 }
 
-Any of the axis classes can have one or more label sets associated with them.
-This is most useful for \code{CFAxisDiscrete}. Labels of the active label set are
+Any of the axis classes can have one or more coordinate sets associated with them.
+This is most useful for \code{CFAxisDiscrete}. Labels of the active coordinate set are
 used for display of axis properties, as well as for selection in e.g.
 \code{CFVariable$subset()}.
 
@@ -185,19 +185,17 @@ axis.
 \item \code{time()}: Retrieve the \code{CFTime} instance of the axis.
 }
 
-\emph{\strong{Labels}}
+\emph{\strong{Coordinates}}
 \itemize{
-\item \code{create_label_set}: Create a label set for the axis for a vector of
-character labels.
-\item \code{has_labels}: The number of label sets associated with the axis. There may
-be more than 1 of such label sets.
-\item \code{label_set_names}: Set or retrieve the names of the label sets (not the
+\item \code{coordinate_names}: Set or retrieve the names of the coordinate sets (not the
 labels themselves).
-\item \code{active_label_set}: Set or retrieve the label set that is currently active
+\item \code{active_coordinates}: Set or retrieve the coordinate set that is currently active
 and used for display and selection.
-\item \code{labels}: Set or retrieve the CF object that manages the active label set,
-or a list of all such label sets.
-\item \code{label_set()}: Set or retrieve the labels of the active label set.
+\item \code{labels}: Set or retrieve the CF object that manages the active coordinate set,
+if they are labels.
+\item \code{coordinates}: Retrieve the labels of the active coordinate set. This may
+be the coordinate values of the axis (say, longitude values) or a set of
+labels associated with the axis.
 }
 
 \emph{\strong{S3 methods for CFAxis}}

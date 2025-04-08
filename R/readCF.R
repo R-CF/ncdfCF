@@ -221,7 +221,7 @@ peek_ncdf <- function(resource) {
     if (length(dim_names)) {
       local_vars <- grp$NCvars[dim_names]
       local_CVs <- local_vars[lengths(local_vars) > 0L]
-      axes <- lapply(local_CVs, function(v) .makeAxis(grp, v, visible_dims))
+      axes <- lapply(local_CVs, function(v) .makeAxis(grp, v)) #, visible_dims))
       grp$CFaxes <- append(grp$CFaxes, unlist(axes))
     } else axes <- list()
   } else axes <- list()
@@ -243,57 +243,42 @@ peek_ncdf <- function(resource) {
 #
 # @param grp Group in which the NC variable is defined.
 # @param var `NCVariable` instance to create the axis from.
-# @param dims `NCDimension` instances visible to `var`.
 #
 # @return An instance of `CFAxis`.
-.makeAxis <- function(grp, var, dims) {
+.makeAxis <- function(grp, var) {
   h <- grp$handle
+  dim <- grp$find_dim_by_id(var$dimids[1L]) # FIXME: What about NC_CHAR axis?
 
   # Dimension values
   vals <- try(as.vector(RNetCDF::var.get.nc(h, var$name)), silent = TRUE)
   if (inherits(vals, "try-error"))
     # No dimension values so it's an identity axis
-    return(CFAxisDiscrete$new(grp, var, dims[[var$name]], ""))
-  if (is.numeric(vals)) vals <- round(vals, 5) # Drop spurious "precision"
+    return(CFAxisDiscrete$new(grp, var, dim, ""))
 
   # Does `var` have attributes?
   if (!nrow(var$attributes)) {
     # No attributes so nothing left to do
     if (var$vtype %in% c("NC_CHAR", "NC_STRING"))
-      return(CFAxisCharacter$new(grp, var, dims[[var$name]], "", vals))
-    else return(CFAxisNumeric$new(grp, var, dims[[var$name]], "", vals))
+      return(CFAxisCharacter$new(grp, var, dim, "", vals))
+    else return(CFAxisNumeric$new(grp, var, dim, "", vals))
   }
 
   # Z: standard_names and formula_terms for parametric vertical axis
   standard <- var$attribute("standard_name")
   if (!is.na(standard) && standard %in% Z_parametric_standard_names)
-    return(.makeParametricAxis(grp, var, dims[[var$name]], vals, standard))
+    return(.makeParametricAxis(grp, var, dim, vals, standard))
 
   # Does the axis have bounds?
-  CFbounds <- .readBounds(grp, var$attribute("bounds"), dims)
+  CFbounds <- .readBounds(grp, var$attribute("bounds"))
 
   # See if we have a "units" attribute that makes time
   units <- var$attribute("units")
   if (!is.na(units)) {
-    cal <- var$attribute("calendar")
-    if (is.na(cal)) cal <- "standard"
-    if (!is.null(CFbounds)) {
-      # Time with bounds
-      t <- try(CFtime::CFTime$new(units, cal, vals), silent = TRUE)
-      if (!inherits(t, "try-error"))
-        t$bounds <- CFbounds$bounds
-    } else {
-      # Climatology must have bounds
-      clim <- .readBounds(grp, var$attribute("climatology"), dims)
-      if (!is.null(clim))
-        t <- try(CFtime::CFClimatology$new(units, cal, vals, clim$bounds), silent = TRUE)
-      else
-        # Time without bounds
-        t <- try(CFtime::CFTime$new(units, cal, vals), silent = TRUE)
-
+    t <- .makeTimeAxis(grp, var, units, vals)
+    if (!inherits(t, "try-error")) {
+      t$bounds <- CFbounds$bounds
+      return(CFAxisTime$new(grp, var, dim, t))
     }
-    if (!inherits(t, "try-error"))
-      return(CFAxisTime$new(grp, var, dims[[var$name]], t))
   }
 
   # Orientation of the axis
@@ -311,10 +296,10 @@ peek_ncdf <- function(resource) {
   }
 
   axis <- if (orient == "X")
-    CFAxisLongitude$new(grp, var, dims[[var$name]], vals)
+    CFAxisLongitude$new(grp, var, dim, vals)
   else if (orient == "Y")
-    CFAxisLatitude$new(grp, var, dims[[var$name]], vals)
-  else CFAxisNumeric$new(grp, var, dims[[var$name]], orient, vals)
+    CFAxisLatitude$new(grp, var, dim, vals)
+  else CFAxisNumeric$new(grp, var, dim, orient, vals)
   axis$bounds <- CFbounds
 
   axis
@@ -361,7 +346,7 @@ peek_ncdf <- function(resource) {
 #'
 #' @param grp The group where the axis is found.
 #' @param var The NC variable that defines the axis.
-#' @param dim The dimension associated with the axis.
+#' @param dim The NC dimension associated with the axis.
 #' @param vals The parameter values of the axis.
 #' @param param_name The "standard_name" attribute that names the specific
 #' parametric form of the axis.
@@ -389,6 +374,17 @@ peek_ncdf <- function(resource) {
     # FIXME: Z axis may have bounds
   }
   Z
+}
+
+.makeTimeAxis <- function(grp, var, units, vals) {
+  cal <- var$attribute("calendar")
+  if (is.na(cal)) cal <- "standard"
+  clim <- .readBounds(grp, var$attribute("climatology")) # Climatology must have bounds
+  try(if (is.null(clim))
+        CFtime::CFTime$new(units, cal, vals)
+      else
+        CFtime::CFClimatology$new(units, cal, vals, clim$bounds),
+      silent = TRUE)
 }
 
 #' Make CF constructs for "coordinates" references
@@ -421,47 +417,63 @@ peek_ncdf <- function(resource) {
         coords <- strsplit(coords, " ", fixed = TRUE)[[1L]]
         varLon <- varLat <- bndsLon <- bndsLat <- NA
         for (cid in seq_along(coords)) {
+          found_one <- FALSE
           aux <- grp$find_by_name(coords[cid], "NC")
           if (!is.null(aux)) {
+            nd <- aux$ndims
             bounds <- aux$attribute("bounds")
 
-            # Create the auxiliary construct
-            nd <- aux$ndims
-            if (nd == 0L) {
-              # No dimensions so create a scalar axis in the group of aux
+            if (nd == 2L) {
+              # If the NCVariable aux has an attribute "units" with value
+              # "degrees_east" or "degrees_north" it is a longitude or latitude,
+              # respectively. Record the fact and move on.
+              units <- aux$attribute("units")
+              if (!is.na(units)) {
+                if (grepl("^degree(s?)(_?)(east|E)$", units)) {
+                  varLon <- aux
+                  bndsLon <- .readBounds(aux$group, bounds)
+                  found_one <- TRUE
+                } else if (grepl("^degree(s?)(_?)(north|N)$", units)) {
+                  varLat <- aux
+                  bndsLat <- .readBounds(aux$group, bounds)
+                  found_one <- TRUE
+                }
+              }
+            }
+
+            if (!found_one) {
               val <- try(RNetCDF::var.get.nc(grp$handle, aux$name), silent = TRUE)
-              if (inherits(val, "try-error")) val <- NULL
-              orient <- aux$attribute("axis")
-              if (is.na(orient)) orient <- ""
-              scalar <- CFAxisScalar$new(aux$group, aux, orient, val)
-              scalar$bounds <- .readBounds(aux$group, bounds)
-              aux$group$CFaxes[[aux$name]] <- scalar
-            } else if (aux$vtype %in% c("NC_CHAR", "NC_STRING")) {
-              # Label
-              val <- try(RNetCDF::var.get.nc(grp$handle, aux$name), silent = TRUE)
-              if (inherits(val, "try-error")) val <- NULL
-              dim <- grp$find_dim_by_id(aux$dimids[length(aux$dimids)]) # If there are 2 dimids, the first is a string length for a NC_CHAR type
-              aux$group$CFlabels[[aux$name]] <- CFLabel$new(aux$group, aux, dim, val)
-            } else {
-              if (!all(aux$dimids %in% vdimids) || nd > 2L)
-                warning("Unmatched `coordinates` value '", coords[cid], "' found in variable '", v$name, "'", call. = FALSE)
-              if (nd == 2L) {
-                # If the NCVariable aux has an attribute "units" with value
-                # "degrees_east" or "degrees_north" it is a longitude or latitude,
-                # respectively. Record the fact and move on.
-                units <- aux$attribute("units")
-                if (!is.na(units)) {
-                  if (grepl("^degree(s?)(_?)(east|E)$", units)) {
-                    varLon <- aux
-                    bndsLon <- .readBounds(aux$group, bounds, grp$dimensions())
-                  } else if (grepl("^degree(s?)(_?)(north|N)$", units)) {
-                    varLat <- aux
-                    bndsLat <- .readBounds(aux$group, bounds, grp$dimensions())
-                  }
+              if (inherits(val, "try-error")) {
+                warning("Could not read data for `coordinates` value '", coords[cid], "' found in variable '", v$name, "'.", call. = FALSE)
+                next
+              }
+
+              if (nd == 0L) {
+                # No dimensions so create a scalar axis in the group of aux
+                orient <- aux$attribute("axis")
+                if (is.na(orient)) orient <- ""
+                scalar <- CFAxisScalar$new(aux$group, aux, orient, val)
+                scalar$bounds <- .readBounds(aux$group, bounds)
+                aux$group$CFaxes[[aux$name]] <- scalar
+                found_one <- TRUE
+              } else if (aux$vtype %in% c("NC_CHAR", "NC_STRING")) {
+                # Label
+                dim <- grp$find_dim_by_id(aux$dimids[length(aux$dimids)]) # If there are 2 dimids, the first is a string length for a NC_CHAR type
+                aux$group$CFaux[[aux$name]] <- CFLabel$new(aux$group, aux, dim, val)
+                found_one <- TRUE
+              } else if (nd == 1L) {
+                # Auxiliary coordinate with a single dimension: make an axis out of it.
+                ax <- .makeAxis(grp, aux)
+                if (inherits(ax, "CFAxis")) {
+                  aux$group$CFaux[[aux$name]] <- ax
+                  found_one <- TRUE
                 }
               }
             }
           }
+
+          if (!found_one)
+            warning("Unmatched `coordinates` value '", coords[cid], "' found in variable '", v$name, "'.", call. = FALSE)
         }
 
         # Make a CFAuxiliaryLongLat if we have found a varLon and a varLat and
@@ -567,10 +579,9 @@ peek_ncdf <- function(resource) {
 # Utility function to read bounds values
 # grp - the current group being processed
 # bounds - the name of the "bounds" variable, or NULL if no bounds present
-# dims - List of visible NCDimension instances
 # axis_dims - number of axes on the coordinate variable; usually 1 but could be
 # 2 on an auxiliary coordinate variable
-.readBounds <- function(grp, bounds, dims, axis_dims = 1L) {
+.readBounds <- function(grp, bounds, axis_dims = 1L) {
   if (is.na(bounds)) NULL
   else {
     NCbounds <- grp$find_by_name(bounds, "NC")
@@ -583,10 +594,7 @@ peek_ncdf <- function(resource) {
           # FIXME: Flag non-standard item
           bnds <- bnds[, , 1L]
         }
-        dimid <- NCbounds$dimids[1L] # Bounds dimid is always the first listed
-        dim <- lapply(dims, function(d) if (d$id == dimid) d)
-        dim <- dim[lengths(dim) > 0L][[1L]] # There must be 1 only
-        CFBounds$new(NCbounds, dim, bnds)
+        CFBounds$new(NCbounds, grp$find_dim_by_id(NCbounds$dimids[1L]), bnds)
       }
     }
   }
@@ -608,6 +616,7 @@ peek_ncdf <- function(resource) {
     vars <- lapply(grp$NCvars, function(v) {
       if (!length(v$CF) && v$ndims > 0L) {
         ax <- .buildVariableAxisList(v, axes)
+        ax_names <- names(ax)
         var <- CFVariable$new(grp, v, ax)
 
         # Add references to any "coordinates" of the variable
@@ -615,34 +624,42 @@ peek_ncdf <- function(resource) {
         if (!is.na(coords <- v$attribute("coordinates"))) {
           coords <- strsplit(coords, " ", fixed = TRUE)[[1L]]
           for (cid in seq_along(coords)) {
+            if (coords[cid] %in% ax_names) next
+
             aux <- grp$find_by_name(coords[cid], "CF")
             if (!is.null(aux)) {
-              clss <- class(aux)[1L]
-              if (clss == "CFAxisScalar")
+              clss <- class(aux)
+              if (clss[1L] == "CFAxisScalar")
                 var$axes[[aux$name]] <- aux
-              else if (clss == "CFLabel") {
+              else if (clss[1L] == "CFLabel") {
                 ndx <- which(sapply(ax, function(x) x$dimid == aux$dimid))
-                if (length(ndx)) ax[[ndx]]$labels <- aux
+                if (length(ndx)) ax[[ndx]]$auxiliary <- aux
+                else {  # FIXME: record warning
+                }
+              } else if ("CFAxis" %in% clss) {
+                browser()
+                ndx <- which(sapply(ax, function(x) x$dimid == aux$dimid))
+                if (length(ndx)) ax[[ndx]]$auxiliary <- aux
                 else {  # FIXME: record warning
                 }
               } else {
                 # FIXME: Record warning
               }
             } else {
-              aux <- grp$find_by_name(coords[cid], "NC")
-              if (!is.null(aux)) {
-                units <- aux$attribute("units")
+              ll <- grp$find_by_name(coords[cid], "NC")
+              if (!is.null(ll)) {
+                units <- ll$attribute("units")
                 if (!is.na(units)) {
-                  if (grepl("^degree(s?)(_?)(east|E)$", units)) varLon <- aux
-                  else if (grepl("^degree(s?)(_?)(north|N)$", units)) varLat <- aux
+                  if (grepl("^degree(s?)(_?)(east|E)$", units)) varLon <- ll
+                  else if (grepl("^degree(s?)(_?)(north|N)$", units)) varLat <- ll
                 }
               }
             }
           }
 
           if (inherits(varLon, "NCVariable") && inherits(varLat, "NCVariable")) {
-            aux <- varLon$group$find_by_name(paste(varLon$name, varLat$name, sep = "_"), "CF")
-            if (!is.null(aux)) var$gridLongLat <- aux
+            ll <- varLon$group$find_by_name(paste(varLon$name, varLat$name, sep = "_"), "CF")
+            if (!is.null(ll)) var$gridLongLat <- ll
           }
         }
 

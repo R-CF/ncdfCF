@@ -3,13 +3,19 @@
 \docType{class}
 \name{CFArray}
 \alias{CFArray}
-\title{Data extracted from a CF data variable}
+\title{Array data extracted from a CF data variable}
 \description{
 This class holds the data that is extracted from a \link{CFVariable},
 using the \code{data()} or \code{subset()} method. The instance of this class will
 additionally have the axes and other relevant information such as its
 attributes (as well as those of the axes) and the coordinate reference
 system.
+
+Otherwise, a \code{CFArray} is detached from the data set where it was derived
+from. It is self-contained in the sense that all its constituent parts
+(axes, bounds, attributes, etc) are available and directly linked to the
+instance. For performance reasons, axes and their parts (e.g. bounds) are
+shared between instances of \code{CFArray} and \code{CFVariable}.
 
 The class has a number of utility functions to extract the data in specific
 formats:

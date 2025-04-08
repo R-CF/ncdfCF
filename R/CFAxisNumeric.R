@@ -12,26 +12,26 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     # The values of the axis, usually a numeric vector.
     values = NULL,
 
+    # The raw values of the axis
     get_values = function() {
       private$values
     },
 
+    # Coordinate values of the axis. This may be a label set. Double values are
+    # rounded to the standard number of digits.
+    get_coordinates = function() {
+      crds <- super$get_coordinates()
+      if (any(is.double(crds))) round(crds, CF$digits)
+      else crds
+    },
+
     dimvalues_short = function() {
-      lbls <- self$labels
+      crds <- self$coordinates
       nv <- length(private$values)
-      if (!length(lbls)) {
-        if (nv == 1L)
-          dims <- sprintf("[%s]", gsub(" ", "", formatC(private$values[1L], digits = 8L)))
-        else {
-          vals <- trimws(formatC(c(private$values[1L], private$values[nv]), digits = 8L))
-          dims <- sprintf("[%s ... %s]", vals[1L], vals[2L])
-        }
-      } else {
-        lbls <- lbls[[1L]]$values
-        if (nv == 1L) dims <- paste0("[", lbls[1L], "]")
-        else dims <- paste0("[", lbls[1L], " ... ", lbls[length(lbls)], "]")
-      }
-      dims
+      if (nv == 1L)
+        paste0("[", crds[1L], "]")
+      else
+        paste0("[", crds[1L], " ... ", crds[nv], "]")
     }
   ),
   public = list(
@@ -59,27 +59,16 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       if (is.na(units)) units <- ""
       if (units == "1") units <- ""
 
-      lbls <- self$labels
-      len <- length(private$values)
-      if (length(lbls)) {
-        lbls <- lbls[[1L]]$values
-        if (len < 5L)
-          cat("Values   : ", paste(lbls, collapse = ", "), "\n", sep = "")
-        else
-          cat("Values   : ", lbls[1L], ", ", lbls[2L], " ... ", lbls[len - 1L], ", ", lbls[len], "\n", sep = "")
-      } else {
-        if (len < 7L) {
-          vals <- trimws(formatC(private$values, digits = 8L))
-          cat("Values   : ", paste(vals, collapse = ", "), " ", units, "\n", sep = "")
-        } else {
-          vals <- trimws(formatC(c(private$values[1L:3L], private$values[(len-2):len], digits = 8L)))
-          cat("Values   : ", vals[1L], ", ", vals[2L], ", ", vals[3L], " ... ", vals[4L], ", ", vals[5L], ", ", vals[6L], " ", units, "\n", sep = "")
-        }
-      }
+      crds <- self$coordinates
+      len <- length(crds)
+      if (len < 8L)
+        cat("Values     : ", paste(crds, collapse = ", "), "\n", sep = "")
+      else
+        cat("Values     : ", crds[1L], ", ", crds[2L], ", ", crds[3L], " ... ", crds[len - 2L], ", ", crds[len - 1L], ", ", crds[len], "\n", sep = "")
 
       if (!is.null(self$bounds))
         self$bounds$print(...)
-      else cat("Bounds   : (not set)\n")
+      else cat("Bounds     : (not set)\n")
 
       self$print_attributes(...)
     },
@@ -131,14 +120,14 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #'   [CFAxisScalar] instance is returned with the value from this axis. If
     #'   the value of the argument is `NULL`, return the entire axis (possibly
     #'   as a scalar axis).
-    sub_axis = function(group, rng = NULL) {
+    subset = function(group, rng = NULL) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
 
       .make_scalar <- function(idx) {
         scl <- CFAxisScalar$new(group, var, self$orientation, idx)
         bnds <- self$bounds
         if (inherits(bnds, "CFBounds")) scl$bounds <- bnds$sub_bounds(group, idx)
-        private$copy_label_subset_to(scl, idx)
+        private$subset_coordinates(scl, idx)
         scl
       }
 
@@ -157,7 +146,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
           ax <- CFAxisNumeric$new(group, var, dim, self$orientation, private$values[rng[1L]:rng[2L]])
           bnds <- self$bounds
           if (inherits(bnds, "CFBounds")) ax$bounds <- bnds$sub_bounds(group, rng)
-          private$copy_label_subset_to(ax, idx)
+          private$subset_coordinates(ax, idx)
           ax
         }
       }
@@ -171,12 +160,12 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
         "Generic numeric axis"
     },
 
-    #' @field dimnames (read-only) The coordinates of the axis as a numeric
-    #' vector, or labels for every axis element if they have been set.
+    #' @field dimnames (read-only) The coordinates of the axis as a vector.
+    #'   These are by default the values of the axis, but it could also be a set
+    #'   of auxiliary coordinates, if they have been set.
     dimnames = function(value) {
       if (missing(value)) {
-        if (length(self$lbls)) self$lbls[[1L]]$values
-        else round(private$values, 6L)
+        self$coordinates
       }
     }
   )

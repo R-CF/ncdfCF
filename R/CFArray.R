@@ -1,10 +1,16 @@
-#' Data extracted from a CF data variable
+#' Array data extracted from a CF data variable
 #'
 #' @description This class holds the data that is extracted from a [CFVariable],
 #'   using the `data()` or `subset()` method. The instance of this class will
 #'   additionally have the axes and other relevant information such as its
 #'   attributes (as well as those of the axes) and the coordinate reference
 #'   system.
+#'
+#'   Otherwise, a `CFArray` is detached from the data set where it was derived
+#'   from. It is self-contained in the sense that all its constituent parts
+#'   (axes, bounds, attributes, etc) are available and directly linked to the
+#'   instance. For performance reasons, axes and their parts (e.g. bounds) are
+#'   shared between instances of `CFArray` and `CFVariable`.
 #'
 #'   The class has a number of utility functions to extract the data in specific
 #'   formats:
@@ -272,7 +278,7 @@ CFArray <- R6::R6Class("CFArray",
       self$group$write_attributes(nc, "NC_GLOBAL")
 
       # Axes
-      lbls <- unlist(sapply(self$axes, function(ax) {ax$write(nc); ax$label_set_names}))
+      lbls <- unlist(sapply(self$axes, function(ax) {ax$write(nc); ax$coordinate_names}))
 
       # CRS
       if (!is.null(self$crs)) {

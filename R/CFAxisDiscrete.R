@@ -21,9 +21,10 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     # The coordinate values of the axis are just an integer sequence, unless
     # labels have been set for the axis.
     get_coordinates = function() {
-      crds <- self$label_set() # Get labels, if they are active
-      if (is.null(crds)) seq(self$length)
-      else crds
+      if (private$active_coords == 1L)
+        seq(self$length)
+      else
+        private$aux[[private$active_coords - 1L]]$coordinates
     },
 
     dimvalues_short = function() {
@@ -96,12 +97,13 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #'   [CFAxisScalar] instance is returned with the value from this axis. If
     #'   the value of the argument is `NULL`, return the entire axis (possibly
     #'   as a scalar axis).
-    sub_axis = function(group, rng = NULL) {
+    subset = function(group, rng = NULL) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
 
       .make_scalar <- function(idx) {
         scl <- CFAxisScalar$new(group, var, self$orientation, idx)
-        private$copy_label_subset_to(scl, idx)
+        private$subset_coordinates(scl, idx)
+        browser
         scl
       }
 
@@ -118,7 +120,7 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
         else {
           dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
           discr <- CFAxisDiscrete$new(group, var, dim, self$orientation)
-          private$copy_label_subset_to(scl, idx)
+          private$subset_labels(discr, idx)
           discr
         }
       }
@@ -136,7 +138,7 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
         # Write the dimension and any labels. No values or attributes to write.
         h <- if (inherits(nc, "NetCDF")) nc else self$group$handle
         self$NCdim$write(h)
-        lapply(private$lbls, function(l) l$write(nc))
+        lapply(private$aux, function(x) x$write(nc))
       } else
         super$write(nc)
       invisible(self)

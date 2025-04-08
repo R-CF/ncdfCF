@@ -32,14 +32,6 @@ defined.}
 }
 \if{html}{\out{</div>}}
 }
-\section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{axis_labels}}{(read-only) Retrieve the names of any axes that have
-labels associated with them.}
-}
-\if{html}{\out{</div>}}
-}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
@@ -171,8 +163,7 @@ if used, should have names as these will be used to label the results.}
 }
 \subsection{Returns}{
 A \code{CFData} object, or a list thereof with as many \code{CFData}
-objects as \code{fun} returns values, created in the same group as \code{self}
-with the summarised data.
+objects as \code{fun} returns values.
 }
 }
 \if{html}{\out{<hr>}}

@@ -243,11 +243,11 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
         if (is.null(rng)) rng <- subset[[ c("longitude", "latitude")[ax] ]]
         if (is.null(rng)) rng <- subset[[ c("X", "Y")[ax] ]]
         if (is.null(rng)) {
-          out_axis <- axis$sub_axis(out_group, NULL)
+          out_axis <- axis$subset(out_group, NULL)
         } else {
           idx <- private$range2index(axis, rng, rightmost.closed)
           if (is.null(idx)) return(NULL)
-          out_axis <- axis$sub_axis(out_group, idx)
+          out_axis <- axis$subset(out_group, idx)
         }
 
         # Collect axes for result
