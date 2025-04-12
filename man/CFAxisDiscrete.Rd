@@ -29,7 +29,7 @@ vector, or labels for every axis element if they have been set.}
 \item \href{#method-CFAxisDiscrete-print}{\code{CFAxisDiscrete$print()}}
 \item \href{#method-CFAxisDiscrete-brief}{\code{CFAxisDiscrete$brief()}}
 \item \href{#method-CFAxisDiscrete-indexOf}{\code{CFAxisDiscrete$indexOf()}}
-\item \href{#method-CFAxisDiscrete-sub_axis}{\code{CFAxisDiscrete$sub_axis()}}
+\item \href{#method-CFAxisDiscrete-subset}{\code{CFAxisDiscrete$subset()}}
 \item \href{#method-CFAxisDiscrete-write}{\code{CFAxisDiscrete$write()}}
 \item \href{#method-CFAxisDiscrete-clone}{\code{CFAxisDiscrete$clone()}}
 }
@@ -138,14 +138,14 @@ of the range of the values in the axis are returned as \code{0} and
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisDiscrete-sub_axis"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisDiscrete-sub_axis}{}}}
-\subsection{Method \code{sub_axis()}}{
+\if{html}{\out{<a id="method-CFAxisDiscrete-subset"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisDiscrete-subset}{}}}
+\subsection{Method \code{subset()}}{
 Return an axis spanning a smaller coordinate range. This
 method returns an axis which spans the range of indices given by the
 \code{rng} argument.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$sub_axis(group, rng = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$subset(group, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

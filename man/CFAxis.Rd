@@ -75,7 +75,7 @@ unlimited dimension.}
 \item \href{#method-CFAxis-shard}{\code{CFAxis$shard()}}
 \item \href{#method-CFAxis-peek}{\code{CFAxis$peek()}}
 \item \href{#method-CFAxis-time}{\code{CFAxis$time()}}
-\item \href{#method-CFAxis-sub_axis}{\code{CFAxis$sub_axis()}}
+\item \href{#method-CFAxis-subset}{\code{CFAxis$subset()}}
 \item \href{#method-CFAxis-indexOf}{\code{CFAxis$indexOf()}}
 \item \href{#method-CFAxis-write}{\code{CFAxis$write()}}
 \item \href{#method-CFAxis-clone}{\code{CFAxis$clone()}}
@@ -213,16 +213,16 @@ to this method succeed with no result for the other axis descendants.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxis-sub_axis"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxis-sub_axis}{}}}
-\subsection{Method \code{sub_axis()}}{
+\if{html}{\out{<a id="method-CFAxis-subset"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-subset}{}}}
+\subsection{Method \code{subset()}}{
 Return an axis spanning a smaller coordinate range. This
 method is "virtual" in the sense that it does not do anything other
 than return \code{NULL}. This stub is here to make the call to this method
 succeed with no result for the other axis descendants that do not
 implement this method.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$sub_axis(group, rng = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$subset(group, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

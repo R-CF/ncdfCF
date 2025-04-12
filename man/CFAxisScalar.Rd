@@ -29,7 +29,7 @@ longitude, latitude and vertical axes.
 \item \href{#method-CFAxisScalar-print}{\code{CFAxisScalar$print()}}
 \item \href{#method-CFAxisScalar-brief}{\code{CFAxisScalar$brief()}}
 \item \href{#method-CFAxisScalar-time}{\code{CFAxisScalar$time()}}
-\item \href{#method-CFAxisScalar-sub_axis}{\code{CFAxisScalar$sub_axis()}}
+\item \href{#method-CFAxisScalar-subset}{\code{CFAxisScalar$subset()}}
 \item \href{#method-CFAxisScalar-write}{\code{CFAxisScalar$write()}}
 \item \href{#method-CFAxisScalar-clone}{\code{CFAxisScalar$clone()}}
 }
@@ -123,13 +123,13 @@ represent time.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisScalar-sub_axis"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisScalar-sub_axis}{}}}
-\subsection{Method \code{sub_axis()}}{
+\if{html}{\out{<a id="method-CFAxisScalar-subset"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisScalar-subset}{}}}
+\subsection{Method \code{subset()}}{
 Return the axis. This method returns a clone of this axis,
 given that a scalar axis cannot be subset.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisScalar$sub_axis(group, rng = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisScalar$subset(group, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

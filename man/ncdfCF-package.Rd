@@ -4,26 +4,25 @@
 \name{ncdfCF-package}
 \alias{ncdfCF}
 \alias{ncdfCF-package}
-\title{ncdfCF: Easy Access to NetCDF Files and Interpreting with CF Metadata Conventions}
+\title{ncdfCF: Easy Access to NetCDF Files and Interpreting with CF Metadata
+Conventions}
 \description{
 Support for accessing and interpreting netCDF datasets in a familiar R style.
-Built on top of the \href{https://cran.r-project.org/package=RNetCDF}{\code{RNetCDF} package},
-built and maintained by the developers of the \code{netcdf} library, package
-\code{ncdfCF} provides high-level access to netCDF resources. Resources are matched
-against the
-\href{https://cfconventions.org/}{Climate and Forecast (CF) Metadata Conventions}
-for climate and forecasting data, current version 1.12. The CF Metadata
-Conventions is widely used for distributing files with climate observations
-or projections, including the Coupled Model Intercomparison Project (CMIP)
-data used by climate change scientists and the Intergovernmental Panel on
-Climate Change (IPCC), as well as large collections of satellite imagery,
-including from Landsat and MODIS.
+Built on top of the \href{https://cran.r-project.org/package=RNetCDF}{\code{RNetCDF} package}, built and maintained by
+the developers of the \code{netcdf} library, package \code{ncdfCF} provides high-level
+access to netCDF resources. Resources are matched against the \href{https://cfconventions.org/}{Climate and Forecast (CF) Metadata Conventions} for climate
+and forecasting data, current version 1.12. The CF Metadata Conventions is
+widely used for distributing files with climate observations or projections,
+including the Coupled Model Intercomparison Project (CMIP) data used by
+climate change scientists and the Intergovernmental Panel on Climate Change
+(IPCC), as well as large collections of satellite imagery, including from
+Landsat and MODIS.
 }
 \details{
 This package currently supports group traversal with scoping rules, axis
 determination and interpretation, including auxiliary axes, time axis
-interpretation with all defined calendars, grid mapping, use of
-bounds data, manipulating and interpreting attributes of groups (including global
+interpretation with all defined calendars, grid mapping, use of bounds data,
+manipulating and interpreting attributes of groups (including global
 attributes) and variables, search for and use of standard names. Some
 specific constructs in CF are also supported:
 \itemize{
@@ -31,14 +30,14 @@ specific constructs in CF are also supported:
 (CF allows any data arrangement and most data sets indeed use an arrangement
 that is not immediately useful in R).
 \item The \code{CFVariable::subset()} function allows one to select subsets of data
-using coordinate values along the axes (such as latitude values, or points
-in time) rather than index values into the array.
+using coordinate values along the axes (such as latitude values, or points in
+time) rather than index values into the array.
 \item Use of auxiliary grids to warp data variables using a non-default grid to
 a regular latitude-longitude grid.
 }
 
-Properties of the netCDF resource objects are easily examined using common
-R commands. Access to the data in the variables can be had using similarly
+Properties of the netCDF resource objects are easily examined using common R
+commands. Access to the data in the variables can be had using similarly
 known patterns, and data can be exported to a variety of formats.
 
 This package is intended to access data from netCDF resources in a format
@@ -123,8 +122,8 @@ native CRS to latitude-longitude.
 \item \code{summarise()}: Summarise the data in the data variable over the "time"
 axis, using a user-defined function, returning a \code{CFArray} object. The
 function can be built-in (such as \code{min()} and \code{max()}) or a user-developed
-function. The function may also return a vector with multiple values (such
-as \code{range()}) and then a list of \code{CFArray} objects is returned, one for each
+function. The function may also return a vector with multiple values (such as
+\code{range()}) and then a list of \code{CFArray} objects is returned, one for each
 result of the function.
 }
 
@@ -148,9 +147,9 @@ classes derive from the basic numeric class to manage the specifics of
 geodetic coordinate systems. Class \link{CFAxisVertical} also derives from the
 basic class to manage depth and height axes.
 \item \link{CFAxisTime} is a specialized class to deal with time axes. Under the CF
-Metadata Conventions multiple different calendars have been defined and this class
-deals with the complexities of all of these. Functionality is provided by the
-\code{CFtime} package.
+Metadata Conventions multiple different calendars have been defined and this
+class deals with the complexities of all of these. Functionality is provided
+by the \code{CFtime} package.
 \item \link{CFAxisCharacter} is for axes that use character labels as categorical
 values.
 \item \link{CFAxisDiscrete} is for axes that don't have any intrinsic coordinate
@@ -161,10 +160,10 @@ record a specific property of the data variable, such as observation time or
 a constant height or depth of the data.
 }
 
-Any of the axis classes can have one or more coordinate sets associated with them.
-This is most useful for \code{CFAxisDiscrete}. Labels of the active coordinate set are
-used for display of axis properties, as well as for selection in e.g.
-\code{CFVariable$subset()}.
+Any of the axis classes can have one or more coordinate sets associated with
+them. This is most useful for \code{CFAxisDiscrete}. Labels of the active
+coordinate set are used for display of axis properties, as well as for
+selection in e.g. \code{CFVariable$subset()}.
 
 Methods for \code{CFAxis} instances:
 
@@ -180,7 +179,7 @@ caller (increasingly more compact) information on an axis.
 \itemize{
 \item \code{indexOf()}: Retrieve the sub-range of the axis that encompasses the
 physical values passed.
-\item \code{sub_axis}: Create a new \code{CFAxis} instance that spans a sub-range of the
+\item \code{subset}: Create a new \code{CFAxis} instance that spans a sub-range of the
 axis.
 \item \code{time()}: Retrieve the \code{CFTime} instance of the axis.
 }
@@ -188,14 +187,14 @@ axis.
 \emph{\strong{Coordinates}}
 \itemize{
 \item \code{coordinate_names}: Set or retrieve the names of the coordinate sets (not the
-labels themselves).
+coordinates themselves).
 \item \code{active_coordinates}: Set or retrieve the coordinate set that is currently active
 and used for display and selection.
-\item \code{labels}: Set or retrieve the CF object that manages the active coordinate set,
-if they are labels.
-\item \code{coordinates}: Retrieve the labels of the active coordinate set. This may
+\item \code{auxiliary}: Set or retrieve the CF object that manages the active coordinate set,
+either an instance of \link{CFLabel} or an \link{CFAxis} descendant.
+\item \code{coordinates}: Retrieve the coordinates of the active coordinate set. This may
 be the coordinate values of the axis (say, longitude values) or a set of
-labels associated with the axis.
+auxiliary coordinates associated with the axis.
 }
 
 \emph{\strong{S3 methods for CFAxis}}
@@ -205,11 +204,11 @@ labels associated with the axis.
 
 \strong{Data}
 
-The \code{CFVariable::data()} and \code{CFVariable::subset()} methods return a \link{CFArray}
-object to the caller. The \code{CFArray} object contains the data from the netCDF
-resource, as well as important metadata from the data variable: axes, CRS and
-attributes. The data is easily accessed as a raw array, or processed to some
-other format.
+The \code{CFVariable::data()} and \code{CFVariable::subset()} methods return a
+\link{CFArray} object to the caller. The \code{CFArray} object contains the data from
+the netCDF resource, as well as important metadata from the data variable:
+axes, CRS and attributes. The data is easily accessed as a raw array, or
+processed to some other format.
 
 \emph{\strong{Properties}}
 \itemize{
@@ -229,8 +228,8 @@ standard R arrangement.
 \item \code{summarise()}: Summarise the data in the data array over the "time"
 axis, using a user-defined function, returning a new \code{CFArray} object. The
 function can be built-in (such as \code{min()} and \code{max()}) or a user-developed
-function. The function may also return a vector with multiple values (such
-as \code{range()}) and then a list of \code{CFArray} objects is returned, one for each
+function. The function may also return a vector with multiple values (such as
+\code{range()}) and then a list of \code{CFArray} objects is returned, one for each
 result of the function.
 \item \code{terra()}: (requires the \code{terra} package) The data values from the data
 object as a \code{terra::SpatRaster} (2 or 3 dimensions) or

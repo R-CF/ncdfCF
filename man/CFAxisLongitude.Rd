@@ -25,7 +25,7 @@ that crosses the 0-360 degree boundary.)
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFAxisLongitude-new}{\code{CFAxisLongitude$new()}}
-\item \href{#method-CFAxisLongitude-sub_axis}{\code{CFAxisLongitude$sub_axis()}}
+\item \href{#method-CFAxisLongitude-subset}{\code{CFAxisLongitude$subset()}}
 \item \href{#method-CFAxisLongitude-clone}{\code{CFAxisLongitude$clone()}}
 }
 }
@@ -73,14 +73,14 @@ Create a new instance of this class.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisLongitude-sub_axis"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisLongitude-sub_axis}{}}}
-\subsection{Method \code{sub_axis()}}{
+\if{html}{\out{<a id="method-CFAxisLongitude-subset"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisLongitude-subset}{}}}
+\subsection{Method \code{subset()}}{
 Return an axis spanning a smaller coordinate range. This
 method returns an axis which spans the range of indices given by the
 \code{rng} argument.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisLongitude$sub_axis(group, rng = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisLongitude$subset(group, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

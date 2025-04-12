@@ -136,10 +136,10 @@ dimnames(ds)
 
 ds[["longitude"]]
 #> <Longitude axis> [1] longitude
-#> Length   : 31
-#> Axis     : X 
-#> Values   : 28, 28.1, 28.2 ... 30.8, 30.9, 31 degrees_east
-#> Bounds   : (not set)
+#> Length     : 31
+#> Axis       : X 
+#> Values     : 28, 28.1, 28.2 ... 30.8, 30.9, 31
+#> Bounds     : (not set)
 #> 
 #> Attributes:
 #>  id name          type     length value       
@@ -188,10 +188,14 @@ peek_ncdf(fn)
 #> time      hours since 1900-01-01 00:00:00.0     24      TRUE
 #> longitude                      degrees_east     31     FALSE
 #> latitude                      degrees_north     21     FALSE
-#>                                                  values has_bounds label_sets
-#> time      [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]      FALSE          0
-#> longitude                                   [28 ... 31]      FALSE          0
-#> latitude                                    [-1 ... -3]      FALSE          0
+#>                                                  values has_bounds
+#> time      [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]      FALSE
+#> longitude                                   [28 ... 31]      FALSE
+#> latitude                                    [-1 ... -3]      FALSE
+#>           coordinate_sets
+#> time                    1
+#> longitude               1
+#> latitude                1
 #> 
 #> $attributes
 #>   id        name    type length
@@ -211,7 +215,7 @@ peek_ncdf(fn)
 There are three ways to read data for a variable from the resource:
 
 - **`data():`** The `data()` method returns all data of a variable,
-  including its metadata, in a `CFData` instance.
+  including its metadata, in a `CFArray` instance.
 - **`[]`:** The usual R array operator gives you access to the raw,
   non-interpreted data in the netCDF resource. This uses index values
   into the dimensions and requires you to know the order in which the
@@ -241,7 +245,7 @@ ts <- t2m[, , 12]
 str(ts)
 #>  num [1:31, 1:21, 1] 300 300 300 300 300 ...
 #>  - attr(*, "dimnames")=List of 3
-#>   ..$ : chr [1:31] "28" "28.1" "28.2" "28.3" ...
+#>   ..$ : chr [1:31] "28" "28.1" "28.200001" "28.299999" ...
 #>   ..$ : chr [1:21] "-1" "-1.1" "-1.2" "-1.3" ...
 #>   ..$ : chr "2016-01-01T11:00:00"
 #>  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"
@@ -253,7 +257,7 @@ str(ts)
 Note that the results contain degenerate dimensions (of length 1). This
 by design when using basic `[]` data access because it allows attributes
 to be attached in a consistent manner. When using the `subset()` method,
-the data is returned as an instance of `CFData`, including axes and
+the data is returned as an instance of `CFArray`, including axes and
 attributes:
 
 ``` r
@@ -295,7 +299,7 @@ attributes:
 #> 
 #> Axes:
 #>  id axis name      length values                                       
-#>  -1 X    longitude  8     [28.8 ... 29.5]                              
+#>  -1 X    longitude  7     [28.9 ... 29.5]                              
 #>  -1 Y    latitude  10     [-1.1 ... -2]                                
 #>  -1 T    time       6     [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]
 #>  unit                             
@@ -455,12 +459,12 @@ library(data.table)
 head(dt <- ts$data.table())
 #>    longitude latitude                time      t2m
 #>        <num>    <num>              <char>    <num>
-#> 1:      28.8     -1.1 2016-01-01T09:00:00 296.0753
-#> 2:      28.9     -1.1 2016-01-01T09:00:00 294.9227
-#> 3:      29.0     -1.1 2016-01-01T09:00:00 295.8135
-#> 4:      29.1     -1.1 2016-01-01T09:00:00 297.0929
-#> 5:      29.2     -1.1 2016-01-01T09:00:00 297.4697
-#> 6:      29.3     -1.1 2016-01-01T09:00:00 298.5419
+#> 1:      28.9     -1.1 2016-01-01T09:00:00 294.9227
+#> 2:      29.0     -1.1 2016-01-01T09:00:00 295.8135
+#> 3:      29.1     -1.1 2016-01-01T09:00:00 297.0929
+#> 4:      29.2     -1.1 2016-01-01T09:00:00 297.4697
+#> 5:      29.3     -1.1 2016-01-01T09:00:00 298.5419
+#> 6:      29.4     -1.1 2016-01-01T09:00:00 299.8894
 
 #install.packages("terra")
 suppressMessages(library(terra))

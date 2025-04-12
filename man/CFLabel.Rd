@@ -104,12 +104,14 @@ is \verb{width = } to indicate a maximum width of attribute columns.}
 \subsection{Method \code{subset()}}{
 Retrieve a subset of the labels.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFLabel$subset(rng)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFLabel$subset(grp, rng)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{grp}}{The group to create the new label object in.}
+
 \item{\code{rng}}{The range of indices to retrieve.}
 }
 \if{html}{\out{</div>}}

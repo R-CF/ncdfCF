@@ -320,3 +320,11 @@ dim.CFAxis <- function(x) {
 dimnames.CFAxis <- function(x) {
   x$dimnames
 }
+
+#' Compact display of an axis.
+#' @param object A `CFAxis` instance or any descendant.
+#' @param ... Ignored.
+#' @export
+str.CFAxis <- function(object, ...) {
+  cat(paste0("<", object$friendlyClassName, "> ", object$name, "\n"))
+}

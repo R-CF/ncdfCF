@@ -23,7 +23,7 @@ range, orientation and meaning.
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFAxisLatitude-new}{\code{CFAxisLatitude$new()}}
-\item \href{#method-CFAxisLatitude-sub_axis}{\code{CFAxisLatitude$sub_axis()}}
+\item \href{#method-CFAxisLatitude-subset}{\code{CFAxisLatitude$subset()}}
 \item \href{#method-CFAxisLatitude-clone}{\code{CFAxisLatitude$clone()}}
 }
 }
@@ -71,14 +71,14 @@ Create a new instance of this class.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisLatitude-sub_axis"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisLatitude-sub_axis}{}}}
-\subsection{Method \code{sub_axis()}}{
+\if{html}{\out{<a id="method-CFAxisLatitude-subset"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisLatitude-subset}{}}}
+\subsection{Method \code{subset()}}{
 Return an axis spanning a smaller coordinate range. This
 method returns an axis which spans the range of indices given by the
 \code{rng} argument.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisLatitude$sub_axis(group, rng = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisLatitude$subset(group, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

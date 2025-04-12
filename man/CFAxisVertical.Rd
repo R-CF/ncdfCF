@@ -66,7 +66,7 @@ to calculate the parametric axis values.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="indexOf"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-indexOf'><code>ncdfCF::CFAxisNumeric$indexOf()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="print"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-print'><code>ncdfCF::CFAxisNumeric$print()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="range"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-range'><code>ncdfCF::CFAxisNumeric$range()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="sub_axis"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-sub_axis'><code>ncdfCF::CFAxisNumeric$sub_axis()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="subset"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-subset'><code>ncdfCF::CFAxisNumeric$subset()</code></a></span></li>
 </ul>
 </details>
 }}

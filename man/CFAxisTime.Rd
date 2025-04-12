@@ -30,7 +30,7 @@ vector.}
 \item \href{#method-CFAxisTime-time}{\code{CFAxisTime$time()}}
 \item \href{#method-CFAxisTime-indexOf}{\code{CFAxisTime$indexOf()}}
 \item \href{#method-CFAxisTime-slice}{\code{CFAxisTime$slice()}}
-\item \href{#method-CFAxisTime-sub_axis}{\code{CFAxisTime$sub_axis()}}
+\item \href{#method-CFAxisTime-subset}{\code{CFAxisTime$subset()}}
 \item \href{#method-CFAxisTime-write}{\code{CFAxisTime$write()}}
 \item \href{#method-CFAxisTime-clone}{\code{CFAxisTime$clone()}}
 }
@@ -175,14 +175,14 @@ values in \code{x}, or \code{integer(0)} if none of the values are valid.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisTime-sub_axis"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisTime-sub_axis}{}}}
-\subsection{Method \code{sub_axis()}}{
+\if{html}{\out{<a id="method-CFAxisTime-subset"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisTime-subset}{}}}
+\subsection{Method \code{subset()}}{
 Return an axis spanning a smaller coordinate range. This
 method returns an axis which spans the range of indices given by the
 \code{rng} argument.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$sub_axis(group, rng = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$subset(group, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

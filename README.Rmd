@@ -82,7 +82,7 @@ peek_ncdf(fn)
 
 There are three ways to read data for a variable from the resource:
 
- * **`data():`** The `data()` method returns all data of a variable, including its metadata, in a `CFData` instance.
+ * **`data():`** The `data()` method returns all data of a variable, including its metadata, in a `CFArray` instance.
  * **`[]`:** The usual R array operator gives you access to the raw, non-interpreted data in the netCDF resource. This uses index values into the dimensions and requires you to know the order in which the dimensions are specified for the variable. With a bit of tinkering and some helper functions in `ncdfCF` this is still very easy to do.
  * **`subset()`:** The `subset()` method lets you specify what you want to extract from each dimension in real-world coordinates and timestamps, in whichever order. This can also rectify non-Cartesian grids to regular longitude-latitude grids.
  
@@ -96,7 +96,7 @@ ts <- t2m[, , 12]
 str(ts)
 ```
 
-Note that the results contain degenerate dimensions (of length 1). This by design when using basic `[]` data access because it allows attributes to be attached in a consistent manner. When using the `subset()` method, the data is returned as an instance of `CFData`, including axes and attributes:
+Note that the results contain degenerate dimensions (of length 1). This by design when using basic `[]` data access because it allows attributes to be attached in a consistent manner. When using the `subset()` method, the data is returned as an instance of `CFArray`, including axes and attributes:
 
 ```{r subset}
 # Extract a specific region, full time dimension

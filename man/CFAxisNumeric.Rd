@@ -17,8 +17,9 @@ knowledge of their nature. More specific classes descend from this class.
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{dimnames}}{(read-only) The coordinates of the axis as a numeric
-vector, or labels for every axis element if they have been set.}
+\item{\code{dimnames}}{(read-only) The coordinates of the axis as a vector.
+These are by default the values of the axis, but it could also be a set
+of auxiliary coordinates, if they have been set.}
 }
 \if{html}{\out{</div>}}
 }
@@ -30,7 +31,7 @@ vector, or labels for every axis element if they have been set.}
 \item \href{#method-CFAxisNumeric-brief}{\code{CFAxisNumeric$brief()}}
 \item \href{#method-CFAxisNumeric-range}{\code{CFAxisNumeric$range()}}
 \item \href{#method-CFAxisNumeric-indexOf}{\code{CFAxisNumeric$indexOf()}}
-\item \href{#method-CFAxisNumeric-sub_axis}{\code{CFAxisNumeric$sub_axis()}}
+\item \href{#method-CFAxisNumeric-subset}{\code{CFAxisNumeric$subset()}}
 \item \href{#method-CFAxisNumeric-clone}{\code{CFAxisNumeric$clone()}}
 }
 }
@@ -152,14 +153,14 @@ provided, or \code{integer(0)} if none of the \code{x} values are valid.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisNumeric-sub_axis"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisNumeric-sub_axis}{}}}
-\subsection{Method \code{sub_axis()}}{
+\if{html}{\out{<a id="method-CFAxisNumeric-subset"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisNumeric-subset}{}}}
+\subsection{Method \code{subset()}}{
 Return an axis spanning a smaller coordinate range. This
 method returns an axis which spans the range of indices given by the
 \code{rng} argument.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$sub_axis(group, rng = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$subset(group, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

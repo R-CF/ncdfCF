@@ -221,7 +221,7 @@ peek_ncdf <- function(resource) {
     if (length(dim_names)) {
       local_vars <- grp$NCvars[dim_names]
       local_CVs <- local_vars[lengths(local_vars) > 0L]
-      axes <- lapply(local_CVs, function(v) .makeAxis(grp, v)) #, visible_dims))
+      axes <- lapply(local_CVs, function(v) .makeAxis(grp, v))
       grp$CFaxes <- append(grp$CFaxes, unlist(axes))
     } else axes <- list()
   } else axes <- list()
@@ -238,8 +238,9 @@ peek_ncdf <- function(resource) {
 # Create an `CFAxis` from an NC variable and dimension
 #
 # This method creates the various kinds of axes, with the exception of
-# [CFAxisVertical], which is passed off to `.makeAxisParametric` once a
-# parametric Z-axis is detected.
+# [CFAxisVertical] and [CFAxisTime], which are passed off to `.makeAxisParametric`
+# once a parametric Z-axis is detected, or `.makeTimeAxis()` for a possible
+# time axis.
 #
 # @param grp Group in which the NC variable is defined.
 # @param var `NCVariable` instance to create the axis from.
