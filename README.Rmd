@@ -56,8 +56,8 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 (ds <- open_ncdf(fn))
 
 # ...or very brief details
-names(ds)
-dimnames(ds)
+ds$var_names
+ds$axis_names
 
 # Variables and dimensions can be accessed through standard list-type extraction syntax
 (t2m <- ds[["t2m"]])

@@ -7,6 +7,7 @@
 - `CFVariable::subset()` can subset over a discrete axis with auxiliary coordinates.
 - `summarise()` can now summarise over eras. This yields a climatological statistic which is now supported with the appropriate "time" axis description.
 - `actual_range` attribute is set on data arrays, axes and bounds.
+- Added `CFDataset$var_names` and `CFDataset$axis_names` fields.
 - Check for duplicate object names at group level added.
 - Axis `values` fields made private. Read-only access provided through`CFAxis$values` and `CFAxis$coordinates` (preferred) for consistent access patterns throughout the axis class hierarchy.
 - Root group can `print()` without enclosing data set.

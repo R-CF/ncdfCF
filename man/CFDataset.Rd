@@ -54,6 +54,10 @@ resource. This is for internal use only.}
 
 \item{\code{conventions}}{(read-only) Returns the conventions that this netCDF
 resource conforms to.}
+
+\item{\code{var_names}}{(read-only) Vector of names of variables in this data set.}
+
+\item{\code{axis_names}}{(read-only) Vector of names of axes in this data set.}
 }
 \if{html}{\out{</div>}}
 }

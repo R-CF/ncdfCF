@@ -227,6 +227,18 @@ CFDataset <- R6::R6Class("CFDataset",
         conv <- self$root$attribute("Conventions")
         if (is.na(conv)) "(not indicated)" else conv
       }
+    },
+
+    #' @field var_names (read-only) Vector of names of variables in this data set.
+    var_names = function(value) {
+      if (missing(value))
+        names(self$variables())
+    },
+
+    #' @field axis_names (read-only) Vector of names of axes in this data set.
+    axis_names = function(value) {
+      if (missing(value))
+        names(self$axes())
     }
   )
 )

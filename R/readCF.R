@@ -47,7 +47,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   axes <- .buildAxes(root)
 
   # Find the id's of any "bounds" variables
-  bnds <- sapply(root$NCvars, function(v) {
+  bnds <- sapply(root$NCvars, function(v) { # FIXME: what about dims in subgroups?
     nm <- v$attribute("bounds")
     if (!is.na(nm)) {
       obj <- v$group$find_by_name(nm, "NC")
@@ -81,7 +81,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   # Coordinate reference systems
   .makeCRS(root)
 
-  if (length(axes) > 0L) {
+  if (length(axes)) {
     # Try to identify the type of the file
     ft <- root$attribute("featureType")
     if (!is.na(ft) && ft %in% c("point", "timeSeries", "trajectory", "profile",

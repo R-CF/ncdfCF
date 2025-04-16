@@ -74,7 +74,7 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 # Open the file, all metadata is read
 (ds <- open_ncdf(fn))
 #> <Dataset> ERA5land_Rwanda_20160101 
-#> Resource   : /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
+#> Resource   : /private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpLl1tMa/temp_libpath16666fe3c1d4/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
 #> Format     : offset64 
 #> Type       : generic netCDF data 
 #> Conventions: CF-1.6 
@@ -109,9 +109,9 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 #>  Climate Data Operators version 2.4.1 (https://m...
 
 # ...or very brief details
-names(ds)
+ds$var_names
 #> [1] "t2m" "pev" "tp"
-dimnames(ds)
+ds$axis_names
 #> [1] "time"      "longitude" "latitude"
 
 # Variables and dimensions can be accessed through standard list-type extraction syntax
@@ -168,7 +168,7 @@ resource, use the `peek_ncdf()` function:
 ``` r
 peek_ncdf(fn)
 #> $uri
-#> [1] "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc"
+#> [1] "/private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpLl1tMa/temp_libpath16666fe3c1d4/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc"
 #> 
 #> $type
 #> [1] "generic netCDF data"
@@ -238,7 +238,7 @@ str(ts)
 #>  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"
 #>   ..- attr(*, "names")= chr [1:3] "longitude" "latitude" "time"
 #>  - attr(*, "time")=List of 1
-#>   ..$ time:CFTime with origin [hours since 1900-01-01 00:00:00.0] using calendar [standard] having 24 offset values
+#>   ..$ time:CFTime with origin [hours since 1900-01-01 00:00:00.0] using calendar [gregorian] having 24 offset values
 
 # Extract the full spatial extent for one time step
 ts <- t2m[, , 12]
@@ -251,7 +251,7 @@ str(ts)
 #>  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"
 #>   ..- attr(*, "names")= chr [1:3] "longitude" "latitude" "time"
 #>  - attr(*, "time")=List of 1
-#>   ..$ time:CFTime with origin [hours since 1900-01-01 00:00:00.0] using calendar [standard] having 1 offset values
+#>   ..$ time:CFTime with origin [hours since 1900-01-01 00:00:00.0] using calendar [gregorian] having 1 offset values
 ```
 
 Note that the results contain degenerate dimensions (of length 1). This

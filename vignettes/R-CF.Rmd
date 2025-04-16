@@ -393,7 +393,9 @@ These are not specifically supported but they will be read correctly.
 
 ##### 7.1. Cell boundaries
 
-Fully supported for 1D and 2D coordinate variables. Higher dimension coordinate variables are not yet supported.
+Fully supported for 1D and 2D coordinate variables. More strictly than the conventions, the coordinate value must fall on or between its two boundary values (which the conventions merely recommend).
+
+Higher dimension coordinate variables are not yet supported.
 
 ##### 7.2. Cell measures
 
