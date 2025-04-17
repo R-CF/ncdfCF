@@ -142,32 +142,25 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
       time <- private$tm
 
-      .make_scalar <- function(idx) {
-        scl <- CFAxisScalar$new(group, var, "T", as_timestamp(time)[idx])
-        bnds <- time$get_bounds()
-        if (!is.null(bnds)) scl$bounds <- bnds[, idx]
-        private$subset_coordinates(scl, idx)
-        scl
-      }
-
       if (is.null(rng)) {
         if (length(time) > 1L) {
           ax <- self$clone()
           ax$group <- group
           ax
         } else
-          .make_scalar(1L)
+          CFAxisScalar$new(group, var, "T", time)
       } else {
         rng <- range(rng)
-        if (rng[1L] == rng[2L])
-          .make_scalar(rng[1L])
+        idx <- time$indexOf(seq(from = rng[1L], to = rng[2L], by = 1L))
+        tm <- attr(idx, "CFTime")
+        t <- if (rng[1L] == rng[2L])
+          CFAxisScalar$new(group, var, "T", tm)
         else {
-          idx <- time$indexOf(seq(from = rng[1L], to = rng[2L], by = 1L))
           dim <- NCDimension$new(-1L, self$name, length(idx), FALSE)
-          t <- CFAxisTime$new(group, var, dim, attr(idx, "CFTime"))
-          private$subset_coordinates(t, idx)
-          t
+          CFAxisTime$new(group, var, dim, tm)
         }
+        private$subset_coordinates(t, idx)
+        t
       }
     },
 

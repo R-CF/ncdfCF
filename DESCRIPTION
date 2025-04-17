@@ -1,7 +1,7 @@
 Package: ncdfCF
 Type: Package
 Title: Easy Access to NetCDF Files with CF Metadata Conventions
-Version: 0.4.0.9000
+Version: 0.5.0.9000
 Authors@R: person("Patrick", "Van Laake", , "patrick@vanlaake.net", role = c("aut", "cre", "cph"))
 Description: Network Common Data Form ('netCDF') files are widely used for 
     scientific data. Library-level access in R is provided through packages 

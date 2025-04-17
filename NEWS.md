@@ -1,5 +1,9 @@
 # ncdfCF (development version)
 
+- Fixed creating a scalar time axis from a larger time axis when doing e.g. `CFVariable$subset(list(time = "2025-04-17"))`.
+
+# ncdfCF 0.5.0
+
 - Cell measure variables fully supported. External variables can be linked and are then automatically available to referring data variables.
 - Writing a `CFArray` instance to file automatically orients the data into the canonical axis order of X - Y - Z - T - others.
 - `CFAxis` has several methods added to work with multiple sets of auxiliary coordinates associated with the axis.
