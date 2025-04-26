@@ -38,12 +38,11 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
   ),
   public = list(
     #' @description Create a new instance of this class.
-    #' @param grp The group that contains the netCDF variable.
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
     #' @param values The `CFTime` instance that manages this axis.
-    initialize = function(grp, nc_var, nc_dim, values) {
-      super$initialize(grp, nc_var, nc_dim, "T")
+    initialize = function(nc_var, nc_dim, values) {
+      super$initialize(nc_var, nc_dim, "T")
       private$tm <- values
       self$set_attribute("units", "NC_CHAR", values$cal$definition)
       self$set_attribute("calendar", "NC_CHAR", values$cal$name)
@@ -99,15 +98,11 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @param rightmost.closed Whether or not to include the upper limit.
     #' Default is `FALSE`.
     #' @return An integer vector giving the indices in the time axis of valid
-    #' values in `x`, or `integer(0)` if none of the values are valid.
+    #' values in `x`, or `NA` if the value is not valid.
     indexOf = function(x, method = "constant", rightmost.closed = FALSE) {
       time <- private$tm
-      idx <- time$indexOf(x, method)
-      idx <- idx[!is.na(idx) & idx > 0 & idx < .Machine$integer.max]
+      idx <- time$indexOf(x, method, rightmost.closed)
       len <- length(idx)
-      if (!len) return (integer(0))
-      if (!rightmost.closed) # FIXME: Is this correct????
-        idx[len] <- idx[len] - 1
       as.integer(idx)
     },
 
@@ -148,16 +143,16 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
           ax$group <- group
           ax
         } else
-          CFAxisScalar$new(group, var, "T", time)
+          CFAxisScalar$new(var, "T", time)
       } else {
         rng <- range(rng)
         idx <- time$indexOf(seq(from = rng[1L], to = rng[2L], by = 1L))
         tm <- attr(idx, "CFTime")
         t <- if (rng[1L] == rng[2L])
-          CFAxisScalar$new(group, var, "T", tm)
+          CFAxisScalar$new(var, "T", tm)
         else {
           dim <- NCDimension$new(-1L, self$name, length(idx), FALSE)
-          CFAxisTime$new(group, var, dim, tm)
+          CFAxisTime$new(var, dim, tm)
         }
         private$subset_coordinates(t, idx)
         t

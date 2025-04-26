@@ -60,14 +60,12 @@ https://docs.ogc.org/is/18-010r11/18-010r11.pdf
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$new(grp, nc_var, name)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$new(nc_var, name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{grp}}{The group that contains the netCDF variable.}
-
 \item{\code{nc_var}}{The netCDF variable that describes this instance.}
 
 \item{\code{name}}{The formal grid mapping name from the attribute.}

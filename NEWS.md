@@ -1,6 +1,11 @@
 # ncdfCF (development version)
 
+- New `profile()` method for `CFVariable` and `CFArray`. With this method profiles can be extracted from the data, having a user-selectable dimensionality and location. Examples are temporal profiles at a given location or a zonal (lat or long) vertical profile of the atmosphere. Multiple profiles can be extracted in a single call and they can be generated as a list of `CFArray` instances or as a single `data.table`.
+- `subset()` method signature changed to have similar signature as the new `profile()` method.
+- `indexOf()` method on axes is using boundary values consistently.
+- CFObject and descendants take group field from NCVariable instance.
 - Fixed creating a scalar time axis from a larger time axis when doing e.g. `CFVariable$subset(list(time = "2025-04-17"))`.
+- Minor code fixes.
 
 # ncdfCF 0.5.0
 

@@ -58,14 +58,12 @@ vector.}
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$new(grp, nc_var, nc_dim, orientation, values)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$new(nc_var, nc_dim, orientation, values)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{grp}}{The group that contains the netCDF variable.}
-
 \item{\code{nc_var}}{The netCDF variable that describes this instance.}
 
 \item{\code{nc_dim}}{The netCDF dimension that describes the dimensionality.}
@@ -96,9 +94,9 @@ A 1-row \code{data.frame} with some details of the axis.
 \if{latex}{\out{\hypertarget{method-CFAxisCharacter-indexOf}{}}}
 \subsection{Method \code{indexOf()}}{
 Find indices in the axis domain. Given a vector of character
-strings \code{x}, find their indices in the values of the axis.
+strings \code{x}, find their indices in the coordinates of the axis.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$indexOf(x, method = "constant")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$indexOf(x, method = "constant", rightmost.closed = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -107,12 +105,14 @@ strings \code{x}, find their indices in the values of the axis.
 \item{\code{x}}{Vector of character strings to find axis indices for.}
 
 \item{\code{method}}{Ignored.}
+
+\item{\code{rightmost.closed}}{Ignored.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Numeric vector of the same length as \code{x}. Values of \code{x} outside of
-the range of the values in the axis are returned as \code{NA}.
+Numeric vector of the same length as \code{x}. Values of \code{x} that are
+not equal to a coordinate of the axis are returned as \code{NA}.
 }
 }
 \if{html}{\out{<hr>}}

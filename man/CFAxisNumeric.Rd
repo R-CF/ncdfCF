@@ -57,14 +57,12 @@ of auxiliary coordinates, if they have been set.}
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$new(grp, nc_var, nc_dim, orientation, values)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$new(nc_var, nc_dim, orientation, values)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{grp}}{The group that contains the netCDF variable.}
-
 \item{\code{nc_var}}{The netCDF variable that describes this instance.}
 
 \item{\code{nc_dim}}{The netCDF dimension that describes the dimensionality.}
@@ -129,27 +127,31 @@ values in the axis, respectively.
 \if{html}{\out{<a id="method-CFAxisNumeric-indexOf"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisNumeric-indexOf}{}}}
 \subsection{Method \code{indexOf()}}{
-Retrieve the indices of supplied values on the axis. If the
-axis has bounds then the supplied values must fall within the bounds to
-be considered valid.
+Retrieve the indices of supplied coordinates on the axis. If
+the axis has bounds then the supplied coordinates must fall within the
+bounds to be considered valid.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$indexOf(x, method = "constant")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$indexOf(x, method = "constant", rightmost.closed = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{x}}{A numeric vector of values whose indices into the axis to
+\item{\code{x}}{A numeric vector of coordinates whose indices into the axis to
 extract.}
 
 \item{\code{method}}{Extract index values without ("constant", the default) or
 with ("linear") fractional parts.}
+
+\item{\code{rightmost.closed}}{Whether or not to include the upper limit. This
+parameter is ignored for this class, effectively it always is \code{TRUE}.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-An integer vector giving the indices in \code{x} of valid values
-provided, or \code{integer(0)} if none of the \code{x} values are valid.
+A vector giving the indices in \code{x} of valid coordinates provided.
+Values of \code{x} outside of the range of the coordinates in the axis are
+returned as \code{NA}.
 }
 }
 \if{html}{\out{<hr>}}

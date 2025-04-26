@@ -138,17 +138,19 @@ Return the indexes into the X (longitude) and Y (latitude)
 axes of the original data grid of the points closest to the supplied
 longitudes and latitudes, up to a maximum distance.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$sample_index(x, y, maxDist = 0.1)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$sample_index(x, y, maxDist = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{x, y}}{Vectors of longitude and latitude values in decimal
-degrees, respectively.}
+\item{\code{x, y}}{Vectors of longitude and latitude values in decimal degrees,
+respectively.}
 
 \item{\code{maxDist}}{Numeric value in decimal degrees of the maximum distance
-between the sampling point and the closest grid cell.}
+between the sampling point and the closest grid cell. If omitted
+(default), the distance is calculated from the nominal resolution of
+the grids.}
 }
 \if{html}{\out{</div>}}
 }

@@ -40,14 +40,13 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     computed_units = "",
 
     #' @description Create a new instance of this class.
-    #' @param grp The group that contains the netCDF variable.
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
     #' @param values The coordinates of this axis.
     #' @param standard_name Character string with the "standard_name" that
     #' defines the meaning, and processing of coordinates, of this axis.
-    initialize = function(grp, nc_var, nc_dim, values, standard_name) {
-      super$initialize(grp, nc_var, nc_dim, "Z", values)
+    initialize = function(nc_var, nc_dim, values, standard_name) {
+      super$initialize(nc_var, nc_dim, "Z", values)
       self$parameter_name <- standard_name
       self$set_attribute("actual_range", nc_var$vtype, range(values))
     }

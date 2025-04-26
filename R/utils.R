@@ -14,7 +14,7 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
 # This function is a bare-bones implementation of `apply(X, MARGIN, tapply, INDEX, FUN, ...)`,
 # i.e. apply a factor over a dimension of an array. There are several restrictions
 # compared to the base::apply/tapply pair (but note that function arguments are
-# named differently): (1) X must be a vector, matrix or array;
+# named differently): (1) X must be a vector, matrix or array (not a data.frame);
 # (2) MARGIN must have all dimensions except the one to operate on; (3) INDEX is
 # therefore a single factor; (4) MARGIN must be numeric (not dimnames); (5) FUN
 # must be a function (not a formula); and (6) FUN must return a vector of numeric
@@ -110,10 +110,34 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
 #'
 #' @param nm A vector of names of variables, groups or attributes to test. Group
 #' names should be plain, i.e. no preceding path.
-#' @returns `TRUE` if all `nm` are valid, `FALSE` otherwise.
+#' @return `TRUE` if all `nm` are valid, `FALSE` otherwise.
 #' @noRd
 .is_valid_name <- function(nm) {
   all(grepl("^[a-zA-Z][a-zA-Z0-9_]{0,254}$", nm))
+}
+
+#' Convert regular character strings to valid CF names. Non-permitted characters
+#' are converted to underscaores "_" and leading underscores are deleted. If the
+#' first character in the resulting string is a number `0-9`, an `x` is placed
+#' immediately before it. Finally, the string is truncated to a maximum of 255
+#' characters
+#'
+#' @param nm A vector of names to test.
+#' @return A vector of the same size as argument `nm` with valid names.
+#' @noRd
+.make_valid_name <- function(nm) {
+  nm <- gsub("[^a-zA-Z0-9_]+", "_", nm)
+  nm <- trimws(nm, "left", "_")
+  nm <- sub("^([0-9])", "x\\1", nm)
+  substr(nm, 1, 255)
+}
+
+#' Round values `x` with .5 being rounded up.
+#' Adapted from https://stackoverflow.com/a/12688836/3304426
+#' @noRd
+.round <- function(x) {
+  posneg <- sign(x)
+  trunc(abs(x) + 0.5 + CF$eps) * posneg
 }
 
 .cache_dir <- function() {

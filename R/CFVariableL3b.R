@@ -47,9 +47,9 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       private$file_rows <- as.integer(range(lat_rows))
       len <- as.integer(private$file_rows[2L] - private$file_rows[1L]) + 1L
       bnds <- (private$file_rows[1L] - 1):private$file_rows[2L] * 180 / lat_len - 90
-      lat <- makeLatitudeAxis(-1L, "latitude", grp, len,
+      lat <- makeLatitudeAxis(-1L, "latitude", grp,
                               (private$file_rows[1L]:private$file_rows[2L] - 0.5) * 180 / lat_len - 90,
-                              rbind(bnds[-len], bnds[-1L]), "degrees_north")
+                              rbind(bnds[-len], bnds[-1L]))
 
       # Longitude axis
       lon_bins <- self$index$max[lat_len * 0.5]
@@ -61,8 +61,8 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       lon <- (private$file_bins[1L]:private$file_bins[2L] - 0.5) * 360 / lon_bins - 180
       bnds <- (private$file_bins[1L]-1):private$file_bins[2L] * 360 / lon_bins - 180
       len <- private$file_bins[2L] - private$file_bins[1L] + 1
-      lon <- makeLongitudeAxis(-1L, "longitude", grp, len, lon,
-                               rbind(bnds[-len], bnds[-1L]), "degrees_east")
+      lon <- makeLongitudeAxis(-1L, "longitude", grp, lon,
+                               rbind(bnds[-len], bnds[-1L]))
 
       axes <- list(
         longitude = lon,
@@ -85,14 +85,14 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
 
       # CRS
       v <- NCVariable$new(-1L, "latitude_longitude", grp, "NC_CHAR", 0L, NULL)
-      self$crs <- CFGridMapping$new(grp, v, "latitude_longitude")
+      self$crs <- CFGridMapping$new(v, "latitude_longitude")
       self$crs$set_attribute("grid_mapping_name", "NC_CHAR", "latitude_longitude")
       self$crs$set_attribute("semi_major_axis", "NC_DOUBLE", 6378145)
       self$crs$set_attribute("inverse_flattening", "NC_DOUBLE", 0)
       self$crs$set_attribute("prime_meridian_name", "NC_CHAR", "Greenwich")
 
       # Construct the object
-      super$initialize(grp, var, axes)
+      super$initialize(var, axes)
       self$set_attribute("units", "NC_CHAR", units[2L])
       self$NCvar$CF <- self # the variable
       ncv[["BinIndex"]]$CF <- ncv[["BinList"]]$CF <- self

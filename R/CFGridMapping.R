@@ -603,13 +603,12 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
     grid_mapping_name = "",
 
     #' @description Create a new instance of this class.
-    #' @param grp The group that contains the netCDF variable.
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param name The formal grid mapping name from the attribute.
-    initialize = function(grp, nc_var, name) {
+    initialize = function(nc_var, name) {
       if(!(name %in% CRS_names))
         stop("Unsupported grid mapping: ", name)
-      super$initialize(nc_var, grp)
+      super$initialize(nc_var)
       self$grid_mapping_name <- name
       nc_var$CF <- self
     },

@@ -55,14 +55,12 @@ vector, or labels for every axis element if they have been set.}
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$new(grp, nc_var, nc_dim, orientation, dim_only = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$new(nc_var, nc_dim, orientation, dim_only = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{grp}}{The group that contains the netCDF variable.}
-
 \item{\code{nc_var}}{The netCDF variable that describes this instance.}
 
 \item{\code{nc_dim}}{The netCDF dimension that describes the dimensionality.}
@@ -119,7 +117,7 @@ values \code{x}, find their indices in the values of the axis. In effect,
 this returns index values into the axis, but outside values will be
 dropped.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$indexOf(x, method = "constant")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$indexOf(x, method = "constant", rightmost.closed = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -128,13 +126,14 @@ dropped.
 \item{\code{x}}{Vector of numeric values to find axis indices for.}
 
 \item{\code{method}}{Ignored.}
+
+\item{\code{rightmost.closed}}{Ignored.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
 Numeric vector of the same length as \code{x}. Values of \code{x} outside
-of the range of the values in the axis are returned as \code{0} and
-\code{.Machine$integer.max}, respectively.
+of the range of the values in the axis are returned as \code{NA}.
 }
 }
 \if{html}{\out{<hr>}}

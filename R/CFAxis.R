@@ -56,17 +56,17 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   variable in a netCDF resource. This method is called upon opening a
     #'   netCDF resource by the `initialize()` method of a descendant class
     #'   suitable for the type of axis.
-    #' @param grp The [NCGroup] that this axis is located in.
     #' @param nc_var The [NCVariable] instance upon which this CF axis is based.
     #' @param nc_dim The [NCDimension] instance upon which this CF axis is
     #'   based.
     #' @param orientation The orientation of the axis: "X", "Y", "Z" "T", or ""
     #'   when not known or relevant.
     #' @return A basic `CFAxis` object.
-    initialize = function(grp, nc_var, nc_dim, orientation) {
-      super$initialize(nc_var, grp)
+    initialize = function(nc_var, nc_dim, orientation) {
+      super$initialize(nc_var)
       self$NCdim <- nc_dim
       self$orientation <- orientation
+      self$set_attribute("axis", "NC_CHAR", orientation)
       self$delete_attribute("_FillValue")
 
       nc_var$CF <- self
@@ -90,7 +90,7 @@ CFAxis <- R6::R6Class("CFAxis",
       if (self$NCdim$unlim) cat(" (unlimited)\n") else cat("\n")
       cat("Axis       :", self$orientation, "\n")
       if (length(private$aux))
-        cat("Coordinates:", paste(self$coordinate_names, collapse = ", "), "\n")
+        cat("Label sets :", paste(self$coordinate_names, collapse = ", "), "\n")
     },
 
     #' @description Some details of the axis.
@@ -160,26 +160,20 @@ CFAxis <- R6::R6Class("CFAxis",
     },
 
     #' @description Find indices in the axis domain. Given a vector of
-    #'   numerical, timestamp or categorical values `x`, find their indices in
-    #'   the values of the axis. With `method = "constant"` this returns the
-    #'   index of the value lower than the supplied values in `x`. With
-    #'   `method = "linear"` the return value includes any fractional part.
+    #'   numerical, timestamp or categorical coordinates `x`, find their indices
+    #'   in the coordinates of the axis.
     #'
-    #'   If bounds are set on the numerical or time axis, the indices are taken
-    #'   from those bounds. Returned indices may fall in between bounds if the
-    #'   latter are not contiguous, with the exception of the extreme values in
-    #'   `x`.
-    #' @param x Vector of numeric, timestamp or categorial values to find axis
-    #'   indices for. The timestamps can be either character, POSIXct or Date
-    #'   vectors. The type of the vector has to correspond to the type of the
-    #'   axis.
+    #'   This is a virtual method. For more detail, see the corresponding method
+    #'   in descendant classes.
+    #' @param x Vector of numeric, timestamp or categorial coordinates to find
+    #'   axis indices for. The timestamps can be either character, POSIXct or
+    #'   Date vectors. The type of the vector has to correspond to the type of
+    #'   the axis.
     #' @param method Single character value of "constant" or "linear".
-    #' @return Numeric vector of the same length as `x`. If `method = "constant"`,
-    #'   return the index value for each match. If `method = "linear"`, return
-    #'   the index value with any fractional value. Values of `x` outside of the
-    #'   range of the values in the axis are returned as `0` and
-    #'   `.Machine$integer.max`, respectively.
-    indexOf = function(x, method = "constant") {
+    #' @param rightmost.closed Whether or not to include the upper limit.
+    #' Default is `TRUE`.
+    #' @return Numeric vector of the same length as `x`.
+    indexOf = function(x, method = "constant", rightmost.closed = TRUE) {
       stop("`indexOf()` must be implemented by descendant CFAxis class.")
     },
 

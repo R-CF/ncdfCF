@@ -13,8 +13,6 @@ class as ancestor.
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
 \item{\code{NCvar}}{The \link{NCVariable} instance that this CF object represents.}
-
-\item{\code{group}}{The \link{NCGroup} that this object is located in.}
 }
 \if{html}{\out{</div>}}
 }
@@ -28,6 +26,8 @@ class as ancestor.
 \item{\code{name}}{(read-only) The name of the CF object.}
 
 \item{\code{fullname}}{(read-only) The fully-qualified name of the CF object.}
+
+\item{\code{group}}{Retrieve the \link{NCGroup} that this object is located in.}
 
 \item{\code{attributes}}{Set or retrieve a \code{data.frame} with the attributes of
 the CF object.}
@@ -57,7 +57,7 @@ rarely, if ever, useful to call this constructor directly from the
 console. Instead, use the methods from higher-level classes such as
 \link{CFVariable}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$new(nc_var, group)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFObject$new(nc_var)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -65,8 +65,6 @@ console. Instead, use the methods from higher-level classes such as
 \describe{
 \item{\code{nc_var}}{The \link{NCVariable} instance upon which this CF object is
 based.}
-
-\item{\code{group}}{The \link{NCGroup} that this object is located in.}
 }
 \if{html}{\out{</div>}}
 }

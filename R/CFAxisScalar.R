@@ -35,14 +35,13 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
   ),
   public = list(
     #' @description Create an instance of this class.
-    #' @param grp The group that contains the netCDF variable.
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param orientation The orientation of this axis, or "" if not known.
     #' @param value The value of this axis, possibly a compound type like
     #' `CFTime` or `CFClimatology`.
-    initialize = function(grp, nc_var, orientation, value) {
+    initialize = function(nc_var, orientation, value) {
       dim <- NCDimension$new(-1L, nc_var$name, 1L, FALSE)
-      super$initialize(grp, nc_var, dim, orientation)
+      super$initialize(nc_var, dim, orientation)
       private$value <- value
       if (inherits(value, "CFTime"))
         self$set_attribute("actual_range", nc_var$vtype, c(value$offsets, value$offsets))
@@ -57,23 +56,23 @@ CFAxisScalar <- R6::R6Class("CFAxisScalar",
     print = function(...) {
       cat("<", self$friendlyClassName, "> ", self$name, "\n", sep = "")
       if (self$group$name != "/")
-        cat("Group    :", self$group$fullname, "\n")
+        cat("Group     :", self$group$fullname, "\n")
 
       longname <- self$attribute("long_name")
       if (!is.na(longname) && longname != self$name)
-        cat("Long name:", longname, "\n")
+        cat("Long name :", longname, "\n")
 
-      cat("Axis     :", self$orientation, "\n")
+      cat("Axis      :", self$orientation, "\n")
 
       if (inherits(private$value, "CFTime")) {
-        cat("Value    :", as_timestamp(private$value), "\n")
+        cat("Coordinate:", as_timestamp(private$value), "\n")
         bnds <- private$value$get_bounds("timestamp")
-        if (is.null(bnds)) cat("Bounds   : (not set)\n")
-        else cat("Bounds   : ", bnds[1L, 1L], ", ", bnds[2L, 1L], "\n", sep = "")
+        if (is.null(bnds)) cat("Bounds    : (not set)\n")
+        else cat("Bounds    : ", bnds[1L, 1L], ", ", bnds[2L, 1L], "\n", sep = "")
       } else {
         units <- self$attribute("units")
         if (is.na(units)) units <- ""
-        cat("Value    : ", private$value, " ", units, "\n", sep = "")
+        cat("Coordinate: ", private$value, " ", units, "\n", sep = "")
         if (inherits(self$bounds, "CFBounds"))
           self$bounds$print(...)
         else cat("Bounds   : (not set)\n")

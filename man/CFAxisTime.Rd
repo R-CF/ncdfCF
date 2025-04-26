@@ -55,14 +55,12 @@ vector.}
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$new(grp, nc_var, nc_dim, values)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$new(nc_var, nc_dim, values)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{grp}}{The group that contains the netCDF variable.}
-
 \item{\code{nc_var}}{The netCDF variable that describes this instance.}
 
 \item{\code{nc_dim}}{The netCDF dimension that describes the dimensionality.}
@@ -145,7 +143,7 @@ Default is \code{FALSE}.}
 }
 \subsection{Returns}{
 An integer vector giving the indices in the time axis of valid
-values in \code{x}, or \code{integer(0)} if none of the values are valid.
+values in \code{x}, or \code{NA} if the value is not valid.
 }
 }
 \if{html}{\out{<hr>}}

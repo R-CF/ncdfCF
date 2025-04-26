@@ -61,13 +61,11 @@ AOI <- R6::R6Class("AOI",
 
       lon_var <- NCVariable$new(-1L, "lon_bnds_aoi", group, "NC_DOUBLE", 1L, NULL)
       lon_vals <- seq(from = private$minLon, by = private$res[1L], length = dims[2L] + 1L)
-      lon_vals <- c(lon_vals[1:dims[2L]], lon_vals[2:(dims[2L] + 1L)])
-      dim(lon_vals) <- c(2L, dims[2L])
+      lon_vals <- rbind(lon_vals[1:dims[2L]], lon_vals[-1L])
 
       lat_var <- NCVariable$new(-1L, "lat_bnds_aoi", group, "NC_DOUBLE", 1L, NULL)
       lat_vals <- seq(from = private$minLat, by = private$res[2L], length = dims[1L] + 1L)
-      lat_vals <- c(lat_vals[1:dims[1L]], lat_vals[2:(dims[1L] + 1L)])
-      dim(lat_vals) <- c(2L, dims[1L])
+      lat_vals <- rbind(lat_vals[1:dims[1L]], lat_vals[-1L])
 
       dim <- NCDimension$new(-1L, "nv", 2L, FALSE)
 

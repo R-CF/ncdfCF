@@ -38,6 +38,7 @@ defined.}
 \item \href{#method-CFVariableBase-new}{\code{CFVariableBase$new()}}
 \item \href{#method-CFVariableBase-time}{\code{CFVariableBase$time()}}
 \item \href{#method-CFVariableBase-summarise}{\code{CFVariableBase$summarise()}}
+\item \href{#method-CFVariableBase-profile}{\code{CFVariableBase$profile()}}
 \item \href{#method-CFVariableBase-clone}{\code{CFVariableBase$clone()}}
 }
 }
@@ -59,15 +60,13 @@ defined.}
 \subsection{Method \code{new()}}{
 Create an instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariableBase$new(var, group, axes, crs)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariableBase$new(var, axes, crs)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{var}}{The NC variable that describes this data object.}
-
-\item{\code{group}}{The group that this data object should live in.}
 
 \item{\code{axes}}{A \code{list} of \link{CFAxis} descendant instances that describe the
 axes of the data object.}
@@ -164,6 +163,84 @@ if used, should have names as these will be used to label the results.}
 \subsection{Returns}{
 A \code{CFData} object, or a list thereof with as many \code{CFData}
 objects as \code{fun} returns values.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariableBase-profile"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariableBase-profile}{}}}
+\subsection{Method \code{profile()}}{
+This method extracts profiles of values from the array of
+the variable, with the location along each axis to extract expressed in
+coordinate values of each axis.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariableBase$profile(..., .names = NULL, .as_table = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{One or more arguments of the form \code{axis = location}. The
+"axis" part should be the name of an axis or its orientation \code{X}, \code{Y},
+\code{Z} or \code{T}. The "location" part is a vector of values representing
+coordinates along the axis where to profile. A profile will be
+generated for each of the elements of the "location" vectors in all
+arguments.}
+
+\item{\code{.names}}{A character vector with names for the results. The names
+will be used for the \code{CFArray} instances, or as values for the
+"location" column of the \code{data.table} if argument \code{.as_table} is
+\code{TRUE}. If the vector is shorter than the longest vector of locations
+in the \code{...} argument, a name "location_#" will be used, with the #
+replaced by the ordinal number of the vector element.}
+
+\item{\code{.as_table}}{Logical to flag if the results should be \code{CFArray}
+instances (\code{FALSE}, default) or a single \code{data.table} (\code{TRUE}). If
+\code{TRUE}, all \code{...} arguments must have the same number of elements, use
+the same axes and the \code{data.table} package must be installed.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+The coordinates along each axis to be sampled are expressed in
+values of the domain of the axis. Any axes which are not passed as
+arguments are extracted in whole to the result. If bounds are set on
+the axis, the coordinate whose bounds envelop the requested coordinate
+is selected. Otherwise, the coordinate along the axis closest to the
+supplied value will be used. If the value for a specified axis falls
+outside the valid range of that axis, \code{NULL} is returned.
+
+A typical case is to extract the temporal profile as a 1D array for a
+given location. In this case, use arguments for the latitude and
+longitude on an X-Y-T data variable: \code{profile(lat = -24, lon = 3)}.
+Other profiling options are also possible, such as a 2D zonal
+atmospheric profile at a given longitude for an X-Y-Z data variable:
+\code{profile(lon = 34)}.
+
+Multiple profiles can be extracted in one call by supplying vectors for
+the indicated axes: \code{profile(lat = c(-24, -23, -2), lon = c(5, 5, 6))}.
+The vectors need not have the same length, unless \code{.as_table = TRUE}.
+With unequal length vectors the result will be a \code{list} of \link{CFArray}
+instances with different dimensionality and/or different axes.
+\subsection{Auxiliary coordinate variables (CFVariable only)}{
+
+A special case exists for variables where the horizontal dimensions (X
+and Y) are not in longitude and latitude coordinates but in some other
+coordinate system. In this case the netCDF resource may have so-called
+\emph{auxiliary coordinate variables}. If the data variable has such
+\emph{auxiliary coordinate variables} then they will be used automatically
+if, and only if, the axes are specified as \code{X} and \code{Y}. \strong{Note} that
+if you want to profile the data in the original grid units, you should
+specify the horizontal axis names.
+}
+}
+
+\subsection{Returns}{
+If \code{.as_table = FALSE}, a list of \link{CFArray} instances, each
+having one profile for each of the elements in the "location" vectors
+of argument \code{...} and named with the respective \code{.names} value. If
+\code{.as_table = TRUE}, a \code{data.table} with a row for each element along
+all profiles, with a ".variable" column using the values from the
+\code{.names} argument.
 }
 }
 \if{html}{\out{<hr>}}

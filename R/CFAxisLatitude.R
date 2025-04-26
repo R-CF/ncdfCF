@@ -11,12 +11,11 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
   public = list(
 
     #' @description Create a new instance of this class.
-    #' @param grp The group that contains the netCDF variable.
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
     #' @param values The coordinates of this axis.
-    initialize = function(grp, nc_var, nc_dim, values) {
-      super$initialize(grp, nc_var, nc_dim, "Y", values)
+    initialize = function(nc_var, nc_dim, values) {
+      super$initialize(nc_var, nc_dim, "Y", values)
     },
 
     #' @description Return an axis spanning a smaller coordinate range. This
@@ -36,7 +35,7 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
 
       .make_scalar <- function(idx) {
-        scl <- CFAxisScalar$new(group, var, "Y", idx)
+        scl <- CFAxisScalar$new(var, "Y", idx)
         bnds <- self$bounds
         if (inherits(bnds, "CFBounds")) scl$bounds <- bnds$sub_bounds(group, idx)
         private$subset_coordinates(scl, idx)
@@ -51,11 +50,12 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
         } else
           .make_scalar(1L)
       } else {
+        rng <- range(rng)
         if (rng[1L] == rng[2L])
           .make_scalar(private$values[rng[1L]])
         else {
           dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
-          lat <- CFAxisLatitude$new(group, var, dim, private$values[rng[1L]:rng[2L]])
+          lat <- CFAxisLatitude$new(var, dim, private$values[rng[1L]:rng[2L]])
           bnds <- self$bounds
           if (inherits(bnds, "CFBounds")) lat$bounds <- bnds$sub_bounds(group, rng)
           private$subset_coordinates(lat, idx)

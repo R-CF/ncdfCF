@@ -48,6 +48,51 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
     # are set for the variable. This is only properly implemented for CFVariable.
     aux_var_names = function() {
       NULL
+    },
+
+    # Check that names passed as arguments to $subset() and $profile() are valid.
+    # This means that they must refer to an axis by name or orientation and
+    # there can be no duplication. It returns an integer vector with the order
+    # in which the axes are specified.
+    check_names = function(nm) {
+      axis_names <- names(self$axes)
+      is_axis <- match(nm, axis_names)
+      if (anyDuplicated(is_axis, incomparables = NA))
+        stop("Duplicated axis names not allowed", call. = FALSE)
+      if (!any(is.na(is_axis)))
+        return(is_axis)
+
+      orientations <- sapply(self$axes, function(a) a$orientation)
+      is_orient <- match(nm, orientations)
+      if (anyDuplicated(is_orient, incomparables = NA))
+        stop("Duplicated axis orientations not allowed", call. = FALSE)
+      if (!any(is.na(is_orient)))
+        return(is_orient)
+
+      ax_na <- which(is.na(is_axis))
+      is_axis[ax_na] <- is_orient[ax_na]
+      if (anyDuplicated(is_axis, incomparables = NA))
+        stop("Duplicated axis names and orientations not allowed", call. = FALSE)
+      if (any(is.na(is_axis)))
+        stop("Arguments contain names not corresponding to an axis", call. = FALSE)
+
+      is_axis
+    },
+
+    # Drop unwanted values in the "coordinates" attribute
+    dropCoordinates = function(atts, names) {
+      crd <- atts[atts$name == "coordinates", ]$value
+      if (!length(crd)) return(atts)
+
+      crds <- strsplit(crd[[1L]], " ")[[1L]]
+      keep <- !(crds %in% names)
+      if (!any(keep))
+        return(atts[!(atts$name == "coordinates"), ])
+
+      crds <- paste(crds[keep])
+      atts[atts$name == "coordinates", ]$length <- nchar(crds)
+      atts[atts$name == "coordinates", ]$value <- crds
+      atts
     }
   ),
   public = list(
@@ -69,14 +114,13 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
 
     #' @description Create an instance of this class.
     #' @param var The NC variable that describes this data object.
-    #' @param group The group that this data object should live in.
     #' @param axes A `list` of [CFAxis] descendant instances that describe the
     #'   axes of the data object.
     #' @param crs The [CFGridMapping] instance of this data object, or `NULL`
     #'   when no grid mapping is available.
     #' @return An instance of this class.
-    initialize = function(var, group, axes, crs) {
-      super$initialize(var, group)
+    initialize = function(var, axes, crs) {
+      super$initialize(var)
       self$axes <- axes
       self$crs <- crs
     },
@@ -214,6 +258,183 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
         names(res) <- names(f)
         res
       }
+    },
+
+    #' @description This method extracts profiles of values from the array of
+    #'   the variable, with the location along each axis to extract expressed in
+    #'   coordinate values of each axis.
+    #'
+    #' @details The coordinates along each axis to be sampled are expressed in
+    #'   values of the domain of the axis. Any axes which are not passed as
+    #'   arguments are extracted in whole to the result. If bounds are set on
+    #'   the axis, the coordinate whose bounds envelop the requested coordinate
+    #'   is selected. Otherwise, the coordinate along the axis closest to the
+    #'   supplied value will be used. If the value for a specified axis falls
+    #'   outside the valid range of that axis, `NULL` is returned.
+    #'
+    #'   A typical case is to extract the temporal profile as a 1D array for a
+    #'   given location. In this case, use arguments for the latitude and
+    #'   longitude on an X-Y-T data variable: `profile(lat = -24, lon = 3)`.
+    #'   Other profiling options are also possible, such as a 2D zonal
+    #'   atmospheric profile at a given longitude for an X-Y-Z data variable:
+    #'   `profile(lon = 34)`.
+    #'
+    #'   Multiple profiles can be extracted in one call by supplying vectors for
+    #'   the indicated axes: `profile(lat = c(-24, -23, -2), lon = c(5, 5, 6))`.
+    #'   The vectors need not have the same length, unless `.as_table = TRUE`.
+    #'   With unequal length vectors the result will be a `list` of [CFArray]
+    #'   instances with different dimensionality and/or different axes.
+    #'
+    #'   ## Auxiliary coordinate variables (CFVariable only)
+    #'
+    #'   A special case exists for variables where the horizontal dimensions (X
+    #'   and Y) are not in longitude and latitude coordinates but in some other
+    #'   coordinate system. In this case the netCDF resource may have so-called
+    #'   *auxiliary coordinate variables*. If the data variable has such
+    #'   *auxiliary coordinate variables* then they will be used automatically
+    #'   if, and only if, the axes are specified as `X` and `Y`. **Note** that
+    #'   if you want to profile the data in the original grid units, you should
+    #'   specify the horizontal axis names.
+    #' @param ... One or more arguments of the form `axis = location`. The
+    #'   "axis" part should be the name of an axis or its orientation `X`, `Y`,
+    #'   `Z` or `T`. The "location" part is a vector of values representing
+    #'   coordinates along the axis where to profile. A profile will be
+    #'   generated for each of the elements of the "location" vectors in all
+    #'   arguments.
+    #' @param .names A character vector with names for the results. The names
+    #'   will be used for the `CFArray` instances, or as values for the
+    #'   "location" column of the `data.table` if argument `.as_table` is
+    #'   `TRUE`. If the vector is shorter than the longest vector of locations
+    #'   in the `...` argument, a name "location_#" will be used, with the #
+    #'   replaced by the ordinal number of the vector element.
+    #' @param .as_table Logical to flag if the results should be `CFArray`
+    #'   instances (`FALSE`, default) or a single `data.table` (`TRUE`). If
+    #'   `TRUE`, all `...` arguments must have the same number of elements, use
+    #'   the same axes and the `data.table` package must be installed.
+    #' @return If `.as_table = FALSE`, a list of [CFArray] instances, each
+    #'   having one profile for each of the elements in the "location" vectors
+    #'   of argument `...` and named with the respective `.names` value. If
+    #'   `.as_table = TRUE`, a `data.table` with a row for each element along
+    #'   all profiles, with a ".variable" column using the values from the
+    #'   `.names` argument.
+    profile = function(..., .names = NULL, .as_table = FALSE) {
+      num_axes <- private$num_dim_axes()
+      if (!num_axes)
+        stop("Cannot profile a scalar variable", call. = FALSE)
+
+      # Organize the selectors
+      selectors <- list(...)
+      sel_names <- names(selectors)
+      sel_axes <- private$check_names(sel_names)
+      sel_lengths <- sapply(selectors, length)
+      total <- max(sel_lengths)
+
+      # Convert domain values to indices
+      if (all(c("X", "Y") %in% sel_names) && inherits(self, "CFVariable") &&
+          inherits(private$llgrid, "CFAuxiliaryLongLat")) {
+        # Only for CFVariable, CFArray never has an auxiliary lat-long grid
+        xy <- private$llgrid$sample_index(selectors[["X"]], selectors[["Y"]])
+        sel_indices <- lapply(1:length(selectors), function(x) {
+          if (sel_names[x] == "X")
+            idx <- xy[, 1L]
+          else if (sel_names[x] == "Y")
+            idx <- xy[, 2L]
+          else
+            idx <- self$axes[[sel_axes[x]]]$indexOf(selectors[[x]])
+          idx[is.na(idx)] <- 0L
+          idx
+        })
+      } else {
+        xy <- NULL
+        sel_indices <- lapply(1:length(selectors), function(x) {
+          idx <- self$axes[[sel_axes[x]]]$indexOf(selectors[[x]])
+          idx[is.na(idx)] <- 0L
+          idx
+        })
+      }
+
+      # Check .as_table
+      if (.as_table) {
+        if (!requireNamespace("data.table", quietly = TRUE))
+          stop("Please install package 'data.table' before using this functionality", call. = FALSE)
+        hasNA <- any(sapply(sel_indices, function(x) any(x == 0L)))
+        if (!all(sel_lengths == sel_lengths[1L]) || hasNA)
+          stop("All ... arguments must have the same length and use same axes when `.as_table = TRUE`.", call. = FALSE)
+      }
+
+      # Check .names
+      len <- length(.names)
+      if (len < total) {
+        .names <- c(.names, sapply((len + 1L):total, function(i) paste0("location_", i)))
+      } else if (len > total)
+        .names <- .names[1L:total]
+
+      # Group for results
+      out_group <- NCGroup$new(-1L, "/", "/", NULL, NULL)
+      out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
+      out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariable$profile()"))
+
+      out <- vector("list", total)
+      for (e in 1L:total) {
+        indices <- sapply(sel_indices, function(x) x[e])
+        if (!any(indices == 0L, na.rm = TRUE)) { # All selector coordinates are in range
+          start <- rep(1L, num_axes)
+          count <- rep(NA_integer_, num_axes)
+          out_axes_dim <- list()
+          out_axes_other <- list()
+
+          for (ax in 1L:num_axes) {
+            axis <- self$axes[[ax]]
+            ax_ndx <- match(ax, sel_axes)
+            if (!is.na(ax_ndx) && !is.na(indices[ax_ndx])) {
+              start[ax] <- indices[ax_ndx]
+              count[ax] <- 1L
+              orient <- axis$orientation
+              var <- if (is.null(xy))
+                NCVariable$new(-1L, axis$name, out_group, "NC_DOUBLE", 1L, NULL)
+              else if (orient == "X")
+                NCVariable$new(-1L, private$llgrid$varLong$name, out_group, "NC_DOUBLE", 1L, NULL)
+              else
+                NCVariable$new(-1L, private$llgrid$varLat$name, out_group, "NC_DOUBLE", 1L, NULL)
+              x <- CFAxisScalar$new(var, orient, selectors[[ax_ndx]][e])
+              out_axes_other <- append(out_axes_other, x)
+            } else {
+              out_axes_dim <- append(out_axes_dim, axis$subset(out_group))
+            }
+          }
+
+          # Read the data
+          d <- private$read_chunk(start, count)
+          d <- drop(d)
+
+          # Sanitize the attributes for the result, as required and make CRS
+          if (is.null(xy)) {
+            atts <- self$attributes
+            crs <- self$crs
+          } else {
+            atts <- private$dropCoordinates(self$attributes,
+                                            c(private$llgrid$varLong$name, private$llgrid$varLat$name))
+            atts <- atts[!(atts$name == "grid_mapping"), ]  # drop: warped to lat-long
+            crs <- NULL
+          }
+
+          # Assemble the CFArray instance
+          scalars <- self$axes[-(1L:num_axes)]
+          axes <- c(out_axes_dim, out_axes_other, scalars)
+          names(axes) <- sapply(axes, function(a) a$name)
+          arr <- CFArray$new(.names[e], out_group, d, private$values_type, axes, crs, atts)
+          out[[e]] <- if (.as_table) arr$data.table(var_as_column = TRUE)
+          else arr
+        }
+      }
+
+      if (.as_table) {
+        atts <- attributes(out[[1L]])$value
+        out <- data.table::rbindlist(out, use.names = FALSE)
+        data.table::setattr(out, "value", atts)
+      } else
+        names(out) <- .names
+      out
     }
   ),
   active = list(

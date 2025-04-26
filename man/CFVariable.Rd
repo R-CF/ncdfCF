@@ -51,6 +51,7 @@ description of the variable as a WKT2 string.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="profile"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-profile'><code>ncdfCF::CFVariableBase$profile()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="summarise"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-summarise'><code>ncdfCF::CFVariableBase$summarise()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="time"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-time'><code>ncdfCF::CFVariableBase$time()</code></a></span></li>
 </ul>
@@ -62,14 +63,12 @@ description of the variable as a WKT2 string.}
 \subsection{Method \code{new()}}{
 Create an instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$new(grp, nc_var, axes)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$new(nc_var, axes)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{grp}}{The group that this CF variable lives in.}
-
 \item{\code{nc_var}}{The netCDF variable that defines this CF variable.}
 
 \item{\code{axes}}{List of \link{CFAxis} instances that describe the dimensions.}
@@ -167,103 +166,98 @@ A \link{CFArray} instance with all data from this variable.
 \subsection{Method \code{subset()}}{
 This method extracts a subset of values from the array of
 the variable, with the range along each axis to extract expressed in
-values of the domain of each axis.
+coordinate values of the domain of each axis.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$subset(subset, aoi = NULL, rightmost.closed = FALSE, ...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$subset(..., .aoi = NULL, rightmost.closed = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{subset}}{A list with the range to extract from each axis. The
-list should have elements for the axes to extract a subset from - if an
-axis is not present in the list the entire axis will be extracted
-from the array. List element names should be the axis designator \code{X}, \code{Y},
-\code{Z} or \code{T}, or the name of the axis - axes without an axis designator
-and any additional axes beyond the four standard ones can only
-be specified by name. Axis designators and names are case-sensitive and
-can be specified in any order. If values for the range per axis fall
-outside of the extent of the axis, the range is clipped to the extent of
-the axis.}
+\item{\code{...}}{One or more arguments of the form \code{axis = range}. The
+"axis" part should be the name of an axis or its orientation \code{X}, \code{Y},
+\code{Z} or \code{T}. The "range" part is a vector of values representing
+coordinates along the axis where to extract data. Axis designators and
+names are case-sensitive and can be specified in any order. If values
+for the range per axis fall outside of the extent of the axis, the
+range is clipped to the extent of the axis.}
 
-\item{\code{aoi}}{Optional, an area-of-interest instance of class \code{AOI} created
-with the \code{\link[=aoi]{aoi()}} function to indicate the horizontal area that should be
-extracted. The longitude and latitude coordinates must be included; the X
-and Y resolution will be calculated if not given. When provided, this
-argument will take precedence over the corresponding axis information for
-the X and Y axes in the \code{subset} argument.}
+\item{\code{.aoi}}{Optional, an area-of-interest instance of class \code{AOI} created
+with the \code{\link[=aoi]{aoi()}} function to indicate the horizontal area that should
+be extracted. The longitude and latitude coordinates must be included;
+the X and Y resolution will be calculated if not given. When provided,
+this argument will take precedence over the corresponding axis
+information for the X and Y axes in the \code{subset} argument.}
 
 \item{\code{rightmost.closed}}{Single logical value to indicate if the upper
 boundary of range in each axis should be included.}
-
-\item{\code{...}}{Ignored. Included to avoid "unused argument" errors on
-argument \code{rightmost.closed}.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Details}{
 The range of values along each axis to be subset is expressed in
-values of the domain of the axis. Any axes for which no information is
-provided in the \code{subset} argument are extracted in whole. Values can be
-specified in a variety of ways that are specific to the nature of the
-axis. For numeric axes it should (resolve to) be a vector of real
-values. A range (e.g. \code{100:200}), a vector (\verb{c(23, 46, 3, 45, 17}),
-a sequence (\verb{seq(from = 78, to = 100, by = 2}), all work. Note, however,
-that only a single range is generated from the vector so these examples
-resolve to \verb{(100, 200)}, \verb{(3, 46)}, and \verb{(78, 100)}, respectively. For
-time axes a vector of character timestamps, \code{POSIXct} or \code{Date} values
-must be specified. As with numeric values, only the two extreme values in
-the vector will be used.
+coordinates of the domain of the axis. Any axes for which no
+selection is made in the \code{...} argument are extracted in
+whole. Coordinates can be specified in a variety of ways that are
+specific to the nature of the axis. For numeric axes it should (resolve
+to) be a vector of real values. A range (e.g. \code{100:200}), a vector
+(\verb{c(23, 46, 3, 45, 17}), a sequence (\verb{seq(from = 78, to = 100, by = 2}), all work. Note, however, that only a single range is generated
+from the vector so these examples resolve to \verb{(100, 200)}, \verb{(3, 46)},
+and \verb{(78, 100)}, respectively. For time axes a vector of character
+timestamps, \code{POSIXct} or \code{Date} values must be specified. As with
+numeric values, only the two extreme values in the vector will be used.
 
-If the range of values for an axis in argument \code{subset} extend the valid
-range of the axis in \code{x}, the extracted slab will start at the beginning
-for smaller values and extend to the end for larger values. If the
-values envelope the valid range the entire axis will be extracted in
-the result. If the range of \code{subset} values for any axis are all either
-smaller or larger than the valid range of the axis in \code{x} then nothing
-is extracted and \code{NULL} is returned.
+If the range of coordinate values for an axis in argument \code{...}
+extend the valid range of the axis in \code{x}, the extracted data will
+start at the beginning for smaller values and extend to the end for
+larger values. If the values envelope the valid range the entire axis
+will be extracted in the result. If the range of coordinate values for
+any axis are all either smaller or larger than the valid range of the
+axis then nothing is extracted and \code{NULL} is returned.
 
-The extracted data has the same dimensional structure as the data in the
-variable, with degenerate dimensions dropped. The order of the axes in
-argument \code{subset} does not reorder the axes in the result; use the
+The extracted data has the same dimensional structure as the data in
+the variable, with degenerate dimensions dropped. The order of the axes
+in argument \code{...} does not reorder the axes in the result; use the
 \link{CFArray}$array() method for this.
 
-As an example, to extract values of a variable for Australia for the year
-2020, where the first axis in \code{x} is the longitude, the second
-axis is the latitude, both in degrees, and the
-third (and final) axis is time, the values are extracted by
-\code{x$subset(list(X = c(112, 154), Y = c(-9, -44), T = c("2020-01-01", "2021-01-01")))}.
+As an example, to extract values of a variable for Australia for the
+year 2020, where the first axis in \code{x} is the longitude, the second
+axis is the latitude, both in degrees, and the third (and final) axis
+is time, the values are extracted by
+\code{x$subset(X = c(112, 154), Y = c(-9, -44), T = c("2020-01-01", "2021-01-01"))}.
 You could take the longitude-latitude values from \code{sf::st_bbox()} or
-\code{terra::ext()} if you have specific spatial geometries for whom you want to
-extract data. Note that this works equally well for projected coordinate
-reference systems - the key is that the specification in argument \code{subset}
-uses the same domain of values as the respective axes in \code{x} use.
+\code{terra::ext()} if you
+have specific spatial geometries for whom you want to extract data.
+Note that this works equally well for projected coordinate reference
+systems - the key is that the specification in argument \code{...} uses
+the same domain of values as the respective axes in \code{x} use.
 \subsection{Auxiliary coordinate variables}{
 
 A special case exists for variables where the horizontal dimensions (X
-and Y) are not in longitude and latitude values but in some other
+and Y) are not in longitude and latitude coordinates but in some other
 coordinate system. In this case the netCDF resource may have so-called
-\emph{auxiliary coordinate variables} for longitude and latitude that are two
-grids with the same dimension as the horizontal axes of the data variable
-where each pixel gives the corresponding value for the longitude and
-latitude. If the variable has such \emph{auxiliary coordinate variables} then
-they will be used automatically if, and only if, the axes are labeled in
-argument \code{subset} as \code{X} and \code{Y}. The resolution of the grid that is
-produced by this method is automatically calculated. If you want to
-subset those axes then specify values in decimal degrees; if you want to
-extract the full extent, specify \code{NA} for both \code{X} and \code{Y}. \strong{Note} that
-if you want to extract the data in the original grid, you should use the
-horizontal axis names in argument \code{subset}.
+\emph{auxiliary coordinate variables} for longitude and latitude that are
+two grids with the same dimension as the horizontal axes of the data
+variable where each pixel gives the corresponding value for the
+longitude and latitude. If the variable has such \emph{auxiliary coordinate
+variables} then they will be used automatically if, and only if, the
+axes are labeled in argument \code{...} as \code{X} and \code{Y}. The resolution of
+the grid that is produced by this method is automatically calculated.
+If you want to subset those axes then specify values in decimal
+degrees; if you want to extract the full extent, specify \code{NA} for both
+\code{X} and \code{Y}. \strong{Note} that if you want to extract the data in the
+original grid, you should use the horizontal axis names in argument
+\code{...}.
 }
 }
 
 \subsection{Returns}{
 A \link{CFArray} instance, having an array with its axes and
-attributes of the variable, or \code{NULL} if one or more of the elements in
-the \code{subset} argument falls entirely outside of the range of the axis.
+attributes of the variable, or \code{NULL} if one or more of the selectors
+in the \code{...} argument fall entirely outside of the range of the axis.
 Note that degenerate dimensions (having \code{length(.) == 1}) are dropped
-from the array but the corresponding axis is maintained in the result as
-a scalar axis.
+from the array but the corresponding axis is maintained in the result
+as a scalar axis.
 }
 }
 \if{html}{\out{<hr>}}

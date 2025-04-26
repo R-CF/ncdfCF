@@ -102,14 +102,12 @@ variable in a netCDF resource. This method is called upon opening a
 netCDF resource by the \code{initialize()} method of a descendant class
 suitable for the type of axis.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$new(grp, nc_var, nc_dim, orientation)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$new(nc_var, nc_dim, orientation)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{grp}}{The \link{NCGroup} that this axis is located in.}
-
 \item{\code{nc_var}}{The \link{NCVariable} instance upon which this CF axis is based.}
 
 \item{\code{nc_dim}}{The \link{NCDimension} instance upon which this CF axis is
@@ -245,37 +243,32 @@ axis. If the value of the argument is \code{NULL}, return the entire axis
 \if{latex}{\out{\hypertarget{method-CFAxis-indexOf}{}}}
 \subsection{Method \code{indexOf()}}{
 Find indices in the axis domain. Given a vector of
-numerical, timestamp or categorical values \code{x}, find their indices in
-the values of the axis. With \code{method = "constant"} this returns the
-index of the value lower than the supplied values in \code{x}. With
-\code{method = "linear"} the return value includes any fractional part.
+numerical, timestamp or categorical coordinates \code{x}, find their indices
+in the coordinates of the axis.
 
-If bounds are set on the numerical or time axis, the indices are taken
-from those bounds. Returned indices may fall in between bounds if the
-latter are not contiguous, with the exception of the extreme values in
-\code{x}.
+This is a virtual method. For more detail, see the corresponding method
+in descendant classes.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$indexOf(x, method = "constant")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$indexOf(x, method = "constant", rightmost.closed = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{x}}{Vector of numeric, timestamp or categorial values to find axis
-indices for. The timestamps can be either character, POSIXct or Date
-vectors. The type of the vector has to correspond to the type of the
-axis.}
+\item{\code{x}}{Vector of numeric, timestamp or categorial coordinates to find
+axis indices for. The timestamps can be either character, POSIXct or
+Date vectors. The type of the vector has to correspond to the type of
+the axis.}
 
 \item{\code{method}}{Single character value of "constant" or "linear".}
+
+\item{\code{rightmost.closed}}{Whether or not to include the upper limit.
+Default is \code{TRUE}.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Numeric vector of the same length as \code{x}. If \code{method = "constant"},
-return the index value for each match. If \code{method = "linear"}, return
-the index value with any fractional value. Values of \code{x} outside of the
-range of the values in the axis are returned as \code{0} and
-\code{.Machine$integer.max}, respectively.
+Numeric vector of the same length as \code{x}.
 }
 }
 \if{html}{\out{<hr>}}

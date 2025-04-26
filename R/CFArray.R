@@ -96,6 +96,17 @@ CFArray <- R6::R6Class("CFArray",
       private$values
     },
 
+    # Extract a chunk of data from the local array
+    read_chunk = function(start, count) {
+      NAs <- which(is.na(count))
+      if (length(NAs)) {
+        lengths <- sapply(self$axes, function(x) x$length)
+        count[NAs] <- lengths[NAs]
+      }
+      cll <- paste0("private$values[", paste(sprintf("%d:%d", start, start + count - 1), collapse = ","), "]")
+      eval(parse(text = cll))
+    },
+
     # Internal apply/tapply over the temporal axis.
     process_data = function(tdim, fac, fun, ...) {
       .process.data(private$values, tdim, fac, fun, ...)
@@ -120,12 +131,12 @@ CFArray <- R6::R6Class("CFArray",
     initialize = function(name, group, values, values_type, axes, crs, attributes) {
       var <- NCVariable$new(-1L, name, group, dt, 0L, NULL)
       var$attributes <- attributes
-      super$initialize(var, group, axes, crs)
+      super$initialize(var, axes, crs)
 
       private$values <- values
       private$values_type <- values_type
       if (!all(is.na(private$values))) {
-        private$actual_range <- round(range(values, na.rm = TRUE), 8)
+        private$actual_range <- round(range(values, na.rm = TRUE), CF$digits)
         self$set_attribute("actual_range", values_type, private$actual_range)
       }
     },
@@ -165,7 +176,10 @@ CFArray <- R6::R6Class("CFArray",
     #' @return The data in the object. This is usually an `array` with the
     #' contents along axes varying.
     raw = function() {
-      dimnames(private$values) <- self$dimnames
+      if (is.null(dim(private$values)))
+        names(private$values) <- self$dimnames
+      else
+        dimnames(private$values) <- self$dimnames
       private$values
     },
 
@@ -210,7 +224,7 @@ CFArray <- R6::R6Class("CFArray",
         Ybnds <- c(vals[1L] - halfres, vals[length(vals)] + halfres)
       }
       if (Ybnds[1L] > Ybnds[2L]) Ybnds <- rev(Ybnds)
-      ext <- round(c(Xbnds, Ybnds), 4) # Round off spurious "accuracy"
+      ext <- round(c(Xbnds, Ybnds), CF$digits) # Round off spurious "accuracy"
 
       # CRS
       wkt <- if (is.null(self$crs)) .wkt2_crs_geo(4326L)
@@ -239,20 +253,26 @@ CFArray <- R6::R6Class("CFArray",
     #' @description Retrieve the data in the object in the form of a
     #'   `data.table`. The `data.table` package needs to be installed for this
     #'   method to work.
+    #' @param var_as_column Logical to flag if the name of the variable should
+    #'   become a column (`TRUE`) or be used as the name of the column with the
+    #'   data values (`FALSE`, default).
     #' @return A `data.table` with all data points in individual rows. All axes,
-    #'   including scalar axes, will become columns. The `name` of this data
-    #'   variable will be used as the column that holds the data values. Two
-    #'   attributes are added: `name` indicates the long name of this data
-    #'   variable, `units` indicates the physical unit of the data values.
-    data.table = function() {
+    #'   including scalar axes, will become columns. Two attributes are added:
+    #'   `name` indicates the long name of this data variable, `units` indicates
+    #'   the physical unit of the data values.
+    data.table = function(var_as_column = FALSE) {
       if (!requireNamespace("data.table", quietly = TRUE))
-        stop("Please install package 'data.table' before using this functionality")
+        stop("Please install package 'data.table' before using this functionality", call. = FALSE)
       .datatable.aware = TRUE
 
       exp <- expand.grid(lapply(self$axes, function(ax) ax$coordinates),
                          KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE)
       dt <- data.table::as.data.table(exp)
-      suppressWarnings(dt[ , eval(self$name) := private$values])
+      if (var_as_column) {
+        dt[ , .variable := self$name]
+        dt[ , .value := private$values]
+      } else
+        suppressWarnings(dt[ , eval(self$name) := private$values])
 
       long_name <- self$attribute("long_name")
       if (is.na(long_name)) long_name <- ""
@@ -318,6 +338,7 @@ CFArray <- R6::R6Class("CFArray",
     dimnames = function(value) {
       if (missing(value)) {
         len <- length(dim(private$values))
+        if (len == 0L) len <- 1L # One-dimensional data has no dim(.)
         dn <- lapply(1:len, function(ax) dimnames(self$axes[[ax]]))
         names(dn) <- sapply(1:len, function(ax) self$axes[[ax]]$name)
         dn

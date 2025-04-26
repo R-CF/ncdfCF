@@ -26,14 +26,13 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
   ),
   public = list(
     #' @description Create a new instance of this class.
-    #' @param grp The group that contains the netCDF variable.
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
     #' @param orientation The orientation (`X`, `Y`, `Z`, or `T`) or `""` if
     #' different or unknown.
     #' @param values The character coordinates of this axis.
-    initialize = function(grp, nc_var, nc_dim, orientation, values) {
-      super$initialize(grp, nc_var, nc_dim, orientation)
+    initialize = function(nc_var, nc_dim, orientation, values) {
+      super$initialize(nc_var, nc_dim, orientation)
       private$values <- values
       self$set_attribute("actual_range", nc_var$vtype, range(values))
     },
@@ -48,14 +47,15 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
     },
 
     #' @description Find indices in the axis domain. Given a vector of character
-    #'   strings `x`, find their indices in the values of the axis.
+    #'   strings `x`, find their indices in the coordinates of the axis.
     #'
     #' @param x Vector of character strings to find axis indices for.
     #' @param method Ignored.
+    #' @param rightmost.closed Ignored.
     #'
-    #' @return Numeric vector of the same length as `x`. Values of `x` outside of
-    #'   the range of the values in the axis are returned as `NA`.
-    indexOf = function(x, method = "constant") {
+    #' @return Numeric vector of the same length as `x`. Values of `x` that are
+    #'   not equal to a coordinate of the axis are returned as `NA`.
+    indexOf = function(x, method = "constant", rightmost.closed = TRUE) {
       match(x, private$values)
     }
   ),

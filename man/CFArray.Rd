@@ -73,6 +73,7 @@ recognized by the different format.
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="profile"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-profile'><code>ncdfCF::CFVariableBase$profile()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="summarise"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-summarise'><code>ncdfCF::CFVariableBase$summarise()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="time"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-time'><code>ncdfCF::CFVariableBase$time()</code></a></span></li>
 </ul>
@@ -188,15 +189,23 @@ Retrieve the data in the object in the form of a
 \code{data.table}. The \code{data.table} package needs to be installed for this
 method to work.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFArray$data.table()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFArray$data.table(var_as_column = FALSE)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{var_as_column}}{Logical to flag if the name of the variable should
+become a column (\code{TRUE}) or be used as the name of the column with the
+data values (\code{FALSE}, default).}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
 A \code{data.table} with all data points in individual rows. All axes,
-including scalar axes, will become columns. The \code{name} of this data
-variable will be used as the column that holds the data values. Two
-attributes are added: \code{name} indicates the long name of this data
-variable, \code{units} indicates the physical unit of the data values.
+including scalar axes, will become columns. Two attributes are added:
+\code{name} indicates the long name of this data variable, \code{units} indicates
+the physical unit of the data values.
 }
 }
 \if{html}{\out{<hr>}}

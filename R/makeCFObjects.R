@@ -5,15 +5,15 @@
 #' writing them to file. Extracting data from a `CFVariable` into a [CFArray]
 #' instance will also create a virtual group.
 #'
-#' @param id The id of the group.
-#' @param name The name of the group.
-#' @param fullname The full path and name of the group.
+#' @param id The id of the group, default -1L.
+#' @param name The name of the group, default "/".
+#' @param fullname The full path and name of the group, default "/".
 #' @param parent Optionally, a parent group to which the new group will be added
 #' as a child.
 #'
 #' @return A `NCGroup` instance.
 #' @export
-makeGroup <- function(id, name, fullname, parent = NULL) {
+makeGroup <- function(id = -1L, name = "/", fullname = "/", parent = NULL) {
   if (name != "/" && !.is_valid_name(name))
     stop("Name for group is not valid", call. = FALSE)
   NCGroup$new(id, name, fullname, parent, NULL)
@@ -27,23 +27,27 @@ makeGroup <- function(id, name, fullname, parent = NULL) {
 #' @param id Id of the axis.
 #' @param name Name of the axis.
 #' @param group Group to place the axis in.
-#' @param length Length of the axis.
 #' @param values The coordinate values.
-#' @param bounds The bounds of the coordinate values, or `NULL` if not available.
-#' @param units A character string with the axis units.
+#' @param bounds The bounds of the coordinate values, or `NULL` if not
+#'   available.
 #'
-#' @return A `CFAxisLongitude` instance.
+#' @return A `CFAxisLongitude` or `CFAxisScalar` instance.
 #' @export
-makeLongitudeAxis <- function(id, name, group, length, values, bounds = NULL, units = "") {
+makeLongitudeAxis <- function(id, name, group, values, bounds = NULL) {
   if (!.is_valid_name(name))
     stop("Name for axis is not valid", call. = FALSE)
   # FIXME: Check domain
 
   var <- NCVariable$new(id, name, group, "NC_DOUBLE", 1L, NULL)
-  dim <- NCDimension$new(-1L, name, length, FALSE)
-  axis <- CFAxisLongitude$new(group, var, dim, values)
-  if (nzchar(units))
-    axis$set_attribute("units", "NC_CHAR", units)
+  length <- length(values)
+  axis <- if (length == 1L)
+    CFAxisScalar$new(var, "X", values)
+  else {
+    dim <- NCDimension$new(-1L, name, length, FALSE)
+    CFAxisLongitude$new(var, dim, values)
+  }
+
+  axis$set_attribute("units", "NC_CHAR", "degrees_east")
   if (!is.null(bounds)) {
     nm <- paste0(name, "_bnds")
     var <- NCVariable$new(-1L, nm, group, "NC_DOUBLE", 2L, NULL)
@@ -51,7 +55,6 @@ makeLongitudeAxis <- function(id, name, group, length, values, bounds = NULL, un
     axis$bounds <- CFBounds$new(var, dim, bounds)
     axis$set_attribute("bounds", "NC_CHAR", nm)
   }
-  axis$set_attribute("axis", "NC_CHAR", "X")
   axis
 }
 
@@ -63,23 +66,26 @@ makeLongitudeAxis <- function(id, name, group, length, values, bounds = NULL, un
 #' @param id Id of the axis.
 #' @param name Name of the axis.
 #' @param group Group to place the axis in.
-#' @param length Length of the the axis.
 #' @param values The coordinate values.
 #' @param bounds The bounds of the coordinate values, or `NULL` if not available.
-#' @param units A character string with the axis units.
 #'
-#' @return A `CFAxisLatitude` instance.
+#' @return A `CFAxisLatitude` or `CFAxisScalar` instance.
 #' @export
-makeLatitudeAxis <- function(id, name, group, length, values, bounds, units) {
+makeLatitudeAxis <- function(id, name, group, values, bounds) {
   if (!.is_valid_name(name))
     stop("Name for axis is not valid", call. = FALSE)
   # FIXME: Check domain
 
   var <- NCVariable$new(id, name, group, "NC_DOUBLE", 1L, NULL)
-  dim <- NCDimension$new(-1L, name, length, FALSE)
-  axis <- CFAxisLatitude$new(group, var, dim, values)
-  if (nzchar(units))
-    axis$set_attribute("units", "NC_CHAR", units)
+  length <- length(values)
+  axis <- if (length == 1L)
+    CFAxisScalar(var, "X", values)
+  else {
+    dim <- NCDimension$new(-1L, name, length, FALSE)
+    CFAxisLatitude$new(var, dim, values)
+  }
+
+  axis$set_attribute("units", "NC_CHAR", "degrees_north")
   if (!is.null(bounds)) {
     nm <- paste0(name, "_bnds")
     var <- NCVariable$new(-1L, nm, group, "NC_DOUBLE", 2L, NULL)
@@ -87,7 +93,6 @@ makeLatitudeAxis <- function(id, name, group, length, values, bounds, units) {
     axis$bounds <- CFBounds$new(var, dim, bounds)
     axis$set_attribute("bounds", "NC_CHAR", nm)
   }
-  axis$set_attribute("axis", "NC_CHAR", "Y")
   axis
 }
 
@@ -99,7 +104,7 @@ makeLatitudeAxis <- function(id, name, group, length, values, bounds, units) {
 #' @param id Id of the axis.
 #' @param name Name of the axis.
 #' @param group Group to place the axis in.
-#' @param values A `CFTime` instance with time values and bounds set.
+#' @param values A `CFTime` instance with time values and optionally bounds set.
 #'
 #' @return A `CFAxisTime` instance.
 #' @export
@@ -108,12 +113,13 @@ makeTimeAxis <- function(id, name, group, values) {
     stop("Name for axis is not valid", call. = FALSE)
 
   var <- NCVariable$new(id, name, group, "NC_DOUBLE", 1L, NULL)
-  if (length(values) == 1L)
-    axis <- CFAxisScalar$new(group, var, "T", values)
+  axis <- if (length(values) == 1L)
+    CFAxisScalar$new(var, "T", values)
   else {
     dim <- NCDimension$new(-1L, name, length(values), FALSE)
-    axis <- CFAxisTime$new(group, var, dim, values)
+    CFAxisTime$new(var, dim, values)
   }
+
   axis$set_attribute("units", "NC_CHAR", values$cal$definition)
   axis$set_attribute("calendar", "NC_CHAR", values$cal$name)
   axis$set_attribute("axis", "NC_CHAR", "T")

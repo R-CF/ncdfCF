@@ -15,9 +15,6 @@ CFObject <- R6::R6Class("CFObject",
     #' @field NCvar The [NCVariable] instance that this CF object represents.
     NCvar = NULL,
 
-    #' @field group The [NCGroup] that this object is located in.
-    group = NULL,
-
     #' @description Create a new CF object instance from a variable in a netCDF
     #'   resource. This method is called upon opening a netCDF resource. It is
     #'   rarely, if ever, useful to call this constructor directly from the
@@ -26,11 +23,9 @@ CFObject <- R6::R6Class("CFObject",
     #'
     #' @param nc_var The [NCVariable] instance upon which this CF object is
     #'   based.
-    #' @param group The [NCGroup] that this object is located in.
     #' @return A `CFobject` instance.
-    initialize = function(nc_var, group) {
+    initialize = function(nc_var) {
       self$NCvar <- nc_var
-      self$group <- group
     },
 
     #' @description Retrieve attributes of any CF object.
@@ -143,6 +138,14 @@ CFObject <- R6::R6Class("CFObject",
         if (!(grp == "/")) grp <- paste0(grp, "/")
         paste0(grp, self$NCvar$name)
       }
+    },
+
+    #' @field group Retrieve the [NCGroup] that this object is located in.
+    group = function(value) {
+      if (missing(value))
+        self$NCvar$group
+      else
+        self$NCvar$group <- value
     },
 
     #' @field attributes Set or retrieve a `data.frame` with the attributes of

@@ -36,15 +36,14 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
   ),
   public = list(
     #' @description Create a new instance of this class.
-    #' @param grp The group that contains the netCDF variable.
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
     #' @param orientation The orientation (`X`, `Y`, `Z`, or `T`) or `""` if
     #' different or unknown.
     #' @param dim_only Flag if this axis only has a dimension on file but no
     #' NC variable.
-    initialize = function(grp, nc_var, nc_dim, orientation, dim_only = FALSE) {
-      super$initialize(grp, nc_var, nc_dim, orientation)
+    initialize = function(nc_var, nc_dim, orientation, dim_only = FALSE) {
+      super$initialize(nc_var, nc_dim, orientation)
       self$set_attribute("actual_range", "NC_INT", c(1L,self$length))
       private$dim_only <- dim_only
     },
@@ -74,13 +73,12 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #'
     #' @param x Vector of numeric values to find axis indices for.
     #' @param method Ignored.
+    #' @param rightmost.closed Ignored.
     #'
     #' @return Numeric vector of the same length as `x`. Values of `x` outside
-    #'   of the range of the values in the axis are returned as `0` and
-    #'   `.Machine$integer.max`, respectively.
-    indexOf = function(x, method = "constant") {
-      x[x < 1] <- 0L
-      x[x > self$length] <- .Machine$integer.max
+    #'   of the range of the values in the axis are returned as `NA`.
+    indexOf = function(x, method = "constant", rightmost.closed = TRUE) {
+      x[x < 1 | x > self$length] <- NA
       as.integer(x)
     },
 
@@ -101,7 +99,7 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
 
       .make_scalar <- function(idx) {
-        scl <- CFAxisScalar$new(group, var, self$orientation, idx)
+        scl <- CFAxisScalar$new(var, self$orientation, idx)
         private$subset_coordinates(scl, idx)
         browser
         scl
@@ -119,7 +117,7 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
           .make_scalar(rng[1L])
         else {
           dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
-          discr <- CFAxisDiscrete$new(group, var, dim, self$orientation)
+          discr <- CFAxisDiscrete$new(var, dim, self$orientation)
           private$subset_labels(discr, idx)
           discr
         }

@@ -254,20 +254,20 @@ peek_ncdf <- function(resource) {
   vals <- try(as.vector(RNetCDF::var.get.nc(h, var$name)), silent = TRUE)
   if (inherits(vals, "try-error"))
     # No dimension values so it's an identity axis
-    return(CFAxisDiscrete$new(grp, var, dim, ""))
+    return(CFAxisDiscrete$new(var, dim, ""))
 
   # Does `var` have attributes?
   if (!nrow(var$attributes)) {
     # No attributes so nothing left to do
     if (var$vtype %in% c("NC_CHAR", "NC_STRING"))
-      return(CFAxisCharacter$new(grp, var, dim, "", vals))
-    else return(CFAxisNumeric$new(grp, var, dim, "", vals))
+      return(CFAxisCharacter$new(var, dim, "", vals))
+    else return(CFAxisNumeric$new(var, dim, "", vals))
   }
 
   # Z: standard_names and formula_terms for parametric vertical axis
   standard <- var$attribute("standard_name")
   if (!is.na(standard) && standard %in% Z_parametric_standard_names)
-    return(.makeParametricAxis(grp, var, dim, vals, standard))
+    return(.makeParametricAxis(var, dim, vals, standard))
 
   # Does the axis have bounds?
   CFbounds <- .readBounds(grp, var$attribute("bounds"))
@@ -275,10 +275,10 @@ peek_ncdf <- function(resource) {
   # See if we have a "units" attribute that makes time
   units <- var$attribute("units")
   if (!is.na(units)) {
-    t <- .makeTimeAxis(grp, var, units, vals)
+    t <- .makeTimeAxis(var, units, vals)
     if (!inherits(t, "try-error")) {
       t$bounds <- CFbounds$bounds
-      return(CFAxisTime$new(grp, var, dim, t))
+      return(CFAxisTime$new(var, dim, t))
     }
   }
 
@@ -297,10 +297,10 @@ peek_ncdf <- function(resource) {
   }
 
   axis <- if (orient == "X")
-    CFAxisLongitude$new(grp, var, dim, vals)
+    CFAxisLongitude$new(var, dim, vals)
   else if (orient == "Y")
-    CFAxisLatitude$new(grp, var, dim, vals)
-  else CFAxisNumeric$new(grp, var, dim, orient, vals)
+    CFAxisLatitude$new(var, dim, vals)
+  else CFAxisNumeric$new(var, dim, orient, vals)
   axis$bounds <- CFbounds
 
   axis
@@ -321,7 +321,7 @@ peek_ncdf <- function(resource) {
     axes <- lapply(grp$NCdims, function(d) {
       if (d$id %in% add_dims) {
         v <- NCVariable$new(-2L, d$name, grp, "NC_INT", 1L, d$id)
-        axis <- CFAxisDiscrete$new(grp, v, d, "", dim_only = TRUE)
+        axis <- CFAxisDiscrete$new(v, d, "", dim_only = TRUE)
         v$CF <- axis
         grp$NCvars <- append(grp$NCvars, v)
         grp$CFaxes <- append(grp$CFaxes, axis)
@@ -345,7 +345,6 @@ peek_ncdf <- function(resource) {
 #' This function is called when a parametric vertical axis is found during in
 #' function .makeAxis().
 #'
-#' @param grp The group where the axis is found.
 #' @param var The NC variable that defines the axis.
 #' @param dim The NC dimension associated with the axis.
 #' @param vals The parameter values of the axis.
@@ -354,8 +353,8 @@ peek_ncdf <- function(resource) {
 #'
 #' @return An instance of CFAxisVertical.
 #' @noRd
-.makeParametricAxis <- function(grp, var, dim, vals, param_name) {
-  Z <- CFAxisVertical$new(grp, var, dim, vals, param_name)
+.makeParametricAxis <- function(var, dim, vals, param_name) {
+  Z <- CFAxisVertical$new(var, dim, vals, param_name)
 
   # Get the formula terms
   ft <- var$attribute("formula_terms")
@@ -377,10 +376,10 @@ peek_ncdf <- function(resource) {
   Z
 }
 
-.makeTimeAxis <- function(grp, var, units, vals) {
+.makeTimeAxis <- function(var, units, vals) {
   cal <- var$attribute("calendar")
   if (is.na(cal)) cal <- "standard"
-  clim <- .readBounds(grp, var$attribute("climatology")) # Climatology must have bounds
+  clim <- .readBounds(var$group, var$attribute("climatology")) # Climatology must have bounds
   try(if (is.null(clim))
         CFtime::CFTime$new(units, cal, vals)
       else
@@ -453,14 +452,14 @@ peek_ncdf <- function(resource) {
                 # No dimensions so create a scalar axis in the group of aux
                 orient <- aux$attribute("axis")
                 if (is.na(orient)) orient <- ""
-                scalar <- CFAxisScalar$new(aux$group, aux, orient, val)
+                scalar <- CFAxisScalar$new(aux, orient, val)
                 scalar$bounds <- .readBounds(aux$group, bounds)
                 aux$group$CFaxes[[aux$name]] <- scalar
                 found_one <- TRUE
               } else if (aux$vtype %in% c("NC_CHAR", "NC_STRING")) {
                 # Label
                 dim <- grp$find_dim_by_id(aux$dimids[length(aux$dimids)]) # If there are 2 dimids, the first is a string length for a NC_CHAR type
-                aux$group$CFaux[[aux$name]] <- CFLabel$new(aux$group, aux, dim, val)
+                aux$group$CFaux[[aux$name]] <- CFLabel$new(aux, dim, val)
                 found_one <- TRUE
               } else if (nd == 1L) {
                 # Auxiliary coordinate with a single dimension: make an axis out of it.
@@ -566,7 +565,7 @@ peek_ncdf <- function(resource) {
     for (refid in seq_along(grp$NCvars)) {
       v <- grp$NCvars[[refid]]
       if (!length(v$CF) && !is.na(gm <- v$attribute("grid_mapping_name")))
-        grp$CFcrs <- append(grp$CFcrs, CFGridMapping$new(grp, v, gm))
+        grp$CFcrs <- append(grp$CFcrs, CFGridMapping$new(v, gm))
     }
     if (length(grp$CFcrs))
       names(grp$CFcrs) <- sapply(grp$CFcrs, function(c) c$name)
@@ -618,7 +617,7 @@ peek_ncdf <- function(resource) {
       if (!length(v$CF) && v$ndims > 0L) {
         ax <- .buildVariableAxisList(v, axes)
         ax_names <- names(ax)
-        var <- CFVariable$new(grp, v, ax)
+        var <- CFVariable$new(v, ax)
 
         # Add references to any "coordinates" of the variable
         varLon <- varLat <- NULL
