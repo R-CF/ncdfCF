@@ -74,7 +74,7 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 # Open the file, all metadata is read
 (ds <- open_ncdf(fn))
 #> <Dataset> ERA5land_Rwanda_20160101 
-#> Resource   : /private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpLl1tMa/temp_libpath16666fe3c1d4/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
+#> Resource   : /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
 #> Format     : offset64 
 #> Type       : generic netCDF data 
 #> Conventions: CF-1.6 
@@ -168,7 +168,7 @@ resource, use the `peek_ncdf()` function:
 ``` r
 peek_ncdf(fn)
 #> $uri
-#> [1] "/private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpLl1tMa/temp_libpath16666fe3c1d4/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc"
+#> [1] "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc"
 #> 
 #> $type
 #> [1] "generic netCDF data"
@@ -212,7 +212,7 @@ peek_ncdf(fn)
 
 ##### Extracting data
 
-There are three ways to read data for a variable from the resource:
+There are four ways to read data for a data variable from the resource:
 
 - **`data():`** The `data()` method returns all data of a variable,
   including its metadata, in a `CFArray` instance.
@@ -225,6 +225,11 @@ There are three ways to read data for a variable from the resource:
   to extract from each dimension in real-world coordinates and
   timestamps, in whichever order. This can also rectify non-Cartesian
   grids to regular longitude-latitude grids.
+- **`profile()`:** Extract “profiles” from the data variable. This can
+  take different forms, such as a temporal or depth profile for a single
+  location, but it could also be a zonal field (such as a transect in
+  latitude - atmosperhic depth for a given latitude) or some other
+  profile in the physical space of the data variable.
 
 ``` r
 # Extract a timeseries for a specific location
@@ -238,7 +243,7 @@ str(ts)
 #>  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"
 #>   ..- attr(*, "names")= chr [1:3] "longitude" "latitude" "time"
 #>  - attr(*, "time")=List of 1
-#>   ..$ time:CFTime with origin [hours since 1900-01-01 00:00:00.0] using calendar [gregorian] having 24 offset values
+#>   ..$ time:CFTime with origin [hours since 1900-01-01 00:00:00.0] using calendar [standard] having 24 offset values
 
 # Extract the full spatial extent for one time step
 ts <- t2m[, , 12]
@@ -251,7 +256,7 @@ str(ts)
 #>  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"
 #>   ..- attr(*, "names")= chr [1:3] "longitude" "latitude" "time"
 #>  - attr(*, "time")=List of 1
-#>   ..$ time:CFTime with origin [hours since 1900-01-01 00:00:00.0] using calendar [gregorian] having 1 offset values
+#>   ..$ time:CFTime with origin [hours since 1900-01-01 00:00:00.0] using calendar [standard] having 1 offset values
 ```
 
 Note that the results contain degenerate dimensions (of length 1). This

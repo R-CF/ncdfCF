@@ -364,7 +364,7 @@ peek_ncdf <- function(resource) {
     rownames(ft) <- c("term", "variable")
     ft <- as.data.frame(t(ft))
     ft$NCvar <- lapply(ft$variable, function(v) {
-      ncvar <- grp$find_by_name(v, "NC")
+      ncvar <- var$group$find_by_name(v, "NC")
       if (!is.null(ncvar)) {
         ncvar$CF <- Z
         ncvar
@@ -637,7 +637,6 @@ peek_ncdf <- function(resource) {
                 else {  # FIXME: record warning
                 }
               } else if ("CFAxis" %in% clss) {
-                browser()
                 ndx <- which(sapply(ax, function(x) x$dimid == aux$dimid))
                 if (length(ndx)) ax[[ndx]]$auxiliary <- aux
                 else {  # FIXME: record warning

@@ -370,7 +370,6 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   from the array but the corresponding axis is maintained in the result
     #'   as a scalar axis.
     subset = function(..., .aoi = NULL, rightmost.closed = FALSE) {
-      browser()
       num_axes <- private$num_dim_axes()
       if (!num_axes)
         stop("Cannot subset a scalar variable", call. = FALSE)

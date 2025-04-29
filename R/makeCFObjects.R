@@ -79,7 +79,7 @@ makeLatitudeAxis <- function(id, name, group, values, bounds) {
   var <- NCVariable$new(id, name, group, "NC_DOUBLE", 1L, NULL)
   length <- length(values)
   axis <- if (length == 1L)
-    CFAxisScalar(var, "X", values)
+    CFAxisScalar$new(var, "X", values)
   else {
     dim <- NCDimension$new(-1L, name, length, FALSE)
     CFAxisLatitude$new(var, dim, values)

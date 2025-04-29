@@ -101,7 +101,6 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
       .make_scalar <- function(idx) {
         scl <- CFAxisScalar$new(var, self$orientation, idx)
         private$subset_coordinates(scl, idx)
-        browser
         scl
       }
 
