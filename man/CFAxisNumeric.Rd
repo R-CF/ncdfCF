@@ -31,6 +31,8 @@ of auxiliary coordinates, if they have been set.}
 \item \href{#method-CFAxisNumeric-brief}{\code{CFAxisNumeric$brief()}}
 \item \href{#method-CFAxisNumeric-range}{\code{CFAxisNumeric$range()}}
 \item \href{#method-CFAxisNumeric-indexOf}{\code{CFAxisNumeric$indexOf()}}
+\item \href{#method-CFAxisNumeric-identical}{\code{CFAxisNumeric$identical()}}
+\item \href{#method-CFAxisNumeric-can_append}{\code{CFAxisNumeric$can_append()}}
 \item \href{#method-CFAxisNumeric-subset}{\code{CFAxisNumeric$subset()}}
 \item \href{#method-CFAxisNumeric-clone}{\code{CFAxisNumeric$clone()}}
 }
@@ -38,6 +40,7 @@ of auxiliary coordinates, if they have been set.}
 \if{html}{\out{
 <details><summary>Inherited methods</summary>
 <ul>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="add_coordinates"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-add_coordinates'><code>ncdfCF::CFObject$add_coordinates()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
@@ -155,6 +158,51 @@ returned as \code{NA}.
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisNumeric-identical"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisNumeric-identical}{}}}
+\subsection{Method \code{identical()}}{
+Tests if the axis passed to this method is identical to
+\code{self}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$identical(axis)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{axis}}{The \code{CFAxisNumeric} or sub-class instance to test.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{TRUE} if the two axes are identical, \code{FALSE} if not.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisNumeric-can_append"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisNumeric-can_append}{}}}
+\subsection{Method \code{can_append()}}{
+Tests if the axis passed to this method can be appended to
+\code{self}. This means that once the values in the passed axis are appended
+to the values in \code{self}, the resulting vector must be monotonically
+increasing or decreasing.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$can_append(axis)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{axis}}{The \code{CFAxisNumeric} or descendant class instance to test.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{TRUE} if the passed axis can be appended to \code{self}, \code{FALSE} if
+not.
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisNumeric-subset"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisNumeric-subset}{}}}
 \subsection{Method \code{subset()}}{
@@ -170,17 +218,15 @@ method returns an axis which spans the range of indices given by the
 \describe{
 \item{\code{group}}{The group to create the new axis in.}
 
-\item{\code{rng}}{The range of values from this axis to include in the returned
-axis.}
+\item{\code{rng}}{The range of indices whose values from this axis to include in
+the returned axis.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
 A \code{CFAxisNumeric} instance covering the indicated range of
-indices. If the \code{rng} argument includes only a single value, an
-\link{CFAxisScalar} instance is returned with the value from this axis. If
-the value of the argument is \code{NULL}, return the entire axis (possibly
-as a scalar axis).
+indices. If the value of the argument is \code{NULL}, return the entire
+axis.
 }
 }
 \if{html}{\out{<hr>}}

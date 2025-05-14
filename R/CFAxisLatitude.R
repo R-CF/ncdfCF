@@ -27,40 +27,23 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
     #'   axis.
     #'
     #' @return A `CFAxisLatitude` instance covering the indicated range of
-    #'   indices. If the `rng` argument includes only a single value, an
-    #'   [CFAxisScalar] instance is returned with the value from this axis. If
-    #'   the value of the argument is `NULL`, return the entire axis (possibly
-    #'   as a scalar axis).
+    #'   indices. If the value of the argument is `NULL`, return the entire
+    #'   axis.
     subset = function(group, rng = NULL) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
 
-      .make_scalar <- function(idx) {
-        scl <- CFAxisScalar$new(var, "Y", idx)
-        bnds <- self$bounds
-        if (inherits(bnds, "CFBounds")) scl$bounds <- bnds$sub_bounds(group, idx)
-        private$subset_coordinates(scl, idx)
-        scl
-      }
-
       if (is.null(rng)) {
-        if (length(private$values) > 1L) {
-          ax <- self$clone()
-          ax$group <- group
-          ax
-        } else
-          .make_scalar(1L)
+        ax <- self$clone()
+        ax$group <- group
+        ax
       } else {
         rng <- range(rng)
-        if (rng[1L] == rng[2L])
-          .make_scalar(private$values[rng[1L]])
-        else {
-          dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
-          lat <- CFAxisLatitude$new(var, dim, private$values[rng[1L]:rng[2L]])
-          bnds <- self$bounds
-          if (inherits(bnds, "CFBounds")) lat$bounds <- bnds$sub_bounds(group, rng)
-          private$subset_coordinates(lat, idx)
-          lat
-        }
+        dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
+        lat <- CFAxisLatitude$new(var, dim, private$values[rng[1L]:rng[2L]])
+        bnds <- self$bounds
+        if (inherits(bnds, "CFBounds")) lat$bounds <- bnds$sub_bounds(group, rng)
+        private$subset_coordinates(lat, idx)
+        lat
       }
     }
   ),

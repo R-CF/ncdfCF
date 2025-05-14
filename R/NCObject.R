@@ -180,7 +180,25 @@ NCObject <- R6::R6Class("NCObject",
           RNetCDF::att.put.nc(nc, nm, attr$name, attr$type, unlist(attr$value))
         }
       invisible(self)
+    },
+
+    #' @description Add names of axes to the "coordinates" attribute, avoiding
+    #' duplicates and retaining previous values.
+    #' @param crds Vector of axis names to add to the attribute.
+    #' @return Self, invisibly.
+    add_coordinates = function(crds) {
+      current <- self$attributes[self$attributes$name == "coordinates", ]
+      if (nrow(current)) {
+        # There is a "coordinates" attribute already so append values
+        new_val <- paste(unique(c(strsplit(current[[1L, "value"]], " ")[[1L]], crds)), collapse = " ")
+        self$attributes[self$attributes$name == "coordinates", ]$value <- new_val
+        self$attributes[self$attributes$name == "coordinates", ]$length <- nchar(new_val)
+      } else
+        # Make a new "coordinates" attribute
+        self$set_attribute("coordinates", "NC_CHAR", crds)
+      invisible(self)
     }
+
   )
 )
 

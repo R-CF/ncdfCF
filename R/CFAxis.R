@@ -42,7 +42,6 @@ CFAxis <- R6::R6Class("CFAxis",
   ),
   public = list(
     #' @field NCdim The [NCDimension] that stores the netCDF dimension details.
-    #' This is `NULL` for [CFAxisScalar] instances.
     NCdim = NULL,
 
     #' @field orientation A character "X", "Y", "Z" or "T" to indicate the
@@ -137,12 +136,34 @@ CFAxis <- R6::R6Class("CFAxis",
     },
 
     #' @description Return the `CFTime` instance that represents time. This
-    #'   method is only useful for `CFAxisTime` instances and `CFAxisScalar`
-    #'   instances having time information. This stub is here to make the call
-    #'   to this method succeed with no result for the other axis descendants.
+    #'   method is only useful for `CFAxisTime` instances having time
+    #'   information. This stub is here to make the call to this method succeed
+    #'   with no result for the other axis descendants.
     #' @return `NULL`
     time = function() {
       NULL
+    },
+
+    #' @description Tests if the axis passed to this method is identical to
+    #'   `self`. This only tests for generic properties - class, length and name
+    #'   - with further assessment done in sub-classes.
+    #' @param axis The `CFAxis` instance to test.
+    #' @return `TRUE` if the two axes are identical, `FALSE` if not.
+    identical = function(axis) {
+      all(class(self) == class(axis)) &&
+      self$length == axis$length &&
+      self$name == axis$name
+    },
+
+    #' @description Tests if the axis passed to this method can be appended to
+    #' `self`. This only tests for generic properties - class and name - with
+    #' further assessment done in sub-classes.
+    #' @param axis The `CFAxis` descendant instance to test.
+    #' @return `TRUE` if the passed axis can be appended to `self`, `FALSE` if
+    #'   not.
+    can_append = function(axis) {
+      all(class(self) == class(axis)) &&
+      self$name == axis$name
     },
 
     #' @description Return an axis spanning a smaller coordinate range. This
@@ -151,9 +172,9 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   succeed with no result for the other axis descendants that do not
     #'   implement this method.
     #' @param group The group to create the new axis in.
-    #' @param rng The range of values from this axis to include in the returned
-    #'   axis. If the value of the argument is `NULL`, return the entire axis
-    #'   (possibly as a scalar axis).
+    #' @param rng The range of indices whose values from this axis to include in
+    #'   the returned axis. If the value of the argument is `NULL`, return the
+    #'   entire axis.
     #' @return `NULL`
     subset = function(group, rng = NULL) {
       NULL
@@ -186,7 +207,7 @@ CFAxis <- R6::R6Class("CFAxis",
     write = function(nc = NULL) {
       h <- if (inherits(nc, "NetCDF")) nc else self$group$handle
 
-      if (inherits(self, "CFAxisScalar")) {
+      if (self$length == 1L) {
         RNetCDF::var.def.nc(h, self$name, self$NCvar$vtype, NA)
       } else {
         self$NCdim$write(h)

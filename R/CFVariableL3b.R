@@ -47,7 +47,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       private$file_rows <- as.integer(range(lat_rows))
       len <- as.integer(private$file_rows[2L] - private$file_rows[1L]) + 1L
       bnds <- (private$file_rows[1L] - 1):private$file_rows[2L] * 180 / lat_len - 90
-      lat <- makeLatitudeAxis(-1L, "latitude", grp,
+      lat <- makeLatitudeAxis("latitude", grp,
                               (private$file_rows[1L]:private$file_rows[2L] - 0.5) * 180 / lat_len - 90,
                               rbind(bnds[-len], bnds[-1L]))
 
@@ -61,7 +61,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       lon <- (private$file_bins[1L]:private$file_bins[2L] - 0.5) * 360 / lon_bins - 180
       bnds <- (private$file_bins[1L]-1):private$file_bins[2L] * 360 / lon_bins - 180
       len <- private$file_bins[2L] - private$file_bins[1L] + 1
-      lon <- makeLongitudeAxis(-1L, "longitude", grp, lon,
+      lon <- makeLongitudeAxis("longitude", grp, lon,
                                rbind(bnds[-len], bnds[-1L]))
 
       axes <- list(
@@ -78,7 +78,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
         cft <- CFtime::CFtime("seconds since 1970-01-01", "proleptic_gregorian")
         cft <- cft + CFtime::parse_timestamps(cft, sprintf("%04d-%02d-%02dT12:00:00", ymd$year, ymd$month, as.integer(ymd$day)))$offset
         cft$set_bounds(matrix(tc$offsets, nrow = 2))
-        axes[["time"]] <- makeTimeAxis(-1L, "time", grp, cft)
+        axes[["time"]] <- makeTimeAxis("time", grp, cft)
       }
 
       grp$CFaxes <- axes
@@ -251,7 +251,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
         }
 
         # Collect axes for result
-        if (inherits(out_axis, "CFAxisScalar"))
+        if (out_axis$length == 1L)
           out_axes_other <- append(out_axes_other, out_axis)
         else
           out_axes_dim <- append(out_axes_dim, out_axis)
@@ -357,7 +357,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
   }
 
   dimnames(data) <- dnames
-  ax <- sapply(x$axes, function(x) if (!inherits(x, "CFAxisScalar")) x$orientation)
+  ax <- sapply(x$axes, function(x) if (x$length > 1L) x$orientation)
   ax <- ax[lengths(ax) > 0L]
   attr(data, "axis") <- ax
   data

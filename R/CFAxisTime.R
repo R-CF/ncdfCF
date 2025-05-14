@@ -90,6 +90,16 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       private$tm
     },
 
+    #' @description Tests if the axis passed to this method is identical to
+    #'   `self`.
+    #' @param axis The `CFAxisTime` instance to test.
+    #' @return `TRUE` if the two axes are identical, `FALSE` if not.
+    identical = function(axis) {
+      super$identical(axis) &&
+      private$tm$cal$is_equivalent(axis$time()$cal) &&
+      all(.near(private$tm$offsets, axis$time()$offsets))
+    },
+
     #' @description Retrieve the indices of supplied values on the time axis.
     #' @param x A vector of timestamps whose indices into the time axis to
     #' extract.
@@ -125,35 +135,25 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #'   `rng` argument.
     #'
     #' @param group The group to create the new axis in.
-    #' @param rng The range of values from this axis to include in the returned
-    #'   axis.
+    #' @param rng The range of indices whose values from this axis to include in
+    #'   the returned axis.
     #'
     #' @return A `CFAxisTime` instance covering the indicated range of indices.
-    #'   If the `rng` argument includes only a single value, an [CFAxisScalar]
-    #'   instance is returned with its value being the character timestamp of
-    #'   the value in this axis. If the value of the argument is `NULL`, return
-    #'   the entire axis (possibly as a scalar axis).
+    #'   If the value of the argument is `NULL`, return the entire axis.
     subset = function(group, rng = NULL) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
       time <- private$tm
 
       if (is.null(rng)) {
-        if (length(time) > 1L) {
-          ax <- self$clone()
-          ax$group <- group
-          ax
-        } else
-          CFAxisScalar$new(var, "T", time)
+        ax <- self$clone()
+        ax$group <- group
+        ax
       } else {
         rng <- range(rng)
         idx <- time$indexOf(seq(from = rng[1L], to = rng[2L], by = 1L))
         tm <- attr(idx, "CFTime")
-        t <- if (rng[1L] == rng[2L])
-          CFAxisScalar$new(var, "T", tm)
-        else {
-          dim <- NCDimension$new(-1L, self$name, length(idx), FALSE)
-          CFAxisTime$new(var, dim, tm)
-        }
+        dim <- NCDimension$new(-1L, self$name, length(idx), FALSE)
+        t <- CFAxisTime$new(var, dim, tm)
         private$subset_coordinates(t, idx)
         t
       }
@@ -172,7 +172,14 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         self$set_attribute("calendar", "NC_CHAR", "standard")
       super$write(nc)
 
-      .writeTimeBounds(nc, self$name, private$tm)
+      bnds <- time$get_bounds()
+      if (!is.null(bnds)) {
+        try(RNetCDF::dim.def.nc(nc, "nv2", 2L), silent = TRUE) # FIXME: nv2 could already exist with a different length
+        nm <- if (inherits(time, "CFClimatology")) "climatology_bnds" else "time_bnds"
+        RNetCDF::att.put.nc(nc, name, "bounds", "NC_CHAR", nm)
+        RNetCDF::var.def.nc(nc, nm, "NC_DOUBLE", c("nv2", name))
+        RNetCDF::var.put.nc(nc, nm, bnds)
+      }
     }
   ),
   active = list(
@@ -190,22 +197,3 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     }
   )
 )
-
-# ==============================================================================
-
-# Helper function to write time axis bounds. These are maintained by the CFTime
-# or CFClimatology instance referenced by the axis. This is a function so that
-# CFAxisScalar can also access it for scalar time axes.
-# nc - Handle to the netCDF file open for writing
-# name - The name of the axis to write the bounds for
-# time - The CFTime or CFClimatology instance whose bounds to write
-.writeTimeBounds <- function(nc, name, time) {
-  bnds <- time$get_bounds()
-  if (!is.null(bnds)) {
-    try(RNetCDF::dim.def.nc(nc, "nv2", 2L), silent = TRUE) # FIXME: nv2 could already exist with a different length
-    nm <- if (inherits(time, "CFClimatology")) "climatology_bnds" else "time_bnds"
-    RNetCDF::att.put.nc(nc, name, "bounds", "NC_CHAR", nm)
-    RNetCDF::var.def.nc(nc, nm, "NC_DOUBLE", c("nv2", name))
-    RNetCDF::var.put.nc(nc, nm, bnds)
-  }
-}

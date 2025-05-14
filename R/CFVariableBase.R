@@ -16,22 +16,22 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
     # Return the R order of dimensional axes that "receive special treatment".
     # Scalar axes are not considered here.
     YXZT = function() {
-      orient <- sapply(self$axes, function(x) if (!inherits(x, "CFAxisScalar")) x$orientation)
+      orient <- sapply(self$axes, function(x) if (x$length > 1L) x$orientation)
       match(c("Y", "X", "Z", "T"), orient, nomatch = 0L)
     },
 
     # Return the CF canonical order of dimensional axes that "receive special
     # treatment". Scalar axes are not considered here.
     XYZT = function() {
-      orient <- sapply(self$axes, function(x) if (!inherits(x, "CFAxisScalar")) x$orientation)
+      orient <- sapply(self$axes, function(x) if (x$length > 1L) x$orientation)
       match(c("X", "Y", "Z", "T"), orient, nomatch = 0L)
     },
 
     # Return the number of "dimensional" axes, i.e. axes that are associated
     # with a dimension of the data of the variable. This may include dimensions
-    # with length 1, but it excludes scalar axes.
+    # with length 1.
     num_dim_axes = function() {
-      sum(sapply(self$axes, function(x) !inherits(x, "CFAxisScalar")))
+      sum(sapply(self$axes, function(x) x$NCvar$ndims > 0L))
     },
 
     # Return the names of the dimensional axes.
@@ -221,13 +221,12 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
         new_tm <- attr(fac, "CFTime")
         var <- NCVariable$new(-1L, tax$name, grp, tax$NCvar$vtype, 1L, NULL)
         len <- length(new_tm)
+        dim <- NCDimension$new(-1L, tax$name, len, FALSE)
+        new_ax <- CFAxisTime$new(grp, var, dim, new_tm)
         if (len == 1L) {
-          new_ax <- CFAxisScalar$new(grp, var, "T", new_tm)
           ax <- c(self$axes[-tm], new_ax)
           names(ax) <- c(names(self$axes[-tm]), tax$name)
         } else {
-          dim <- NCDimension$new(-1L, tax$name, len, FALSE)
-          new_ax <- CFAxisTime$new(grp, var, dim, new_tm)
           ax <- c(new_ax, self$axes[-tm])
           names(ax) <- c(tax$name, names(self$axes[-tm]))
         }
@@ -390,13 +389,13 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
               start[ax] <- indices[ax_ndx]
               count[ax] <- 1L
               orient <- axis$orientation
-              var <- if (is.null(xy))
-                NCVariable$new(-1L, axis$name, out_group, "NC_DOUBLE", 1L, NULL)
+              nm <- if (is.null(xy))
+                axis$name
               else if (orient == "X")
-                NCVariable$new(-1L, private$llgrid$varLong$name, out_group, "NC_DOUBLE", 1L, NULL)
+                private$llgrid$varLong$name
               else
-                NCVariable$new(-1L, private$llgrid$varLat$name, out_group, "NC_DOUBLE", 1L, NULL)
-              x <- CFAxisScalar$new(var, orient, selectors[[ax_ndx]][e])
+                private$llgrid$varLat$name
+              x <- makeAxis(nm, out_group, orient, selectors[[ax_ndx]][e], NULL)
               out_axes_other <- append(out_axes_other, x)
             } else {
               out_axes_dim <- append(out_axes_dim, axis$subset(out_group))
@@ -423,6 +422,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
           axes <- c(out_axes_dim, out_axes_other, scalars)
           names(axes) <- sapply(axes, function(a) a$name)
           arr <- CFArray$new(.names[e], out_group, d, private$values_type, axes, crs, atts)
+          arr$add_coordinates(sapply(out_axes_other, function(ax) ax$name))
           out[[e]] <- if (.as_table) arr$data.table(var_as_column = TRUE)
           else arr
         }

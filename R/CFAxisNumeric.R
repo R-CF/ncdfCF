@@ -120,49 +120,57 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
         idx
     },
 
+    #' @description Tests if the axis passed to this method is identical to
+    #'   `self`.
+    #' @param axis The `CFAxisNumeric` or sub-class instance to test.
+    #' @return `TRUE` if the two axes are identical, `FALSE` if not.
+    identical = function(axis) {
+      super$identical(axis) &&
+      all(.near(private$values, axis$values))
+    },
+
+    #' @description Tests if the axis passed to this method can be appended to
+    #'   `self`. This means that once the values in the passed axis are appended
+    #'   to the values in `self`, the resulting vector must be monotonically
+    #'   increasing or decreasing.
+    #' @param axis The `CFAxisNumeric` or descendant class instance to test.
+    #' @return `TRUE` if the passed axis can be appended to `self`, `FALSE` if
+    #'   not.
+    can_append = function(axis) {
+      self_len <- self$length
+      axis_len <- axis$length
+      if (self_len > 1L) self_incr <- private$values[2L] > private$values[1L]
+      if (axis_len > 1L) axis_incr <- axis$values[2L] > axis$values[1L]
+      super$can_append(axis) &&
+        !any(axis$values %in% private$values)
+    },
+
     #' @description Return an axis spanning a smaller coordinate range. This
     #'   method returns an axis which spans the range of indices given by the
     #'   `rng` argument.
     #'
     #' @param group The group to create the new axis in.
-    #' @param rng The range of values from this axis to include in the returned
-    #'   axis.
+    #' @param rng The range of indices whose values from this axis to include in
+    #'   the returned axis.
     #'
     #' @return A `CFAxisNumeric` instance covering the indicated range of
-    #'   indices. If the `rng` argument includes only a single value, an
-    #'   [CFAxisScalar] instance is returned with the value from this axis. If
-    #'   the value of the argument is `NULL`, return the entire axis (possibly
-    #'   as a scalar axis).
+    #'   indices. If the value of the argument is `NULL`, return the entire
+    #'   axis.
     subset = function(group, rng = NULL) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
 
-      .make_scalar <- function(idx) {
-        scl <- CFAxisScalar$new(var, self$orientation, idx)
-        bnds <- self$bounds
-        if (inherits(bnds, "CFBounds")) scl$bounds <- bnds$sub_bounds(group, idx)
-        private$subset_coordinates(scl, idx)
-        scl
-      }
-
       if (is.null(rng)) {
-        if (length(private$values) > 1L) {
-          ax <- self$clone()
-          ax$group <- group
-          ax
-        } else
-          .make_scalar(1L)
+        ax <- self$clone()
+        ax$group <- group
+        ax
       } else {
         rng <- range(rng)
-        if (rng[1L] == rng[2L])
-          .make_scalar(private$values[rng[1L]])
-        else {
-          dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
-          ax <- CFAxisNumeric$new(var, dim, self$orientation, private$values[rng[1L]:rng[2L]])
-          bnds <- self$bounds
-          if (inherits(bnds, "CFBounds")) ax$bounds <- bnds$sub_bounds(group, rng)
-          private$subset_coordinates(ax, idx)
-          ax
-        }
+        dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
+        ax <- CFAxisNumeric$new(var, dim, self$orientation, private$values[rng[1L]:rng[2L]])
+        bnds <- self$bounds
+        if (inherits(bnds, "CFBounds")) ax$bounds <- bnds$sub_bounds(group, rng)
+        private$subset_coordinates(ax, idx)
+        ax
       }
     }
 

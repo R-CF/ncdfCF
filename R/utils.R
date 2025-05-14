@@ -140,6 +140,12 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
   trunc(abs(x) + 0.5 + CF$eps) * posneg
 }
 
+#' Test if vectors `x` and `y` have near-identical values.
+#' @noRd
+.near <- function(x, y) {
+  abs(x - y) < CF$eps
+}
+
 .cache_dir <- function() {
   if (as.integer(R.version$major) >= 4)
     tools::R_user_dir("ncdfCF", "cache")

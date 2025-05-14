@@ -91,35 +91,20 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #'   axis.
     #'
     #' @return A `CFAxisDiscrete` instance covering the indicated range of
-    #'   indices. If the `rng` argument includes only a single value, an
-    #'   [CFAxisScalar] instance is returned with the value from this axis. If
-    #'   the value of the argument is `NULL`, return the entire axis (possibly
-    #'   as a scalar axis).
+    #'   indices. If the value of the argument is `NULL`, return the entire
+    #'   axis.
     subset = function(group, rng = NULL) {
       var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
 
-      .make_scalar <- function(idx) {
-        scl <- CFAxisScalar$new(var, self$orientation, idx)
-        private$subset_coordinates(scl, idx)
-        scl
-      }
-
       if (is.null(rng)) {
-        if (self$length > 1L) {
-          ax <- self$clone()
-          ax$group <- group
-          ax
-        } else
-          .make_scalar(1L)
+        ax <- self$clone()
+        ax$group <- group
+        ax
       } else {
-        if (rng[1L] == rng[2L])
-          .make_scalar(rng[1L])
-        else {
-          dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
-          discr <- CFAxisDiscrete$new(var, dim, self$orientation)
-          private$subset_labels(discr, idx)
-          discr
-        }
+        dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
+        discr <- CFAxisDiscrete$new(var, dim, self$orientation)
+        private$subset_labels(discr, idx)
+        discr
       }
     },
 

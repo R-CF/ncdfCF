@@ -44,6 +44,7 @@ the CF object.}
 \item \href{#method-CFObject-append_attribute}{\code{CFObject$append_attribute()}}
 \item \href{#method-CFObject-delete_attribute}{\code{CFObject$delete_attribute()}}
 \item \href{#method-CFObject-write_attributes}{\code{CFObject$write_attributes()}}
+\item \href{#method-CFObject-add_coordinates}{\code{CFObject$add_coordinates()}}
 \item \href{#method-CFObject-clone}{\code{CFObject$clone()}}
 }
 }
@@ -222,6 +223,27 @@ Write the attributes of this object to a netCDF file.
 \item{\code{nc}}{The handle to the netCDF file opened for writing.}
 
 \item{\code{nm}}{The NC variable name or "NC_GLOBAL" to write the attributes to.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFObject-add_coordinates"></a>}}
+\if{latex}{\out{\hypertarget{method-CFObject-add_coordinates}{}}}
+\subsection{Method \code{add_coordinates()}}{
+Add names of axes to the "coordinates" attribute, avoiding
+duplicates and retaining previous values.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFObject$add_coordinates(crds)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{crds}}{Vector of axis names to add to the attribute.}
 }
 \if{html}{\out{</div>}}
 }

@@ -46,6 +46,26 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
       out
     },
 
+    #' @description Tests if the axis passed to this method is identical to
+    #'   `self`.
+    #' @param axis The `CFAxisCharacter` instance to test.
+    #' @return `TRUE` if the two axes are identical, `FALSE` if not.
+    identical = function(axis) {
+      super$identical(axis) &&
+      all(private$values == axis$values)
+    },
+
+    #' @description Tests if the axis passed to this method can be appended to
+    #'   `self`. This means that all values in the passed axis must be different
+    #'   from the values in `self`.
+    #' @param axis The `CFAxisCharacter` instance to test.
+    #' @return `TRUE` if the passed axis can be appended to `self`, `FALSE` if
+    #'   not.
+    can_append = function(axis) {
+      super$can_append(axis) &&
+      !any(axis$values %in% private$values)
+    },
+
     #' @description Find indices in the axis domain. Given a vector of character
     #'   strings `x`, find their indices in the coordinates of the axis.
     #'

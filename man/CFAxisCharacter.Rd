@@ -30,6 +30,8 @@ vector.}
 \itemize{
 \item \href{#method-CFAxisCharacter-new}{\code{CFAxisCharacter$new()}}
 \item \href{#method-CFAxisCharacter-brief}{\code{CFAxisCharacter$brief()}}
+\item \href{#method-CFAxisCharacter-identical}{\code{CFAxisCharacter$identical()}}
+\item \href{#method-CFAxisCharacter-can_append}{\code{CFAxisCharacter$can_append()}}
 \item \href{#method-CFAxisCharacter-indexOf}{\code{CFAxisCharacter$indexOf()}}
 \item \href{#method-CFAxisCharacter-clone}{\code{CFAxisCharacter$clone()}}
 }
@@ -37,6 +39,7 @@ vector.}
 \if{html}{\out{
 <details><summary>Inherited methods</summary>
 <ul>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="add_coordinates"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-add_coordinates'><code>ncdfCF::CFObject$add_coordinates()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
@@ -87,6 +90,50 @@ Some details of the axis.
 
 \subsection{Returns}{
 A 1-row \code{data.frame} with some details of the axis.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisCharacter-identical"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisCharacter-identical}{}}}
+\subsection{Method \code{identical()}}{
+Tests if the axis passed to this method is identical to
+\code{self}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$identical(axis)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{axis}}{The \code{CFAxisCharacter} instance to test.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{TRUE} if the two axes are identical, \code{FALSE} if not.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisCharacter-can_append"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisCharacter-can_append}{}}}
+\subsection{Method \code{can_append()}}{
+Tests if the axis passed to this method can be appended to
+\code{self}. This means that all values in the passed axis must be different
+from the values in \code{self}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$can_append(axis)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{axis}}{The \code{CFAxisCharacter} instance to test.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{TRUE} if the passed axis can be appended to \code{self}, \code{FALSE} if
+not.
 }
 }
 \if{html}{\out{<hr>}}

@@ -34,6 +34,7 @@ this class manages the attributes for its descendent classes.
 \item \href{#method-NCObject-append_attribute}{\code{NCObject$append_attribute()}}
 \item \href{#method-NCObject-delete_attribute}{\code{NCObject$delete_attribute()}}
 \item \href{#method-NCObject-write_attributes}{\code{NCObject$write_attributes()}}
+\item \href{#method-NCObject-add_coordinates}{\code{NCObject$add_coordinates()}}
 \item \href{#method-NCObject-clone}{\code{NCObject$clone()}}
 }
 }
@@ -209,6 +210,27 @@ Write the attributes of this object to a netCDF file.
 \item{\code{nc}}{The handle to the netCDF file opened for writing.}
 
 \item{\code{nm}}{The NC variable name or "NC_GLOBAL" to write the attributes to.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCObject-add_coordinates"></a>}}
+\if{latex}{\out{\hypertarget{method-NCObject-add_coordinates}{}}}
+\subsection{Method \code{add_coordinates()}}{
+Add names of axes to the "coordinates" attribute, avoiding
+duplicates and retaining previous values.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCObject$add_coordinates(crds)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{crds}}{Vector of axis names to add to the attribute.}
 }
 \if{html}{\out{</div>}}
 }

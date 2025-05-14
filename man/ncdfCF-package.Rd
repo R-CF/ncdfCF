@@ -154,11 +154,10 @@ by the \code{CFtime} package.
 values.
 \item \link{CFAxisDiscrete} is for axes that don't have any intrinsic coordinate
 values, instead the ordinal values along the axis are used.
-\item \link{CFAxisScalar} is an axis of length 1 of any type. This axis is not
-included in the data array of the data variable, it is mostly useful to
-record a specific property of the data variable, such as observation time or
-a constant height or depth of the data.
 }
+
+Any scalar axes that are found in a netCDF file are converted to one of the
+above axis classes, with a length of 1.
 
 Any of the axis classes can have one or more coordinate sets associated with
 them. This is most useful for \code{CFAxisDiscrete}. Labels of the active

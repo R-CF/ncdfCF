@@ -109,6 +109,15 @@ CFObject <- R6::R6Class("CFObject",
     write_attributes = function(nc, nm) {
       self$NCvar$write_attributes(nc, nm)
       invisible(self)
+    },
+
+    #' @description Add names of axes to the "coordinates" attribute, avoiding
+    #' duplicates and retaining previous values.
+    #' @param crds Vector of axis names to add to the attribute.
+    #' @return Self, invisibly.
+    add_coordinates = function(crds) {
+      self$NCvar$add_coordinates(crds)
+      invisible(self)
     }
   ),
 
@@ -176,7 +185,6 @@ CFObject <- R6::R6Class("CFObject",
 #' * `CFAxisTime`: The values of the elements along the axis as a
 #' character vector containing timestamps in ISO8601 format. This could be dates
 #' or date-times if time information is available in the axis.
-#' * `CFAxisScalar`: The value of the scalar.
 #' * `CFAxisCharacter`: The values of the elements along the axis as
 #' a character vector.
 #' * `CFAxisDiscrete`: The index values of the axis, from 1 to the

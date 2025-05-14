@@ -4,11 +4,9 @@
 \alias{makeLatitudeAxis}
 \title{Create a latitude axis}
 \usage{
-makeLatitudeAxis(id, name, group, values, bounds)
+makeLatitudeAxis(name, group, values, bounds)
 }
 \arguments{
-\item{id}{Id of the axis.}
-
 \item{name}{Name of the axis.}
 
 \item{group}{Group to place the axis in.}
@@ -18,7 +16,7 @@ makeLatitudeAxis(id, name, group, values, bounds)
 \item{bounds}{The bounds of the coordinate values, or \code{NULL} if not available.}
 }
 \value{
-A \code{CFAxisLatitude} or \code{CFAxisScalar} instance.
+A \code{CFAxisLatitude} instance.
 }
 \description{
 With this method you can create a latitude axis to use with new \link{CFArray}

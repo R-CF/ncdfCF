@@ -4,7 +4,8 @@
 - `subset()` method signature changed to have similar signature as the new `profile()` method.
 - `indexOf()` method on axes is using boundary values consistently.
 - CFObject and descendants take group field from NCVariable instance.
-- Fixed creating a scalar time axis from a larger time axis when doing e.g. `CFVariable$subset(list(time = "2025-04-17"))`.
+- Fixed creating a scalar time axis from a longer time axis when doing e.g. `CFVariable$subset(time = "2025-04-17")`.
+- Scalar axes are now implemented as an axis of a specific type with length 1.
 - Minor code fixes.
 
 # ncdfCF 0.5.0

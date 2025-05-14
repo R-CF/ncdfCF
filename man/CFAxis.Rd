@@ -20,8 +20,7 @@ processing is selectable through methods and fields in this class.
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{NCdim}}{The \link{NCDimension} that stores the netCDF dimension details.
-This is \code{NULL} for \link{CFAxisScalar} instances.}
+\item{\code{NCdim}}{The \link{NCDimension} that stores the netCDF dimension details.}
 
 \item{\code{orientation}}{A character "X", "Y", "Z" or "T" to indicate the
 orientation of the axis, or an empty string if not known or different.}
@@ -75,6 +74,8 @@ unlimited dimension.}
 \item \href{#method-CFAxis-shard}{\code{CFAxis$shard()}}
 \item \href{#method-CFAxis-peek}{\code{CFAxis$peek()}}
 \item \href{#method-CFAxis-time}{\code{CFAxis$time()}}
+\item \href{#method-CFAxis-identical}{\code{CFAxis$identical()}}
+\item \href{#method-CFAxis-can_append}{\code{CFAxis$can_append()}}
 \item \href{#method-CFAxis-subset}{\code{CFAxis$subset()}}
 \item \href{#method-CFAxis-indexOf}{\code{CFAxis$indexOf()}}
 \item \href{#method-CFAxis-write}{\code{CFAxis$write()}}
@@ -84,6 +85,7 @@ unlimited dimension.}
 \if{html}{\out{
 <details><summary>Inherited methods</summary>
 <ul>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="add_coordinates"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-add_coordinates'><code>ncdfCF::CFObject$add_coordinates()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
@@ -199,15 +201,62 @@ A 1-row \code{data.frame} with details of the axis.
 \if{latex}{\out{\hypertarget{method-CFAxis-time}{}}}
 \subsection{Method \code{time()}}{
 Return the \code{CFTime} instance that represents time. This
-method is only useful for \code{CFAxisTime} instances and \code{CFAxisScalar}
-instances having time information. This stub is here to make the call
-to this method succeed with no result for the other axis descendants.
+method is only useful for \code{CFAxisTime} instances having time
+information. This stub is here to make the call to this method succeed
+with no result for the other axis descendants.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxis$time()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
 \code{NULL}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-identical"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-identical}{}}}
+\subsection{Method \code{identical()}}{
+Tests if the axis passed to this method is identical to
+\code{self}. This only tests for generic properties - class, length and name
+\itemize{
+\item with further assessment done in sub-classes.
+}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$identical(axis)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{axis}}{The \code{CFAxis} instance to test.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{TRUE} if the two axes are identical, \code{FALSE} if not.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-can_append"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-can_append}{}}}
+\subsection{Method \code{can_append()}}{
+Tests if the axis passed to this method can be appended to
+\code{self}. This only tests for generic properties - class and name - with
+further assessment done in sub-classes.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$can_append(axis)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{axis}}{The \code{CFAxis} descendant instance to test.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{TRUE} if the passed axis can be appended to \code{self}, \code{FALSE} if
+not.
 }
 }
 \if{html}{\out{<hr>}}
@@ -228,9 +277,9 @@ implement this method.
 \describe{
 \item{\code{group}}{The group to create the new axis in.}
 
-\item{\code{rng}}{The range of values from this axis to include in the returned
-axis. If the value of the argument is \code{NULL}, return the entire axis
-(possibly as a scalar axis).}
+\item{\code{rng}}{The range of indices whose values from this axis to include in
+the returned axis. If the value of the argument is \code{NULL}, return the
+entire axis.}
 }
 \if{html}{\out{</div>}}
 }

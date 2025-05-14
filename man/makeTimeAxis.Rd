@@ -4,11 +4,9 @@
 \alias{makeTimeAxis}
 \title{Create a time axis}
 \usage{
-makeTimeAxis(id, name, group, values)
+makeTimeAxis(name, group, values)
 }
 \arguments{
-\item{id}{Id of the axis.}
-
 \item{name}{Name of the axis.}
 
 \item{group}{Group to place the axis in.}

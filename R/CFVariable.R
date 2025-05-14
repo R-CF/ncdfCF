@@ -404,11 +404,11 @@ CFVariable <- R6::R6Class("CFVariable",
         if (!is.null(aux) && orient == "X") {
           start[ax] <- aux$X[1L]
           count[ax] <- aux$X[2L]
-          out_axis <- makeLongitudeAxis(-1L, private$llgrid$varLong$name, out_group, aux$aoi$dimnames[[2L]], aux$aoi$bounds(out_group)$lon$bounds)
+          out_axis <- makeLongitudeAxis(private$llgrid$varLong$name, out_group, aux$aoi$dimnames[[2L]], aux$aoi$bounds(out_group)$lon$bounds)
         } else if (!is.null(aux) && orient == "Y") {
           start[ax] <- aux$Y[1L]
           count[ax] <- aux$Y[2L]
-          out_axis <- makeLatitudeAxis(-1L, private$llgrid$varLat$name, out_group, aux$aoi$dimnames[[1L]], aux$aoi$bounds(out_group)$lat$bounds)
+          out_axis <- makeLatitudeAxis(private$llgrid$varLat$name, out_group, aux$aoi$dimnames[[1L]], aux$aoi$bounds(out_group)$lat$bounds)
         } else { # No auxiliary coordinates
           rng <- NULL
           if (!is.null(.aoi))
@@ -431,7 +431,7 @@ CFVariable <- R6::R6Class("CFVariable",
         }
 
         # Collect axes for result
-        if (inherits(out_axis, "CFAxisScalar"))
+        if (out_axis$length == 1L)
           out_axes_other <- append(out_axes_other, out_axis)
         else
           out_axes_dim <- append(out_axes_dim, out_axis)
@@ -583,7 +583,7 @@ dimnames.CFVariable <- function(x) {
 #' summer <- pr[, , 173:263]
 #' str(summer)
 "[.CFVariable" <- function(x, i, j, ..., drop = FALSE) {
-  numaxes <- sum(!sapply(x$axes, inherits, "CFAxisScalar"))
+  numaxes <- sum(sapply(x$axes, function(ax) ax$length > 1L))
   t <- vector("list", numaxes)
   names(t) <- dimnames(x)[1:numaxes]
 
@@ -634,7 +634,7 @@ dimnames.CFVariable <- function(x) {
   # Apply dimension data and other attributes
   if (length(x$axes) && length(dim(data)) == length(dnames)) { # dimensions may have been dropped automatically, e.g. NC_CHAR to character string
     dimnames(data) <- dnames
-    ax <- sapply(x$axes, function(x) if (!inherits(x, "CFAxisScalar")) x$orientation)
+    ax <- sapply(x$axes, function(ax) if (ax$length > 1L) x$orientation)
     ax <- ax[lengths(ax) > 0L]
     attr(data, "axis") <- ax
   }

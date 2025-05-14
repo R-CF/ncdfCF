@@ -255,7 +255,7 @@ Names of NC variables - thus the names of CF objects built on top of them as wel
 
 ##### 2.4. Dimensions
 
-Fully implemented. Axes of length 1 are automatically encoded as a scalar coordinate variable, thus avoiding the use of a dimension.
+Fully implemented. Scalar coordinate variables are supported in reading and writing, but internally represented as an axis with length 1.
 
 ##### 2.5. Variables
 
@@ -329,9 +329,9 @@ Parametric vertical coordinates are not yet supported.
 
 The time coordinate is managed by the [CFtime](https://cran.r-project.org/package=CFtime) package. All defined calendars, including the recently added `utc` and `tai` calendars, are supported, with some restrictions. Leap seconds are fully supported in notation and arithmetic when using the `utc` calendar.
 
-Upon writing, the deprecated `gregorian` calendar is replaced by the equivalent `standard` calendar.
+The deprecated `gregorian` calendar is replaced by the equivalent `standard` calendar.
 
-Time coordinates with no annual cycle and explicitly defined calendars are not supported.
+Time coordinates with an explicitly defined calendar is not supported.
 
 ##### 4.5. Discrete axis
 
@@ -365,7 +365,7 @@ The `crs_wkt` attribute is used when found.
 
 ##### 5.7. Scalar coordinate variables
 
-Fully supported.
+Fully supported but internally represented as a regular axis of length 1.
 
 ##### 5.8. Domain variables
 

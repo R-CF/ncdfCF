@@ -32,7 +32,6 @@ Collate:
     'CFAxisLatitude.R'
     'CFAxisLongitude.R'
     'CFAxisNumeric.R'
-    'CFAxisScalar.R'
     'CFAxisTime.R'
     'CFAxisVertical.R'
     'CFBounds.R'

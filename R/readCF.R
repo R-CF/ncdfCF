@@ -248,7 +248,10 @@ peek_ncdf <- function(resource) {
 # @return An instance of `CFAxis`.
 .makeAxis <- function(grp, var) {
   h <- grp$handle
-  dim <- grp$find_dim_by_id(var$dimids[1L]) # FIXME: What about NC_CHAR axis?
+  if (var$ndims == 0L)
+    dim <- NCDimension$new(-1L, var$name, 1L, FALSE) # Scalar variable
+  else
+    dim <- grp$find_dim_by_id(var$dimids[1L]) # FIXME: What about NC_CHAR axis?
 
   # Dimension values
   vals <- try(as.vector(RNetCDF::var.get.nc(h, var$name)), silent = TRUE)
@@ -402,7 +405,7 @@ peek_ncdf <- function(resource) {
 #'
 #' @param grp The group to scan.
 #'
-#' @return Nothing. CFAxisScalar and CFAuxiliaryLongLat instances are created
+#' @return Nothing. CFAxis and CFAuxiliaryLongLat instances are created
 #' in the groups where the NC variables are found. These will later be picked up
 #' when CFvariables are created.
 #' @noRd
@@ -423,51 +426,37 @@ peek_ncdf <- function(resource) {
             nd <- aux$ndims
             bounds <- aux$attribute("bounds")
 
-            if (nd == 2L) {
-              # If the NCVariable aux has an attribute "units" with value
-              # "degrees_east" or "degrees_north" it is a longitude or latitude,
-              # respectively. Record the fact and move on.
-              units <- aux$attribute("units")
-              if (!is.na(units)) {
-                if (grepl("^degree(s?)(_?)(east|E)$", units)) {
-                  varLon <- aux
-                  bndsLon <- .readBounds(aux$group, bounds)
-                  found_one <- TRUE
-                } else if (grepl("^degree(s?)(_?)(north|N)$", units)) {
-                  varLat <- aux
-                  bndsLat <- .readBounds(aux$group, bounds)
-                  found_one <- TRUE
-                }
+            # If aux is a 2D NCVariable having an attribute "units" with value
+            # "degrees_east" or "degrees_north" it is a longitude or latitude,
+            # respectively. Record the fact and move on.
+            if (nd == 2L && !is.na(units <- aux$attribute("units"))) {
+              if (grepl("^degree(s?)(_?)(east|E)$", units)) {
+                varLon <- aux
+                bndsLon <- .readBounds(aux$group, bounds)
+                found_one <- TRUE
+              } else if (grepl("^degree(s?)(_?)(north|N)$", units)) {
+                varLat <- aux
+                bndsLat <- .readBounds(aux$group, bounds)
+                found_one <- TRUE
               }
             }
 
             if (!found_one) {
-              val <- try(RNetCDF::var.get.nc(grp$handle, aux$name), silent = TRUE)
-              if (inherits(val, "try-error")) {
-                warning("Could not read data for `coordinates` value '", coords[cid], "' found in variable '", v$name, "'.", call. = FALSE)
-                next
-              }
-
-              if (nd == 0L) {
-                # No dimensions so create a scalar axis in the group of aux
-                orient <- aux$attribute("axis")
-                if (is.na(orient)) orient <- ""
-                scalar <- CFAxisScalar$new(aux, orient, val)
-                scalar$bounds <- .readBounds(aux$group, bounds)
-                aux$group$CFaxes[[aux$name]] <- scalar
-                found_one <- TRUE
-              } else if (aux$vtype %in% c("NC_CHAR", "NC_STRING")) {
+              if (nd > 0L && aux$vtype %in% c("NC_CHAR", "NC_STRING")) {
                 # Label
                 dim <- grp$find_dim_by_id(aux$dimids[length(aux$dimids)]) # If there are 2 dimids, the first is a string length for a NC_CHAR type
+                val <- try(RNetCDF::var.get.nc(grp$handle, aux$name), silent = TRUE)
+                if (inherits(val, "try-error")) {
+                  warning("Could not read data for `coordinates` value '", coords[cid], "' found in variable '", v$name, "'.", call. = FALSE)
+                  next
+                }
                 aux$group$CFaux[[aux$name]] <- CFLabel$new(aux, dim, val)
                 found_one <- TRUE
-              } else if (nd == 1L) {
-                # Auxiliary coordinate with a single dimension: make an axis out of it.
+              } else if (nd < 2L) {
+                # Scalar or auxiliary coordinate with a single dimension: make an axis out of it.
                 ax <- .makeAxis(grp, aux)
-                if (inherits(ax, "CFAxis")) {
-                  aux$group$CFaux[[aux$name]] <- ax
-                  found_one <- TRUE
-                }
+                aux$group$CFaxes[[aux$name]] <- ax
+                found_one <- TRUE
               }
             }
           }
@@ -629,7 +618,7 @@ peek_ncdf <- function(resource) {
             aux <- grp$find_by_name(coords[cid], "CF")
             if (!is.null(aux)) {
               clss <- class(aux)
-              if (clss[1L] == "CFAxisScalar")
+              if (aux$length == 1L)
                 var$axes[[aux$name]] <- aux
               else if (clss[1L] == "CFLabel") {
                 ndx <- which(sapply(ax, function(x) x$dimid == aux$dimid))

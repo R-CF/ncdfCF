@@ -4,11 +4,9 @@
 \alias{makeLongitudeAxis}
 \title{Create a longitude axis}
 \usage{
-makeLongitudeAxis(id, name, group, values, bounds = NULL)
+makeLongitudeAxis(name, group, values, bounds = NULL)
 }
 \arguments{
-\item{id}{Id of the axis.}
-
 \item{name}{Name of the axis.}
 
 \item{group}{Group to place the axis in.}
@@ -19,7 +17,7 @@ makeLongitudeAxis(id, name, group, values, bounds = NULL)
 available.}
 }
 \value{
-A \code{CFAxisLongitude} or \code{CFAxisScalar} instance.
+A \code{CFAxisLongitude} instance.
 }
 \description{
 With this method you can create a longitude axis to use with new \link{CFArray}
