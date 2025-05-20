@@ -29,6 +29,7 @@ vector.}
 \item \href{#method-CFAxisTime-brief}{\code{CFAxisTime$brief()}}
 \item \href{#method-CFAxisTime-time}{\code{CFAxisTime$time()}}
 \item \href{#method-CFAxisTime-identical}{\code{CFAxisTime$identical()}}
+\item \href{#method-CFAxisTime-append}{\code{CFAxisTime$append()}}
 \item \href{#method-CFAxisTime-indexOf}{\code{CFAxisTime$indexOf()}}
 \item \href{#method-CFAxisTime-slice}{\code{CFAxisTime$slice()}}
 \item \href{#method-CFAxisTime-subset}{\code{CFAxisTime$subset()}}
@@ -140,6 +141,29 @@ Tests if the axis passed to this method is identical to
 }
 \subsection{Returns}{
 \code{TRUE} if the two axes are identical, \code{FALSE} if not.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisTime-append"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisTime-append}{}}}
+\subsection{Method \code{append()}}{
+Append a vector of time values at the end of the current
+values of the axis.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$append(from)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{from}}{An instance of \code{CFAxisTime} whose values to append to the
+values of \code{self}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A new \code{CFAxisTime} instance with values from self and the \code{from}
+axis appended.
 }
 }
 \if{html}{\out{<hr>}}

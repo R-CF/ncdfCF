@@ -58,6 +58,7 @@ recognized by the different format.
 \item \href{#method-CFArray-print}{\code{CFArray$print()}}
 \item \href{#method-CFArray-raw}{\code{CFArray$raw()}}
 \item \href{#method-CFArray-array}{\code{CFArray$array()}}
+\item \href{#method-CFArray-append}{\code{CFArray$append()}}
 \item \href{#method-CFArray-terra}{\code{CFArray$terra()}}
 \item \href{#method-CFArray-data.table}{\code{CFArray$data.table()}}
 \item \href{#method-CFArray-save}{\code{CFArray$save()}}
@@ -163,6 +164,35 @@ with axis ordering Y-X-others and Y values going from the top down.
 
 \subsection{Returns}{
 An \code{array} of data in R ordering.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFArray-append"></a>}}
+\if{latex}{\out{\hypertarget{method-CFArray-append}{}}}
+\subsection{Method \code{append()}}{
+Append the data from another \code{CFArray} instance to the
+current instance, along one of the axes. The operation will only
+succeed if the axes other than the one to append along have the same
+coordinates and the coordinates of the axis to append along have to be
+monotonically increasing or decreasing after appending.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFArray$append(from, along)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{from}}{The \code{CFArray} instance to append from.}
+
+\item{\code{along}}{The name of the axis to append along. This must be a single
+character string and the named axis has to be present both in \code{self}
+and in the \code{CFArray} instance in argument \code{from}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{self}, invisibly, with the arrays from \code{self} and \code{from}
+appended.
 }
 }
 \if{html}{\out{<hr>}}

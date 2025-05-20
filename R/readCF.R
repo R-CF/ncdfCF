@@ -280,7 +280,7 @@ peek_ncdf <- function(resource) {
   if (!is.na(units)) {
     t <- .makeTimeAxis(var, units, vals)
     if (!inherits(t, "try-error")) {
-      t$bounds <- CFbounds$bounds
+      t$bounds <- CFbounds$coordinates
       return(CFAxisTime$new(var, dim, t))
     }
   }

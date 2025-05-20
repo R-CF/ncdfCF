@@ -49,7 +49,7 @@ makeAxis <- function(name, group, orientation, values, bounds = NULL) {
     if (is.numeric(values)) {
       var <- NCVariable$new(-1L, name, group, "NC_DOUBLE", 1L, NULL)
       dim <- NCDimension$new(-1L, name, length(values), FALSE)
-      axis <- CFAxisNumeric$new(var, dim, values)
+      axis <- CFAxisNumeric$new(var, dim, "", values)
 
       axis$set_attribute("actual_range", "NC_DOUBLE", range(values))
       if (!is.null(bounds)) {
@@ -63,7 +63,7 @@ makeAxis <- function(name, group, orientation, values, bounds = NULL) {
     } else if (is.character(values)) {
       var <- NCVariable$new(-1L, name, group, "NC_STRING", 1L, NULL)
       dim <- NCDimension$new(-1L, name, length(values), FALSE)
-      CFAxisNumeric$new(var, dim, values)
+      CFAxisCharacter$new(var, dim, "", values)
     }
   } else stop("Bad `orientation` value for axis creation.", call. = FALSE)
 }
@@ -168,5 +168,30 @@ makeTimeAxis <- function(name, group, values) {
     axis$bounds <- CFBounds$new(var, dim, values$get_bounds())
     axis$set_attribute("bounds", "NC_CHAR", nm)
   }
+  axis
+}
+
+#' Create a discrete axis
+#'
+#' With this method you can create a discrete axis to use with new [CFArray]
+#' instances.
+#'
+#' @param name Name of the axis.
+#' @param group Group to place the axis in.
+#' @param length The length of the axis.
+#'
+#' @return A `CFAxisLatitude` instance. The values will be sequence of size
+#' `length`.
+#' @export
+makeDiscreteAxis <- function(name, group, length) {
+  if (!.is_valid_name(name))
+    stop("Name for axis is not valid", call. = FALSE)
+
+  length <- as.integer(length)
+  var <- NCVariable$new(-1L, name, group, "NC_INT", 1L, NULL)
+  dim <- NCDimension$new(-1L, name, length, FALSE)
+  axis <- CFAxisDiscrete$new(var, dim, "")
+
+  axis$set_attribute("actual_range", "NC_int", c(1L, length))
   axis
 }

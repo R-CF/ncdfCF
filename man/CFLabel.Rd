@@ -61,14 +61,12 @@ See also \link{CFAxisCharacter}, which is an axis with character labels.
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFLabel$new(grp, nc_var, nc_dim, values)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFLabel$new(nc_var, nc_dim, values)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{grp}}{The group that contains the netCDF variable.}
-
 \item{\code{nc_var}}{The netCDF variable that describes this instance.}
 
 \item{\code{nc_dim}}{The netCDF dimension that describes the dimensionality.}

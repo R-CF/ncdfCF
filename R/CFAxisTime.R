@@ -59,10 +59,17 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       super$print()
 
       time <- private$tm
-      crds <- self$coordinates
+      if (private$active_coords == 1L) {
+        crds <- private$tm$as_timestamp()
+        units <- time$unit
+      } else {
+        crds <- private$aux[[private$active_coords - 1L]]$coordinates
+        units <- private$aux[[private$active_coords - 1L]]$attribute("units")
+      }
       len <- length(crds)
       rng <- if (len == 1L) crds[1L]
-             else paste0(crds[1L], " ... ", crds[len], " (", time$unit, ")")
+             else paste(crds[1L], "...", crds[len])
+      if (!is.na(units)) rng <- paste0(rng, " (", units, ")")
       bndrng <- if (!is.null(time$get_bounds()))
         paste0(time$range(format = "", bounds = TRUE), collapse = " ... ")
       else "(not set)"
@@ -98,6 +105,29 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       super$identical(axis) &&
       private$tm$cal$is_equivalent(axis$time()$cal) &&
       all(.near(private$tm$offsets, axis$time()$offsets))
+    },
+
+    #' @description Append a vector of time values at the end of the current
+    #'   values of the axis.
+    #' @param from An instance of `CFAxisTime` whose values to append to the
+    #'   values of `self`.
+    #' @return A new `CFAxisTime` instance with values from self and the `from`
+    #'   axis appended.
+    append = function(from) {
+      if (super$can_append(from) && .c_is_monotonic(private$tm$offsets, from$time()$offsets)) {
+        bnds <- if (is.null(private$tm$bounds) || is.null(from$time()$bounds)) NULL
+                else cbind(private$tm$bounds, from$time()$bounds)
+        if (class(private$tm)[1L] == "CFClimatology")
+          time <- CFClimatology$new(private$tm$cal$definition, private$tm$cal$name, c(private$tm$offsets, from$time()$offsets), bnds)
+        else {
+          time <- CFTime$new(private$tm$cal$definition, private$tm$cal$name, c(private$tm$offsets, from$time()$offsets))
+          time$bounds <- bnds
+        }
+        axis <- makeTimeAxis(self$name, makeGroup(), time)
+        axis$attributes <- self$attributes
+        axis
+      } else
+        stop("Axis values cannot be appended.", call. = FALSE)
     },
 
     #' @description Retrieve the indices of supplied values on the time axis.

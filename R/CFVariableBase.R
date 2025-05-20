@@ -222,7 +222,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
         var <- NCVariable$new(-1L, tax$name, grp, tax$NCvar$vtype, 1L, NULL)
         len <- length(new_tm)
         dim <- NCDimension$new(-1L, tax$name, len, FALSE)
-        new_ax <- CFAxisTime$new(grp, var, dim, new_tm)
+        new_ax <- CFAxisTime$new(var, dim, new_tm)
         if (len == 1L) {
           ax <- c(self$axes[-tm], new_ax)
           names(ax) <- c(names(self$axes[-tm]), tax$name)

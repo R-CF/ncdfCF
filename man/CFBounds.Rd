@@ -28,7 +28,7 @@ axis).}
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{bounds}}{(read-only) Retrieve the boundary values.}
+\item{\code{coordinates}}{(read-only) Retrieve the boundary values.}
 }
 \if{html}{\out{</div>}}
 }

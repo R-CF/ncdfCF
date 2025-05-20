@@ -55,15 +55,19 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
       all(private$values == axis$values)
     },
 
-    #' @description Tests if the axis passed to this method can be appended to
-    #'   `self`. This means that all values in the passed axis must be different
-    #'   from the values in `self`.
-    #' @param axis The `CFAxisCharacter` instance to test.
-    #' @return `TRUE` if the passed axis can be appended to `self`, `FALSE` if
-    #'   not.
-    can_append = function(axis) {
-      super$can_append(axis) &&
-      !any(axis$values %in% private$values)
+    #' @description Append a vector of values at the end of the current values
+    #'   of the axis.
+    #' @param from An instance of `CFAxisCharacter` whose values to append to
+    #'   the values of `self`.
+    #' @return A new `CFAxisCharacter` instance with values from `self` and the
+    #'   `from` axis appended.
+    append = function(from) {
+      if (super$can_append(from) && !any(from$values %in% private$values)) {
+        axis <- makeAxis(self$name, makeGroup(), "", c(private$values, from$values))
+        axis$attributes <- self$attributes
+        axis
+      } else
+        stop("Axis values are not unique after appending.", call. = FALSE)
     },
 
     #' @description Find indices in the axis domain. Given a vector of character

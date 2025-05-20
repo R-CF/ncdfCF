@@ -85,7 +85,7 @@ There are four ways to read data for a data variable from the resource:
  * **`data():`** The `data()` method returns all data of a variable, including its metadata, in a `CFArray` instance.
  * **`[]`:** The usual R array operator gives you access to the raw, non-interpreted data in the netCDF resource. This uses index values into the dimensions and requires you to know the order in which the dimensions are specified for the variable. With a bit of tinkering and some helper functions in `ncdfCF` this is still very easy to do.
  * **`subset()`:** The `subset()` method lets you specify what you want to extract from each dimension in real-world coordinates and timestamps, in whichever order. This can also rectify non-Cartesian grids to regular longitude-latitude grids.
- * **`profile()`:** Extract "profiles" from the data variable. This can take different forms, such as a temporal or depth profile for a single location, but it could also be a zonal field (such as a transect in latitude - atmosperhic depth for a given latitude) or some other profile in the physical space of the data variable.
+ * **`profile()`:** Extract "profiles" from the data variable. This can take different forms, such as a temporal or depth profile for a single location, but it could also be a zonal field (such as a transect in latitude - atmospheric depth for a given longitude) or some other profile in the physical space of the data variable.
  
 ```{r extract}
 # Extract a timeseries for a specific location

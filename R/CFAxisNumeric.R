@@ -54,16 +54,22 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     print = function(...) {
       super$print()
 
-      units <- self$attribute("units")
+      if (private$active_coords == 1L) {
+        crds <- private$get_coordinates()
+        units <- self$attribute("units")
+      } else {
+        crds <- private$aux[[private$active_coords - 1L]]$coordinates
+        units <- private$aux[[private$active_coords - 1L]]$attribute("units")
+      }
       if (is.na(units)) units <- ""
       if (units == "1") units <- ""
 
-      crds <- self$coordinates
       len <- length(crds)
       if (len < 8L)
-        cat("Coordinates: ", paste(crds, collapse = ", "), "\n", sep = "")
+        cat("Coordinates: ", paste(crds, collapse = ", "), sep = "")
       else
-        cat("Coordinates: ", crds[1L], ", ", crds[2L], ", ", crds[3L], " ... ", crds[len - 2L], ", ", crds[len - 1L], ", ", crds[len], "\n", sep = "")
+        cat("Coordinates: ", crds[1L], ", ", crds[2L], ", ", crds[3L], " ... ", crds[len - 2L], ", ", crds[len - 1L], ", ", crds[len], sep = "")
+      if (units == "") cat("\n") else cat(" (", units, ")\n", sep = "")
 
       if (!is.null(self$bounds))
         self$bounds$print(...)
@@ -129,20 +135,21 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       all(.near(private$values, axis$values))
     },
 
-    #' @description Tests if the axis passed to this method can be appended to
-    #'   `self`. This means that once the values in the passed axis are appended
-    #'   to the values in `self`, the resulting vector must be monotonically
-    #'   increasing or decreasing.
-    #' @param axis The `CFAxisNumeric` or descendant class instance to test.
-    #' @return `TRUE` if the passed axis can be appended to `self`, `FALSE` if
-    #'   not.
-    can_append = function(axis) {
-      self_len <- self$length
-      axis_len <- axis$length
-      if (self_len > 1L) self_incr <- private$values[2L] > private$values[1L]
-      if (axis_len > 1L) axis_incr <- axis$values[2L] > axis$values[1L]
-      super$can_append(axis) &&
-        !any(axis$values %in% private$values)
+    #' @description Append a vector of values at the end of the current values
+    #'   of the axis.
+    #' @param from An instance of `CFAxisNumeric` or any of its descendants
+    #'   whose values to append to the values of `self`.
+    #' @return A new `CFAxisNumeric` or descendant instance with values from
+    #'   self and the `from` axis appended.
+    append = function(from) {
+      if (super$can_append(from) && .c_is_monotonic(private$values, from$values)) {
+        bnds <- if (is.null(self$bounds) || is.null(from$bounds)) NULL
+                else cbind(self$bounds, from$bounds)
+        axis <- makeAxis(self$name, makeGroup(), axis$orientation, c(private$values, from$values), NULL)
+        axis$attributes <- self$attributes
+        axis
+      } else
+        stop("Axis values cannot be appended.", call. = FALSE)
     },
 
     #' @description Return an axis spanning a smaller coordinate range. This

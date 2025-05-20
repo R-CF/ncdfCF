@@ -22,12 +22,11 @@ CFLabel <- R6::R6Class("CFLabel",
     NCdim = NULL,
 
     #' @description Create a new instance of this class.
-    #' @param grp The group that contains the netCDF variable.
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
     #' @param values Character vector of the label values.
-    initialize = function(grp, nc_var, nc_dim, values) {
-      super$initialize(nc_var, grp)
+    initialize = function(nc_var, nc_dim, values) {
+      super$initialize(nc_var)
       self$NCdim <- nc_dim
 
       private$values <- values

@@ -32,7 +32,7 @@ of auxiliary coordinates, if they have been set.}
 \item \href{#method-CFAxisNumeric-range}{\code{CFAxisNumeric$range()}}
 \item \href{#method-CFAxisNumeric-indexOf}{\code{CFAxisNumeric$indexOf()}}
 \item \href{#method-CFAxisNumeric-identical}{\code{CFAxisNumeric$identical()}}
-\item \href{#method-CFAxisNumeric-can_append}{\code{CFAxisNumeric$can_append()}}
+\item \href{#method-CFAxisNumeric-append}{\code{CFAxisNumeric$append()}}
 \item \href{#method-CFAxisNumeric-subset}{\code{CFAxisNumeric$subset()}}
 \item \href{#method-CFAxisNumeric-clone}{\code{CFAxisNumeric$clone()}}
 }
@@ -47,6 +47,7 @@ of auxiliary coordinates, if they have been set.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="can_append"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-can_append'><code>ncdfCF::CFAxis$can_append()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-peek'><code>ncdfCF::CFAxis$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="time"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-time'><code>ncdfCF::CFAxis$time()</code></a></span></li>
@@ -179,27 +180,26 @@ Tests if the axis passed to this method is identical to
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisNumeric-can_append"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisNumeric-can_append}{}}}
-\subsection{Method \code{can_append()}}{
-Tests if the axis passed to this method can be appended to
-\code{self}. This means that once the values in the passed axis are appended
-to the values in \code{self}, the resulting vector must be monotonically
-increasing or decreasing.
+\if{html}{\out{<a id="method-CFAxisNumeric-append"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisNumeric-append}{}}}
+\subsection{Method \code{append()}}{
+Append a vector of values at the end of the current values
+of the axis.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$can_append(axis)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$append(from)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{axis}}{The \code{CFAxisNumeric} or descendant class instance to test.}
+\item{\code{from}}{An instance of \code{CFAxisNumeric} or any of its descendants
+whose values to append to the values of \code{self}.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-\code{TRUE} if the passed axis can be appended to \code{self}, \code{FALSE} if
-not.
+A new \code{CFAxisNumeric} or descendant instance with values from
+self and the \code{from} axis appended.
 }
 }
 \if{html}{\out{<hr>}}

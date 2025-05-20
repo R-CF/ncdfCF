@@ -31,7 +31,7 @@ vector.}
 \item \href{#method-CFAxisCharacter-new}{\code{CFAxisCharacter$new()}}
 \item \href{#method-CFAxisCharacter-brief}{\code{CFAxisCharacter$brief()}}
 \item \href{#method-CFAxisCharacter-identical}{\code{CFAxisCharacter$identical()}}
-\item \href{#method-CFAxisCharacter-can_append}{\code{CFAxisCharacter$can_append()}}
+\item \href{#method-CFAxisCharacter-append}{\code{CFAxisCharacter$append()}}
 \item \href{#method-CFAxisCharacter-indexOf}{\code{CFAxisCharacter$indexOf()}}
 \item \href{#method-CFAxisCharacter-clone}{\code{CFAxisCharacter$clone()}}
 }
@@ -46,6 +46,7 @@ vector.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="can_append"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-can_append'><code>ncdfCF::CFAxis$can_append()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-peek'><code>ncdfCF::CFAxis$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="print"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-print'><code>ncdfCF::CFAxis$print()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
@@ -114,26 +115,26 @@ Tests if the axis passed to this method is identical to
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisCharacter-can_append"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisCharacter-can_append}{}}}
-\subsection{Method \code{can_append()}}{
-Tests if the axis passed to this method can be appended to
-\code{self}. This means that all values in the passed axis must be different
-from the values in \code{self}.
+\if{html}{\out{<a id="method-CFAxisCharacter-append"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisCharacter-append}{}}}
+\subsection{Method \code{append()}}{
+Append a vector of values at the end of the current values
+of the axis.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$can_append(axis)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$append(from)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{axis}}{The \code{CFAxisCharacter} instance to test.}
+\item{\code{from}}{An instance of \code{CFAxisCharacter} whose values to append to
+the values of \code{self}.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-\code{TRUE} if the passed axis can be appended to \code{self}, \code{FALSE} if
-not.
+A new \code{CFAxisCharacter} instance with values from \code{self} and the
+\code{from} axis appended.
 }
 }
 \if{html}{\out{<hr>}}

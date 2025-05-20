@@ -158,6 +158,24 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
   }
 }
 
+#' Test if the concatenation of vectors `x` and `y` yields a monotonic result.
+#' @noRd
+.c_is_monotonic <- function(x, y) {
+  xlen <- length(x)
+  if (xlen == 1L) {
+    if (length(y) == 1L) !.near(x, y)
+    else !.near(x, y[1L]) && ((x < y[1L] && y[1L] < y[2L]) || (x > y[1L] && y[1L] > y[2L]))
+  } else {
+    xlast <- x[xlen]
+    if (length(y) == 1L) {
+      !.near(xlast, y) && ((xlast < y && x[1L] < xlast) || (xlast > y && x[1L] > xlast))
+    } else {
+      if (x[1L] < x[2L]) (y[1L] < y[2L]) && (xlast < y[1L]) && !.near(xlast, y[1L])
+      else (y[1L] > y[2L]) && (xlast > y[1L]) && !.near(xlast, y[1L])
+    }
+  }
+}
+
 unused_imports <- function() {
   stringr::word
 }

@@ -156,20 +156,21 @@ CFAxis <- R6::R6Class("CFAxis",
     },
 
     #' @description Tests if the axis passed to this method can be appended to
-    #' `self`. This only tests for generic properties - class and name - with
-    #' further assessment done in sub-classes.
+    #'   `self`. This only tests for generic properties - class, mode of the
+    #'   values and name - with further assessment done in sub-classes.
     #' @param axis The `CFAxis` descendant instance to test.
     #' @return `TRUE` if the passed axis can be appended to `self`, `FALSE` if
     #'   not.
     can_append = function(axis) {
       all(class(self) == class(axis)) &&
+      mode(self$values) == mode(axis$values) &&
       self$name == axis$name
     },
 
     #' @description Return an axis spanning a smaller coordinate range. This
     #'   method is "virtual" in the sense that it does not do anything other
     #'   than return `NULL`. This stub is here to make the call to this method
-    #'   succeed with no result for the other axis descendants that do not
+    #'   succeed with no result for the  `CFAxis` descendants that do not
     #'   implement this method.
     #' @param group The group to create the new axis in.
     #' @param rng The range of indices whose values from this axis to include in
@@ -274,7 +275,8 @@ CFAxis <- R6::R6Class("CFAxis",
         if (private$active_coords == 1L) NULL
         else private$aux[[private$active_coords - 1L]]
       } else {
-        if ((inherits(value, "CFLabel") || inherits(value, "CFAxis")) && value$length == self$length) {
+        if ((inherits(value, "CFLabel") || inherits(value, "CFAxis")) &&
+            value$length == self$length && !(value$name %in% names(private$aux))) {
           private$aux <- append(private$aux, value)
           names(private$aux) <- sapply(private$aux, function(l) l$name)
         }

@@ -194,6 +194,41 @@ CFArray <- R6::R6Class("CFArray",
       private$orient("R")
     },
 
+    #' @description Append the data from another `CFArray` instance to the
+    #'   current instance, along one of the axes. The operation will only
+    #'   succeed if the axes other than the one to append along have the same
+    #'   coordinates and the coordinates of the axis to append along have to be
+    #'   monotonically increasing or decreasing after appending.
+    #' @param from The `CFArray` instance to append from.
+    #' @param along The name of the axis to append along. This must be a single
+    #'   character string and the named axis has to be present both in `self`
+    #'   and in the `CFArray` instance in argument `from`.
+    #' @return `self`, invisibly, with the arrays from `self` and `from`
+    #'   appended.
+    append = function(from, along) {
+      # Check if the array can be appended to self
+      if (length(along) != 1L || !(along %in% names(self$axes)))
+        stop("Argument `along` must be a single name of an existing axis.", call. = FALSE)
+      if (length(from$axes) != length(self$axes))
+        stop("Array `from` must have the same number of axes as this array.", call. = FALSE)
+      for (ax in seq_along(self$axes)) {
+        if (self$axes[[ax]]$name == along)
+          axno <- ax
+        else
+          if (!self$axes[[ax]]$identical(from$axes[[ax]]))
+            stop(paste("Axis", ax, "is not identical between the two arrays."), call. = FALSE)
+      }
+
+      # Extend the axis `along` with values from `from`
+      self$axes[[axno]] <- self$axes[[axno]]$append(from$axes[[axno]])
+
+      # Merge the arrays
+      private$values <- abind::abind(private$values, from$raw(), along = axno)
+      self$set_attribute("actual_range", private$values_type, round(range(private$values), CF$digits))
+
+      invisible(self)
+    },
+
     #' @description Convert the data to a `terra::SpatRaster` (3D) or a
     #' `terra::SpatRasterDataset` (4D) object. The data
     #' will be oriented to North-up. The 3rd dimension in the data will become

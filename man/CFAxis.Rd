@@ -241,8 +241,8 @@ Tests if the axis passed to this method is identical to
 \if{latex}{\out{\hypertarget{method-CFAxis-can_append}{}}}
 \subsection{Method \code{can_append()}}{
 Tests if the axis passed to this method can be appended to
-\code{self}. This only tests for generic properties - class and name - with
-further assessment done in sub-classes.
+\code{self}. This only tests for generic properties - class, mode of the
+values and name - with further assessment done in sub-classes.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxis$can_append(axis)}\if{html}{\out{</div>}}
 }
@@ -266,7 +266,7 @@ not.
 Return an axis spanning a smaller coordinate range. This
 method is "virtual" in the sense that it does not do anything other
 than return \code{NULL}. This stub is here to make the call to this method
-succeed with no result for the other axis descendants that do not
+succeed with no result for the  \code{CFAxis} descendants that do not
 implement this method.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxis$subset(group, rng = NULL)}\if{html}{\out{</div>}}

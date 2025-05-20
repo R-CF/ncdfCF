@@ -111,8 +111,8 @@ CFBounds <- R6::R6Class("CFBounds",
         "Bounds object"
     },
 
-    #' @field bounds (read-only) Retrieve the boundary values.
-    bounds = function(value) {
+    #' @field coordinates (read-only) Retrieve the boundary values.
+    coordinates = function(value) {
       if (missing(value))
         private$values
     }
