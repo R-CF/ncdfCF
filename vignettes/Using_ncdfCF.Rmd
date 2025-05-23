@@ -51,7 +51,7 @@ Several packages have been developed to address some of these issues and make ac
 
 ### ncdfCF
 
-Package `ncdfCF` provides a high-level interface using functions and methods that are familiar to the R user. It reads the structural metadata and also the attributes upon opening the resource. In the process, the `ncdfCF` package also applies CF Metadata Conventions to interpret the data. This currently applies to:
+Package `ncdfCF` provides a high-level interface using functions and methods that are familiar to the R user. It reads the structural metadata and also the attributes upon opening the resource. In the process, the `ncdfCF` package also applies CF Metadata Conventions to interpret the data. This applies to:
 
  * **Groups** are a feature of the newer `netcdf4` format, allowing for a directory-like structure in the netCDF resource. The specific scoping rules to find related objects distributed over multiple groups are supported.
  * The **axis designation**. The three mechanisms to identify the axis each dimension represents are applied until an axis is determined.
@@ -111,7 +111,7 @@ Enter `ncdfCF`. With `ncdfCF` you have four options to extract data for a variab
 
  * **`data()`** extracts all the data of the data variable into a `CFArray` object, including information on axes, the coordinate reference system and attributes.
  * **`[]`**: Using R's standard extraction operator `[` you work directly with the index values into the array dimensions: `d <- t2m[3:5, 1:4, 1:10]`. You can leave out dimensions to extract everything from that dimension (but you have to indicate the position, just like in regular arrays). So to get the first 5 "time" slices from `t2m`: `d <- t2m[, , 1:5]`. This works for any number of dimensions, you simply have to adjust the number of positions that you specify.  You still need to know the indices into the arrays but `ncdfCF` has some helper functions to get you those. Not specifying anything gets you the whole array: `d <- t2m[]`.
- * **`subset()`**: The `subset()` method is more flexible than `[]` because it requires less knowledge of how the data in the variable is structured, particularly the order of the axes. While many netCDF resources "behave" in their dimension order, there is no guarantee. With `subset()` you supply a list with items for each axis (by axis orientation or name, in any order) and each item containing a vector of real-world coordinates to extract. As an example, to extract values of a variable `x` for Australia for the year 2020 you call `x$subset(list(X = 112:154, Y = -9:-44, T = c("2020-01-01", "2021-01-01")))`. The result is returned in a `CFArray` object.
+ * **`subset()`**: The `subset()` method is more flexible than `[]` because it requires less knowledge of how the data in the variable is structured, particularly the order of the axes. While many netCDF resources "behave" in their dimension order, there is no guarantee. With `subset()` you supply each axis you want to subset (by axis orientation or name, in any order) and each item containing a vector of real-world coordinates to extract. As an example, to extract values of a variable `x` for Australia for the year 2020 you call `x$subset(X = 112:154, Y = -9:-44, T = c("2020-01-01", "2021-01-01"))`. The result is returned in a `CFArray` object.
  * **`summarise()`**: The `summarise()` method summarises the temporal dimension of a data variable to a lower resolution and returns a `CFArray` object with the results. For instance, you can summarise daily data to monthly summaries, which greatly reduces the size of the data variable. The periods to which data can be summarised are "day", "dekad" (10-day periods), "month", "quarter" (i.e. JFM, AMJ, JAS, OND), "season" (the meteorological seasons: DJF, MAM, JJA, SON), and "year". The `summarise()` method can also be called from a `CFArray` object. The function to summarise on is user-supplied and can be a simple built-in function, like `mean()`, a function that results multiple results, like `range()`, or a custom function. A `CFArray` instance is returned for every result returned from the function.
   
 
@@ -129,14 +129,14 @@ Note that the results contain degenerate dimensions (of length 1). This by desig
 
 ```{r subset}
 # Extract a specific region, full time dimension
-(ts <- t2m$subset(list(X = 29:30, Y = -1:-2)))
+(ts <- t2m$subset(X = 29:30, Y = -1:-2))
 
 # Extract specific time slices for a specific region
 # Note that the axes are specified out of order and using alternative
 # specifications: only the extreme values are used.
-(ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
-                       X = c(29.6, 28.8),
-                       Y = seq(-2, -1, by = 0.05))))
+(ts <- t2m$subset(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
+                  X = c(29.6, 28.8),
+                  Y = seq(-2, -1, by = 0.05)))
 ```
 
 These methods will read data from the netCDF resource, but only as much as is requested.
@@ -179,7 +179,7 @@ plot(r)
 
 Ok, so now we got North America looking pretty ok again. The data has been oriented in the right way. Behind the scenes that may have involved transposing and flipping the data, depending on the data storage arrangement in the netCDF resource.
 
-But the coordinate system is still not right. These are just ordinal values along both axes. The `terra::SpatRaster` object also does not show a CRS. All of the above steps can be fixed by simply calling the `terra()` method on the data object. This will return a `terra::SpatRaster` for a data object with three axes and a `terra::SpatRasterDataset` for a data object with four axes, including scalar axes if present:
+But the coordinate system is still not right. These are just ordinal values along both axes. The `terra::SpatRaster` object also does not show a CRS. All of the above steps can be fixed by simply calling the `terra()` method on the data object. This will return a `terra::SpatRaster` for a data object with three axes and a `terra::SpatRasterDataset` for a data object with four axes:
 
 ```{r terra}
 (r <- tx$terra())

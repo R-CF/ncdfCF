@@ -83,12 +83,13 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 
   if (length(axes)) {
     # Try to identify the type of the file
-    ft <- root$attribute("featureType")
-    if (!is.na(ft) && ft %in% c("point", "timeSeries", "trajectory", "profile",
-                                "timeSeriesProfile", "trajectoryProfile"))
-      ds$file_type <- "discrete sampling geometry"
-
-    # CMIP6, CMIP5, CORDEX
+    ds$file_type <- if (!is.na(ft <- root$attribute("featureType")) &&
+        ft %in% c("point", "timeSeries", "trajectory", "profile", "timeSeriesProfile", "trajectoryProfile"))
+      "discrete sampling geometry"
+    else if (!is.na(mip_era <- root$attribute("mip_era")))
+      mip_era
+    else if (!is.na(crd <- root$attribute("project_id")) && crd == "CORDEX")
+      "CORDEX"
 
     vars <- .buildVariables(root, axes)
   } else {

@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Lifecycle:
-Experimental](https://img.shields.io/badge/Lifecycle-Experimental-red.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+Stable](https://img.shields.io/badge/Lifecycle-Stable-green.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![CRAN
 Status](https://www.r-pkg.org/badges/version/ncdfCF)](https://cran.r-project.org/package=ncdfCF)
 [![CRAN
@@ -541,10 +541,12 @@ features:
 
 ## Installation
 
-**<span style="color: red;">CAUTION:</span>** Package `ncdfCF` is still
-in the early phases of development. While extensively tested on multiple
-well-structured datasets, errors may still occur, particularly in
-datasets that do not adhere to the CF Metadata Conventions.
+Package `ncdfCF` is still in the early phases of development. While
+extensively tested on multiple well-structured datasets, errors may
+still occur, particularly in datasets that do not adhere to the CF
+Metadata Conventions. The API may still change, although care is taken
+not to make breaking changes; any such changes will be flagged as
+deprecated before being replaced or removed.
 
 Installation from CRAN of the latest release:
 

@@ -66,7 +66,7 @@ CFDataset <- R6::R6Class("CFDataset",
       cat("<Dataset>", self$name, "\n")
       cat("Resource   :", private$res$uri, "\n")
       cat("Format     :", private$format, "\n")
-      cat("Type       :", self$file_type, "\n")
+      cat("Collection :", self$file_type, "\n")
       cat("Conventions:", self$conventions, "\n")
       cat("Keep open  :", self$keep_open, "\n")
 
@@ -86,13 +86,6 @@ CFDataset <- R6::R6Class("CFDataset",
         ev <- self$attribute("external_variables")
         if (!is.na(ev))
           cat("\nExternal variable", if (length(ev) > 1L) "s", ": ", ev, "\n", sep = "")
-
-        cat("\nAxes:\n")
-        axes <- do.call(rbind, lapply(self$root$axes(), function(a) a$brief()))
-        axes <- lapply(axes, function(c) if (all(c == "")) NULL else c)
-        if (all(axes$group == "/")) axes$group <- NULL
-        axes <- unique(as.data.frame(axes[lengths(axes) > 0L]))
-        print(.slim.data.frame(axes, ...), right = FALSE, row.names = FALSE)
       }
 
       self$root$print_attributes(...)

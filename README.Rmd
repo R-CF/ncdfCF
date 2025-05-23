@@ -11,22 +11,13 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
-
-colorize <- function(x, color) {
-  if (knitr::is_latex_output()) {
-    sprintf("\\textcolor{%s}{%s}", color, x)
-  } else if (knitr::is_html_output()) {
-    sprintf("<span style='color: %s;'>%s</span>", color,
-      x)
-  } else x
-}
 ```
 
 # ncdfCF
 
 <!-- badges: start -->
 
-[![Lifecycle: Experimental](https://img.shields.io/badge/Lifecycle-Experimental-red.svg)](https://lifecycle.r-lib.org/articles/stages.html) [![CRAN Status](https://www.r-pkg.org/badges/version/ncdfCF)](https://cran.r-project.org/package=ncdfCF) [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ncdfCF)](https://cran.r-project.org/package=ncdfCF) [![License: GPL v3](https://img.shields.io/badge/License-MIT-blue.svg)](https://mit-license.org) [![Last commit](https://img.shields.io/github/last-commit/pvanlaake/ncdfCF)](https://github.com/pvanlaake/ncdfCF/commits/main)
+[![Lifecycle: Stable](https://img.shields.io/badge/Lifecycle-Stable-green.svg)](https://lifecycle.r-lib.org/articles/stages.html) [![CRAN Status](https://www.r-pkg.org/badges/version/ncdfCF)](https://cran.r-project.org/package=ncdfCF) [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ncdfCF)](https://cran.r-project.org/package=ncdfCF) [![License: GPL v3](https://img.shields.io/badge/License-MIT-blue.svg)](https://mit-license.org) [![Last commit](https://img.shields.io/github/last-commit/pvanlaake/ncdfCF)](https://github.com/pvanlaake/ncdfCF/commits/main)
 [![R-CMD-check](https://github.com/pvanlaake/ncdfCF/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pvanlaake/ncdfCF/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
@@ -189,7 +180,7 @@ Development plans for the near future focus on supporting the below features:
 
 ## Installation
 
-**`r colorize("CAUTION:", "red")`** Package `ncdfCF` is still in the early phases of development. While extensively tested on multiple well-structured datasets, errors may still occur, particularly in datasets that do not adhere to the CF Metadata Conventions.
+Package `ncdfCF` is still in the early phases of development. While extensively tested on multiple well-structured datasets, errors may still occur, particularly in datasets that do not adhere to the CF Metadata Conventions. The API may still change, although care is taken not to make breaking changes; any such changes will be flagged as deprecated before being replaced or removed.
 
 Installation from CRAN of the latest release:
 
