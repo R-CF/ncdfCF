@@ -14,7 +14,10 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
     file_rows = c(0L, 0L),
 
     # Minimum and maximum bin in the L3b variable.
-    file_bins = c(0L, 0L)
+    file_bins = c(0L, 0L),
+
+    # The netCDF type of the unpacked data of the variable after reading.
+    values_type = "NC_FLOAT"
   ),
   public = list(
     #' @field variable The name of the variable contained in this L3b data.
@@ -61,21 +64,20 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       lon <- (private$file_bins[1L]:private$file_bins[2L] - 0.5) * 360 / lon_bins - 180
       bnds <- (private$file_bins[1L]-1):private$file_bins[2L] * 360 / lon_bins - 180
       len <- private$file_bins[2L] - private$file_bins[1L] + 1
-      lon <- makeLongitudeAxis("longitude", grp, lon,
-                               rbind(bnds[-len], bnds[-1L]))
+      lon <- makeLongitudeAxis("longitude", grp, lon, rbind(bnds[-len], bnds[-1L]))
 
       axes <- list(
-        longitude = lon,
-        latitude = lat
+        latitude = lat,
+        longitude = lon
       )
 
       # Scalar time axis
       tc_start <- grp$parent$attribute("time_coverage_start")
       tc_end <- grp$parent$attribute("time_coverage_end")
       if (!is.na(tc_start) && !is.na(tc_end)) {
-        tc <- CFtime::CFtime("seconds since 1970-01-01", "proleptic_gregorian", c(tc_start, tc_end))
+        tc <- CFtime::CFTime$new("seconds since 1970-01-01", "proleptic_gregorian", c(tc_start, tc_end))
         ymd <- tc$cal$offset2date(mean(tc$offsets) / 86400)
-        cft <- CFtime::CFtime("seconds since 1970-01-01", "proleptic_gregorian")
+        cft <- CFtime::CFTime$new("seconds since 1970-01-01", "proleptic_gregorian")
         cft <- cft + CFtime::parse_timestamps(cft, sprintf("%04d-%02d-%02dT12:00:00", ymd$year, ymd$month, as.integer(ymd$day)))$offset
         cft$set_bounds(matrix(tc$offsets, nrow = 2))
         axes[["time"]] <- makeTimeAxis("time", grp, cft)
@@ -125,16 +127,17 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
         endBin <- private$file_bins[2L]
       } else {
         # Subset the latitude
-        startRow <- floor((aoi[3L] + 90) * numRows / 180) + 1L
-        endRow <- floor((aoi[4L] + 90) * numRows / 180)
+        startRow <- floor((aoi$latMin + 90) * numRows / 180) + 1L
+        endRow <- floor((aoi$latMax + 90) * numRows / 180)
 
         # Subset the longitude
-        startBin <- floor((aoi[1L] + 180) * maxBins / 360) + 1L
-        endBin <- floor((aoi[2L] + 180) * maxBins / 360)
+        startBin <- floor((aoi$lonMin + 180) * maxBins / 360) + 1L
+        endBin <- floor((aoi$lonMax + 180) * maxBins / 360)
       }
 
       l <- lapply(startRow:endRow, function(r) {
         out <- rep(NA_real_, maxBins)
+
         idx <- which(data_row == r)
         if (!length(idx)) return(out[startBin:endBin])
 
@@ -150,20 +153,21 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
 
         out[startBin:endBin]
       })
-      abind::abind(l, along = 2)
+      out <- do.call(rbind, l)
+      dimnames(out) <- list(self$axes[["latitude"]]$values[startRow:endRow - private$file_rows[1L] + 1L],
+                            self$axes[["longitude"]]$values[startBin:endBin - private$file_bins[1L] + 1L])
+      out
     },
 
     #' @description Retrieve all data of the L3b variable.
     #'
     #' @return A [CFArray] instance with all data from this L3b variable.
     data = function() {
-      out_group <- NCGroup$new(-1L, "/", "/", NULL, NULL)
+      out_group <- makeGroup()
       out_group$set_attribute("title", "NC_CHAR", paste("L3b variable", self$name, "regridded to latitude-longitude"))
       out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariableL3b$data()"))
 
-      axes <- lapply(self$axes, function(ax) ax$clone())
-
-      CFArray$new(self$name, out_group, self$as_matrix(), private$values_type, axes, self$crs, self$attributes)
+      CFArray$new(self$name, out_group, self$as_matrix(), "NC_FLOAT", self$axes, self$crs, self$attributes)
     },
 
     #' @description This method extracts a subset of values from the data of the
@@ -192,62 +196,72 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
     #'   in argument `subset` does not reorder the axes in the result; use the
     #'   [CFArray]$array() method for this.
     #'
-    #' @param subset A list with the range to extract from each axis. The list
-    #'   should have elements for the axes to extract a subset from - if an axis
-    #'   is not present in the list the entire axis will be extracted from the
-    #'   array. List element names should be the axis name or designator
-    #'   `longitude` or `X`, or `latitude` or `Y`. Axis designators and names
-    #'   are case-sensitive and can be specified in any order. If values for the
-    #'   range per axis fall outside of the extent of the axis, the range is
-    #'   clipped to the extent of the axis.
-    #' @param aoi Optional, an area-of-interest instance of class `AOI` created
+    #' @param ... One or more arguments of the form `axis = range`. The "axis"
+    #'   part should be the name of axis `longitude` or `latitude` or its
+    #'   orientation `X` or `Y`. The "range" part is a vector of values
+    #'   representing coordinates along the axis where to extract data. Axis
+    #'   designators and names are case-sensitive and can be specified in any
+    #'   order. If values for the range of an axis fall outside of the extent of
+    #'   the axis, the range is clipped to the extent of the axis.
+    #' @param .aoi Optional, an area-of-interest instance of class `AOI` created
     #'   with the [aoi()] function to indicate the horizontal area that should
     #'   be extracted. The longitude and latitude coordinates must be included;
     #'   the X and Y resolution will be calculated if not given. When provided,
-    #'   this argument will take precedence over the `subset` argument.
+    #'   this argument will take precedence over the `...` argument.
     #' @param rightmost.closed Single logical value to indicate if the upper
     #'   boundary of range in each axis should be included.
-    #' @param ... Ignored.
     #'
     #' @return A [CFArray] instance, having an array with axes and attributes of
-    #'   the variable, or `NULL` if one or more of the elements in the `subset`
+    #'   the variable, or `NULL` if one or more of the elements in the `...`
     #'   argument falls entirely outside of the range of the axis. Note that
     #'   degenerate dimensions (having `length(.) == 1`) are dropped from the
     #'   array but the corresponding axis is maintained in the result as a
     #'   scalar axis.
-    subset = function(subset = NULL, aoi = NULL, rightmost.closed = FALSE, ...) {
-      if (is.null(subset) && is.null(aoi))
-        stop("Either `subset` or `aoi` arguments must be set", call. = FALSE)
-      if (!is.null(aoi) && is.null(aoi$lonMin))
-        stop("Argument `aoi` must have coordinates set", call. = FALSE)
-      if (!is.null(subset)) {
-        sub_names <- names(subset)
-        bad <- sub_names[!(sub_names %in% c("longitude", "latitude", "X", "Y"))]
-        if (length(bad))
-          stop("Argument `subset` contains elements not corresponding to an axis:", paste(bad, collapse = ", "), call. = FALSE)
-      }
+    subset = function(..., .aoi = NULL, rightmost.closed = FALSE) {
+      if (!is.null(.aoi) && is.null(.aoi$lonMin))
+        stop("Argument `.aoi` must have coordinates set", call. = FALSE)
 
-      out_group <- NCGroup$new(-1L, "/", "/", NULL, NULL)
+      # Organize the selectors
+      selectors <- list(...)
+      sel_names <- names(selectors)
+      axis_names <- names(self$axes)
+      axis_order <- private$check_names(sel_names)
+
+      out_group <- makeGroup()
       out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
       out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariableL3b$subset()"))
 
+      aoi <- AOI$new()
+
       out_axes_dim <- list()
       out_axes_other <- list()
-      for (ax in 1:2) {
+      for (ax in 1L:2L) {
         axis <- self$axes[[ax]]
+        orient <- axis$orientation
 
         rng <- NULL
-        if (!is.null(aoi))
-          rng <- if (axis$orientation == "X") c(aoi$lonMin, aoi$lonMax)
-                 else c(aoi$latMin, aoi$latMax)
-        if (is.null(rng)) rng <- subset[[ c("longitude", "latitude")[ax] ]]
-        if (is.null(rng)) rng <- subset[[ c("X", "Y")[ax] ]]
+        if (!is.null(.aoi))
+          rng <- if (orient == "X") c(.aoi$lonMin, .aoi$lonMax)
+                 else c(.aoi$latMin, .aoi$latMax)
+        if (is.null(rng)) rng <- selectors[[ axis_names[ax] ]]
+        if (is.null(rng)) rng <- selectors[[ orient ]]
         if (is.null(rng)) {
           out_axis <- axis$subset(out_group, NULL)
         } else {
           idx <- private$range2index(axis, rng, rightmost.closed)
           if (is.null(idx)) return(NULL)
           out_axis <- axis$subset(out_group, idx)
+        }
+        rng <- range(rng)
+        len <- out_axis$length
+        if (rng[1L] < out_axis$bounds$coordinates[1L, 1L]) rng[1L] <- out_axis$bounds$coordinates[1L, 1L]
+        if (rng[2L] > out_axis$bounds$coordinates[2L, len]) rng[2L] <- out_axis$bounds$coordinates[2L, len]
+        if (orient == "X") {
+          aoi$lonMin <- rng[1L]
+          aoi$lonMax <- rng[2L]
+        } else {
+          aoi$latMin <- rng[1L]
+          aoi$latMax <- rng[2L]
         }
 
         # Collect axes for result
@@ -264,7 +278,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       # Assemble the CFArray instance
       axes <- c(out_axes_dim, out_axes_other)
       names(axes) <- sapply(axes, function(a) a$name)
-      CFArray$new(self$name, out_group, d, private$values_type, axes, self$crs, self$attributes)
+      CFArray$new(self$name, out_group, d, "NC_FLOAT", axes, self$crs, self$attributes)
     }
   )
 )

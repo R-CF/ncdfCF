@@ -100,11 +100,17 @@ dim.AOI <- function(x) {
 }
 
 .aoi_check_longitude <- function(min, max) {
+  if (is.null(min) && is.null(max)) return()
+  if (is.null(min) && (max > -180 && max <= 360)) return()
+  if (is.null(max) && (min >= -180 && min < 360)) return()
   if (min < -180 || (min < 0 && max > 180) || max > 360 || min >= max)
     stop("Longitude range is not valid", call. = FALSE)
 }
 
 .aoi_check_latitude <- function(min, max) {
+  if (is.null(min) && is.null(max)) return()
+  if (is.null(min) && (max > -90 && max <= 90)) return()
+  if (is.null(max) && (min >= -90 && min < 90)) return()
   if (min < -90 || max > 90 || min >= max)
     stop("Latitude range is not valid", call. = FALSE)
 }

@@ -387,7 +387,7 @@ CFVariable <- R6::R6Class("CFVariable",
         sel_names <- sel_names[!grepl("X|Y", sel_names)]
       } else aux <- NULL
 
-      out_group <- NCGroup$new(-1L, "/", "/", NULL, NULL)
+      out_group <- makeGroup()
       out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
       out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariable$subset()"))
 

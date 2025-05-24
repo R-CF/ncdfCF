@@ -23,12 +23,15 @@ AOI <- R6::R6Class("AOI",
     #'   which this AOI will be applied, e.g. `[-180,180]` or `[0,360]`.
     #' @param resolution The separation between adjacent grid cell, in longitude
     #'   and latitude directions, in decimal degrees.
-    initialize = function(lonMin, lonMax, latMin, latMax, resolution) {
+    initialize = function(lonMin = NULL, lonMax = NULL, latMin = NULL, latMax = NULL, resolution = c(NULL, NULL)) {
       private$minLon <- lonMin
       private$maxLon <- lonMax
       private$minLat <- latMin
       private$maxLat <- latMax
-      private$res <- resolution
+      if (length(resolution == 1L))
+        private$res <- c(resolution, resolution)
+      else
+        private$res <- resolution[1L:2L]
     },
 
     #' @description Summary of the area of interest printed to the console.

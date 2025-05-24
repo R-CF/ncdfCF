@@ -71,7 +71,7 @@ NCObject <- R6::R6Class("NCObject",
     #'   length of 255 characters. UTF-8 characters are not supported in
     #'   attribute names.
     #' @param type The type of the attribute, as a string value of a netCDF data
-    #'   type.
+    #'   type or a user-defined type.
     #' @param value The value of the attribute. This can be of any supported
     #'   type, including a vector or list of values. Matrices, arrays and like
     #'   compound data structures should be stored as a data variable, not as an
@@ -119,7 +119,6 @@ NCObject <- R6::R6Class("NCObject",
         df$value <- value # Preserve lists
         self$attributes <- rbind(self$attributes, df)
       }
-      # FIXME: Flag that attributes have changed so that object is dirty
       invisible(self)
     },
 
