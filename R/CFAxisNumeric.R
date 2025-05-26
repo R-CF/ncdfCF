@@ -177,6 +177,8 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
         bnds <- self$bounds
         if (inherits(bnds, "CFBounds")) ax$bounds <- bnds$sub_bounds(group, rng)
         private$subset_coordinates(ax, idx)
+        ax$attributes <- self$attributes
+        ax$attribute("actual_range", self$NCvar$vtype, range(ax$values))
         ax
       }
     }

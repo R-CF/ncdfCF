@@ -149,14 +149,16 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
       } else
         cat("Groups         :", grpLon, "(longitude) ||", grpLat, "(latitude)\n")
 
-      cat(sprintf("\nLongitude range: [%5.3f ... %5.3f] degrees_east\n", self$extent[1], self$extent[2]))
-      cat(sprintf("Latitude range : [%5.3f ... %5.3f] degrees_north\n", self$extent[3], self$extent[4]))
+      ext <- self$extent
+      cat(sprintf("\nLongitude range: [%5.3f ... %5.3f] degrees_east\n", ext[1], ext[2]))
+      cat(sprintf("Latitude range : [%5.3f ... %5.3f] degrees_north\n", ext[3], ext[4]))
 
       if (inherits(private$aoi_, "AOI")) {
-        cat(sprintf("\nAOI  longitude : [%5.3f ... %5.3f] degrees_east\n", private$aoi_$lonMin, private$aoi_$lonMax))
-        cat(sprintf("      latitude : [%5.3f ... %5.3f] degrees_north\n", private$aoi_$latMin, private$aoi_$latMax))
-        aoi_dim <- private$aoi_$dim
-        aoi_res <- private$aoi_$resolution
+        aoi <- private$aoi_
+        cat(sprintf("\nAOI  longitude : [%5.3f ... %5.3f] degrees_east\n", aoi$lonMin, aoi$lonMax))
+        cat(sprintf("      latitude : [%5.3f ... %5.3f] degrees_north\n", aoi$latMin, aoi$latMax))
+        aoi_dim <- aoi$dim
+        aoi_res <- aoi$resolution
         cat(sprintf("    resolution : [%5.3f degrees_east x %5.3f degrees_north]\n", aoi_res[1L], aoi_res[2L]))
         cat(sprintf("        extent : [%d rows x %d columns]", aoi_dim[1L], aoi_dim[2L]))
       } else
@@ -166,16 +168,17 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     #' @description Some details of the auxiliary longitude-latitude grid.
     #' @return A 2-row `data.frame` with some details of the grid components.
     brief = function() {
-      out <- data.frame(orientation = c("longitude", "latitude"),
-                        axis = c("X", "Y"),
-                        name = c(self$varLong$name, self$varLat$name))
+      lon <- self$varLong
+      lat <- self$varLat
+      out <- data.frame(axis = c("X", "Y"),
+                        name = c(lon$name, lat$name))
 
-      if (!identical(self$varLong$longname, self$varLong$name) ||
-          !identical(self$varLat$longname, self$varLat$name))
-        out[["long_name"]] <- c(self$varLong$longname, self$varLat$longname)
+      if (!identical(lon$longname, lon$name) || !identical(lat$longname, lat$name))
+        out[["long_name"]] <- c(lon$longname, lat$longname)
 
-      out[["extent"]] <- c(sprintf("[%5.3f ... %5.3f]", self$extent[1], self$extent[2]),
-                           sprintf("[%5.3f ... %5.3f]", self$extent[3], self$extent[4]))
+      ext <- self$extent
+      out[["extent"]] <- c(sprintf("[%5.3f ... %5.3f]", ext[1], ext[2]),
+                           sprintf("[%5.3f ... %5.3f]", ext[3], ext[4]))
 
       out[["unit"]] <- c("degrees_east", "degrees_north")
       out

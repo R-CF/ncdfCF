@@ -433,11 +433,11 @@ peek_ncdf <- function(resource) {
             if (nd == 2L && !is.na(units <- aux$attribute("units"))) {
               if (grepl("^degree(s?)(_?)(east|E)$", units)) {
                 varLon <- aux
-                bndsLon <- .readBounds(aux$group, bounds)
+                bndsLon <- .readBounds(aux$group, bounds, 2L)
                 found_one <- TRUE
               } else if (grepl("^degree(s?)(_?)(north|N)$", units)) {
                 varLat <- aux
-                bndsLat <- .readBounds(aux$group, bounds)
+                bndsLat <- .readBounds(aux$group, bounds, 2L)
                 found_one <- TRUE
               }
             }

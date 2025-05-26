@@ -185,6 +185,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         dim <- NCDimension$new(-1L, self$name, length(idx), FALSE)
         t <- CFAxisTime$new(var, dim, tm)
         private$subset_coordinates(t, idx)
+        t$set_attribute("actual_range", self$NCvar$vtype, range(tm$offsets))
         t
       }
     },
