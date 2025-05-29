@@ -63,5 +63,5 @@ Suggests:
 VignetteBuilder: knitr
 Depends: 
     R (>= 3.5)
-URL: https://github.com/pvanlaake/ncdfCF
-BugReports: https://github.com/pvanlaake/ncdfCF/issues
+URL: https://github.com/R-CF/ncdfCF
+BugReports: https://github.com/R-CF/ncdfCF/issues

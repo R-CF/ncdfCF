@@ -67,7 +67,7 @@ CFVariable <- R6::R6Class("CFVariable",
 
       # The below appears counter-intuitive (XY relationship to indices) but it
       # works for long-lat grids that use the recommended X-Y-Z-T axis ordering.
-      # Report any problems to https://github.com/pvanlaake/ncdfCF/issues
+      # Report any problems to https://github.com/R-CF/ncdfCF/issues
       dim_ll <- private$llgrid$dim
       xyidx <- arrayInd(index, dim_ll)          # convert indices to row,column
       rx <- range(xyidx[, 2L], na.rm = TRUE)    # full range of columns

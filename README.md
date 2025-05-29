@@ -14,8 +14,8 @@ Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ncdfCF)](https://cran.r
 [![License: GPL
 v3](https://img.shields.io/badge/License-MIT-blue.svg)](https://mit-license.org)
 [![Last
-commit](https://img.shields.io/github/last-commit/pvanlaake/ncdfCF)](https://github.com/pvanlaake/ncdfCF/commits/main)
-[![R-CMD-check](https://github.com/pvanlaake/ncdfCF/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pvanlaake/ncdfCF/actions/workflows/R-CMD-check.yaml)
+commit](https://img.shields.io/github/last-commit/R-CF/ncdfCF)](https://github.com/R-CF/ncdfCF/commits/main)
+[![R-CMD-check](https://github.com/R-CF/ncdfCF/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/R-CF/ncdfCF/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The `ncdfCF` package provides an easy to use interface to netCDF
@@ -523,4 +523,4 @@ You can install the development version of `ncdfCF` from
 [GitHub](https://github.com/) with:
 
     # install.packages("devtools")
-    devtools::install_github("pvanlaake/ncdfCF")
+    devtools::install_github("R-CF/ncdfCF")

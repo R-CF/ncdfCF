@@ -241,8 +241,8 @@ of the axis values and a final data value.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/pvanlaake/ncdfCF}
-  \item Report bugs at \url{https://github.com/pvanlaake/ncdfCF/issues}
+  \item \url{https://github.com/R-CF/ncdfCF}
+  \item Report bugs at \url{https://github.com/R-CF/ncdfCF/issues}
 }
 
 }

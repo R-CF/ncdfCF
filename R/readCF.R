@@ -122,7 +122,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 #' returning the netCDF resource is closed.
 #'
 #' If you find that you need other information to be included in the result,
-#' open an issue: https://github.com/pvanlaake/ncdfCF/issues.
+#' open an issue: https://github.com/R-CF/ncdfCF/issues.
 #'
 #' @param resource The name of the netCDF resource to open, either a local file
 #'   name or a remote URI.

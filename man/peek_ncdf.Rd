@@ -21,7 +21,7 @@ returning the netCDF resource is closed.
 }
 \details{
 If you find that you need other information to be included in the result,
-open an issue: https://github.com/pvanlaake/ncdfCF/issues.
+open an issue: https://github.com/R-CF/ncdfCF/issues.
 }
 \examples{
 fn <- system.file("extdata",
