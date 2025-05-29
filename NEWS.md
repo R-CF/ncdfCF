@@ -1,3 +1,5 @@
+# ncdfCF (development version)
+
 # ncdfCF 0.6.0
 
 - New `profile()` method for `CFVariable` and `CFArray`. With this method profiles can be extracted from the data, having a user-selectable dimensionality and location. Examples are temporal profiles at a given location or a zonal (lat or long) vertical profile of the atmosphere, but there are many other options. Multiple profiles can be extracted in a single call and they can be generated as a list of `CFArray` instances or as a single `data.table`.
