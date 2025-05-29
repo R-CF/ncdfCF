@@ -60,6 +60,8 @@ of auxiliary coordinates, if they have been set.}
 \if{latex}{\out{\hypertarget{method-CFAxisNumeric-new}{}}}
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
+
+Creating a new axis is more easily done with the \code{\link[=makeAxis]{makeAxis()}} function.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$new(nc_var, nc_dim, orientation, values)}\if{html}{\out{</div>}}
 }

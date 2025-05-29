@@ -39,7 +39,8 @@ makeGroup <- function(id = -1L, name = "/", fullname = "/", parent = NULL) {
 #' @param bounds The bounds of the coordinate values, or `NULL` if not
 #'   available.
 #'
-#' @return A `CFAxisLongitude` instance.
+#' @seealso [makeLongitudeAxis()], [makeLatitudeAxis()], [makeTimeAxis()], [makeDiscreteAxis()]
+#' @return An instance of a class descending from [CFAxis].
 #' @export
 makeAxis <- function(name, group, orientation, values, bounds = NULL) {
   if (orientation == "X") makeLongitudeAxis(name, group, values, bounds)
@@ -79,7 +80,7 @@ makeAxis <- function(name, group, orientation, values, bounds = NULL) {
 #' @param bounds The bounds of the coordinate values, or `NULL` if not
 #'   available.
 #'
-#' @return A `CFAxisLongitude` instance.
+#' @return A [CFAxisLongitude] instance.
 #' @export
 makeLongitudeAxis <- function(name, group, values, bounds = NULL) {
   if (!.is_valid_name(name))
@@ -114,7 +115,7 @@ makeLongitudeAxis <- function(name, group, values, bounds = NULL) {
 #' @param values The coordinate values.
 #' @param bounds The bounds of the coordinate values, or `NULL` if not available.
 #'
-#' @return A `CFAxisLatitude` instance.
+#' @return A [CFAxisLatitude] instance.
 #' @export
 makeLatitudeAxis <- function(name, group, values, bounds) {
   if (!.is_valid_name(name))
@@ -147,7 +148,7 @@ makeLatitudeAxis <- function(name, group, values, bounds) {
 #' @param group Group to place the axis in.
 #' @param values A `CFTime` instance with time values and optionally bounds set.
 #'
-#' @return A `CFAxisTime` instance.
+#' @return A [CFAxisTime] instance.
 #' @export
 makeTimeAxis <- function(name, group, values) {
   if (!.is_valid_name(name))
@@ -180,7 +181,7 @@ makeTimeAxis <- function(name, group, values) {
 #' @param group Group to place the axis in.
 #' @param length The length of the axis.
 #'
-#' @return A `CFAxisLatitude` instance. The values will be sequence of size
+#' @return A [CFAxisDiscrete] instance. The values will be a sequence of size
 #' `length`.
 #' @export
 makeDiscreteAxis <- function(name, group, length) {

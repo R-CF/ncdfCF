@@ -14,7 +14,7 @@ makeDiscreteAxis(name, group, length)
 \item{length}{The length of the axis.}
 }
 \value{
-A \code{CFAxisLatitude} instance. The values will be sequence of size
+A \link{CFAxisDiscrete} instance. The values will be a sequence of size
 \code{length}.
 }
 \description{

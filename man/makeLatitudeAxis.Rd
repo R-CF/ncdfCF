@@ -16,7 +16,7 @@ makeLatitudeAxis(name, group, values, bounds)
 \item{bounds}{The bounds of the coordinate values, or \code{NULL} if not available.}
 }
 \value{
-A \code{CFAxisLatitude} instance.
+A \link{CFAxisLatitude} instance.
 }
 \description{
 With this method you can create a latitude axis to use with new \link{CFArray}

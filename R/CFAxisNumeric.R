@@ -36,6 +36,8 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
   ),
   public = list(
     #' @description Create a new instance of this class.
+    #'
+    #'   Creating a new axis is more easily done with the [makeAxis()] function.
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
     #' @param orientation The orientation (`X`, `Y`, `Z`, or `T`) or `""` if

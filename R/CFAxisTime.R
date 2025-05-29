@@ -38,6 +38,9 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
   ),
   public = list(
     #' @description Create a new instance of this class.
+    #'
+    #'   Creating a new time axis is more easily done with the [makeTimeAxis()]
+    #'   function.
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
     #' @param values The `CFTime` instance that manages this axis.

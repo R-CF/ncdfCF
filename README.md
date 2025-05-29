@@ -76,7 +76,7 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 #> <Dataset> ERA5land_Rwanda_20160101 
 #> Resource   : /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
 #> Format     : offset64 
-#> Type       : generic netCDF data 
+#> Collection : Generic netCDF data 
 #> Conventions: CF-1.6 
 #> Keep open  : FALSE 
 #> 
@@ -86,27 +86,12 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 #>  pev  Potential evaporation m     NC_SHORT  longitude, latitude, time
 #>  tp   Total precipitation   m     NC_SHORT  longitude, latitude, time
 #> 
-#> Axes:
-#>  id axis name      length unlim values                                       
-#>  0  T    time      24     U     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
-#>  1  X    longitude 31           [28 ... 31]                                  
-#>  2  Y    latitude  21           [-1 ... -3]                                  
-#>  unit                             
-#>  hours since 1900-01-01 00:00:00.0
-#>  degrees_east                     
-#>  degrees_north                    
-#> 
 #> Attributes:
-#>  id name        type    length
-#>  0  CDI         NC_CHAR  64   
-#>  1  Conventions NC_CHAR   6   
-#>  2  history     NC_CHAR 482   
-#>  3  CDO         NC_CHAR  64   
-#>  value                                             
-#>  Climate Data Interface version 2.4.1 (https://m...
-#>  CF-1.6                                            
-#>  Tue May 28 18:39:12 2024: cdo seldate,2016-01-0...
-#>  Climate Data Operators version 2.4.1 (https://m...
+#>  name        type    length value                                             
+#>  CDI         NC_CHAR  64    Climate Data Interface version 2.4.1 (https://m...
+#>  Conventions NC_CHAR   6    CF-1.6                                            
+#>  history     NC_CHAR 482    Tue May 28 18:39:12 2024: cdo seldate,2016-01-0...
+#>  CDO         NC_CHAR  64    Climate Data Operators version 2.4.1 (https://m...
 
 # ...or very brief details
 ds$var_names
@@ -114,25 +99,25 @@ ds$var_names
 ds$axis_names
 #> [1] "time"      "longitude" "latitude"
 
-# Variables and dimensions can be accessed through standard list-type extraction syntax
+# Variables and axes can be accessed through standard list-type extraction syntax
 (t2m <- ds[["t2m"]])
 #> <Variable> t2m 
 #> Long name: 2 metre temperature 
 #> 
 #> Axes:
-#>  id axis name      length unlim values                                       
-#>  1  X    longitude 31           [28 ... 31]                                  
-#>  2  Y    latitude  21           [-1 ... -3]                                  
-#>  0  T    time      24     U     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  axis name      length unlim values                                       
+#>  X    longitude 31           [28 ... 31]                                  
+#>  Y    latitude  21           [-1 ... -3]                                  
+#>  T    time      24     U     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    
 #>  hours since 1900-01-01 00:00:00.0
 #> 
 #> Attributes:
-#>  id name      type    length value              
-#>  0  long_name NC_CHAR 19     2 metre temperature
-#>  1  units     NC_CHAR  1     K
+#>  name      type    length value              
+#>  long_name NC_CHAR 19     2 metre temperature
+#>  units     NC_CHAR  1     K
 
 ds[["longitude"]]
 #> <Longitude axis> [1] longitude
@@ -142,17 +127,17 @@ ds[["longitude"]]
 #> Bounds     : (not set)
 #> 
 #> Attributes:
-#>  id name          type     length value       
-#>  0  standard_name NC_CHAR   9     longitude   
-#>  1  long_name     NC_CHAR   9     longitude   
-#>  2  units         NC_CHAR  12     degrees_east
-#>  3  axis          NC_CHAR   1     X           
-#>  4  actual_range  NC_FLOAT  2     28, 31
+#>  name          type     length value       
+#>  standard_name NC_CHAR   9     longitude   
+#>  long_name     NC_CHAR   9     longitude   
+#>  units         NC_CHAR  12     degrees_east
+#>  axis          NC_CHAR   1     X           
+#>  actual_range  NC_FLOAT  2     28, 31
 
 # Regular base R operations simplify life further
-dimnames(ds[["pev"]]) # A variable: list of dimension names
+dimnames(ds[["pev"]]) # A variable: list of axis names
 #> [1] "longitude" "latitude"  "time"
-dimnames(ds[["longitude"]]) # A dimension: vector of dimension element values
+dimnames(ds[["longitude"]]) # An axis: vector of axis coordinates
 #>  [1] 28.0 28.1 28.2 28.3 28.4 28.5 28.6 28.7 28.8 28.9 29.0 29.1 29.2 29.3 29.4
 #> [16] 29.5 29.6 29.7 29.8 29.9 30.0 30.1 30.2 30.3 30.4 30.5 30.6 30.7 30.8 30.9
 #> [31] 31.0
@@ -171,7 +156,7 @@ peek_ncdf(fn)
 #> [1] "/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc"
 #> 
 #> $type
-#> [1] "generic netCDF data"
+#> [1] "Generic netCDF data"
 #> 
 #> $variables
 #>     id name             long_name standard_name units                      axes
@@ -273,20 +258,20 @@ attributes:
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  id axis name      length unlim values                                       
-#>  1  X    longitude 31           [28 ... 31]                                  
-#>  2  Y    latitude  21           [-1 ... -3]                                  
-#>  0  T    time      24     U     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  axis name      length unlim values                                       
+#>  X    longitude 31           [28 ... 31]                                  
+#>  Y    latitude  21           [-1 ... -3]                                  
+#>  T    time      24     U     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    
 #>  hours since 1900-01-01 00:00:00.0
 #> 
 #> Attributes:
-#>  id name         type      length value                
-#>  0  long_name    NC_CHAR   19     2 metre temperature  
-#>  1  units        NC_CHAR    1     K                    
-#>  2  actual_range NC_DOUBLE  2     283.018168, 302.04472
+#>  name         type      length value                
+#>  long_name    NC_CHAR   19     2 metre temperature  
+#>  units        NC_CHAR    1     K                    
+#>  actual_range NC_DOUBLE  2     283.018168, 302.04472
 
 # Extract specific time slices for a specific region
 # Note that the dimensions are specified out of order and using alternative
@@ -301,20 +286,20 @@ attributes:
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  id axis name      length unlim values                                       
-#>  1  X    longitude 31           [28 ... 31]                                  
-#>  2  Y    latitude  21           [-1 ... -3]                                  
-#>  0  T    time      24     U     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  axis name      length unlim values                                       
+#>  X    longitude 31           [28 ... 31]                                  
+#>  Y    latitude  21           [-1 ... -3]                                  
+#>  T    time      24     U     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    
 #>  hours since 1900-01-01 00:00:00.0
 #> 
 #> Attributes:
-#>  id name         type      length value                
-#>  0  long_name    NC_CHAR   19     2 metre temperature  
-#>  1  units        NC_CHAR    1     K                    
-#>  2  actual_range NC_DOUBLE  2     283.018168, 302.04472
+#>  name         type      length value                
+#>  long_name    NC_CHAR   19     2 metre temperature  
+#>  units        NC_CHAR    1     K                    
+#>  actual_range NC_DOUBLE  2     283.018168, 302.04472
 ```
 
 The latter two methods will read only as much data from the netCDF
@@ -338,20 +323,16 @@ t2m$summarise("tmax", max, "day")
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  id axis name      length values               
-#>   1 X    longitude 31     [28 ... 31]          
-#>   2 Y    latitude  21     [-1 ... -3]          
-#>  -1 T    time       1     [2016-01-01T12:00:00]
-#>  unit                             
-#>  degrees_east                     
-#>  degrees_north                    
-#>  hours since 1900-01-01 00:00:00.0
+#>  axis name      length values                unit                             
+#>  X    longitude 31     [28 ... 31]           degrees_east                     
+#>  Y    latitude  21     [-1 ... -3]           degrees_north                    
+#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
 #> 
 #> Attributes:
-#>  id name         type      length value                
-#>  0  long_name    NC_CHAR   19     2 metre temperature  
-#>  1  units        NC_CHAR    1     K                    
-#>  2  actual_range NC_DOUBLE  2     290.036358, 302.04472
+#>  name         type      length value                
+#>  long_name    NC_CHAR   19     2 metre temperature  
+#>  units        NC_CHAR    1     K                    
+#>  actual_range NC_DOUBLE  2     290.036358, 302.04472
 ```
 
 A function may also return a vector of multiple values, in which case a
@@ -383,20 +364,16 @@ daily_stats <- function(x, na.rm = TRUE) {
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  id axis name      length values               
-#>   1 X    longitude 31     [28 ... 31]          
-#>   2 Y    latitude  21     [-1 ... -3]          
-#>  -1 T    time       1     [2016-01-01T12:00:00]
-#>  unit                             
-#>  degrees_east                     
-#>  degrees_north                    
-#>  hours since 1900-01-01 00:00:00.0
+#>  axis name      length values                unit                             
+#>  X    longitude 31     [28 ... 31]           degrees_east                     
+#>  Y    latitude  21     [-1 ... -3]           degrees_north                    
+#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
 #> 
 #> Attributes:
-#>  id name         type      length value                 
-#>  0  long_name    NC_CHAR   19     2 metre temperature   
-#>  1  units        NC_CHAR    1     K                     
-#>  2  actual_range NC_DOUBLE  2     283.018168, 293.865857
+#>  name         type      length value                 
+#>  long_name    NC_CHAR   19     2 metre temperature   
+#>  units        NC_CHAR    1     K                     
+#>  actual_range NC_DOUBLE  2     283.018168, 293.865857
 #> 
 #> $tmax
 #> <Data array> tmax 
@@ -406,20 +383,16 @@ daily_stats <- function(x, na.rm = TRUE) {
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  id axis name      length values               
-#>   1 X    longitude 31     [28 ... 31]          
-#>   2 Y    latitude  21     [-1 ... -3]          
-#>  -1 T    time       1     [2016-01-01T12:00:00]
-#>  unit                             
-#>  degrees_east                     
-#>  degrees_north                    
-#>  hours since 1900-01-01 00:00:00.0
+#>  axis name      length values                unit                             
+#>  X    longitude 31     [28 ... 31]           degrees_east                     
+#>  Y    latitude  21     [-1 ... -3]           degrees_north                    
+#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
 #> 
 #> Attributes:
-#>  id name         type      length value                
-#>  0  long_name    NC_CHAR   19     2 metre temperature  
-#>  1  units        NC_CHAR    1     K                    
-#>  2  actual_range NC_DOUBLE  2     290.036358, 302.04472
+#>  name         type      length value                
+#>  long_name    NC_CHAR   19     2 metre temperature  
+#>  units        NC_CHAR    1     K                    
+#>  actual_range NC_DOUBLE  2     290.036358, 302.04472
 #> 
 #> $diurnal_range
 #> <Data array> diurnal_range 
@@ -429,20 +402,16 @@ daily_stats <- function(x, na.rm = TRUE) {
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  id axis name      length values               
-#>   1 X    longitude 31     [28 ... 31]          
-#>   2 Y    latitude  21     [-1 ... -3]          
-#>  -1 T    time       1     [2016-01-01T12:00:00]
-#>  unit                             
-#>  degrees_east                     
-#>  degrees_north                    
-#>  hours since 1900-01-01 00:00:00.0
+#>  axis name      length values                unit                             
+#>  X    longitude 31     [28 ... 31]           degrees_east                     
+#>  Y    latitude  21     [-1 ... -3]           degrees_north                    
+#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
 #> 
 #> Attributes:
-#>  id name         type      length value              
-#>  0  long_name    NC_CHAR   19     2 metre temperature
-#>  1  units        NC_CHAR    1     K                  
-#>  2  actual_range NC_DOUBLE  2     1.819982, 11.27369
+#>  name         type      length value              
+#>  long_name    NC_CHAR   19     2 metre temperature
+#>  units        NC_CHAR    1     K                  
+#>  actual_range NC_DOUBLE  2     1.819982, 11.27369
 ```
 
 Note that you may have to update some attributes after calling
@@ -514,21 +483,20 @@ More comprehensive support for DSG is in the development plan.
 ## Development plan
 
 Package `ncdfCF` is in the early phases of development. It supports
-reading of groups, variables, dimensions, user-defined data types,
-attributes and data from netCDF resources in “classic” and “netcdf4”
-formats; and can write single data variables back to a netCDF file. From
-the CF Metadata Conventions it supports identification of axes,
-interpretation of the “time” axis, name resolution when using groups,
-reading of “bounds” information, parametric vertical coordinates,
-auxiliary coordinate variables, labels, cell measures and grid mapping
-information.
+reading of all data objects from netCDF resources in “classic” and
+“netcdf4” formats; and can write single data arrays back to a netCDF
+file. From the CF Metadata Conventions it supports identification of
+axes, interpretation of the “time” axis, name resolution when using
+groups, reading of “bounds” information, auxiliary coordinate variables,
+labels, cell measures, attributes and grid mapping information.
 
 Development plans for the near future focus on supporting the below
 features:
 
 ##### netCDF
 
-- Support for writing of data sets.
+- Support for writing of data sets (`CFArray` instances can already be
+  written to file).
 
 ##### CF Metadata Conventions
 
@@ -544,9 +512,8 @@ features:
 Package `ncdfCF` is still in the early phases of development. While
 extensively tested on multiple well-structured datasets, errors may
 still occur, particularly in datasets that do not adhere to the CF
-Metadata Conventions. The API may still change, although care is taken
-not to make breaking changes; any such changes will be flagged as
-deprecated before being replaced or removed.
+Metadata Conventions. The API may still change and although care is
+taken not to make breaking changes, sometimes this is unavoidable.
 
 Installation from CRAN of the latest release:
 

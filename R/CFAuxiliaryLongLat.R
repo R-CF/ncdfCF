@@ -10,8 +10,11 @@
 #' to extract values on a long-lat grid of the associated X-Y grid data variable
 #' using a user-selectable extent and resolution.
 #'
+#' Auxiliary longitude-latitude grids are only supported for reading from a
+#' netCDF resource. Creating an instance manually therefore has no practical
+#' purpose.
+#'
 #' @docType class
-#' @export
 CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
   inherit = CFObject,
   private = list(
@@ -120,7 +123,9 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     #' indicate the orientation of the latitude and longitude grids.
     axis_order = c("X", "Y"),
 
-    #' @description Creating a new instance.
+    #' @description Creating a new instance. It should normally not be useful to
+    #'   create an instance of this class other than upon reading a netCDF
+    #'   resource.
     #' @param varLong,varLat The [NCVariable] instances with the longitude and
     #'   latitude grid values, respectively.
     #' @param boundsLong,boundsLat The bounds of the grid cells for the

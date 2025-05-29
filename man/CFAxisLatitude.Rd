@@ -56,6 +56,9 @@ range, orientation and meaning.
 \if{latex}{\out{\hypertarget{method-CFAxisLatitude-new}{}}}
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
+
+Creating a new latitude axis is more easily done with the
+\code{\link[=makeLatitudeAxis]{makeLatitudeAxis()}} function.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisLatitude$new(nc_var, nc_dim, values)}\if{html}{\out{</div>}}
 }

@@ -46,10 +46,7 @@ CFObject <- R6::R6Class("CFObject",
     #' @param width The maximum width of each column in the `data.frame` when
     #' printed to the console.
     print_attributes = function(width = 50L) {
-      if (nrow(self$NCvar$attributes)) {
-        cat("\nAttributes:\n")
-        print(.slim.data.frame(self$NCvar$attributes, width), right = FALSE, row.names = FALSE)
-      }
+      self$NCvar$print_attributes(width)
     },
 
     #' @description Add an attribute. If an attribute `name` already exists, it

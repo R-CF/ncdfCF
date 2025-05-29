@@ -13,6 +13,9 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
   public = list(
 
     #' @description Create a new instance of this class.
+    #'
+    #'   Creating a new longitude axis is more easily done with the
+    #'   [makeLongitudeAxis()] function.
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
     #' @param values The coordinates of this axis.

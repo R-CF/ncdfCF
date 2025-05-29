@@ -90,6 +90,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
       mip_era
     else if (!is.na(crd <- root$attribute("project_id")) && crd == "CORDEX")
       "CORDEX"
+    else "Generic netCDF data"
 
     vars <- .buildVariables(root, axes)
   } else {

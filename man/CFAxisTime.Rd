@@ -58,6 +58,9 @@ vector.}
 \if{latex}{\out{\hypertarget{method-CFAxisTime-new}{}}}
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
+
+Creating a new time axis is more easily done with the \code{\link[=makeTimeAxis]{makeTimeAxis()}}
+function.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$new(nc_var, nc_dim, values)}\if{html}{\out{</div>}}
 }

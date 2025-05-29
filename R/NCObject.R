@@ -40,7 +40,7 @@ NCObject <- R6::R6Class("NCObject",
     print_attributes = function(width = 50L) {
       if (nrow(self$attributes)) {
         cat("\nAttributes:\n")
-        print(.slim.data.frame(self$attributes, width), right = FALSE, row.names = FALSE)
+        print(.slim.data.frame(self$attributes[-1L], width), right = FALSE, row.names = FALSE)
       }
     },
 

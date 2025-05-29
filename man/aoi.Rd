@@ -9,8 +9,8 @@ aoi(lonMin, lonMax, latMin, latMax, resX, resY)
 \arguments{
 \item{lonMin, lonMax, latMin, latMax}{The minimum and maximum values of the
 longitude and latitude of the AOI, in decimal degrees. The longitude values
-must agree with the range of the longitude in the variable to which this
-AOI will be applied, e.g. \verb{[-180,180]} or \verb{[0,360]}.}
+must agree with the range of the longitude in the data variable to which
+this AOI will be applied, e.g. \verb{[-180,180]} or \verb{[0,360]}.}
 
 \item{resX, resY}{The separation between adjacent grid cell, in the longitude
 and latitude directions respectively, in decimal degrees. The permitted
@@ -27,11 +27,11 @@ This function constructs the area of interest of an analysis. It
 consists of an extent and a resolution of longitude and latitude, all in
 decimal degrees.
 
-The AOI is used to define the subset of data to be extracted from a
+The AOI is used to define the subset of data to be extracted from a data
 variable that has an auxiliary longitude-latitude grid (see the
-\link{CFAuxiliaryLongLat} class) at a specified resolution. The variable thus
-has a primary coordinate system where the horizontal components are not a
-geographic system of longitude and latitude coordinates.
+\link{CFAuxiliaryLongLat} class) at a specified resolution. The data variable
+thus has a primary coordinate system where the horizontal components are
+not a geographic system of longitude and latitude coordinates.
 }
 \details{
 Following the CF Metadata Conventions, axis coordinates represent
@@ -55,14 +55,14 @@ arguments are calculated internally and stored in the returned object, but
 only after the call to \code{CFVariable$subset()}.
 \subsection{Caching}{
 
-In data collections that are composed of multiple variables in a single
-netCDF resource, a single auxiliary longitude-latitude grid may be
-referenced by multiple variables, such as in \href{https://www.myroms.org}{ROMS}
-data which may have dozens of variables using a shared grid. When
-subsetting with an AOI, the instance of this class is cached to improve
-performance. The successive calls to \code{CFVariable$subset()} should use the
-same object returned from a single call to this function for this caching
-to work properly.
+In data collections that are composed of multiple data variables in a
+single netCDF resource, a single auxiliary longitude-latitude grid may be
+referenced by multiple data variables, such as in
+\href{https://www.myroms.org}{ROMS} data which may have dozens of data variables
+using a shared grid. When subsetting with an AOI, the instance of this
+class is cached to improve performance. The successive calls to
+\code{CFVariable$subset()} should use the same object returned from a single
+call to this function for this caching to work properly.
 }
 }
 \examples{

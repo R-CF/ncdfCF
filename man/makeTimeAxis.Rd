@@ -14,7 +14,7 @@ makeTimeAxis(name, group, values)
 \item{values}{A \code{CFTime} instance with time values and optionally bounds set.}
 }
 \value{
-A \code{CFAxisTime} instance.
+A \link{CFAxisTime} instance.
 }
 \description{
 With this method you can create a time axis to use with new \link{CFArray}

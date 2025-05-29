@@ -21,7 +21,7 @@ respectively. For any other axis, indicate an empty string ""}
 available.}
 }
 \value{
-A \code{CFAxisLongitude} instance.
+An instance of a class descending from \link{CFAxis}.
 }
 \description{
 With this method you can create an axis to use with new \link{CFArray} instances.
@@ -33,4 +33,7 @@ There are several restrictions on the combination of \code{orientation} and
 \code{values} arguments. Longitude and latitude axes (\code{orientation} of "X" or "Y")
 must have numeric \code{values}. For a time axis (\code{orientation} of "T") the
 \code{values} argument must be an instance of \code{CFTime} or \code{CFClimatology}.
+}
+\seealso{
+\code{\link[=makeLongitudeAxis]{makeLongitudeAxis()}}, \code{\link[=makeLatitudeAxis]{makeLatitudeAxis()}}, \code{\link[=makeTimeAxis]{makeTimeAxis()}}, \code{\link[=makeDiscreteAxis]{makeDiscreteAxis()}}
 }

@@ -14,6 +14,10 @@ latitude from the netCDF resource, as well as all the details that have been
 associated with both axes. Additionally, this class can generate the index
 to extract values on a long-lat grid of the associated X-Y grid data variable
 using a user-selectable extent and resolution.
+
+Auxiliary longitude-latitude grids are only supported for reading from a
+netCDF resource. Creating an instance manually therefore has no practical
+purpose.
 }
 \section{Super class}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFAuxiliaryLongLat}
@@ -90,7 +94,9 @@ grids.}
 \if{html}{\out{<a id="method-CFAuxiliaryLongLat-new"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAuxiliaryLongLat-new}{}}}
 \subsection{Method \code{new()}}{
-Creating a new instance.
+Creating a new instance. It should normally not be useful to
+create an instance of this class other than upon reading a netCDF
+resource.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$new(varLong, varLat, boundsLong, boundsLat)}\if{html}{\out{</div>}}
 }

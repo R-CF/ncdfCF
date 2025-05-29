@@ -50,14 +50,14 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 ds$var_names
 ds$axis_names
 
-# Variables and dimensions can be accessed through standard list-type extraction syntax
+# Variables and axes can be accessed through standard list-type extraction syntax
 (t2m <- ds[["t2m"]])
 
 ds[["longitude"]]
 
 # Regular base R operations simplify life further
-dimnames(ds[["pev"]]) # A variable: list of dimension names
-dimnames(ds[["longitude"]]) # A dimension: vector of dimension element values
+dimnames(ds[["pev"]]) # A variable: list of axis names
+dimnames(ds[["longitude"]]) # An axis: vector of axis coordinates
 
 # Access attributes
 ds[["pev"]]$attribute("long_name")
@@ -162,13 +162,13 @@ More comprehensive support for DSG is in the development plan.
 
 ## Development plan
 
-Package `ncdfCF` is in the early phases of development. It supports reading of groups, variables, dimensions, user-defined data types, attributes and data from netCDF resources in "classic" and "netcdf4" formats; and can write single data variables back to a netCDF file. From the CF Metadata Conventions it supports identification of axes, interpretation of the "time" axis, name resolution when using groups, reading of "bounds" information, parametric vertical coordinates, auxiliary coordinate variables, labels, cell measures and grid mapping information.
+Package `ncdfCF` is in the early phases of development. It supports reading of all data objects from netCDF resources in "classic" and "netcdf4" formats; and can write single data arrays back to a netCDF file. From the CF Metadata Conventions it supports identification of axes, interpretation of the "time" axis, name resolution when using groups, reading of "bounds" information, auxiliary coordinate variables, labels, cell measures, attributes and grid mapping information.
 
 Development plans for the near future focus on supporting the below features:
 
 ##### netCDF
 
- * Support for writing of data sets.
+ * Support for writing of data sets (`CFArray` instances can already be written to file).
 
 ##### CF Metadata Conventions
 
@@ -180,7 +180,7 @@ Development plans for the near future focus on supporting the below features:
 
 ## Installation
 
-Package `ncdfCF` is still in the early phases of development. While extensively tested on multiple well-structured datasets, errors may still occur, particularly in datasets that do not adhere to the CF Metadata Conventions. The API may still change, although care is taken not to make breaking changes; any such changes will be flagged as deprecated before being replaced or removed.
+Package `ncdfCF` is still in the early phases of development. While extensively tested on multiple well-structured datasets, errors may still occur, particularly in datasets that do not adhere to the CF Metadata Conventions. The API may still change and although care is taken not to make breaking changes, sometimes this is unavoidable.
 
 Installation from CRAN of the latest release:
 

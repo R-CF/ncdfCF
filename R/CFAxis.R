@@ -55,6 +55,8 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   variable in a netCDF resource. This method is called upon opening a
     #'   netCDF resource by the `initialize()` method of a descendant class
     #'   suitable for the type of axis.
+    #'
+    #'   Creating a new axis is more easily done with the [makeAxis()] function.
     #' @param nc_var The [NCVariable] instance upon which this CF axis is based.
     #' @param nc_dim The [NCDimension] instance upon which this CF axis is
     #'   based.
@@ -102,7 +104,7 @@ CFAxis <- R6::R6Class("CFAxis",
       if (is.na(units)) units <- ""
       if (units == "1") units <- ""
 
-      data.frame(id = self$dimid, axis = self$orientation, group = self$group$fullname,
+      data.frame(axis = self$orientation, group = self$group$fullname,
                  name = self$name, long_name = longname, length = self$NCdim$length,
                  unlim = unlim, values = "", unit = units)
     },
@@ -116,7 +118,7 @@ CFAxis <- R6::R6Class("CFAxis",
     },
 
     #' @description Retrieve interesting details of the axis.
-    #' @param with_groups Should group information be included? The save option
+    #' @param with_groups Should group information be included? The safe option
     #' is `TRUE` (default) when the netCDF resource has groups because names may
     #' be duplicated among objects in different groups.
     #' @return A 1-row `data.frame` with details of the axis.
@@ -138,7 +140,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #' @description Return the `CFTime` instance that represents time. This
     #'   method is only useful for `CFAxisTime` instances having time
     #'   information. This stub is here to make the call to this method succeed
-    #'   with no result for the other axis descendants.
+    #'   with no result for the other descendant classes.
     #' @return `NULL`
     time = function() {
       NULL
@@ -190,7 +192,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #' @param x Vector of numeric, timestamp or categorial coordinates to find
     #'   axis indices for. The timestamps can be either character, POSIXct or
     #'   Date vectors. The type of the vector has to correspond to the type of
-    #'   the axis.
+    #'   the axis values.
     #' @param method Single character value of "constant" or "linear".
     #' @param rightmost.closed Whether or not to include the upper limit.
     #' Default is `TRUE`.
@@ -283,7 +285,7 @@ CFAxis <- R6::R6Class("CFAxis",
       }
     },
 
-    #' @field coordinate_names Retrieve the names of the coordinates
+    #' @field coordinate_names Retrieve the names of the coordinate sets
     #'   defined for the axis, as a character vector. The first element in the
     #'   vector is the name of the axis and it refers to the values of the
     #'   coordinates as stored in the netCDF file. Following elements refer to

@@ -5,11 +5,11 @@
 \alias{CFArray}
 \title{Array data extracted from a CF data variable}
 \description{
-This class holds the data that is extracted from a \link{CFVariable},
-using the \code{data()} or \code{subset()} method. The instance of this class will
-additionally have the axes and other relevant information such as its
-attributes (as well as those of the axes) and the coordinate reference
-system.
+This class holds the data that is extracted from a \link{CFVariable}
+using the \code{data()}, \code{subset()} or \code{profile()} method. The instance of this
+class will additionally have the axes and other relevant information such
+as its attributes (as well as those of the axes) and the coordinate
+reference system.
 
 Otherwise, a \code{CFArray} is detached from the data set where it was derived
 from. It is self-contained in the sense that all its constituent parts
@@ -105,13 +105,13 @@ on the method that produced it.}
 \item{\code{values_type}}{The unpacked netCDF data type for this object.}
 
 \item{\code{axes}}{A \code{list} of \link{CFAxis} descendant instances that describe the
-axes of the argument \code{value}.}
+axes of the argument \code{values}.}
 
 \item{\code{crs}}{The \link{CFGridMapping} instance of this data object, or \code{NULL}
 when no grid mapping is available.}
 
 \item{\code{attributes}}{A \code{data.frame} with the attributes associated with the
-data in argument \code{value}.}
+data in argument \code{values}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -228,15 +228,16 @@ method to work.
 \describe{
 \item{\code{var_as_column}}{Logical to flag if the name of the variable should
 become a column (\code{TRUE}) or be used as the name of the column with the
-data values (\code{FALSE}, default).}
+data values (\code{FALSE}, default). Including the name of the variable as a
+column is useful when multiple \code{data.table}s are merged into one.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A \code{data.table} with all data points in individual rows. All axes,
-including scalar axes, will become columns. Two attributes are added:
-\code{name} indicates the long name of this data variable, \code{units} indicates
-the physical unit of the data values.
+A \code{data.table} with all data points in individual rows. All axes
+will become columns. Two attributes are added: \code{name} indicates the
+long name of this data variable, \code{units} indicates the physical unit of
+the data values.
 }
 }
 \if{html}{\out{<hr>}}

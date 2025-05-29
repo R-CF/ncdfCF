@@ -124,31 +124,28 @@ A \link{CFArray} instance with all data from this L3b variable.
 This method extracts a subset of values from the data of the
 variable, with the range along both axes expressed in decimal degrees.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariableL3b$subset(subset = NULL, aoi = NULL, rightmost.closed = FALSE, ...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariableL3b$subset(..., .aoi = NULL, rightmost.closed = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{subset}}{A list with the range to extract from each axis. The list
-should have elements for the axes to extract a subset from - if an axis
-is not present in the list the entire axis will be extracted from the
-array. List element names should be the axis name or designator
-\code{longitude} or \code{X}, or \code{latitude} or \code{Y}. Axis designators and names
-are case-sensitive and can be specified in any order. If values for the
-range per axis fall outside of the extent of the axis, the range is
-clipped to the extent of the axis.}
+\item{\code{...}}{One or more arguments of the form \code{axis = range}. The "axis"
+part should be the name of axis \code{longitude} or \code{latitude} or its
+orientation \code{X} or \code{Y}. The "range" part is a vector of values
+representing coordinates along the axis where to extract data. Axis
+designators and names are case-sensitive and can be specified in any
+order. If values for the range of an axis fall outside of the extent of
+the axis, the range is clipped to the extent of the axis.}
 
-\item{\code{aoi}}{Optional, an area-of-interest instance of class \code{AOI} created
+\item{\code{.aoi}}{Optional, an area-of-interest instance of class \code{AOI} created
 with the \code{\link[=aoi]{aoi()}} function to indicate the horizontal area that should
 be extracted. The longitude and latitude coordinates must be included;
 the X and Y resolution will be calculated if not given. When provided,
-this argument will take precedence over the \code{subset} argument.}
+this argument will take precedence over the \code{...} argument.}
 
 \item{\code{rightmost.closed}}{Single logical value to indicate if the upper
 boundary of range in each axis should be included.}
-
-\item{\code{...}}{Ignored.}
 }
 \if{html}{\out{</div>}}
 }
@@ -178,7 +175,7 @@ in argument \code{subset} does not reorder the axes in the result; use the
 
 \subsection{Returns}{
 A \link{CFArray} instance, having an array with axes and attributes of
-the variable, or \code{NULL} if one or more of the elements in the \code{subset}
+the variable, or \code{NULL} if one or more of the elements in the \code{...}
 argument falls entirely outside of the range of the axis. Note that
 degenerate dimensions (having \code{length(.) == 1}) are dropped from the
 array but the corresponding axis is maintained in the result as a

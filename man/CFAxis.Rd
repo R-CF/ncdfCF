@@ -50,7 +50,7 @@ descendant, which is added to the end of the list of coordinate sets.
 On retrieval, the active \code{CFLabel} or \code{CFAxis} instance or \code{NULL} when
 the active coordinate set is the primary axis coordinates.}
 
-\item{\code{coordinate_names}}{Retrieve the names of the coordinates
+\item{\code{coordinate_names}}{Retrieve the names of the coordinate sets
 defined for the axis, as a character vector. The first element in the
 vector is the name of the axis and it refers to the values of the
 coordinates as stored in the netCDF file. Following elements refer to
@@ -103,6 +103,8 @@ Create a new CF axis instance from a dimension and a
 variable in a netCDF resource. This method is called upon opening a
 netCDF resource by the \code{initialize()} method of a descendant class
 suitable for the type of axis.
+
+Creating a new axis is more easily done with the \code{\link[=makeAxis]{makeAxis()}} function.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxis$new(nc_var, nc_dim, orientation)}\if{html}{\out{</div>}}
 }
@@ -186,7 +188,7 @@ Retrieve interesting details of the axis.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{with_groups}}{Should group information be included? The save option
+\item{\code{with_groups}}{Should group information be included? The safe option
 is \code{TRUE} (default) when the netCDF resource has groups because names may
 be duplicated among objects in different groups.}
 }
@@ -203,7 +205,7 @@ A 1-row \code{data.frame} with details of the axis.
 Return the \code{CFTime} instance that represents time. This
 method is only useful for \code{CFAxisTime} instances having time
 information. This stub is here to make the call to this method succeed
-with no result for the other axis descendants.
+with no result for the other descendant classes.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxis$time()}\if{html}{\out{</div>}}
 }
@@ -307,7 +309,7 @@ in descendant classes.
 \item{\code{x}}{Vector of numeric, timestamp or categorial coordinates to find
 axis indices for. The timestamps can be either character, POSIXct or
 Date vectors. The type of the vector has to correspond to the type of
-the axis.}
+the axis values.}
 
 \item{\code{method}}{Single character value of "constant" or "linear".}
 

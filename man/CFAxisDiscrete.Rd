@@ -58,6 +58,9 @@ vector, or labels for every axis element if they have been set.}
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-new}{}}}
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
+
+Creating a new discrete axis is more easily done with the
+\code{\link[=makeDiscreteAxis]{makeDiscreteAxis()}} function.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$new(nc_var, nc_dim, orientation, dim_only = FALSE)}\if{html}{\out{</div>}}
 }

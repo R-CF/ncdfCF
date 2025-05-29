@@ -61,6 +61,9 @@ vector.}
 \if{latex}{\out{\hypertarget{method-CFAxisCharacter-new}{}}}
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
+
+Creating a new character axis is more easily done with the \code{\link[=makeAxis]{makeAxis()}}
+function.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$new(nc_var, nc_dim, orientation, values)}\if{html}{\out{</div>}}
 }

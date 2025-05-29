@@ -11,6 +11,9 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
   public = list(
 
     #' @description Create a new instance of this class.
+    #'
+    #'   Creating a new latitude axis is more easily done with the
+    #'   [makeLatitudeAxis()] function.
     #' @param nc_var The netCDF variable that describes this instance.
     #' @param nc_dim The netCDF dimension that describes the dimensionality.
     #' @param values The coordinates of this axis.

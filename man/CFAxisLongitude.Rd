@@ -58,6 +58,9 @@ that crosses the 0-360 degree boundary.)
 \if{latex}{\out{\hypertarget{method-CFAxisLongitude-new}{}}}
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
+
+Creating a new longitude axis is more easily done with the
+\code{\link[=makeLongitudeAxis]{makeLongitudeAxis()}} function.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisLongitude$new(nc_var, nc_dim, values)}\if{html}{\out{</div>}}
 }

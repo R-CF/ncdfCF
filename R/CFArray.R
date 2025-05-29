@@ -1,10 +1,10 @@
 #' Array data extracted from a CF data variable
 #'
-#' @description This class holds the data that is extracted from a [CFVariable],
-#'   using the `data()` or `subset()` method. The instance of this class will
-#'   additionally have the axes and other relevant information such as its
-#'   attributes (as well as those of the axes) and the coordinate reference
-#'   system.
+#' @description This class holds the data that is extracted from a [CFVariable]
+#'   using the `data()`, `subset()` or `profile()` method. The instance of this
+#'   class will additionally have the axes and other relevant information such
+#'   as its attributes (as well as those of the axes) and the coordinate
+#'   reference system.
 #'
 #'   Otherwise, a `CFArray` is detached from the data set where it was derived
 #'   from. It is self-contained in the sense that all its constituent parts
@@ -122,11 +122,11 @@ CFArray <- R6::R6Class("CFArray",
     #'   on the method that produced it.
     #' @param values_type The unpacked netCDF data type for this object.
     #' @param axes A `list` of [CFAxis] descendant instances that describe the
-    #'   axes of the argument `value`.
+    #'   axes of the argument `values`.
     #' @param crs The [CFGridMapping] instance of this data object, or `NULL`
     #'   when no grid mapping is available.
     #' @param attributes A `data.frame` with the attributes associated with the
-    #'   data in argument `value`.
+    #'   data in argument `values`.
     #' @return An instance of this class.
     initialize = function(name, group, values, values_type, axes, crs, attributes) {
       var <- NCVariable$new(-1L, name, group, dt, 0L, NULL)
@@ -290,11 +290,12 @@ CFArray <- R6::R6Class("CFArray",
     #'   method to work.
     #' @param var_as_column Logical to flag if the name of the variable should
     #'   become a column (`TRUE`) or be used as the name of the column with the
-    #'   data values (`FALSE`, default).
-    #' @return A `data.table` with all data points in individual rows. All axes,
-    #'   including scalar axes, will become columns. Two attributes are added:
-    #'   `name` indicates the long name of this data variable, `units` indicates
-    #'   the physical unit of the data values.
+    #'   data values (`FALSE`, default). Including the name of the variable as a
+    #'   column is useful when multiple `data.table`s are merged into one.
+    #' @return A `data.table` with all data points in individual rows. All axes
+    #'   will become columns. Two attributes are added: `name` indicates the
+    #'   long name of this data variable, `units` indicates the physical unit of
+    #'   the data values.
     data.table = function(var_as_column = FALSE) {
       if (!requireNamespace("data.table", quietly = TRUE))
         stop("Please install package 'data.table' before using this functionality", call. = FALSE)

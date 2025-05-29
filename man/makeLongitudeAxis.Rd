@@ -17,7 +17,7 @@ makeLongitudeAxis(name, group, values, bounds = NULL)
 available.}
 }
 \value{
-A \code{CFAxisLongitude} instance.
+A \link{CFAxisLongitude} instance.
 }
 \description{
 With this method you can create a longitude axis to use with new \link{CFArray}
