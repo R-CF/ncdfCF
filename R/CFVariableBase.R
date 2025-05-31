@@ -310,10 +310,10 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
     #'   instances (`FALSE`, default) or a single `data.table` (`TRUE`). If
     #'   `TRUE`, all `...` arguments must have the same number of elements, use
     #'   the same axes and the `data.table` package must be installed.
-    #' @return If `.as_table = FALSE`, a list of [CFArray] instances, each
-    #'   having one profile for each of the elements in the "location" vectors
-    #'   of argument `...` and named with the respective `.names` value. If
-    #'   `.as_table = TRUE`, a `data.table` with a row for each element along
+    #' @return If `.as_table = FALSE`, a [CFArray] instance, or a list thereof
+    #'   with each having one profile for each of the elements in the "location"
+    #'   vectors of argument `...` and named with the respective `.names` value.
+    #'   If `.as_table = TRUE`, a `data.table` with a row for each element along
     #'   all profiles, with a ".variable" column using the values from the
     #'   `.names` argument.
     profile = function(..., .names = NULL, .as_table = FALSE) {
@@ -432,7 +432,9 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
         atts <- attributes(out[[1L]])$value
         out <- data.table::rbindlist(out, use.names = FALSE)
         data.table::setattr(out, "value", atts)
-      } else
+      } else if (total == 1L)
+        out <- out[[1L]]
+      else
         names(out) <- .names
       out
     }
