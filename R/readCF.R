@@ -122,7 +122,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
 #' returning the netCDF resource is closed.
 #'
 #' If you find that you need other information to be included in the result,
-#' open an issue: https://github.com/R-CF/ncdfCF/issues.
+#' [open an issue](https://github.com/R-CF/ncdfCF/issues).
 #'
 #' @param resource The name of the netCDF resource to open, either a local file
 #'   name or a remote URI.
@@ -282,7 +282,8 @@ peek_ncdf <- function(resource) {
   if (!is.na(units)) {
     t <- .makeTimeAxis(var, units, vals)
     if (!inherits(t, "try-error")) {
-      t$bounds <- CFbounds$coordinates
+      if (!(is.null(CFbounds)))
+        t$bounds <- CFbounds$coordinates
       return(CFAxisTime$new(var, dim, t))
     }
   }
@@ -579,7 +580,7 @@ peek_ncdf <- function(resource) {
     if (is.null(NCbounds)) NULL
     else {
       bnds <- try(RNetCDF::var.get.nc(NCbounds$group$handle, bounds, collapse = FALSE), silent = TRUE)
-      if (inherits(bnds, "try-error")) NULL
+      if (inherits(bnds, "try-error") || !length(bnds)) NULL
       else {
         if (length(dim(bnds)) == 3L && axis_dims == 1L) { # Never seen more dimensions than this
           # FIXME: Flag non-standard item

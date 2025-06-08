@@ -51,7 +51,9 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       self$set_attribute("calendar", "NC_CHAR", values$cal$name)
       self$set_attribute("standard_name", "NC_CHAR", "time")
       self$set_attribute("axis", "NC_CHAR", "T")
-      self$set_attribute("actual_range", nc_var$vtype, range(values$offsets))
+      off <- values$offsets
+      if (length(off))
+        self$set_attribute("actual_range", nc_var$vtype, range(off))
     },
 
     #' @description Summary of the time axis printed to the console.

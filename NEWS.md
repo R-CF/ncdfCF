@@ -1,6 +1,7 @@
 # ncdfCF (development version)
 
 - ncdfCF is now hosted on Github through the R-CF organization: all things related to the CF Metadata Conventions in R.
+- Fixed profiling on a "time" axis.
 
 # ncdfCF 0.6.0
 

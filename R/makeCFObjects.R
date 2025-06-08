@@ -35,7 +35,8 @@ makeGroup <- function(id = -1L, name = "/", fullname = "/", parent = NULL) {
 #' @param orientation The orientation of the axis. Must be one of "X", "Y", "Z",
 #'   or "T" for longitude, latitude, height or depth, and time axes,
 #'   respectively. For any other axis, indicate an empty string ""
-#' @param values The coordinate values.
+#' @param values The coordinate values. In the case of an axis with
+#' `orientation = "T"` this must be a `CFTime` instance.
 #' @param bounds The bounds of the coordinate values, or `NULL` if not
 #'   available.
 #'
@@ -162,7 +163,7 @@ makeTimeAxis <- function(name, group, values) {
   axis$set_attribute("calendar", "NC_CHAR", values$cal$name)
   axis$set_attribute("axis", "NC_CHAR", "T")
   axis$set_attribute("actual_range", "NC_DOUBLE", range(values$offsets))
-  if (!isFALSE(values$bounds)) {
+  if (!is.null(values$bounds)) {
     nm <- paste0(name, "_bnds")
     var <- NCVariable$new(-1L, nm, group, "NC_DOUBLE", 2L, NULL)
     dim <- NCDimension$new(-1L, "nv", 2L, FALSE)

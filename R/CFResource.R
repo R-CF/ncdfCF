@@ -4,8 +4,8 @@
 #'
 #'   There is a single instance of this class for every netCDF resource, owned
 #'   by the [CFDataset] instance. The instance is shared by other objects,
-#'   specifically [NCGroup] and [CFVariable] instances, for access to the
-#'   underlying resource for reading of data.
+#'   specifically [NCGroup] instances, for access to the underlying resource for
+#'   reading of data.
 #'
 #'   This class should never have to be accessed directly. All access is handled
 #'   by higher-level methods.

@@ -236,10 +236,10 @@ specify the horizontal axis names.
 }
 
 \subsection{Returns}{
-If \code{.as_table = FALSE}, a list of \link{CFArray} instances, each
-having one profile for each of the elements in the "location" vectors
-of argument \code{...} and named with the respective \code{.names} value. If
-\code{.as_table = TRUE}, a \code{data.table} with a row for each element along
+If \code{.as_table = FALSE}, a \link{CFArray} instance, or a list thereof
+with each having one profile for each of the elements in the "location"
+vectors of argument \code{...} and named with the respective \code{.names} value.
+If \code{.as_table = TRUE}, a \code{data.table} with a row for each element along
 all profiles, with a ".variable" column using the values from the
 \code{.names} argument.
 }

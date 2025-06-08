@@ -7,3 +7,5 @@ TODO
 inst/doc
 CRAN-SUBMISSION
 Local_resources
+docs
+tests/testdata

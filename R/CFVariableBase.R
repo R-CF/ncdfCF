@@ -355,7 +355,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
       # Check .as_table
       if (.as_table) {
         if (!requireNamespace("data.table", quietly = TRUE))
-          stop("Please install package 'data.table' before using this functionality", call. = FALSE)
+          stop("Please install package 'data.table' before calling this method", call. = FALSE)
         hasNA <- any(sapply(sel_indices, function(x) any(x == 0L)))
         if (!all(sel_lengths == sel_lengths[1L]) || hasNA)
           stop("All ... arguments must have the same length and use same axes when `.as_table = TRUE`.", call. = FALSE)
@@ -369,7 +369,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
         .names <- .names[1L:total]
 
       # Group for results
-      out_group <- NCGroup$new(-1L, "/", "/", NULL, NULL)
+      out_group <- makeGroup()
       out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
       out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariable$profile()"))
 
@@ -395,7 +395,10 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
                 private$llgrid$varLong$name
               else
                 private$llgrid$varLat$name
-              x <- makeAxis(nm, out_group, orient, selectors[[ax_ndx]][e], NULL)
+              t <- axis$time()
+              val <- if (inherits(t, "CFTime")) CFtime::CFTime$new(t$calendar$definition, t$calendar$name, selectors[[ax_ndx]][e])
+                     else selectors[[ax_ndx]][e]
+              x <- makeAxis(nm, out_group, orient, val, NULL)
               out_axes_other <- append(out_axes_other, x)
             } else {
               out_axes_dim <- append(out_axes_dim, axis$subset(out_group))
@@ -406,7 +409,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
           d <- private$read_chunk(start, count)
           d <- drop(d)
 
-          # Sanitize the attributes for the result, as required and make CRS
+          # Sanitize the attributes for the result, as required, and make CRS
           if (is.null(xy)) {
             atts <- self$attributes
             crs <- self$crs
@@ -424,7 +427,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
           arr <- CFArray$new(.names[e], out_group, d, private$values_type, axes, crs, atts)
           arr$add_coordinates(sapply(out_axes_other, function(ax) ax$name))
           out[[e]] <- if (.as_table) arr$data.table(var_as_column = TRUE)
-          else arr
+                      else arr
         }
       }
 

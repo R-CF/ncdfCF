@@ -42,7 +42,7 @@ CFDataset <- R6::R6Class("CFDataset",
     #'   identified include L3b files used by NASA and NOAA for satellite
     #'   imagery (these data sets need special processing), and CMIP5, CMIP6 and
     #'   CORDEX climate projection data.
-    file_type = "generic netCDF data",
+    file_type = "Generic netCDF data",
 
     #' @description Create an instance of this class.
     #' @param name The name that describes this instance.

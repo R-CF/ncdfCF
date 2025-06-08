@@ -70,9 +70,10 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @param id The identifier of the group.
     #' @param name The name of the group.
     #' @param fullname The fully qualified name of the group.
-    #' @param parent The parent group of this group. `NULL` for the root group.
+    #' @param parent The parent group of this group. the owning [CFDataset] for
+    #'   the root group.
     #' @param resource Reference to the [CFResource] instance that provides
-    #' access to the netCDF resource. For in-memory groups this can be `NULL`.
+    #'   access to the netCDF resource. For in-memory groups this can be `NULL`.
     initialize = function(id, name, fullname, parent, resource) {
       super$initialize(id, name)
       self$fullname <- fullname

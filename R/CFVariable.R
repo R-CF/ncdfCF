@@ -360,9 +360,13 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   be extracted. The longitude and latitude coordinates must be included;
     #'   the X and Y resolution will be calculated if not given. When provided,
     #'   this argument will take precedence over the corresponding axis
-    #'   information for the X and Y axes in the `subset` argument.
+    #'   information for the X and Y axes in the `subset` argument. You must
+    #'   use the argument name when specifying this, like `.aoi = my_aoi`, to
+    #'   avoid the argument being treated as an axis name.
     #' @param rightmost.closed Single logical value to indicate if the upper
-    #'   boundary of range in each axis should be included.
+    #'   boundary of range in each axis should be included. You must use the
+    #'   argument name when specifying this, like `rightmost.closed = TRUE`, to
+    #'   avoid the argument being treated as an axis name.
     #' @return A [CFArray] instance, having an array with its axes and
     #'   attributes of the variable, or `NULL` if one or more of the selectors
     #'   in the `...` argument fall entirely outside of the range of the axis.
@@ -605,6 +609,7 @@ dimnames.CFVariable <- function(x) {
       start <- vector("integer", numaxes)
       count <- vector("integer", numaxes)
       dnames <- vector("list", numaxes)
+      names(dnames) <- dimnames(x)[1:numaxes]
       for (d in seq_along(sc)) {
         ax <- x$axes[[d]]
         tm <- ax$time()
@@ -634,7 +639,7 @@ dimnames.CFVariable <- function(x) {
   # Apply dimension data and other attributes
   if (length(x$axes) && length(dim(data)) == length(dnames)) { # dimensions may have been dropped automatically, e.g. NC_CHAR to character string
     dimnames(data) <- dnames
-    ax <- sapply(x$axes, function(ax) if (ax$length > 1L) x$orientation)
+    ax <- sapply(x$axes, function(ax) if (ax$length > 1L) ax$orientation)
     ax <- ax[lengths(ax) > 0L]
     attr(data, "axis") <- ax
   }

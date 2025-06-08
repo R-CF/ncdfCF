@@ -9,3 +9,7 @@
 ^data-raw$
 ^revdep$
 ^Local_resources$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^tests/testdata$

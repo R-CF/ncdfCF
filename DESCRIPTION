@@ -59,9 +59,11 @@ Suggests:
     data.table,
     knitr,
     rmarkdown,
-    terra
+    terra,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Depends: 
     R (>= 3.5)
 URL: https://github.com/R-CF/ncdfCF
 BugReports: https://github.com/R-CF/ncdfCF/issues
+Config/testthat/edition: 3

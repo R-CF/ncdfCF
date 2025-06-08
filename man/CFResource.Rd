@@ -9,8 +9,8 @@ This class contains the connection details to a netCDF resource.
 
 There is a single instance of this class for every netCDF resource, owned
 by the \link{CFDataset} instance. The instance is shared by other objects,
-specifically \link{NCGroup} and \link{CFVariable} instances, for access to the
-underlying resource for reading of data.
+specifically \link{NCGroup} instances, for access to the underlying resource for
+reading of data.
 
 This class should never have to be accessed directly. All access is handled
 by higher-level methods.
