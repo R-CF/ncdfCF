@@ -67,3 +67,4 @@ Depends:
 URL: https://github.com/R-CF/ncdfCF
 BugReports: https://github.com/R-CF/ncdfCF/issues
 Config/testthat/edition: 3
+Config/Needs/website: rmarkdown

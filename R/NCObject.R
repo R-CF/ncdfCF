@@ -194,7 +194,7 @@ NCObject <- R6::R6Class("NCObject",
         self$attributes[self$attributes$name == "coordinates", ]$length <- nchar(new_val)
       } else
         # Make a new "coordinates" attribute
-        self$set_attribute("coordinates", "NC_CHAR", crds)
+        self$set_attribute("coordinates", "NC_CHAR", paste(crds, collapse = " "))
       invisible(self)
     }
 

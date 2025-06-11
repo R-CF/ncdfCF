@@ -204,7 +204,8 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #'   `NULL`, the handle to a netCDF file or a group therein.
     #' @return Self, invisibly.
     write = function(nc = NULL) {
-      if (private$tm$cal$name == "gregorian")
+      time <- private$tm
+      if (time$cal$name == "gregorian")
         self$set_attribute("calendar", "NC_CHAR", "standard")
       super$write(nc)
 
@@ -212,8 +213,8 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       if (!is.null(bnds)) {
         try(RNetCDF::dim.def.nc(nc, "nv2", 2L), silent = TRUE) # FIXME: nv2 could already exist with a different length
         nm <- if (inherits(time, "CFClimatology")) "climatology_bnds" else "time_bnds"
-        RNetCDF::att.put.nc(nc, name, "bounds", "NC_CHAR", nm)
-        RNetCDF::var.def.nc(nc, nm, "NC_DOUBLE", c("nv2", name))
+        RNetCDF::att.put.nc(nc, self$name, "bounds", "NC_CHAR", nm)
+        RNetCDF::var.def.nc(nc, nm, "NC_DOUBLE", c("nv2", self$name))
         RNetCDF::var.put.nc(nc, nm, bnds)
       }
     }
