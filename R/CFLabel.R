@@ -65,7 +65,7 @@ CFLabel <- R6::R6Class("CFLabel",
       else {
         dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
         var <- NCVariable$new(-1L, self$name, grp, "NC_STRING", 1L, NULL)
-        CFLabel$new(grp, var, dim, private$values[rng[1L]:rng[2L]])
+        CFLabel$new(var, dim, private$values[rng[1L]:rng[2L]])
       }
     },
 

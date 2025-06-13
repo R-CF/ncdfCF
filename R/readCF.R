@@ -389,7 +389,7 @@ peek_ncdf <- function(resource) {
   try(if (is.null(clim))
         CFtime::CFTime$new(units, cal, vals)
       else
-        CFtime::CFClimatology$new(units, cal, vals, clim$bounds),
+        CFtime::CFClimatology$new(units, cal, vals, clim$coordinates),
       silent = TRUE)
 }
 

@@ -32,12 +32,15 @@ CFVariable <- R6::R6Class("CFVariable",
         if (!length(idx)) return(NULL)
         idx <- range(idx)
       } else if (inherits(axis, "CFAxisCharacter")) {
-        idx <- range(match(rng, axis$values))
+        idx <- .range_match(rng, axis$values)
       } else {
         if (length(rng) == 1L) closed <- TRUE
         rng <- range(rng)
         vals <- axis$coordinates
-        idx <- if (closed)
+        idx <- if (is.character(rng)) {
+          closed <- TRUE
+          .range_match(rng, vals)
+        } else if (closed)
           which(vals >= rng[1L] & vals <= rng[2L], arr.ind = TRUE)
         else
           which(vals >= rng[1L] & vals < rng[2L], arr.ind = TRUE)
@@ -46,7 +49,7 @@ CFVariable <- R6::R6Class("CFVariable",
         if (!closed && isTRUE(all.equal(vals[idx[2L]], rng[2L])))
           idx[2L] <- idx[2L] - 1L
       }
-      as.integer(idx)
+      if (is.null(idx)) NULL else as.integer(idx)
     },
 
     # Do the auxiliary grid interpolation. Argument "subset" is passed from the
@@ -433,6 +436,9 @@ CFVariable <- R6::R6Class("CFVariable",
             out_axis <- axis$subset(out_group, idx)
           }
         }
+
+        # Set the label set of the axis on the new axis
+        out_axis$active_coordinates <- axis$active_coordinates
 
         # Collect axes for result
         if (out_axis$length == 1L)

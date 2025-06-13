@@ -15,7 +15,8 @@ makeAxis(name, group, orientation, values, bounds = NULL)
 or "T" for longitude, latitude, height or depth, and time axes,
 respectively. For any other axis, indicate an empty string ""}
 
-\item{values}{The coordinate values.}
+\item{values}{The coordinate values. In the case of an axis with
+\code{orientation = "T"} this must be a \code{CFTime} instance.}
 
 \item{bounds}{The bounds of the coordinate values, or \code{NULL} if not
 available.}

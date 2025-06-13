@@ -146,6 +146,14 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
   abs(x - y) < CF$eps
 }
 
+#' Get the range on the matches. Works on numeric and character data. Returns
+#' NULL if there is no match
+#' @noRd
+.range_match <- function(rng, match) {
+  res <- range(match(rng, match, nomatch = 0L), na.rm = TRUE)
+  if (all(res == 0L)) NULL else res
+}
+
 .cache_dir <- function() {
   if (as.integer(R.version$major) >= 4)
     tools::R_user_dir("ncdfCF", "cache")

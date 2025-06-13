@@ -123,7 +123,7 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
       } else {
         dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
         discr <- CFAxisDiscrete$new(var, dim, self$orientation)
-        private$subset_labels(discr, idx)
+        private$subset_coordinates(discr, rng)
         discr
       }
     },

@@ -128,7 +128,8 @@ Create a new instance of this class.
 
 \item{\code{fullname}}{The fully qualified name of the group.}
 
-\item{\code{parent}}{The parent group of this group. \code{NULL} for the root group.}
+\item{\code{parent}}{The parent group of this group. the owning \link{CFDataset} for
+the root group.}
 
 \item{\code{resource}}{Reference to the \link{CFResource} instance that provides
 access to the netCDF resource. For in-memory groups this can be \code{NULL}.}

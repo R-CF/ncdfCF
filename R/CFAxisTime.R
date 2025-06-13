@@ -123,9 +123,9 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         bnds <- if (is.null(private$tm$bounds) || is.null(from$time()$bounds)) NULL
                 else cbind(private$tm$bounds, from$time()$bounds)
         if (class(private$tm)[1L] == "CFClimatology")
-          time <- CFClimatology$new(private$tm$cal$definition, private$tm$cal$name, c(private$tm$offsets, from$time()$offsets), bnds)
+          time <- CFtime::CFClimatology$new(private$tm$cal$definition, private$tm$cal$name, c(private$tm$offsets, from$time()$offsets), bnds)
         else {
-          time <- CFTime$new(private$tm$cal$definition, private$tm$cal$name, c(private$tm$offsets, from$time()$offsets))
+          time <- CFtime::CFTime$new(private$tm$cal$definition, private$tm$cal$name, c(private$tm$offsets, from$time()$offsets))
           time$bounds <- bnds
         }
         axis <- makeTimeAxis(self$name, makeGroup(), time)
@@ -212,8 +212,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       bnds <- time$get_bounds()
       if (!is.null(bnds)) {
         try(RNetCDF::dim.def.nc(nc, "nv2", 2L), silent = TRUE) # FIXME: nv2 could already exist with a different length
-        nm <- if (inherits(time, "CFClimatology")) "climatology_bnds" else "time_bnds"
-        RNetCDF::att.put.nc(nc, self$name, "bounds", "NC_CHAR", nm)
+        nm <- if (inherits(time, "CFClimatology")) self$attribute("climatology") else self$attribute("bounds")
         RNetCDF::var.def.nc(nc, nm, "NC_DOUBLE", c("nv2", self$name))
         RNetCDF::var.put.nc(nc, nm, bnds)
       }

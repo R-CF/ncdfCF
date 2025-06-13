@@ -48,6 +48,8 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
         bnds <- self$bounds
         if (inherits(bnds, "CFBounds")) lon$bounds <- bnds$sub_bounds(group, rng)
         private$subset_coordinates(lon, idx)
+        lon$attributes <- self$attributes
+        lon$set_attribute("actual_range", self$NCvar$vtype, range(lon$values))
         lon
       }
     }

@@ -46,6 +46,8 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
         bnds <- self$bounds
         if (inherits(bnds, "CFBounds")) lat$bounds <- bnds$sub_bounds(group, rng)
         private$subset_coordinates(lat, idx)
+        lat$attributes <- self$attributes
+        lat$set_attribute("actual_range", self$NCvar$vtype, range(lat$values))
         lat
       }
     }

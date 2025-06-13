@@ -1,7 +1,8 @@
 # ncdfCF (development version)
 
 - ncdfCF is now hosted on Github through the R-CF organization: all things related to the CF Metadata Conventions in R.
-- Fixed profiling on a "time" axis.
+- Fixed profiling on a "time" axis and writing boundary values to file, with regular or "climatology" bounds.
+- Fixed subsetting on multiple character labels from a label set.
 
 # ncdfCF 0.6.0
 

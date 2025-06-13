@@ -188,10 +188,14 @@ with the \code{\link[=aoi]{aoi()}} function to indicate the horizontal area that
 be extracted. The longitude and latitude coordinates must be included;
 the X and Y resolution will be calculated if not given. When provided,
 this argument will take precedence over the corresponding axis
-information for the X and Y axes in the \code{subset} argument.}
+information for the X and Y axes in the \code{subset} argument. You must
+use the argument name when specifying this, like \code{.aoi = my_aoi}, to
+avoid the argument being treated as an axis name.}
 
 \item{\code{rightmost.closed}}{Single logical value to indicate if the upper
-boundary of range in each axis should be included.}
+boundary of range in each axis should be included. You must use the
+argument name when specifying this, like \code{rightmost.closed = TRUE}, to
+avoid the argument being treated as an axis name.}
 }
 \if{html}{\out{</div>}}
 }
