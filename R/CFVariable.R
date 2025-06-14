@@ -411,11 +411,11 @@ CFVariable <- R6::R6Class("CFVariable",
         if (!is.null(aux) && orient == "X") {
           start[ax] <- aux$X[1L]
           count[ax] <- aux$X[2L]
-          out_axis <- makeLongitudeAxis(private$llgrid$varLong$name, out_group, aux$aoi$dimnames[[2L]], aux$aoi$bounds(out_group)$lon$bounds)
+          out_axis <- makeLongitudeAxis(private$llgrid$varLong$name, out_group, aux$aoi$dimnames[[2L]], aux$aoi$bounds(out_group)$lon$coordinates)
         } else if (!is.null(aux) && orient == "Y") {
           start[ax] <- aux$Y[1L]
           count[ax] <- aux$Y[2L]
-          out_axis <- makeLatitudeAxis(private$llgrid$varLat$name, out_group, aux$aoi$dimnames[[1L]], aux$aoi$bounds(out_group)$lat$bounds)
+          out_axis <- makeLatitudeAxis(private$llgrid$varLat$name, out_group, aux$aoi$dimnames[[1L]], aux$aoi$bounds(out_group)$lat$coordinates)
         } else { # No auxiliary coordinates
           rng <- NULL
           if (!is.null(.aoi))

@@ -151,7 +151,10 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
 #' @noRd
 .range_match <- function(rng, match) {
   res <- range(match(rng, match, nomatch = 0L), na.rm = TRUE)
-  if (all(res == 0L)) NULL else res
+  if (all(res == 0L)) NULL
+  else if (res[1L] == 0L) c(res[2L], res[2L])
+  else if (res[2L] == 0L) c(res[1L], res[1L])
+  else res
 }
 
 .cache_dir <- function() {
