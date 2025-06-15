@@ -133,6 +133,12 @@ CFArray <- R6::R6Class("CFArray",
       var$attributes <- attributes
       super$initialize(var, axes, crs)
 
+      # Set the coordinates attribute for scalar axes
+      scalars <- sapply(axes, function(x) if (x$length == 1L) x$name)
+      scalars <- unlist(scalars[lengths(scalars) > 0L])
+      if (length(scalars)) self$add_coordinates(scalars)
+
+      # Set values and the actual_range attribute
       private$values <- values
       private$values_type <- values_type
       if (!all(is.na(private$values))) {

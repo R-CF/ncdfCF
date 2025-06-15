@@ -1,12 +1,3 @@
-# ncdfCF (development version)
-
-- ncdfCF is now hosted on Github through the R-CF organization: all things related to the CF Metadata Conventions in R.
-- `CFArray$new()` writes `coordinates` attribute for scalar axes.
-- Set boundary values on lat-long grids warped from auxiliary grids.
-- Fixed profiling on a "time" axis and writing boundary values to file, with regular or "climatology" bounds.
-- Fixed subsetting on multiple character labels from a label set.
-- Testing added. This is rather bare-bones because the netCDF files that are bundled with the package are necessarily small. Much more testing is done locally on a large set of production netCDF files.
-
 # ncdfCF 0.6.0
 
 - New `profile()` method for `CFVariable` and `CFArray`. With this method profiles can be extracted from the data, having a user-selectable dimensionality and location. Examples are temporal profiles at a given location or a zonal (lat or long) vertical profile of the atmosphere, but there are many other options. Multiple profiles can be extracted in a single call and they can be generated as a list of `CFArray` instances or as a single `data.table`.

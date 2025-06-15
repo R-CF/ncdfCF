@@ -71,7 +71,7 @@ peek_ncdf(fn)
 
 ##### Extracting data
 
-There are four ways to read data for a data variable from the resource:
+There are four ways to read data for a data variable from the resource: 
 
  * **`data():`** The `data()` method returns all data of a variable, including its metadata, in a `CFArray` instance.
  * **`[]`:** The usual R array operator gives you access to the raw, non-interpreted data in the netCDF resource. This uses index values into the dimensions and requires you to know the order in which the dimensions are specified for the variable. With a bit of tinkering and some helper functions in `ncdfCF` this is still very easy to do.
