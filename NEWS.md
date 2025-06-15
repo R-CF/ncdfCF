@@ -1,5 +1,7 @@
 # ncdfCF (development version)
 
+# ncdfCF 0.6.1
+
 - ncdfCF is now hosted on Github through the R-CF organization: all things related to the CF Metadata Conventions in R.
 - `CFArray$new()` writes `coordinates` attribute for scalar axes.
 - Set boundary values on lat-long grids warped from auxiliary grids.
