@@ -486,15 +486,12 @@ CFVariable <- R6::R6Class("CFVariable",
     gridLongLat = function(value) {
       if (missing(value))
         private$llgrid
-      else {
-        private$llgrid <- value
-        dimids <- value$dimids
-        ax1 <- sapply(self$axes, function(x) if (x$dimid == dimids[[1L]]) x$orientation)
-        ax1 <- ax1[lengths(ax1) > 0L]
-        ax2 <- sapply(self$axes, function(x) if (x$dimid == dimids[[2L]]) x$orientation)
-        ax2 <- ax2[lengths(ax2) > 0L]
-        c(ax1[[1L]], ax2[[1L]])
-      }
+      else if (inherits(value, "CFAuxiliaryLongLat"))
+        if (all(value$dimids %in% sapply(self$axes, function(x) x$dimid)))
+          private$llgrid <- value
+        else
+          warning("Dimension ids of auxiliary lat-lon grid do not match those of the axis.", call. = FALSE)
+      else stop("Trying to set wrong object as auxiliary lat-lon grid.", call. = FALSE)
     },
 
     #' @field crs_wkt2 (read-only) Retrieve the coordinate reference system
