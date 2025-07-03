@@ -1,4 +1,10 @@
 # ncdfCF (development version)
+- With the `as_CFArray()` function you can create a CFArray instance from an R object such as a vector, matrix or array using logical, integer, double or character mode. Axes are created from dimnames, using names when set (such as in `dimnames(arr) <- list(X = 40:43, Y = 50:54, Z = 60:65)`).
+- CFAxisVertical has better logic for using parametric coordinates. This is still a work in progress but the existing code works without a problem.
+- Names of CF objects (variables, axes, etc) can be modified.
+- Optional use of the `units` package to deal with the various pressure units. This package is recommended if you work with data on the atmosphere.
+- Several minor improvements and code fixes.
+- Documentation updated.
 
 # ncdfCF 0.6.1
 

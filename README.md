@@ -60,7 +60,7 @@ Metadata Conventions to interpret the data. This currently applies to:
   system (CRS) of the data, with support for all defined objects in the
   latest EPSG database as well as “manual” construction of CRSs.
 
-##### Basic usage
+## Basic usage
 
 Opening and inspecting the contents of a netCDF resource is very
 straightforward:
@@ -95,9 +95,11 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 
 # ...or very brief details
 ds$var_names
-#> [1] "t2m" "pev" "tp"
+#>   t2m   pev    tp 
+#> "t2m" "pev"  "tp"
 ds$axis_names
-#> [1] "time"      "longitude" "latitude"
+#>        time   longitude    latitude 
+#>      "time" "longitude"  "latitude"
 
 # Variables and axes can be accessed through standard list-type extraction syntax
 (t2m <- ds[["t2m"]])
@@ -195,7 +197,7 @@ peek_ncdf(fn)
 #> 4                                                                                                                                                                                                                                                                                                                                                                                                                                    Climate Data Operators version 2.4.1 (https://mpimet.mpg.de/cdo)
 ```
 
-##### Extracting data
+## Extracting data
 
 There are four ways to read data for a data variable from the resource:
 
@@ -307,7 +309,83 @@ attributes:
 The latter two methods will read only as much data from the netCDF
 resource as is requested.
 
-##### Summarising data over time
+##### Make a profile of data
+
+It is often useful to extract a “profile” of data for a given location
+or zone, such as a timeseries of data. The `profile()` method has some
+flexible options to support this:
+
+- Profile specific locations, with multiple locations specified per
+  call, returning the data as a (set of) `CFArray` instance(s) or as a
+  single `data.table`.
+- Profile zones, such as a latitude band or an atmospheric level. Data
+  is returned as `CFArray` instance(s).
+
+In all cases, you can profile over any of the axes and over any number
+of axes.
+
+Note that the `profile()` method returns data for the grid cells closest
+to the specified location. That is different from the `subset()` method,
+which will return data as it is recorded in the netCDF resource.
+
+``` r
+rwa <- t2m$profile(longitude = c(30.07, 30.07, 29.74), latitude = c(-1.94, -1.58, -2.60), 
+                   .names = c("Kigali", "Byumba", "Butare"), .as_table = TRUE)
+head(rwa)
+#>                   time longitude latitude .variable   .value
+#>                 <char>     <num>    <num>    <char>    <num>
+#> 1: 2016-01-01T00:00:00     30.07    -1.94    Kigali 290.4055
+#> 2: 2016-01-01T01:00:00     30.07    -1.94    Kigali 290.0088
+#> 3: 2016-01-01T02:00:00     30.07    -1.94    Kigali 289.3608
+#> 4: 2016-01-01T03:00:00     30.07    -1.94    Kigali 288.8414
+#> 5: 2016-01-01T04:00:00     30.07    -1.94    Kigali 288.4713
+#> 6: 2016-01-01T05:00:00     30.07    -1.94    Kigali 289.9276
+attr(rwa, "value")
+#> $name
+#> [1] "2 metre temperature"
+#> 
+#> $units
+#> [1] "K"
+```
+
+Some critical metadata is recorded in the “value” attribute: original
+long name and the physical unit.
+
+When you provide coordinates for all axes but one, you get a profile of
+values along the remaining axis, as shown above. If you provide fewer
+axis coordinates you get progressively higher-order results. To get a
+latitudinal transect, for instance, provide only a longitude coordinate:
+
+``` r
+(trans30 <- t2m$profile(longitude = 30, .names = "lon_30"))
+#> <Data array> lon_30 
+#> Long name: 2 metre temperature 
+#> 
+#> Values: [286.4614 ... 300.0948] K
+#>     NA: 0 (0.0%)
+#> 
+#> Axes:
+#>  axis name      length unlim values                                       
+#>  Y    latitude  21           [-1 ... -3]                                  
+#>  T    time      24     U     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  X    longitude  1           [30]                                         
+#>  unit                             
+#>  degrees_north                    
+#>  hours since 1900-01-01 00:00:00.0
+#>  degrees_east                     
+#> 
+#> Attributes:
+#>  name         type      length value                 
+#>  long_name    NC_CHAR   19     2 metre temperature   
+#>  units        NC_CHAR    1     K                     
+#>  coordinates  NC_CHAR    9     longitude             
+#>  actual_range NC_DOUBLE  2     286.461377, 300.094771
+```
+
+Note that there is only a single longitude coordinate left, at exactly
+the specified longitude.
+
+## Summarising data over time
 
 With the `summarise()` method, available for both `CFVariable` and
 `CFArray`, you can apply a function over the data to generate summaries.
@@ -334,6 +412,7 @@ t2m$summarise("tmax", max, "day")
 #>  name         type      length value                
 #>  long_name    NC_CHAR   19     2 metre temperature  
 #>  units        NC_CHAR    1     K                    
+#>  coordinates  NC_CHAR    4     time                 
 #>  actual_range NC_DOUBLE  2     290.036358, 302.04472
 ```
 
@@ -375,6 +454,7 @@ daily_stats <- function(x, na.rm = TRUE) {
 #>  name         type      length value                 
 #>  long_name    NC_CHAR   19     2 metre temperature   
 #>  units        NC_CHAR    1     K                     
+#>  coordinates  NC_CHAR    4     time                  
 #>  actual_range NC_DOUBLE  2     283.018168, 293.865857
 #> 
 #> $tmax
@@ -394,6 +474,7 @@ daily_stats <- function(x, na.rm = TRUE) {
 #>  name         type      length value                
 #>  long_name    NC_CHAR   19     2 metre temperature  
 #>  units        NC_CHAR    1     K                    
+#>  coordinates  NC_CHAR    4     time                 
 #>  actual_range NC_DOUBLE  2     290.036358, 302.04472
 #> 
 #> $diurnal_range
@@ -413,6 +494,7 @@ daily_stats <- function(x, na.rm = TRUE) {
 #>  name         type      length value              
 #>  long_name    NC_CHAR   19     2 metre temperature
 #>  units        NC_CHAR    1     K                  
+#>  coordinates  NC_CHAR    4     time               
 #>  actual_range NC_DOUBLE  2     1.819982, 11.27369
 ```
 
@@ -420,7 +502,87 @@ Note that you may have to update some attributes after calling
 `summarise()`. You can use the `set_attribute()` method on the `CFArray`
 objects to do that.
 
-##### Exporting and saving data
+## Create new netCDF objects
+
+You can convert a suitable R object into a `CFArray` instance quite
+easily. R objects that are supported include arrays, matrices and
+vectors of type logical, integer, numeric or logical.
+
+``` r
+arr <- array(rnorm(120), dim = c(6, 5, 4))
+as_CFArray("my_first_CF_object", arr)
+#> <Data array> my_first_CF_object 
+#> 
+#> Values: [-2.459651 ... 2.300486] 
+#>     NA: 0 (0.0%)
+#> 
+#> Axes:
+#>  name   length values   
+#>  axis_1 6      [1 ... 6]
+#>  axis_2 5      [1 ... 5]
+#>  axis_3 4      [1 ... 4]
+#> 
+#> Attributes:
+#>  name         type      length value              
+#>  actual_range NC_DOUBLE 2      -2.459651, 2.300486
+```
+
+Usable but not very impressive. If the R object has dimnames set, these
+will be used to create more informed axes:
+
+``` r
+# Note the use of named dimnames here - these will become the names of the axes
+dimnames(arr) <- list(y = c(40, 41, 42, 43, 44, 45), x = c(0, 1, 2, 3, 4), 
+                      time = c("2025-07-01", "2025-07-02", "2025-07-03", "2025-07-04"))
+str(arr)
+#>  num [1:6, 1:5, 1:4] -1 -0.754 0.948 0.731 -1.705 ...
+#>  - attr(*, "dimnames")=List of 3
+#>   ..$ y   : chr [1:6] "40" "41" "42" "43" ...
+#>   ..$ x   : chr [1:5] "0" "1" "2" "3" ...
+#>   ..$ time: chr [1:4] "2025-07-01" "2025-07-02" "2025-07-03" "2025-07-04"
+
+(obj <- as_CFArray("a_better_CF_object", arr))
+#> <Data array> a_better_CF_object 
+#> 
+#> Values: [-2.459651 ... 2.300486] 
+#>     NA: 0 (0.0%)
+#> 
+#> Axes:
+#>  axis name length values                      unit                          
+#>       y    6      [40 ... 45]                                               
+#>       x    5      [0 ... 4]                                                 
+#>  T    time 4      [2025-07-01 ... 2025-07-04] days since 1970-01-01T00:00:00
+#> 
+#> Attributes:
+#>  name         type      length value              
+#>  actual_range NC_DOUBLE 2      -2.459651, 2.300486
+
+obj$axes[["time"]]
+#> <Time axis> [-1] time
+#> Length     : 4
+#> Axis       : T 
+#> Calendar   : standard 
+#> Range      : 2025-07-01 ... 2025-07-04 (days) 
+#> Bounds     : (not set) 
+#> 
+#> Attributes:
+#>  name          type      length value                         
+#>  axis          NC_CHAR    1     T                             
+#>  units         NC_CHAR   30     days since 1970-01-01T00:00:00
+#>  calendar      NC_CHAR    8     standard                      
+#>  standard_name NC_CHAR    4     time                          
+#>  actual_range  NC_DOUBLE  2     20270, 20273
+```
+
+The timestamp strings in the third dimension have been correctly
+interpreted as a time series and a `CFAxisTime` instance is created for
+it.
+
+You can further modify the resulting `CFArray` by setting other
+properties, such as attributes or a coordinate reference system. Once
+the object is complete, you can export or save it.
+
+## Exporting and saving data
 
 A `CFData` object can be exported to a `data.table` or to a
 `terra::SpatRaster` (3D) or `terra::SpatRasterDataset` (4D) for further
@@ -473,12 +635,14 @@ Discrete Sampling Geometries (DSG) map almost directly to the venerable
 rather distinct from array-based data sets. At the moment there is no
 specific code for DSG, but the simplest layouts can currently already be
 read (without any warranty). Various methods, such as
-`CFVariable::subset()` or `CFData::array()` will fail miserably, and you
-are well-advised to try no more than the empty array indexing operator
-`CFVariable::[]` which will yield the full data variable with column and
-row names set as an array, of `CFVariable::data()` to get the whole data
-variable as a `CFData` object for further processing. You can identify a
-DSG data set by the `featureType` attribute of the `CFDataset`.
+`CFVariable::subset()` or `CFArray::array()` will fail miserably, and
+you are well-advised to try no more than the empty array indexing
+operator `CFVariable::[]` which will yield the full data variable with
+column and row names set as an array, of `CFVariable::data()` to get the
+whole data variable as a `CFArray` object for further processing,
+possibly converting it of a `data.table` for a format that matches the
+structure of a typical table closest. You can identify a DSG data set by
+the `featureType` attribute of the `CFDataset`.
 
 More comprehensive support for DSG is in the development plan.
 

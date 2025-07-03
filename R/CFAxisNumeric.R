@@ -32,6 +32,11 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
         paste0("[", crds[1L], "]")
       else
         paste0("[", crds[1L], " ... ", crds[nv], "]")
+    },
+
+    # This function allows descendant classes to print more detail. This stub
+    # does nothing but satisfy the call to it from print()
+    print_details = function(...) {
     }
   ),
   public = list(
@@ -55,7 +60,6 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #' @return `self`, invisibly.
     print = function(...) {
       super$print()
-
       if (private$active_coords == 1L) {
         crds <- private$get_coordinates()
         units <- self$attribute("units")
@@ -77,7 +81,10 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
         self$bounds$print(...)
       else cat("Bounds     : (not set)\n")
 
+      private$print_details(...)
+
       self$print_attributes(...)
+      invisible(self)
     },
 
     #' @description Some details of the axis.
@@ -166,18 +173,15 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #'   indices. If the value of the argument is `NULL`, return the entire
     #'   axis.
     subset = function(group, rng = NULL) {
-      var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
-
       if (is.null(rng)) {
         ax <- self$clone()
         ax$group <- group
         ax
       } else {
         rng <- range(rng)
-        dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
-        ax <- CFAxisNumeric$new(var, dim, self$orientation, private$values[rng[1L]:rng[2L]])
         bnds <- self$bounds
-        if (inherits(bnds, "CFBounds")) ax$bounds <- bnds$sub_bounds(group, rng)
+        if (inherits(bnds, "CFBounds")) bnds <- bnds$coordinates[, rng[1L]:rng[2L]]
+        ax <- makeAxis(self$name, group, self$orientation, private$values[rng[1L]:rng[2L]], bnds)
         private$subset_coordinates(ax, rng)
         ax$attributes <- self$attributes
         ax$set_attribute("actual_range", self$NCvar$vtype, range(ax$values))

@@ -116,7 +116,7 @@ NCGroup <- R6::R6Class("NCGroup",
       # Variables
       if (length(self$CFvars) > 0L) {
         vars <- lapply(self$CFvars, function(v) v$shard())
-        vars <- unlist(vars[lengths(vars) > 0])
+        vars <- unlist(vars[lengths(vars) > 0], use.names = FALSE)
         v <- paste(vars, collapse = ", ")
         hier <- c(hier, paste0(sep, "Variables: ", v, "\n"))
       }
@@ -124,7 +124,7 @@ NCGroup <- R6::R6Class("NCGroup",
       # Subgroups
       subs <- length(self$subgroups)
       if (subs > 0L) {
-        sg <- unlist(sapply(1L:subs, function(g) self$subgroups[[g]]$hierarchy(g, subs)))
+        sg <- unlist(sapply(1L:subs, function(g) self$subgroups[[g]]$hierarchy(g, subs)), use.names = FALSE)
         hier <- c(hier, paste0(sep, sg))
       }
       hier
@@ -285,7 +285,7 @@ NCGroup <- R6::R6Class("NCGroup",
       # Descend into subgroups
       if (length(self$subgroups)) {
         subvars <- lapply(self$subgroups, function(g) g$unused())
-        vars <- append(vars, unlist(subvars))
+        vars <- append(vars, unlist(subvars, use.names = FALSE))
       }
 
       vars
@@ -365,7 +365,7 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @return A list of [CFVariable].
     variables = function(recursive = TRUE) {
       if (recursive && length(self$subgroups))
-        c(self$CFvars, unlist(lapply(self$subgroups, function(g) g$variables(recursive))))
+        c(self$CFvars, unlist(lapply(self$subgroups, function(g) g$variables(recursive)), use.names = FALSE))
       else self$CFvars
     },
 
@@ -380,7 +380,7 @@ NCGroup <- R6::R6Class("NCGroup",
       if (recursive && length(self$subgroups))
         subaxes <- lapply(self$subgroups, function(g) g$axes(recursive))
       else subaxes <- list()
-      c(self$CFaxes, unlist(subaxes))
+      c(self$CFaxes, unlist(subaxes, use.names = FALSE))
     },
 
     #' @description This method lists the grid mappings located in this group,
@@ -394,7 +394,7 @@ NCGroup <- R6::R6Class("NCGroup",
       if (recursive && length(self$subgroups))
         subgm <- lapply(self$subgroups, function(g) g$grid_mappings(recursive))
       else subgm <- list()
-      c(self$CFcrs, unlist(subgm))
+      c(self$CFcrs, unlist(subgm, use.names = FALSE))
     }
   ),
   active = list(

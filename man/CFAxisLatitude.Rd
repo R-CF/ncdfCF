@@ -23,7 +23,6 @@ range, orientation and meaning.
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFAxisLatitude-new}{\code{CFAxisLatitude$new()}}
-\item \href{#method-CFAxisLatitude-subset}{\code{CFAxisLatitude$subset()}}
 \item \href{#method-CFAxisLatitude-clone}{\code{CFAxisLatitude$clone()}}
 }
 }
@@ -48,6 +47,7 @@ range, orientation and meaning.
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="indexOf"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-indexOf'><code>ncdfCF::CFAxisNumeric$indexOf()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="print"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-print'><code>ncdfCF::CFAxisNumeric$print()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="range"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-range'><code>ncdfCF::CFAxisNumeric$range()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="subset"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-subset'><code>ncdfCF::CFAxisNumeric$subset()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -73,33 +73,6 @@ Creating a new latitude axis is more easily done with the
 \item{\code{values}}{The coordinates of this axis.}
 }
 \if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisLatitude-subset"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisLatitude-subset}{}}}
-\subsection{Method \code{subset()}}{
-Return an axis spanning a smaller coordinate range. This
-method returns an axis which spans the range of indices given by the
-\code{rng} argument.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisLatitude$subset(group, rng = NULL)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{group}}{The group to create the new axis in.}
-
-\item{\code{rng}}{The range of values from this axis to include in the returned
-axis.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A \code{CFAxisLatitude} instance covering the indicated range of
-indices. If the value of the argument is \code{NULL}, return the entire
-axis.
 }
 }
 \if{html}{\out{<hr>}}

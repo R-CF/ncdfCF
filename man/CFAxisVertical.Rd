@@ -3,13 +3,14 @@
 \docType{class}
 \name{CFAxisVertical}
 \alias{CFAxisVertical}
-\title{Parametric vertical CF axis object}
+\title{Vertical CF axis object}
 \description{
-This class represents a parametric vertical axis. It is defined
-through an index value that is contained in the axis, with additional
-\link{NCVariable} instances that hold ancillary data with which to calculate
-dimensional axis values. It is used in atmosphere and ocean data sets.
-Non-parametric vertical axes are stored in an \link{CFAxisNumeric} instance.
+This class represents a vertical axis, which may be parametric.
+It is defined through an index value that is contained in the axis, with
+additional \link{NCVariable} instances that hold ancillary data with which to
+calculate dimensional axis values. It is used in atmosphere and ocean data
+sets. Non-parametric vertical axes are stored in an \link{CFAxisNumeric}
+instance.
 }
 \references{
 https://cfconventions.org/Data/cf-conventions/cf-conventions-1.12/cf-conventions.html#parametric-vertical-coordinate
@@ -35,10 +36,8 @@ axis.}
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{formula_terms}}{A \code{data.frame} with the "formula_terms"
+\item{\code{formula_terms}}{(read-only) A \code{data.frame} with the "formula_terms"
 to calculate the parametric axis values.}
-
-\item{\code{dimnames}}{(read-only) The coordinates of the axis.}
 }
 \if{html}{\out{</div>}}
 }
@@ -93,7 +92,9 @@ Create a new instance of this class.
 \item{\code{values}}{The coordinates of this axis.}
 
 \item{\code{standard_name}}{Character string with the "standard_name" that
-defines the meaning, and processing of coordinates, of this axis.}
+defines the meaning, and processing of coordinates, of this axis. In
+particular, the "standard_name may indicate that this is a parametric
+vertical axis.}
 }
 \if{html}{\out{</div>}}
 }

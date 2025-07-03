@@ -215,11 +215,9 @@ peek_ncdf <- function(resource) {
 }
 
 .buildAxes <- function(grp) {
-  visible_dims <- grp$dimensions()
-
   if (length(grp$NCvars) > 0L) {
     # Create axis for variables with name equal to dimension names
-    dim_names <- sapply(visible_dims, function(d) d$name)
+    dim_names <- sapply(grp$dimensions(), function(d) d$name)
     if (length(dim_names)) {
       local_vars <- grp$NCvars[dim_names]
       local_CVs <- local_vars[lengths(local_vars) > 0L]
@@ -250,10 +248,10 @@ peek_ncdf <- function(resource) {
 # @return An instance of `CFAxis`.
 .makeAxis <- function(grp, var) {
   h <- grp$handle
-  if (var$ndims == 0L)
-    dim <- NCDimension$new(-1L, var$name, 1L, FALSE) # Scalar variable
+  dim <- if (var$ndims == 0L)
+    NCDimension$new(-1L, var$name, 1L, FALSE) # Scalar variable
   else
-    dim <- grp$find_dim_by_id(var$dimids[1L]) # FIXME: What about NC_CHAR axis?
+    grp$find_dim_by_id(var$dimids[1L]) # FIXME: What about NC_CHAR axis?
 
   # Dimension values
   vals <- try(as.vector(RNetCDF::var.get.nc(h, var$name)), silent = TRUE)
@@ -269,46 +267,39 @@ peek_ncdf <- function(resource) {
     else return(CFAxisNumeric$new(var, dim, "", vals))
   }
 
-  # Z: standard_names and formula_terms for parametric vertical axis
+  # Read some useful attributes
+  orient   <- var$attribute("axis")
   standard <- var$attribute("standard_name")
-  if (!is.na(standard) && standard %in% Z_parametric_standard_names)
-    return(.makeParametricAxis(var, dim, vals, standard))
+  units    <- var$attribute("units")
 
-  # Does the axis have bounds?
-  CFbounds <- .readBounds(grp, var$attribute("bounds"))
-
-  # See if we have a "units" attribute that makes time
-  units <- var$attribute("units")
-  if (!is.na(units)) {
-    t <- .makeTimeAxis(var, units, vals)
-    if (!inherits(t, "try-error")) {
-      if (!(is.null(CFbounds)))
-        t$bounds <- CFbounds$coordinates
-      return(CFAxisTime$new(var, dim, t))
-    }
-  }
+  # See if we can make time
+  t <- .makeTimeObject(var, units, vals)
+  if (!is.null(t)) return(CFAxisTime$new(var, dim, t))
 
   # Orientation of the axis
-  orient <- var$attribute("axis")
-  if (is.na(orient) && !is.na(units))
+  if (is.na(orient) && !is.na(units)) {
     if (grepl("^degree(s?)(_?)(east|E)$", units)) orient <- "X"
     else if (grepl("^degree(s?)(_?)(north|N)$", units)) orient <- "Y"
-  if (is.na(orient) && !is.na(standard))
+    else if (requireNamespace("units", quietly = TRUE) && units::ud_are_convertible(units, "bar")) orient <- "Z"
+  }
+  if (is.na(orient) && !is.na(standard)) {
     if (standard == "longitude") orient <- "X"
     else if (standard == "latitude") orient <- "Y"
+    else if (standard %in% Z_parametric_standard_names ||
+             !is.na(var$attribute("positive"))) orient <- "Z"
+  }
   if (is.na(orient)) {
     # Desperate option: try name of NC variable - non-standard
     nm <- toupper(var$name)
     orient <- if (match(nm, c("X", "Y", "Z", "T"), nomatch = 0L)) nm else ""
   }
 
-  axis <- if (orient == "X")
-    CFAxisLongitude$new(var, dim, vals)
-  else if (orient == "Y")
-    CFAxisLatitude$new(var, dim, vals)
-  else CFAxisNumeric$new(var, dim, orient, vals)
-  axis$bounds <- CFbounds
-
+  axis <- switch(orient,
+                 "X" = CFAxisLongitude$new(var, dim, vals),
+                 "Y" = CFAxisLatitude$new(var, dim, vals),
+                 "Z" = CFAxisVertical$new(var, dim, vals, standard),
+                 CFAxisNumeric$new(var, dim, orient, vals))
+  axis$bounds <- .readBounds(grp, var$attribute("bounds"))
   axis
 }
 
@@ -328,7 +319,6 @@ peek_ncdf <- function(resource) {
       if (d$id %in% add_dims) {
         v <- NCVariable$new(-2L, d$name, grp, "NC_INT", 1L, d$id)
         axis <- CFAxisDiscrete$new(v, d, "", dim_only = TRUE)
-        v$CF <- axis
         grp$NCvars <- append(grp$NCvars, v)
         grp$CFaxes <- append(grp$CFaxes, axis)
         add_dims <- add_dims[-which(add_dims == d$id)]
@@ -346,51 +336,23 @@ peek_ncdf <- function(resource) {
   axes
 }
 
-#' Make a parametric vertical axis
-#'
-#' This function is called when a parametric vertical axis is found during in
-#' function .makeAxis().
-#'
-#' @param var The NC variable that defines the axis.
-#' @param dim The NC dimension associated with the axis.
-#' @param vals The parameter values of the axis.
-#' @param param_name The "standard_name" attribute that names the specific
-#' parametric form of the axis.
-#'
-#' @return An instance of CFAxisVertical.
+#' Make a CFtime object. This will try to create a CFTime or CFClimatology object,
+#' including its bounds if set. If it fails it will return NULL, otherwise the
+#' object.
 #' @noRd
-.makeParametricAxis <- function(var, dim, vals, param_name) {
-  Z <- CFAxisVertical$new(var, dim, vals, param_name)
-
-  # Get the formula terms
-  ft <- var$attribute("formula_terms")
-  if (!is.na(ft)) {
-    ft <- trimws(strsplit(ft, " ")[[1L]], whitespace = ":")
-    dim(ft) <- c(2, length(ft) * 0.5)
-    rownames(ft) <- c("term", "variable")
-    ft <- as.data.frame(t(ft))
-    ft$NCvar <- lapply(ft$variable, function(v) {
-      ncvar <- var$group$find_by_name(v, "NC")
-      if (!is.null(ncvar)) {
-        ncvar$CF <- Z
-        ncvar
-      }
-    })
-    Z$formula_terms <- ft
-    # FIXME: Z axis may have bounds
-  }
-  Z
-}
-
-.makeTimeAxis <- function(var, units, vals) {
-  cal <- var$attribute("calendar")
-  if (is.na(cal)) cal <- "standard"
+.makeTimeObject <- function(var, units, vals) {
+  if (is.na(units)) return(NULL)
+  cal <- if (is.na(cal <- var$attribute("calendar"))) "standard" else cal
   clim <- .readBounds(var$group, var$attribute("climatology")) # Climatology must have bounds
-  try(if (is.null(clim))
-        CFtime::CFTime$new(units, cal, vals)
-      else
-        CFtime::CFClimatology$new(units, cal, vals, clim$coordinates),
-      silent = TRUE)
+  t <- if (is.null(clim)) try(CFtime::CFTime$new(units, cal, vals), silent = TRUE)
+       else try(CFtime::CFClimatology$new(units, cal, vals, clim$coordinates), silent = TRUE)
+  if (inherits(t, "try-error")) return(NULL)
+  if (is.null(clim)) {
+    bnds <- .readBounds(var$group, var$attribute("bounds"))
+    if (inherits(bnds, "CFBounds"))
+      t$bounds <- bnds$coordinates
+  }
+  t
 }
 
 #' Make CF constructs for "coordinates" references

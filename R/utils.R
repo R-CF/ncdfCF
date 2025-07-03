@@ -22,7 +22,9 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
 # speed, these restrictions are not tested. Furthermore, no dimnames
 # are set and the result is always simplified to a vector, matrix or array.
 # On the up side, this function always returns a list, with as many elements as
-# FUN returns values.
+# FUN returns values. If oper > 1L, the dimensions of the result are rearranged
+# such that the dimension that is operated on comes first with the others
+# following. This is identical to the tapply output.
 #
 # The basic version without a factor is about 10% faster than the base::apply()
 # function. When used with a factor, this code is twice as fast as apply/tapply.
@@ -113,7 +115,7 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
 #' @return `TRUE` if all `nm` are valid, `FALSE` otherwise.
 #' @noRd
 .is_valid_name <- function(nm) {
-  all(grepl("^[a-zA-Z][a-zA-Z0-9_]{0,254}$", nm))
+  !is.null(nm) && all(grepl("^[a-zA-Z][a-zA-Z0-9_]{0,254}$", nm))
 }
 
 #' Convert regular character strings to valid CF names. Non-permitted characters

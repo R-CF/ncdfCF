@@ -11,15 +11,16 @@
 #' @docType class
 #'
 NCObject <- R6::R6Class("NCObject",
+  private = list(
+    # A `data.frame` with the attributes of the netCDF object.
+    atts = data.frame()
+  ),
   public = list(
     #' @field id Numeric identifier of the netCDF object.
     id         = -1L,
 
     #' @field name The name of the netCDF object.
     name       = "",
-
-    #' @field attributes `data.frame` with the attributes of the netCDF object.
-    attributes = data.frame(),
 
     #' @description Create a new netCDF object. This class should not be
     #'   instantiated directly, create descendant objects instead.
@@ -38,9 +39,9 @@ NCObject <- R6::R6Class("NCObject",
     #' @param width The maximum width of each column in the `data.frame` when
     #'   printed to the console.
     print_attributes = function(width = 50L) {
-      if (nrow(self$attributes)) {
+      if (nrow(private$atts)) {
         cat("\nAttributes:\n")
-        print(.slim.data.frame(self$attributes[-1L], width), right = FALSE, row.names = FALSE)
+        print(.slim.data.frame(private$atts[-1L], width), right = FALSE, row.names = FALSE)
       }
     },
 
@@ -56,7 +57,7 @@ NCObject <- R6::R6Class("NCObject",
       if (length(att) > 1L)
         stop("Can extract only one attribute at a time.", call. = FALSE)
 
-      atts <- self$attributes
+      atts <- private$atts
       if (!nrow(atts)) return(NA)
       val <- atts[atts$name == att, ]
       if (!nrow(val)) return(NA)
@@ -104,20 +105,20 @@ NCObject <- R6::R6Class("NCObject",
       if (type != "NC_CHAR") value <- list(value)
 
       # Check if the name refers to an existing attribute
-      if (nrow(self$attributes[self$attributes$name == name, ])) {
+      if (nrow(private$atts) && nrow(private$atts[private$atts$name == name, ])) {
         # If so, replace its type and value
-        self$attributes[self$attributes$name == name, ]$type <- type
-        self$attributes[self$attributes$name == name, ]$length <- len
-        self$attributes[self$attributes$name == name, ]$value <- value
+        private$atts[private$atts$name == name, ]$type <- type
+        private$atts[private$atts$name == name, ]$length <- len
+        private$atts[private$atts$name == name, ]$value <- value
       } else {
         # If not, create a new attribute
         if (!.is_valid_name(name))
           stop("Attribute name is not valid.", call. = FALSE)
 
-        id <- if (nrow(self$attributes)) max(self$attributes$id) + 1L else 0L
+        id <- if (nrow(private$atts)) max(private$atts$id) + 1L else 0L
         df <- data.frame(id = id, name = name, type = type, length = len)
         df$value <- value # Preserve lists
-        self$attributes <- rbind(self$attributes, df)
+        private$atts <- rbind(private$atts, df)
       }
       invisible(self)
     },
@@ -145,13 +146,13 @@ NCObject <- R6::R6Class("NCObject",
 
       if (nchar(value) > 0L) {
         # Check if the name refers to an existing attribute
-        if (nrow(self$attributes[self$attributes$name == name, ])) {
+        if (nrow(private$atts[private$atts$name == name, ])) {
           new_val <- if (prepend)
-                       paste0(value, sep, self$attributes[self$attributes$name == name, ]$value)
+                       paste0(value, sep, private$atts[private$atts$name == name, ]$value)
                      else
-                       paste0(self$attributes[self$attributes$name == name, ]$value, sep, value)
-          self$attributes[self$attributes$name == name, ]$value <- new_val
-          self$attributes[self$attributes$name == name, ]$length <- nchar(new_val)
+                       paste0(private$atts[private$atts$name == name, ]$value, sep, value)
+          private$atts[private$atts$name == name, ]$value <- new_val
+          private$atts[private$atts$name == name, ]$length <- nchar(new_val)
         } else # else create a new attribute
           self$set_attribute(name, "NC_STRING", value)
       }
@@ -164,7 +165,7 @@ NCObject <- R6::R6Class("NCObject",
     #' @param name Vector of names of the attributes to delete.
     #' @return Self, invisibly.
     delete_attribute = function(name) {
-      self$attributes <- self$attributes[!self$attributes$name %in% name, ]
+      private$atts <- private$atts[!private$atts$name %in% name, ]
       invisible(self)
     },
 
@@ -173,10 +174,10 @@ NCObject <- R6::R6Class("NCObject",
     #' @param nm The NC variable name or "NC_GLOBAL" to write the attributes to.
     #' @return Self, invisibly.
     write_attributes = function(nc, nm) {
-      if ((num_atts <- nrow(self$attributes)) > 0L)
+      if ((num_atts <- nrow(private$atts)) > 0L)
         for (a in 1L:num_atts) {
-          attr <- self$attributes[a,]
-          RNetCDF::att.put.nc(nc, nm, attr$name, attr$type, unlist(attr$value))
+          attr <- private$atts[a,]
+          RNetCDF::att.put.nc(nc, nm, attr$name, attr$type, unlist(attr$value, use.names = FALSE))
         }
       invisible(self)
     },
@@ -186,18 +187,42 @@ NCObject <- R6::R6Class("NCObject",
     #' @param crds Vector of axis names to add to the attribute.
     #' @return Self, invisibly.
     add_coordinates = function(crds) {
-      current <- self$attributes[self$attributes$name == "coordinates", ]
+      current <- private$atts[private$atts$name == "coordinates", ]
       if (nrow(current)) {
         # There is a "coordinates" attribute already so append values
         new_val <- paste(unique(c(strsplit(current[[1L, "value"]], " ")[[1L]], crds)), collapse = " ")
-        self$attributes[self$attributes$name == "coordinates", ]$value <- new_val
-        self$attributes[self$attributes$name == "coordinates", ]$length <- nchar(new_val)
+        private$atts[private$atts$name == "coordinates", ]$value <- new_val
+        private$atts[private$atts$name == "coordinates", ]$length <- nchar(new_val)
       } else
         # Make a new "coordinates" attribute
         self$set_attribute("coordinates", "NC_CHAR", paste(crds, collapse = " "))
       invisible(self)
     }
-
+  ),
+  active = list(
+    #' @field attributes Read or set the attributes of the object. The
+    #'   attributes are stored in a `data.frame` with columns "id" (integer),
+    #'   "name" (character), "type" (one of the netCDF data types), "length"
+    #'   (integer), and "value" (any allowed type). When setting the attributes,
+    #'   all existing attributes are deleted; use method `set_attribute()` to
+    #'   add attributes to the existing set. Upon reading, when there are no
+    #'   attributes, an empty `data.frame` will be returned.
+    attributes = function(value) {
+      if (missing(value)) {
+        private$atts
+      } else if (is.data.frame(value) && nrow(value)) {
+        req <- c("id", "name", "type", "length", "value")
+        cols <- names(value)
+        if (all(req %in% cols)) {
+          if (is.numeric(value$id) && is.character(value$name) &&
+              is.character(value$type) && is.numeric(value$length))
+            private$atts <- value[req]
+          else
+            warning("Attributes to be set have columns with wrong mode.", call. = FALSE)
+        } else
+          warning("Cannot set attributes without all required columns", call. = FALSE)
+      }
+    }
   )
 )
 

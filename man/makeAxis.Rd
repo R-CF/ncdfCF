@@ -15,8 +15,7 @@ makeAxis(name, group, orientation, values, bounds = NULL)
 or "T" for longitude, latitude, height or depth, and time axes,
 respectively. For any other axis, indicate an empty string ""}
 
-\item{values}{The coordinate values. In the case of an axis with
-\code{orientation = "T"} this must be a \code{CFTime} instance.}
+\item{values}{The coordinate values. In the case of an axis with \code{orientation = "T"} this must be a \code{CFTime} instance.}
 
 \item{bounds}{The bounds of the coordinate values, or \code{NULL} if not
 available.}
@@ -31,10 +30,12 @@ an instance of a class descending from \link{CFAxis} will be returned.
 }
 \details{
 There are several restrictions on the combination of \code{orientation} and
-\code{values} arguments. Longitude and latitude axes (\code{orientation} of "X" or "Y")
-must have numeric \code{values}. For a time axis (\code{orientation} of "T") the
-\code{values} argument must be an instance of \code{CFTime} or \code{CFClimatology}.
+\code{values} arguments. Longitude, latitude and depth axes (\code{orientation} of "X",
+"Y" or "Z") must have numeric \code{values}. For a time axis (\code{orientation} of
+"T") the \code{values} argument must be an instance of \code{CFTime} or
+\code{CFClimatology}.
 }
 \seealso{
-\code{\link[=makeLongitudeAxis]{makeLongitudeAxis()}}, \code{\link[=makeLatitudeAxis]{makeLatitudeAxis()}}, \code{\link[=makeTimeAxis]{makeTimeAxis()}}, \code{\link[=makeDiscreteAxis]{makeDiscreteAxis()}}
+\code{\link[=makeLongitudeAxis]{makeLongitudeAxis()}}, \code{\link[=makeLatitudeAxis]{makeLatitudeAxis()}}, \code{\link[=makeTimeAxis]{makeTimeAxis()}},
+\code{\link[=makeDiscreteAxis]{makeDiscreteAxis()}}
 }

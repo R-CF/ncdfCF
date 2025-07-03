@@ -21,6 +21,11 @@ CFAxis <- R6::R6Class("CFAxis",
     # it should be 1L.
     active_coords = 1L,
 
+    # get the names of the auxiliary coordinate instances
+    aux_names = function() {
+      sapply(private$aux, function(aux) aux$name)
+    },
+
     # Get the values of the active coordinate set. In most cases that is just
     # the values but it could be a label set. Most sub-classes override or
     # extend this method.
@@ -278,9 +283,9 @@ CFAxis <- R6::R6Class("CFAxis",
         else private$aux[[private$active_coords - 1L]]
       } else {
         if ((inherits(value, "CFLabel") || inherits(value, "CFAxis")) &&
-            value$length == self$length && !(value$name %in% names(private$aux))) {
+            value$length == self$length && !(value$name %in% private$aux_names())) {
           private$aux <- append(private$aux, value)
-          names(private$aux) <- sapply(private$aux, function(l) l$name)
+          names(private$aux) <- private$aux_names()
         }
       }
     },

@@ -114,18 +114,16 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #'   indices. If the value of the argument is `NULL`, return the entire
     #'   axis.
     subset = function(group, rng = NULL) {
-      var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
-
       if (is.null(rng)) {
         ax <- self$clone()
         ax$group <- group
-        ax
       } else {
+        var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, -1L)
         dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
-        discr <- CFAxisDiscrete$new(var, dim, self$orientation)
-        private$subset_coordinates(discr, rng)
-        discr
+        ax <- CFAxisDiscrete$new(var, dim, self$orientation)
+        private$subset_coordinates(ax, rng)
       }
+      ax
     },
 
     #' @description Write the axis to a netCDF file, including its attributes,

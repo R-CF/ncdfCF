@@ -21,37 +21,6 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
     #' @param values The coordinates of this axis.
     initialize = function(nc_var, nc_dim, values) {
       super$initialize(nc_var, nc_dim, "X", values)
-    },
-
-    #' @description Return an axis spanning a smaller coordinate range. This
-    #'   method returns an axis which spans the range of indices given by the
-    #'   `rng` argument.
-    #'
-    #' @param group The group to create the new axis in.
-    #' @param rng The range of values from this axis to include in the returned
-    #'   axis.
-    #'
-    #' @return A `CFAxisLongitude` instance covering the indicated range of
-    #'   indices. If the value of the argument is `NULL`, return the entire
-    #'   axis.
-    subset = function(group, rng = NULL) {
-      var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
-
-      if (is.null(rng)) {
-        ax <- self$clone()
-        ax$group <- group
-        ax
-      } else {
-        rng <- range(rng)
-        dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
-        lon <- CFAxisLongitude$new(var, dim, private$values[rng[1L]:rng[2L]])
-        bnds <- self$bounds
-        if (inherits(bnds, "CFBounds")) lon$bounds <- bnds$sub_bounds(group, rng)
-        private$subset_coordinates(lon, idx)
-        lon$attributes <- self$attributes
-        lon$set_attribute("actual_range", self$NCvar$vtype, range(lon$values))
-        lon
-      }
     }
   ),
   active = list(

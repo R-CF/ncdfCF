@@ -28,15 +28,21 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
     },
 
     # Return the number of "dimensional" axes, i.e. axes that are associated
-    # with a dimension of the data of the variable. This may include dimensions
-    # with length 1.
+    # with a dimension of the data of the variable. This may include axes with
+    # length 1 if the netCDF resource lists them as a dimension.
     num_dim_axes = function() {
-      sum(sapply(self$axes, function(x) x$NCvar$ndims > 0L))
+      if (length(self$axes))
+        #sum(sapply(self$axes, function(x) x$NCvar$ndims > 0L && x$length > 1L))
+        self$NCvar$array_dims()
+      else 0L
     },
 
     # Return the names of the dimensional axes.
     dim_names = function() {
-      sapply(1:private$num_dim_axes(), function(i) self$axes[[i]]$name)
+      num <- private$num_dim_axes()
+      if (num > 0L)
+        sapply(1:num, function(i) self$axes[[i]]$name)
+      else character(0)
     },
 
     # Return the lengths of the dimensional axes.
@@ -55,7 +61,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
     # there can be no duplication. It returns an integer vector with the order
     # in which the axes are specified.
     check_names = function(nm) {
-      axis_names <- names(self$axes)
+      axis_names <- self$axis_names
       is_axis <- match(nm, axis_names)
       if (anyDuplicated(is_axis, incomparables = NA))
         stop("Duplicated axis names not allowed", call. = FALSE)
@@ -202,7 +208,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
       # Attributes
       atts <- self$attributes
       atts <- atts[!atts$name %in% c("scale_factor", "add_offset"), ]
-      coords <- unlist(atts[atts$name == "coordinates", ]$value)
+      coords <- unlist(atts[atts$name == "coordinates", ]$value, use.names = FALSE)
       if (!is.null(coords)) {
         # Remove reference to any auxiliary coordinate variables, but leave scalar variables
         if (!is.null(nm <- private$aux_var_names())) {
@@ -451,5 +457,12 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
     #   names(ax) <- NULL
     #   ax
     # }
+
+    #' @field axis_names (read-only) Return the names of all axes defined for
+    #' the data variable.
+    axis_names = function(value) {
+      if (missing(value))
+        sapply(self$axes, function(ax) ax$name)
+    }
   )
 )

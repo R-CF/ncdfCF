@@ -31,7 +31,7 @@ functions, respectively.
 \examples{
 fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 ds <- open_ncdf(fn)
-v1 <- names(ds)[1]
+v1 <- ds$var_names[1]
 var <- ds[[v1]]
 var
 }

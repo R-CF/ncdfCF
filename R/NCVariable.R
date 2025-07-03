@@ -78,6 +78,17 @@ NCVariable <- R6::R6Class("NCVariable",
     shard = function() {
       if (self$id > -1L) paste0("[", self$id, ": ", self$name, "]")
       else NULL
+    },
+
+    #' @description Return the number of dimensions of the array that this
+    #'   variable holds in the netCDF file. It is thus not necessarily equal to
+    #'   the number of axes of a CF data variable.
+    #'
+    #' @return Integer value with the number of dimensional axes.
+    array_dims = function() {
+      if (length(self$dimids))
+        sum(self$dimids > -1L)
+      else 0L
     }
   ),
   active = list(
@@ -89,7 +100,7 @@ NCVariable <- R6::R6Class("NCVariable",
         if (inherits(value, "CFObject"))
           private$CFobjects[[value$name]] <- value
         else
-          warning("Can only reference an object descending from `CFObject` from an `NCVariable`.")
+          warning("Can only reference an object descending from `CFObject` from an `NCVariable`", call. = FALSE)
       }
     },
 

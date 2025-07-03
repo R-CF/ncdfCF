@@ -26,6 +26,11 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
     # variable or from an external file after it is linked.
     axes = list(),
 
+    # Get the names of the private$variables or private$axes
+    names_of = function(lst) {
+      sapply(lst, function(el) el$name)
+    },
+
     # This method checks that a CFVariable, v, has (a subset of) axes that are
     # compatible with this cell measure variable. If not, an error is thrown.
     compatible = function(v) {
@@ -103,7 +108,7 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
           cat("Long name:", longname, "\n")
 
         if (length(private$variables))
-          cat("Linked to:", names(private$variables), "\n")
+          cat("Linked to:", private$names_of(private$variables), "\n")
 
         cat("\nAxes:\n")
         axes <- do.call(rbind, lapply(private$var$axes, function(a) a$brief()))
@@ -131,7 +136,7 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
     register = function(var) {
       private$compatible(var)
       private$variables <- append(private$variables, var)
-      names(private$variables) <- c(names(private$variables), var$name)
+      names(private$variables) <- private$names_of(private$variables)
     },
 
     #' @description Link the cell measure variable to an external netCDF

@@ -225,13 +225,13 @@ CFDataset <- R6::R6Class("CFDataset",
     #' @field var_names (read-only) Vector of names of variables in this data set.
     var_names = function(value) {
       if (missing(value))
-        names(self$variables())
+        sapply(self$variables(), function(v) v$name)
     },
 
     #' @field axis_names (read-only) Vector of names of axes in this data set.
     axis_names = function(value) {
       if (missing(value))
-        names(self$axes())
+        sapply(self$axes(), function(ax) ax$name)
     }
   )
 )
@@ -251,13 +251,12 @@ str.CFDataset <- function(object, ...) {
 #' @rdname dimnames
 #' @export
 names.CFDataset <- function(x) {
-  vars <- x$variables()
-  if (!length(vars))
+  if (!length(x$variables()))
     NULL
   else if (x$has_subgroups())
-    paste0("/", gsub(".", "/", names(vars), fixed = TRUE))
+    paste0("/", gsub(".", "/", x$var_names, fixed = TRUE))
   else
-    names(vars)
+    x$var_names
 }
 
 #' @export
@@ -267,9 +266,9 @@ dimnames.CFDataset <- function(x) {
     NULL
   else if (x$has_subgroups()) {
     grps <- sapply(ax, function(z) z$group$fullname)
-    unique(paste0(ifelse(grps == "/", "/", paste0(grps, "/")), names(ax)))
+    unique(paste0(ifelse(grps == "/", "/", paste0(grps, "/")), x$axis_names))
   } else
-    unique(names(ax))
+    unique(x$axis_names)
 }
 
 #' @rdname dimnames
@@ -309,7 +308,7 @@ groups.CFDataset <- function(x) {
 #' @examples
 #' fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 #' ds <- open_ncdf(fn)
-#' v1 <- names(ds)[1]
+#' v1 <- ds$var_names[1]
 #' var <- ds[[v1]]
 #' var
 `[[.CFDataset` <- function(x, i) {

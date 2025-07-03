@@ -23,7 +23,7 @@ class as ancestor.
 
 \item{\code{id}}{(read-only) The identifier of the CF object.}
 
-\item{\code{name}}{(read-only) The name of the CF object.}
+\item{\code{name}}{Set or retrieve the name of the CF object.}
 
 \item{\code{fullname}}{(read-only) The fully-qualified name of the CF object.}
 

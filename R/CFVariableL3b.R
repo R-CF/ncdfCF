@@ -224,7 +224,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       # Organize the selectors
       selectors <- list(...)
       sel_names <- names(selectors)
-      axis_names <- names(self$axes)
+      axis_names <- self$axis_names
       axis_order <- private$check_names(sel_names)
 
       out_group <- makeGroup()
@@ -350,7 +350,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
     dnames <- list(longitude = x$axes[[1L]]$dimnames, latitude = x$axes[[2L]]$dimnames)
   } else {
     dnames <- vector("list", 2L)
-    names(dnames) <- names(x$axes)[1L:2L]
+    names(dnames) <- x$axis_names[1L:2L]
     if (missing(i)) {
       dnames[[1L]] <- x$axes[[1L]]$dimnames
       lon <- 1L:(length(x$axes[[1L]]))

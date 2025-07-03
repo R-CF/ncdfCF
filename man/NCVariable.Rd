@@ -50,6 +50,7 @@ path from the root group.}
 \item \href{#method-NCVariable-new}{\code{NCVariable$new()}}
 \item \href{#method-NCVariable-print}{\code{NCVariable$print()}}
 \item \href{#method-NCVariable-shard}{\code{NCVariable$shard()}}
+\item \href{#method-NCVariable-array_dims}{\code{NCVariable$array_dims()}}
 \item \href{#method-NCVariable-clone}{\code{NCVariable$clone()}}
 }
 }
@@ -128,6 +129,21 @@ with similar information from other variables.
 
 \subsection{Returns}{
 Character string with very basic variable information.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCVariable-array_dims"></a>}}
+\if{latex}{\out{\hypertarget{method-NCVariable-array_dims}{}}}
+\subsection{Method \code{array_dims()}}{
+Return the number of dimensions of the array that this
+variable holds in the netCDF file. It is thus not necessarily equal to
+the number of axes of a CF data variable.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCVariable$array_dims()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Integer value with the number of dimensional axes.
 }
 }
 \if{html}{\out{<hr>}}

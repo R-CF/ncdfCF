@@ -386,7 +386,7 @@ CFVariable <- R6::R6Class("CFVariable",
       # Organize the selectors
       selectors <- list(...)
       sel_names <- names(selectors)
-      axis_names <- names(self$axes)
+      axis_names <- self$axis_names
       axis_order <- private$check_names(sel_names)
 
       if ((all(c("X", "Y") %in% sel_names) || !missing(.aoi)) && inherits(private$llgrid, "CFAuxiliaryLongLat")) {
@@ -448,6 +448,7 @@ CFVariable <- R6::R6Class("CFVariable",
       }
 
       # Read the data, index as required
+
       d <- private$read_chunk(start, count)
       if (!is.null(aux)) {
         dim(d) <- c(aux$X[2L] * aux$Y[2L], prod(ZT_dim))

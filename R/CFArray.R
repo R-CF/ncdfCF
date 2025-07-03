@@ -53,6 +53,8 @@ CFArray <- R6::R6Class("CFArray",
     # Returns a new array with an attribute "axes" that lists axis names in the
     # order of the new array.
     orient = function(ordering = "R") {
+      dim_names <- sapply(self$axes, function(ax) ax$name)
+
       if (ordering == "R")
         order <- private$YXZT()
       else if (ordering == "CF")
@@ -62,16 +64,18 @@ CFArray <- R6::R6Class("CFArray",
 
       if (sum(order) == 0L) {
         warning("Cannot orient data array because axis orientation has not been set")
-        return(private$values)
+        out <- private$values
+        attr(out, "axes") <- dim_names
+        return(out)
       }
       if (all(diff(order[which(order > 0L)]) > 0L)) {
         out <- private$values
-        attr(out, "axes") <- private$dim_names()
+        attr(out, "axes") <- dim_names
       } else {
         all_dims <- seq(length(dim(private$values)))
         perm <- c(order[which(order > 0L)], all_dims[!(all_dims %in% order)])
         out <- aperm(private$values, perm)
-        attr(out, "axes") <- private$dim_names()[perm]
+        attr(out, "axes") <- dim_names[perm]
       }
 
       if (ordering == "R") {
@@ -129,13 +133,13 @@ CFArray <- R6::R6Class("CFArray",
     #'   data in argument `values`.
     #' @return An instance of this class.
     initialize = function(name, group, values, values_type, axes, crs, attributes) {
-      var <- NCVariable$new(-1L, name, group, dt, 0L, NULL)
+      var <- NCVariable$new(-1L, name, group, values_type, 0L, NULL)
       var$attributes <- attributes
       super$initialize(var, axes, crs)
 
       # Set the coordinates attribute for scalar axes
       scalars <- sapply(axes, function(x) if (x$length == 1L) x$name)
-      scalars <- unlist(scalars[lengths(scalars) > 0L])
+      scalars <- unlist(scalars[lengths(scalars) > 0L], use.names = FALSE)
       if (length(scalars)) self$add_coordinates(scalars)
 
       # Set values and the actual_range attribute
@@ -213,7 +217,7 @@ CFArray <- R6::R6Class("CFArray",
     #'   appended.
     append = function(from, along) {
       # Check if the array can be appended to self
-      if (length(along) != 1L || !(along %in% names(self$axes)))
+      if (length(along) != 1L || !(along %in% self$axis_names))
         stop("Argument `along` must be a single name of an existing axis.", call. = FALSE)
       if (length(from$axes) != length(self$axes))
         stop("Array `from` must have the same number of axes as this array.", call. = FALSE)
@@ -312,7 +316,7 @@ CFArray <- R6::R6Class("CFArray",
       dt <- data.table::as.data.table(exp)
       if (var_as_column) {
         dt[ , .variable := self$name]
-        dt[ , .value := private$values]
+        suppressWarnings(dt[ , .value := private$values])
       } else
         suppressWarnings(dt[ , eval(self$name) := private$values])
 
@@ -340,7 +344,7 @@ CFArray <- R6::R6Class("CFArray",
       self$group$write_attributes(nc, "NC_GLOBAL")
 
       # Axes
-      lbls <- unlist(sapply(self$axes, function(ax) {ax$write(nc); ax$coordinate_names}))
+      lbls <- unlist(sapply(self$axes, function(ax) {ax$write(nc); ax$coordinate_names}), use.names = FALSE)
 
       # CRS
       if (!is.null(self$crs)) {
@@ -360,10 +364,14 @@ CFArray <- R6::R6Class("CFArray",
       dt <- private$orient("CF")
       axes <- attr(dt, "axes")
       dim_axes <- length(axes)
-      RNetCDF::var.def.nc(nc, self$name, if (pack) "NC_SHORT" else private$values_type, axes)
+      if (dim_axes > 0L)
+        RNetCDF::var.def.nc(nc, self$name, if (pack) "NC_SHORT" else private$values_type, axes)
+      else
+        RNetCDF::var.def.nc(nc, self$name, if (pack) "NC_SHORT" else private$values_type, NA)
       if (length(self$axes) > dim_axes || length(lbls)) {
         non_dim_axis_names <- sapply(self$axes, function(ax) ax$name)[-(1L:dim_axes)]
-        self$set_attribute("coordinates", "NC_CHAR", paste(c(non_dim_axis_names, lbls), collapse = " "))
+        if (length(non_dim_axis_names) > 0L)
+          self$set_attribute("coordinates", "NC_CHAR", paste(c(non_dim_axis_names, lbls), collapse = " "))
       }
       self$write_attributes(nc, self$name)
       RNetCDF::var.put.nc(nc, self$name, dt, pack = pack, na.mode = 2)
@@ -388,3 +396,4 @@ CFArray <- R6::R6Class("CFArray",
     }
   )
 )
+

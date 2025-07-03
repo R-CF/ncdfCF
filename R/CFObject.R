@@ -131,10 +131,13 @@ CFObject <- R6::R6Class("CFObject",
         self$NCvar$id
     },
 
-    #' @field name (read-only) The name of the CF object.
+    #' @field name Set or retrieve the name of the CF object.
     name = function(value) {
       if (missing(value))
         self$NCvar$name
+      else if (.is_valid_name(value))
+        self$NCvar$name <- value
+      else stop("Invalid name for CF object", call. = FALSE)
     },
 
     #' @field fullname (read-only) The fully-qualified name of the CF object.
@@ -166,15 +169,15 @@ CFObject <- R6::R6Class("CFObject",
 )
 
 #' @name dimnames
-#' @title Names or dimension values of an CF object
+#' @title Names or axis values of an CF object
 #'
-#' @description Retrieve the variable or dimension names of an `ncdfCF` object.
+#' @description Retrieve the variable or axis names of an `ncdfCF` object.
 #' The `names()` function gives the names of the variables in the data set,
-#' prepended with the path to the group if the resource uses groups.
+#' preceded by the path to the group if the resource uses groups.
 #' The return value of the `dimnames()` function differs depending on the type
 #' of object:
 #' * `CFDataset`, `CFVariable`: The dimnames are returned as a vector of the
-#' names of the axes of the data set or variable, prepended with the path to the
+#' names of the axes of the data set or variable, preceded with the path to the
 #' group if the resource uses groups. Note that this differs markedly from the
 #' `base::dimnames()` functionality.
 #' * `CFAxisNumeric`, `CFAxisLongitude`, `CFAxisLatitude`, `CFAxisVertical`: The
@@ -196,6 +199,9 @@ CFObject <- R6::R6Class("CFObject",
 #'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20230101-20231231_vncdfCF.nc",
 #'   package = "ncdfCF")
 #' ds <- open_ncdf(fn)
+#'
+#' # Names of data variables
+#' names(ds)
 #'
 #' # CFDataset
 #' dimnames(ds)

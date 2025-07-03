@@ -26,26 +26,29 @@ makeGroup <- function(id = -1L, name = "/", fullname = "/", parent = NULL) {
 #' an instance of a class descending from [CFAxis] will be returned.
 #'
 #' There are several restrictions on the combination of `orientation` and
-#' `values` arguments. Longitude and latitude axes (`orientation` of "X" or "Y")
-#' must have numeric `values`. For a time axis (`orientation` of "T") the
-#' `values` argument must be an instance of `CFTime` or `CFClimatology`.
+#' `values` arguments. Longitude, latitude and depth axes (`orientation` of "X",
+#' "Y" or "Z") must have numeric `values`. For a time axis (`orientation` of
+#' "T") the `values` argument must be an instance of `CFTime` or
+#' `CFClimatology`.
 #'
 #' @param name Name of the axis.
 #' @param group Group to place the axis in.
 #' @param orientation The orientation of the axis. Must be one of "X", "Y", "Z",
 #'   or "T" for longitude, latitude, height or depth, and time axes,
 #'   respectively. For any other axis, indicate an empty string ""
-#' @param values The coordinate values. In the case of an axis with
-#' `orientation = "T"` this must be a `CFTime` instance.
+#' @param values The coordinate values. In the case of an axis with `orientation
+#'   = "T"` this must be a `CFTime` instance.
 #' @param bounds The bounds of the coordinate values, or `NULL` if not
 #'   available.
 #'
-#' @seealso [makeLongitudeAxis()], [makeLatitudeAxis()], [makeTimeAxis()], [makeDiscreteAxis()]
+#' @seealso [makeLongitudeAxis()], [makeLatitudeAxis()], [makeTimeAxis()],
+#'   [makeDiscreteAxis()]
 #' @return An instance of a class descending from [CFAxis].
 #' @export
 makeAxis <- function(name, group, orientation, values, bounds = NULL) {
   if (orientation == "X") makeLongitudeAxis(name, group, values, bounds)
   else if (orientation == "Y") makeLatitudeAxis(name, group, values, bounds)
+  else if (orientation == "Z") makeVerticalAxis(name, group, values, bounds)
   else if (orientation == "T") makeTimeAxis(name, group, values)
   else if (orientation == "") {
     if (is.numeric(values)) {
@@ -140,6 +143,42 @@ makeLatitudeAxis <- function(name, group, values, bounds) {
   axis
 }
 
+#' Create a vertical axis
+#'
+#' With this method you can create a vertical axis to use with new [CFArray]
+#' instances. Note that you should set the "positive" attribute after creating
+#' the axis to indicate if values are increasing going upwards (positive = "up")
+#' or downwards (positive = "down").
+#'
+#' @param name Name of the axis.
+#' @param group Group to place the axis in.
+#' @param values The coordinate values.
+#' @param bounds The bounds of the coordinate values, or `NULL` if not
+#'   available.
+#'
+#' @return A [CFAxisVertical] instance.
+#' @export
+makeVerticalAxis <- function(name, group, values, bounds) {
+  if (!.is_valid_name(name))
+    stop("Name for axis is not valid", call. = FALSE)
+  # FIXME: Check domain
+
+  var <- NCVariable$new(-1L, name, group, "NC_DOUBLE", 1L, NULL)
+  dim <- NCDimension$new(-1L, name, length(values), FALSE)
+  axis <- CFAxisVertical$new(var, dim, values, "depth")
+
+  axis$set_attribute("axis", "NC_CHAR", "Z")
+  axis$set_attribute("actual_range", "NC_DOUBLE", range(values))
+  if (!is.null(bounds)) {
+    nm <- paste0(name, "_bnds")
+    var <- NCVariable$new(-1L, nm, group, "NC_DOUBLE", 2L, NULL)
+    dim <- NCDimension$new(-1L, "nv", 2L, FALSE)
+    axis$bounds <- CFBounds$new(var, dim, bounds)
+    axis$set_attribute("bounds", "NC_CHAR", nm)
+  }
+  axis
+}
+
 #' Create a time axis
 #'
 #' With this method you can create a time axis to use with new [CFArray]
@@ -194,6 +233,106 @@ makeDiscreteAxis <- function(name, group, length) {
   dim <- NCDimension$new(-1L, name, length, FALSE)
   axis <- CFAxisDiscrete$new(var, dim, "")
 
-  axis$set_attribute("actual_range", "NC_int", c(1L, length))
+  axis$set_attribute("actual_range", "NC_INT", c(1L, length))
   axis
 }
+
+#' Create a character axis
+#'
+#' With this method you can create a character axis to use with new [CFArray]
+#' instances.
+#'
+#' @param name Name of the axis.
+#' @param group Group to place the axis in.
+#' @param values The character coordinate values of the axis.
+#'
+#' @return A [CFAxisCharacter] instance.
+#' @export
+makeCharacterAxis <- function(name, group, values) {
+  if (!.is_valid_name(name))
+    stop("Name for axis is not valid", call. = FALSE)
+
+  var <- NCVariable$new(-1L, name, group, "NC_STRING", 1L, NULL) # FIXME: Make this NC_CHAR for netcdf3 support -> extra dim!
+  dim <- NCDimension$new(-1L, name, length(values), FALSE)
+  axis <- CFAxisCharacter$new(var, dim, "", values)
+
+  axis
+}
+
+#' Create a CFArray instance from an R object
+#'
+#' With this function you can convert an R object into a [CFArray]. This can be
+#' an array, matrix or vector of type `logical`, `integer`, `numeric` or
+#' `character.`
+#'
+#' Dimnames on the R object will be converted to instances of a [CFAxis]
+#' descendant class, depending on their values. If the dimnames along a
+#' dimension of the R object can be converted to `numeric`, then it will be an
+#' instance of [CFAxisNumeric]. If the dimnames are `character`, a first attempt
+#' is made to create a [CFAxisTime] (i.e. the dimnames have to represent
+#' timestamps), failing that a [CFAxisCharacter] will be created. If no dimnames
+#' are set, an instance of [CFAxisDiscrete] is generated.
+#'
+#' The axes of the `CFArray` are oriented as in the R object. Note that this is
+#' different from standard practice in the netCDF community and the portability
+#' of saved datasets is thus limited. You can improve this situation by setting
+#' the orientation of the axes and by adding attributes.
+#'
+#' After creation of the `CFArray`, it is recommended to set other properties,
+#' such as attributes or a coordinate reference system.
+#'
+#' @param name The name of the CFArray to create.
+#' @param values The data of this object. This can be an array, matrix or vector
+#'   of type `logical`, `integer`, `numeric` or `character.`
+#' @return An instance of class [CFArray].
+#' @export
+as_CFArray <- function(name, values) {
+  # Check the properties of "values" and create axes from dimnames
+  if (is.logical(values)) values <- as.integer(values)
+  dt <- typeof(values)
+  if (!(dt %in% c("integer", "double", "character")))
+    stop("Argument 'values' is of an unsupported type", call. = FALSE)
+
+  # Output data type
+  dt <- switch(dt,
+               "integer"   = "NC_INT",
+               "double"    = "NC_DOUBLE",
+               "character" = "NC_STRING")
+
+  # Group for all the objects to be created
+  grp <- makeGroup()
+
+  # Helper function - "name" is name for the axis, "len" is length of the dimension, "vals" is coordinate values
+  .makeArrayAxis <- function(name, len, vals) {
+    if (is.null(vals))              # vals has no names so make discrete axis
+      return(makeDiscreteAxis(name, grp, len))
+
+    crds <- suppressWarnings(as.numeric(vals))
+    if (any(is.na(crds))) {         # Not numeric so time or character
+      t <- try(CFtime::CFTime$new("days since 1970-01-01T00:00:00", "standard", vals), silent = TRUE)
+      if (inherits(t, "try-error")) # Not time
+        makeCharacterAxis(name, grp, vals)
+      else makeTimeAxis(name, grp, t)
+    } else makeAxis(name, grp, "", crds)
+  }
+
+  dims <- dim(values)
+  if (is.null(dims))  # values is a vector
+    axes <- list(axis1 = .makeArrayAxis("axis_1", length(values), names(values)))
+  else {
+    dn <- dimnames(values)
+    names <- names(dn)
+    if (is.null(names))
+      names <- sapply(seq_along(dims), function(x) paste0("axis_", x))
+    else
+      names <- sapply(seq_along(dims), function(x) if (nzchar(names[x])) names[x] else paste0("axis_", x))
+
+    axes <- lapply(seq_along(dims), function(x) .makeArrayAxis(names[x], dims[x], dn[[x]]))
+  }
+  axes <- axes[lengths(axes) > 0L]
+  if (length(axes))
+    names(axes) <- sapply(axes, function(ax) ax$name)
+
+  CFArray$new(name, grp, values, dt, axes, NULL, NULL)
+}
+

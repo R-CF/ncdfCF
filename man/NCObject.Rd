@@ -19,8 +19,19 @@ this class manages the attributes for its descendent classes.
 \item{\code{id}}{Numeric identifier of the netCDF object.}
 
 \item{\code{name}}{The name of the netCDF object.}
-
-\item{\code{attributes}}{\code{data.frame} with the attributes of the netCDF object.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{attributes}}{Read or set the attributes of the object. The
+attributes are stored in a \code{data.frame} with columns "id" (integer),
+"name" (character), "type" (one of the netCDF data types), "length"
+(integer), and "value" (any allowed type). When setting the attributes,
+all existing attributes are deleted; use method \code{set_attribute()} to
+add attributes to the existing set. Upon reading, when there are no
+attributes, an empty \code{data.frame} will be returned.}
 }
 \if{html}{\out{</div>}}
 }
