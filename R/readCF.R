@@ -160,7 +160,7 @@ peek_ncdf <- function(resource) {
 #' @noRd
 .readGroup <- function(parent, h, parent_dims) {
   g <- RNetCDF::grp.inq.nc(h)
-  grp <- NCGroup$new(id = as.integer(g$self), name = g$name, fullname = g$fullname,
+  grp <- NCGroup$new(id = as.integer(g$self), name = g$name,
                      parent = parent, resource = parent$resource)
 
   # Read all the raw NC variables in the group

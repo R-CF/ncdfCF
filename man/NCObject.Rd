@@ -13,18 +13,16 @@ ancestor.
 The fields in this class are common among all netCDF objects. In addition,
 this class manages the attributes for its descendent classes.
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{id}}{Numeric identifier of the netCDF object.}
-
-\item{\code{name}}{The name of the netCDF object.}
-}
-\if{html}{\out{</div>}}
-}
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
+\item{\code{id}}{(read-only) Retrieve the identifier of the netCDF object.}
+
+\item{\code{name}}{Set or retrieve the name of the object. Note that the name
+comply with CF requirements: start with a letter, followed by lettters,
+numbers or underscores, and having a maximum length of 255 characters.
+Multi-byte characters are not allowed in names.}
+
 \item{\code{attributes}}{Read or set the attributes of the object. The
 attributes are stored in a \code{data.frame} with columns "id" (integer),
 "name" (character), "type" (one of the netCDF data types), "length"

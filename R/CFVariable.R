@@ -280,7 +280,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @description Retrieve all data of the variable.
     #' @return A [CFArray] instance with all data from this variable.
     data = function() {
-      out_group <- NCGroup$new(-1L, "/", "/", NULL, NULL)
+      out_group <- makeGroup()
       out_group$set_attribute("title", "NC_CHAR", paste("Data copy of variable", self$name))
       out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), "): CFVariable::data()"))
 

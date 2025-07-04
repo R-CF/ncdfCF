@@ -7,16 +7,15 @@
 #'
 #' @param id The id of the group, default -1L.
 #' @param name The name of the group, default "/".
-#' @param fullname The full path and name of the group, default "/".
 #' @param parent Optionally, a parent group to which the new group will be added
 #' as a child.
 #'
 #' @return A `NCGroup` instance.
 #' @export
-makeGroup <- function(id = -1L, name = "/", fullname = "/", parent = NULL) {
+makeGroup <- function(id = -1L, name = "/", parent = NULL) {
   if (name != "/" && !.is_valid_name(name))
     stop("Name for group is not valid", call. = FALSE)
-  NCGroup$new(id, name, fullname, parent, NULL)
+  NCGroup$new(id, name, parent, NULL)
 }
 
 #' Create an axis
@@ -302,18 +301,18 @@ as_CFArray <- function(name, values) {
   # Group for all the objects to be created
   grp <- makeGroup()
 
-  # Helper function - "name" is name for the axis, "len" is length of the dimension, "vals" is coordinate values
-  .makeArrayAxis <- function(name, len, vals) {
+  # Helper function - "nm" is name for the axis, "len" is length of the dimension, "vals" is coordinate values
+  .makeArrayAxis <- function(nm, len, vals) {
     if (is.null(vals))              # vals has no names so make discrete axis
-      return(makeDiscreteAxis(name, grp, len))
+      return(makeDiscreteAxis(nm, grp, len))
 
     crds <- suppressWarnings(as.numeric(vals))
     if (any(is.na(crds))) {         # Not numeric so time or character
       t <- try(CFtime::CFTime$new("days since 1970-01-01T00:00:00", "standard", vals), silent = TRUE)
       if (inherits(t, "try-error")) # Not time
-        makeCharacterAxis(name, grp, vals)
-      else makeTimeAxis(name, grp, t)
-    } else makeAxis(name, grp, "", crds)
+        makeCharacterAxis(nm, grp, vals)
+      else makeTimeAxis(nm, grp, t)
+    } else makeAxis(nm, grp, "", crds)
   }
 
   dims <- dim(values)

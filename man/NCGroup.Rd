@@ -24,8 +24,6 @@ required.
 \item{\code{resource}}{Access to the underlying netCDF resource. This can be
 \code{NULL} for instances created in memory.}
 
-\item{\code{fullname}}{The fully qualified absolute path of the group.}
-
 \item{\code{parent}}{Parent group of this group, the owning \code{CFDataset} for the
 root group.}
 
@@ -69,6 +67,13 @@ references them.}
 
 \item{\code{handle}}{(read-only) Get the handle to the netCDF resource for the
 group}
+
+\item{\code{name}}{Set or retrieve the name of the group. Note that the name is
+always relative to the location in the hierarchy that the group is in
+and it should thus not be qualified by backslashes. The name has to be
+a valid CF name. The name of the root group cannot be changed.}
+
+\item{\code{fullname}}{(read-only) The fully qualified absolute path of the group.}
 
 \item{\code{root}}{(read-only) Retrieve the root group.}
 
@@ -116,7 +121,7 @@ belongs to.}
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$new(id, name, fullname, parent, resource)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$new(id, name, parent, resource)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -125,8 +130,6 @@ Create a new instance of this class.
 \item{\code{id}}{The identifier of the group.}
 
 \item{\code{name}}{The name of the group.}
-
-\item{\code{fullname}}{The fully qualified name of the group.}
 
 \item{\code{parent}}{The parent group of this group. the owning \link{CFDataset} for
 the root group.}

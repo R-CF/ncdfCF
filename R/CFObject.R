@@ -135,9 +135,8 @@ CFObject <- R6::R6Class("CFObject",
     name = function(value) {
       if (missing(value))
         self$NCvar$name
-      else if (.is_valid_name(value))
+      else
         self$NCvar$name <- value
-      else stop("Invalid name for CF object", call. = FALSE)
     },
 
     #' @field fullname (read-only) The fully-qualified name of the CF object.

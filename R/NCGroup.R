@@ -13,13 +13,15 @@
 #' @docType class
 NCGroup <- R6::R6Class("NCGroup",
   inherit = NCObject,
+  private = list(
+    # The name of the group. Groups manage their own names because they are not
+    # compliant with CF rules when starting with a backslash.
+    nm = ""
+  ),
   public = list(
     #' @field resource Access to the underlying netCDF resource. This can be
     #' `NULL` for instances created in memory.
     resource  = NULL,
-
-    #' @field fullname The fully qualified absolute path of the group.
-    fullname  = "",
 
     #' @field parent Parent group of this group, the owning `CFDataset` for the
     #'   root group.
@@ -69,14 +71,13 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @description Create a new instance of this class.
     #' @param id The identifier of the group.
     #' @param name The name of the group.
-    #' @param fullname The fully qualified name of the group.
     #' @param parent The parent group of this group. the owning [CFDataset] for
     #'   the root group.
     #' @param resource Reference to the [CFResource] instance that provides
     #'   access to the netCDF resource. For in-memory groups this can be `NULL`.
-    initialize = function(id, name, fullname, parent, resource) {
-      super$initialize(id, name)
-      self$fullname <- fullname
+    initialize = function(id, name, parent, resource) {
+      super$initialize(id, "group")
+      private$nm <- name
       self$parent <- parent
       self$resource <- resource
     },
@@ -87,8 +88,8 @@ NCGroup <- R6::R6Class("NCGroup",
     #' of an enclosing object (`FALSE`).
     #' @param ... Passed on to other methods.
     print = function(stand_alone = TRUE, ...) {
-      if (stand_alone || self$name != "/") {
-        cat("<", self$friendlyClassName, "> [", self$id, "] ", self$name, "\n", sep = "")
+      if (stand_alone || private$nm != "/") {
+        cat("<", self$friendlyClassName, "> [", self$id, "] ", private$nm, "\n", sep = "")
         cat("Path      :", self$fullname, "\n")
       }
       if (length(self$subgroups) > 0L)
@@ -105,7 +106,7 @@ NCGroup <- R6::R6Class("NCGroup",
     #'   recursion when there are groups below the current group.
     hierarchy = function(idx = 1L, total = 1L) {
       if (idx == total) sep <- "   " else sep <- "|  "
-      hier <- paste0("* ", self$name, "\n")
+      hier <- paste0("* ", private$nm, "\n")
 
       # Axes
       if (length(self$CFaxes) > 0L) {
@@ -342,7 +343,7 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @return A vector of [NCDimension] objects.
     dimensions = function() {
       dims <- self$NCdims
-      if (self$name == "/")
+      if (private$nm == "/")
         dims
       else {
         pdims <- self$parent$dimensions()
@@ -412,6 +413,34 @@ NCGroup <- R6::R6Class("NCGroup",
         else self$resource$group_handle(self$fullname)
       else
         stop("Can't assign a value to a netCDF resource handle", call. = FALSE)
+    },
+
+    #' @field name Set or retrieve the name of the group. Note that the name is
+    #'   always relative to the location in the hierarchy that the group is in
+    #'   and it should thus not be qualified by backslashes. The name has to be
+    #'   a valid CF name. The name of the root group cannot be changed.
+    name = function(value) {
+      if (missing(value))
+        private$nm
+      else if (private$nm == "/")
+        stop("Cannot change the name of the root group", call. = FALSE)
+      else if (.is_valid_name(value)) {
+        private$nm <- value
+      }
+    },
+
+    #' @field fullname (read-only) The fully qualified absolute path of the group.
+    fullname = function(value) {
+      if (missing(value)) {
+        nm <- private$nm
+        if (nm == "/") return(nm)
+        g <- self
+        while (g$parent$name != "/") {
+          g <- g$parent
+          nm <- paste(g$name, nm, sep = "/")
+        }
+      }
+      if (nm != "/") paste0("/", nm) else nm
     },
 
     #' @field root (read-only) Retrieve the root group.

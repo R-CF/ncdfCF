@@ -12,23 +12,23 @@
 #'
 NCObject <- R6::R6Class("NCObject",
   private = list(
+    # Numeric identifier of the netCDF object.
+    id_ = -1L,
+
+    # The name of the netCDF object.
+    name_ = "",
+
     # A `data.frame` with the attributes of the netCDF object.
     atts = data.frame()
   ),
   public = list(
-    #' @field id Numeric identifier of the netCDF object.
-    id         = -1L,
-
-    #' @field name The name of the netCDF object.
-    name       = "",
-
     #' @description Create a new netCDF object. This class should not be
     #'   instantiated directly, create descendant objects instead.
     #'
     #' @param id Numeric identifier of the netCDF object.
     #' @param name Character string with the name of the netCDF object.
     initialize = function(id, name) {
-      self$id <- id
+      private$id_ <- id
       self$name <- name
     },
 
@@ -200,6 +200,24 @@ NCObject <- R6::R6Class("NCObject",
     }
   ),
   active = list(
+    #' @field id (read-only) Retrieve the identifier of the netCDF object.
+    id = function(value) {
+      if (missing(value))
+        private$id_
+    },
+
+    #' @field name Set or retrieve the name of the object. Note that the name
+    #' comply with CF requirements: start with a letter, followed by lettters,
+    #' numbers or underscores, and having a maximum length of 255 characters.
+    #' Multi-byte characters are not allowed in names.
+    name = function(value) {
+      if (missing(value))
+        private$name_
+      else if (.is_valid_name(value))
+        private$name_ <- value
+      else stop("Invalid name for NC object", call. = FALSE)
+    },
+
     #' @field attributes Read or set the attributes of the object. The
     #'   attributes are stored in a `data.frame` with columns "id" (integer),
     #'   "name" (character), "type" (one of the netCDF data types), "length"
