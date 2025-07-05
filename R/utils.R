@@ -171,7 +171,18 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
   }
 }
 
+#' Test if vector `x` is monotonic, either increasing or decreasing. Return value
+#' is -1L for monotonic decreasing, 0L for not monotonic, and 1L for monotonic
+#' increasing.
+#' @noRd
+.monotonicity <- function(x) {
+  if (!is.unsorted(x, strictly = TRUE)) 1L
+  else if(!is.unsorted(-x, strictly = TRUE)) -1L
+  else 0L
+}
+
 #' Test if the concatenation of vectors `x` and `y` yields a monotonic result.
+#' This assumes that both `x` and `y` are independently monotonic.
 #' @noRd
 .c_is_monotonic <- function(x, y) {
   xlen <- length(x)

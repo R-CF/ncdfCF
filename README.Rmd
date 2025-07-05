@@ -169,20 +169,22 @@ arr <- array(rnorm(120), dim = c(6, 5, 4))
 as_CFArray("my_first_CF_object", arr)
 ```
 
-Usable but not very impressive. If the R object has dimnames set, these will be used to create more informed axes:
+Usable but not very impressive. The axes have dull names without any meaning and the coordinates are just a sequence along the axis.
+
+If the R object has `dimnames` set, these will be used to create more informed axes. More interestingly, if your array represents some spatial data you can give your `dimnames` appropriate names ("lat", "lon", "latitude", "longitude", case-insensitive) and the corresponding axis will be created (if the coordinate values in the `dimnames` are within the domain of the axis type). For "time" coordinates, these are automatically detected irrespective of the name.
 
 ```{r create_dimnames}
 # Note the use of named dimnames here - these will become the names of the axes
-dimnames(arr) <- list(y = c(40, 41, 42, 43, 44, 45), x = c(0, 1, 2, 3, 4), 
+dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4), 
                       time = c("2025-07-01", "2025-07-02", "2025-07-03", "2025-07-04"))
-str(arr)
 
 (obj <- as_CFArray("a_better_CF_object", arr))
 
+# Axes are of a specific type and have basic attributes set
+obj$axes[["lat"]]
+
 obj$axes[["time"]]
 ```
-
-The timestamp strings in the third dimension have been correctly interpreted as a time series and a `CFAxisTime` instance is created for it.
 
 You can further modify the resulting `CFArray` by setting other properties, such as attributes or a coordinate reference system. Once the object is complete, you can export or save it.
 
@@ -201,7 +203,7 @@ suppressMessages(library(terra))
 terra::plot(r)
 ```
 
-A `CFData` object can also be written back to a netCDF file. The object will have all its relevant attributes and properties written together with the actual data: axes, bounds, attributes, CRS. 
+A `CFData` object can also be written back to a netCDF file. The object will have all its relevant attributes and properties written together with the actual data: axes, bounds, attributes, CRS. The netCDF file is of version "netcdf4" and will have the axes oriented in such a way that the file has maximum portability (specifically, data will be stored in row-major order with increasing Y values).
 
 ```{r save, eval=FALSE}
 # Save a CFData instance to a netCDF file on disk
@@ -216,7 +218,7 @@ More comprehensive support for DSG is in the development plan.
 
 ## Development plan
 
-Package `ncdfCF` is in the early phases of development. It supports reading of all data objects from netCDF resources in "classic" and "netcdf4" formats; and can write single data arrays back to a netCDF file. From the CF Metadata Conventions it supports identification of axes, interpretation of the "time" axis, name resolution when using groups, reading of "bounds" information, auxiliary coordinate variables, labels, cell measures, attributes and grid mapping information.
+Package `ncdfCF` is in the early phases of development. It supports reading of all data objects from netCDF resources in "classic" and "netcdf4" formats; and can write single data arrays back to a netCDF file. From the CF Metadata Conventions it supports identification of axes, interpretation of the "time" axis, name resolution when using groups, reading of grid cell boundary information, auxiliary coordinate variables, labels, cell measures, attributes and grid mapping information.
 
 Development plans for the near future focus on supporting the below features:
 

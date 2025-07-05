@@ -29,3 +29,19 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
    }
   )
 )
+
+# ============ Helper functions
+
+# This function checks if the supplied coordinates are within the domain of
+# latitude values. The values have to be numeric and monotonic and in
+# the range [-90, 90]. Returns TRUE or FALSE.
+.check_latitude_domain <- function(crds) {
+  len <- length(crds)
+  if (!len) TRUE
+  else if (is.numeric(crds))
+    switch(.monotonicity(crds) + 2L,
+           crds[len] >= -90 && crds[1L] <= 90,
+           FALSE,
+           crds[1L] >= -90 && crds[len] <= 90)
+  else FALSE
+}

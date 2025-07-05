@@ -513,7 +513,7 @@ arr <- array(rnorm(120), dim = c(6, 5, 4))
 as_CFArray("my_first_CF_object", arr)
 #> <Data array> my_first_CF_object 
 #> 
-#> Values: [-2.459651 ... 2.300486] 
+#> Values: [-2.416518 ... 2.849734] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -524,38 +524,55 @@ as_CFArray("my_first_CF_object", arr)
 #> 
 #> Attributes:
 #>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -2.459651, 2.300486
+#>  actual_range NC_DOUBLE 2      -2.416518, 2.849734
 ```
 
-Usable but not very impressive. If the R object has dimnames set, these
-will be used to create more informed axes:
+Usable but not very impressive. The axes have dull names without any
+meaning and the coordinates are just a sequence along the axis.
+
+If the R object has `dimnames` set, these will be used to create more
+informed axes. More interestingly, if your array represents some spatial
+data you can give your `dimnames` appropriate names (“lat”, “lon”,
+“latitude”, “longitude”, case-insensitive) and the corresponding axis
+will be created (if the coordinate values in the `dimnames` are within
+the domain of the axis type). For “time” coordinates, these are
+automatically detected irrespective of the name.
 
 ``` r
 # Note the use of named dimnames here - these will become the names of the axes
-dimnames(arr) <- list(y = c(40, 41, 42, 43, 44, 45), x = c(0, 1, 2, 3, 4), 
+dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4), 
                       time = c("2025-07-01", "2025-07-02", "2025-07-03", "2025-07-04"))
-str(arr)
-#>  num [1:6, 1:5, 1:4] -1 -0.754 0.948 0.731 -1.705 ...
-#>  - attr(*, "dimnames")=List of 3
-#>   ..$ y   : chr [1:6] "40" "41" "42" "43" ...
-#>   ..$ x   : chr [1:5] "0" "1" "2" "3" ...
-#>   ..$ time: chr [1:4] "2025-07-01" "2025-07-02" "2025-07-03" "2025-07-04"
 
 (obj <- as_CFArray("a_better_CF_object", arr))
 #> <Data array> a_better_CF_object 
 #> 
-#> Values: [-2.459651 ... 2.300486] 
+#> Values: [-2.416518 ... 2.849734] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
 #>  axis name length values                      unit                          
-#>       y    6      [40 ... 45]                                               
-#>       x    5      [0 ... 4]                                                 
+#>  Y    lat  6      [45 ... 40]                 degrees_north                 
+#>  X    lon  5      [0 ... 4]                   degrees_east                  
 #>  T    time 4      [2025-07-01 ... 2025-07-04] days since 1970-01-01T00:00:00
 #> 
 #> Attributes:
 #>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -2.459651, 2.300486
+#>  actual_range NC_DOUBLE 2      -2.416518, 2.849734
+
+# Axes are of a specific type and have basic attributes set
+obj$axes[["lat"]]
+#> <Latitude axis> [-1] lat
+#> Length     : 6
+#> Axis       : Y 
+#> Coordinates: 45, 44, 43, 42, 41, 40 (degrees_north)
+#> Bounds     : (not set)
+#> 
+#> Attributes:
+#>  name          type      length value        
+#>  axis          NC_CHAR    1     Y            
+#>  actual_range  NC_DOUBLE  2     40, 45       
+#>  standard_name NC_CHAR    8     latitude     
+#>  units         NC_CHAR   13     degrees_north
 
 obj$axes[["time"]]
 #> <Time axis> [-1] time
@@ -573,10 +590,6 @@ obj$axes[["time"]]
 #>  standard_name NC_CHAR    4     time                          
 #>  actual_range  NC_DOUBLE  2     20270, 20273
 ```
-
-The timestamp strings in the third dimension have been correctly
-interpreted as a time series and a `CFAxisTime` instance is created for
-it.
 
 You can further modify the resulting `CFArray` by setting other
 properties, such as attributes or a coordinate reference system. Once
@@ -621,7 +634,10 @@ terra::plot(r)
 
 A `CFData` object can also be written back to a netCDF file. The object
 will have all its relevant attributes and properties written together
-with the actual data: axes, bounds, attributes, CRS.
+with the actual data: axes, bounds, attributes, CRS. The netCDF file is
+of version “netcdf4” and will have the axes oriented in such a way that
+the file has maximum portability (specifically, data will be stored in
+row-major order with increasing Y values).
 
 ``` r
 # Save a CFData instance to a netCDF file on disk
@@ -653,8 +669,9 @@ reading of all data objects from netCDF resources in “classic” and
 “netcdf4” formats; and can write single data arrays back to a netCDF
 file. From the CF Metadata Conventions it supports identification of
 axes, interpretation of the “time” axis, name resolution when using
-groups, reading of “bounds” information, auxiliary coordinate variables,
-labels, cell measures, attributes and grid mapping information.
+groups, reading of grid cell boundary information, auxiliary coordinate
+variables, labels, cell measures, attributes and grid mapping
+information.
 
 Development plans for the near future focus on supporting the below
 features:

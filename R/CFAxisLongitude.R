@@ -31,3 +31,19 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
    }
   )
 )
+
+# ============ Helper functions
+
+# This function checks if the supplied coordinates are within the domain of
+# longitude values. The values have to be numeric and monotonic and be either in
+# the range [-180, 180] or [0, 360]. Returns TRUE or FALSE.
+.check_longitude_domain <- function(crds) {
+  len <- length(crds)
+  if (!len) TRUE
+  else if (is.numeric(crds))
+    switch(.monotonicity(crds) + 2L,
+           (crds[len] >= -180 && crds[1L] <= 180) || (crds[len] >= 0 && crds[1L] <= 360),
+           FALSE,
+           (crds[1L] >= -180 && crds[len] <= 180) || (crds[1L] >= 0 && crds[len] <= 360))
+  else FALSE
+}

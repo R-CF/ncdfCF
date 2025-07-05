@@ -51,19 +51,27 @@ makeAxis <- function(name, group, orientation, values, bounds = NULL) {
   else if (orientation == "T") makeTimeAxis(name, group, values)
   else if (orientation == "") {
     if (is.numeric(values)) {
-      var <- NCVariable$new(-1L, name, group, "NC_DOUBLE", 1L, NULL)
-      dim <- NCDimension$new(-1L, name, length(values), FALSE)
-      axis <- CFAxisNumeric$new(var, dim, "", values)
+      # Check if we have a potential longitude or latitude axis
+      if (tolower(name) %in% c("longitude", "lon") && .check_longitude_domain(values))
+        makeLongitudeAxis(name, group, values, bounds)
+      else if (tolower(name) %in% c("latitude", "lat") && .check_latitude_domain(values))
+        makeLatitudeAxis(name, group, values, bounds)
+      else {
+        # Make a generic axis
+        var <- NCVariable$new(-1L, name, group, "NC_DOUBLE", 1L, NULL)
+        dim <- NCDimension$new(-1L, name, length(values), FALSE)
+        axis <- CFAxisNumeric$new(var, dim, "", values)
 
-      axis$set_attribute("actual_range", "NC_DOUBLE", range(values))
-      if (!is.null(bounds)) {
-        nm <- paste0(name, "_bnds")
-        var <- NCVariable$new(-1L, nm, group, "NC_DOUBLE", 2L, NULL)
-        dim <- NCDimension$new(-1L, "nv", 2L, FALSE)
-        axis$bounds <- CFBounds$new(var, dim, bounds)
-        axis$set_attribute("bounds", "NC_CHAR", nm)
+        axis$set_attribute("actual_range", "NC_DOUBLE", range(values))
+        if (!is.null(bounds)) {
+          nm <- paste0(name, "_bnds")
+          var <- NCVariable$new(-1L, nm, group, "NC_DOUBLE", 2L, NULL)
+          dim <- NCDimension$new(-1L, "nv", 2L, FALSE)
+          axis$bounds <- CFBounds$new(var, dim, bounds)
+          axis$set_attribute("bounds", "NC_CHAR", nm)
+        }
+        axis
       }
-      axis
     } else if (is.character(values)) {
       var <- NCVariable$new(-1L, name, group, "NC_STRING", 1L, NULL)
       dim <- NCDimension$new(-1L, name, length(values), FALSE)
@@ -95,6 +103,7 @@ makeLongitudeAxis <- function(name, group, values, bounds = NULL) {
   dim <- NCDimension$new(-1L, name, length(values), FALSE)
   axis <- CFAxisLongitude$new(var, dim, values)
 
+  axis$set_attribute("standard_name", "NC_CHAR", "longitude")
   axis$set_attribute("units", "NC_CHAR", "degrees_east")
   axis$set_attribute("actual_range", "NC_DOUBLE", range(values))
   axis$set_attribute("axis", "NC_CHAR", "X")
@@ -129,6 +138,7 @@ makeLatitudeAxis <- function(name, group, values, bounds) {
   dim <- NCDimension$new(-1L, name, length(values), FALSE)
   axis <- CFAxisLatitude$new(var, dim, values)
 
+  axis$set_attribute("standard_name", "NC_CHAR", "latitude")
   axis$set_attribute("units", "NC_CHAR", "degrees_north")
   axis$set_attribute("axis", "NC_CHAR", "Y")
   axis$set_attribute("actual_range", "NC_DOUBLE", range(values))
@@ -197,6 +207,7 @@ makeTimeAxis <- function(name, group, values) {
   dim <- NCDimension$new(-1L, name, length(values), FALSE)
   axis <- CFAxisTime$new(var, dim, values)
 
+  axis$set_attribute("standard_name", "NC_CHAR", "time")
   axis$set_attribute("units", "NC_CHAR", values$cal$definition)
   axis$set_attribute("calendar", "NC_CHAR", values$cal$name)
   axis$set_attribute("axis", "NC_CHAR", "T")
