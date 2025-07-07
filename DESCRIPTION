@@ -42,6 +42,7 @@ Collate:
     'NCObject.R'
     'CFObject.R'
     'CFResource.R'
+    'CFStandardNames.R'
     'CFVariable.R'
     'CFVariableBase.R'
     'CFVariableL3b.R'
@@ -64,7 +65,7 @@ Suggests:
     units 
 VignetteBuilder: knitr
 Depends: 
-    R (>= 3.5)
+    R (>= 4.0)
 URL: https://github.com/R-CF/ncdfCF
 BugReports: https://github.com/R-CF/ncdfCF/issues
 Config/testthat/edition: 3

@@ -116,7 +116,7 @@ CFVariable <- R6::R6Class("CFVariable",
     # as well (untested).
     process_data = function(tdim, fac, fun, ...) {
       # Read the whole data array if size is manageable
-      if (prod(sapply(self$axes, function(x) x$length)) < CF$memory_cell_limit)
+      if (prod(sapply(self$axes, function(x) x$length)) < CF.options$memory_cell_limit)
         return(.process.data(private$get_values(), tdim, fac, fun, ...))
 
       # If data variable is large, go by individual factor levels
@@ -221,9 +221,11 @@ CFVariable <- R6::R6Class("CFVariable",
       cat("\nAxes:\n")
       axes <- do.call(rbind, lapply(self$axes, function(a) a$brief()))
       axes <- lapply(axes, function(c) if (all(c == "")) NULL else c)
-      if (all(axes$group == "/")) axes$group <- NULL
-      axes <- as.data.frame(axes[lengths(axes) > 0L])
-      print(.slim.data.frame(axes, ...), right = FALSE, row.names = FALSE)
+      if (length(axes)) {
+        if (all(axes$group == "/")) axes$group <- NULL
+        axes <- as.data.frame(axes[lengths(axes) > 0L])
+        print(.slim.data.frame(axes, ...), right = FALSE, row.names = FALSE)
+      } else cat(" (none)\n")
 
       if (!is.null(self$cell_measure)) {
         cat("\nCell measure: ", self$cell_measure$name, " (", self$cell_measure$measure, ")\n", sep = "")

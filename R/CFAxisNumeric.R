@@ -21,7 +21,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     # rounded to the standard number of digits.
     get_coordinates = function() {
       crds <- super$get_coordinates()
-      if (any(is.double(crds))) round(crds, CF$digits)
+      if (any(is.double(crds))) round(crds, CF.options$digits)
       else crds
     },
 

@@ -146,7 +146,7 @@ CFArray <- R6::R6Class("CFArray",
       private$values <- values
       private$values_type <- values_type
       if (!all(is.na(private$values))) {
-        private$actual_range <- round(range(values, na.rm = TRUE), CF$digits)
+        private$actual_range <- round(range(values, na.rm = TRUE), CF.options$digits)
         self$set_attribute("actual_range", values_type, private$actual_range)
       }
     },
@@ -174,9 +174,11 @@ CFArray <- R6::R6Class("CFArray",
       cat("\nAxes:\n")
       axes <- do.call(rbind, lapply(self$axes, function(a) a$brief()))
       axes <- lapply(axes, function(c) if (all(c == "")) NULL else c)
-      axes$group <- NULL
-      axes <- as.data.frame(axes[lengths(axes) > 0L])
-      print(.slim.data.frame(axes, 50L), right = FALSE, row.names = FALSE)
+      if (length(axes)) {
+        axes$group <- NULL
+        axes <- as.data.frame(axes[lengths(axes) > 0L])
+        print(.slim.data.frame(axes, 50L), right = FALSE, row.names = FALSE)
+      } else cat(" (none)\n")
 
       self$print_attributes(...)
     },
@@ -234,7 +236,7 @@ CFArray <- R6::R6Class("CFArray",
 
       # Merge the arrays
       private$values <- abind::abind(private$values, from$raw(), along = axno)
-      self$set_attribute("actual_range", private$values_type, round(range(private$values), CF$digits))
+      self$set_attribute("actual_range", private$values_type, round(range(private$values), CF.options$digits))
 
       invisible(self)
     },
@@ -269,7 +271,7 @@ CFArray <- R6::R6Class("CFArray",
         Ybnds <- c(vals[1L] - halfres, vals[length(vals)] + halfres)
       }
       if (Ybnds[1L] > Ybnds[2L]) Ybnds <- rev(Ybnds)
-      ext <- round(c(Xbnds, Ybnds), CF$digits) # Round off spurious "accuracy"
+      ext <- round(c(Xbnds, Ybnds), CF.options$digits) # Round off spurious "accuracy"
 
       # CRS
       wkt <- if (is.null(self$crs)) .wkt2_crs_geo(4326L)

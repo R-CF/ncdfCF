@@ -159,18 +159,6 @@ Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
   else res
 }
 
-.cache_dir <- function() {
-  if (as.integer(R.version$major) >= 4)
-    tools::R_user_dir("ncdfCF", "cache")
-  else {
-    if (nzchar(p <- Sys.getenv("R_USER_CACHE_DIR"))) p
-    else if (nzchar(p <- Sys.getenv("XDG_CACHE_HOME"))) p
-    else if (.Platform$OS.type == "windows") file.path(Sys.getenv("LOCALAPPDATA"), "R", "cache")
-    else if (Sys.info()["sysname"] == "Darwin") file.path(normalizePath("~"), "Library", "Caches", "org.R-project.R")
-    else file.path(normalizePath("~"), ".cache")
-  }
-}
-
 #' Test if vector `x` is monotonic, either increasing or decreasing. Return value
 #' is -1L for monotonic decreasing, 0L for not monotonic, and 1L for monotonic
 #' increasing.

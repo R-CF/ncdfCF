@@ -86,7 +86,7 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
         if (is.na(center[1L]))
           stop("Center of AOI contains no data so resolution cannot be derived. Please specify explicitly.", call. = FALSE)
         private$setResolution(center)
-        aoi$resolution <- round(c(private$res_[1L], private$res_[2L]), CF$digits)
+        aoi$resolution <- round(c(private$res_[1L], private$res_[2L]), CF.options$digits)
       }
 
       if (expand) {
