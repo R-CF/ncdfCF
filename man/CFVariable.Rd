@@ -21,8 +21,13 @@ mapping parameters, etc. The actual data array can be accessed through the
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{gridLongLat}}{The grid of longitude and latitude values of every
-grid cell when the main variable grid has a different coordinate system.}
+\item{\code{auxiliary_names}}{(read-only) Retrieve the names of the auxiliary
+longitude and latitude grids as a vector of two character strings, in
+that order. If no auxiliary grids are defined, returns \code{NULL}.}
+
+\item{\code{gridLongLat}}{Retrieve or set the grid of longitude and latitude
+values of every grid cell when the main variable grid has a different
+coordinate system.}
 
 \item{\code{crs_wkt2}}{(read-only) Retrieve the coordinate reference system
 description of the variable as a WKT2 string.}
@@ -169,28 +174,19 @@ This method extracts a subset of values from the array of
 the variable, with the range along each axis to extract expressed in
 coordinate values of the domain of each axis.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$subset(..., .aoi = NULL, rightmost.closed = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$subset(..., rightmost.closed = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{...}}{One or more arguments of the form \code{axis = range}. The
-"axis" part should be the name of an axis or its orientation \code{X}, \code{Y},
-\code{Z} or \code{T}. The "range" part is a vector of values representing
-coordinates along the axis where to extract data. Axis designators and
-names are case-sensitive and can be specified in any order. If values
-for the range per axis fall outside of the extent of the axis, the
-range is clipped to the extent of the axis.}
-
-\item{\code{.aoi}}{Optional, an area-of-interest instance of class \code{AOI} created
-with the \code{\link[=aoi]{aoi()}} function to indicate the horizontal area that should
-be extracted. The longitude and latitude coordinates must be included;
-the X and Y resolution will be calculated if not given. When provided,
-this argument will take precedence over the corresponding axis
-information for the X and Y axes in the \code{subset} argument. You must
-use the argument name when specifying this, like \code{.aoi = my_aoi}, to
-avoid the argument being treated as an axis name.}
+\item{\code{...}}{One or more arguments of the form \code{axis = range}. The "axis"
+part should be the name of an axis or its orientation \code{X}, \code{Y}, \code{Z} or
+\code{T}. The "range" part is a vector of values representing coordinates
+along the axis where to extract data. Axis designators and names are
+case-sensitive and can be specified in any order. If values for the
+range per axis fall outside of the extent of the axis, the range is
+clipped to the extent of the axis.}
 
 \item{\code{rightmost.closed}}{Single logical value to indicate if the upper
 boundary of range in each axis should be included. You must use the
@@ -201,24 +197,25 @@ avoid the argument being treated as an axis name.}
 }
 \subsection{Details}{
 The range of values along each axis to be subset is expressed in
-coordinates of the domain of the axis. Any axes for which no
-selection is made in the \code{...} argument are extracted in
-whole. Coordinates can be specified in a variety of ways that are
-specific to the nature of the axis. For numeric axes it should (resolve
-to) be a vector of real values. A range (e.g. \code{100:200}), a vector
-(\verb{c(23, 46, 3, 45, 17}), a sequence (\verb{seq(from = 78, to = 100, by = 2}), all work. Note, however, that only a single range is generated
-from the vector so these examples resolve to \verb{(100, 200)}, \verb{(3, 46)},
-and \verb{(78, 100)}, respectively. For time axes a vector of character
-timestamps, \code{POSIXct} or \code{Date} values must be specified. As with
-numeric values, only the two extreme values in the vector will be used.
+coordinates of the domain of the axis. Any axes for which no selection
+is made in the \code{...} argument are extracted in whole. Coordinates can
+be specified in a variety of ways that are specific to the nature of
+the axis. For numeric axes it should (resolve to) be a vector of real
+values. A range (e.g. \code{100:200}), a vector (\verb{c(23, 46, 3, 45, 17}), a
+sequence (\verb{seq(from = 78, to = 100, by = 2}), all work. Note, however,
+that only a single range is generated from the vector so these examples
+resolve to \verb{(100, 200)}, \verb{(3, 46)}, and \verb{(78, 100)}, respectively. For
+time axes a vector of character timestamps, \code{POSIXct} or \code{Date} values
+must be specified. As with numeric values, only the two extreme values
+in the vector will be used.
 
-If the range of coordinate values for an axis in argument \code{...}
-extend the valid range of the axis in \code{x}, the extracted data will
-start at the beginning for smaller values and extend to the end for
-larger values. If the values envelope the valid range the entire axis
-will be extracted in the result. If the range of coordinate values for
-any axis are all either smaller or larger than the valid range of the
-axis then nothing is extracted and \code{NULL} is returned.
+If the range of coordinate values for an axis in argument \code{...} extend
+the valid range of the axis in \code{self}, the extracted data will start at
+the beginning for smaller values and extend to the end for larger
+values. If the values envelope the valid range the entire axis will be
+extracted in the result. If the range of coordinate values for any axis
+are all either smaller or larger than the valid range of the axis then
+nothing is extracted and \code{NULL} is returned.
 
 The extracted data has the same dimensional structure as the data in
 the variable, with degenerate dimensions dropped. The order of the axes
@@ -228,14 +225,10 @@ in argument \code{...} does not reorder the axes in the result; use the
 As an example, to extract values of a variable for Australia for the
 year 2020, where the first axis in \code{x} is the longitude, the second
 axis is the latitude, both in degrees, and the third (and final) axis
-is time, the values are extracted by
-\code{x$subset(X = c(112, 154), Y = c(-9, -44), T = c("2020-01-01", "2021-01-01"))}.
-You could take the longitude-latitude values from \code{sf::st_bbox()} or
-\code{terra::ext()} if you
-have specific spatial geometries for whom you want to extract data.
-Note that this works equally well for projected coordinate reference
-systems - the key is that the specification in argument \code{...} uses
-the same domain of values as the respective axes in \code{x} use.
+is time, the values are extracted by \code{x$subset(X = c(112, 154), Y = c(-9, -44), T = c("2020-01-01", "2021-01-01"))}. Note that this works
+equally well for projected coordinate reference systems - the key is
+that the specification in argument \code{...} uses the same domain of values
+as the respective axes in \code{x} use.
 \subsection{Auxiliary coordinate variables}{
 
 A special case exists for variables where the horizontal dimensions (X
@@ -245,14 +238,11 @@ coordinate system. In this case the netCDF resource may have so-called
 two grids with the same dimension as the horizontal axes of the data
 variable where each pixel gives the corresponding value for the
 longitude and latitude. If the variable has such \emph{auxiliary coordinate
-variables} then they will be used automatically if, and only if, the
-axes are labeled in argument \code{...} as \code{X} and \code{Y}. The resolution of
-the grid that is produced by this method is automatically calculated.
-If you want to subset those axes then specify values in decimal
-degrees; if you want to extract the full extent, specify \code{NA} for both
-\code{X} and \code{Y}. \strong{Note} that if you want to extract the data in the
-original grid, you should use the horizontal axis names in argument
-\code{...}.
+variables} then you can specify their names (instead of specifying the
+names of the primary planar axes). The resolution of the grid that is
+produced by this method is automatically calculated. If you want to
+subset those axes then specify values in decimal degrees; if you want
+to extract the full extent, specify \code{NA} for both \code{X} and \code{Y}.
 }
 }
 

@@ -47,19 +47,19 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
       if (is.null(location))
         location <- as.integer(dim * 0.5)
 
-      private$res_[1L] <- if (location[1L] == 1L)
+      private$res_[1L] <- abs(if (location[1L] == 1L)
         private$lon_[location[1L] + 1L, location[2L]] - private$lon_[location[1L], location[2L]]
       else if (location[1L] == dim[1L])
         private$lon_[location[1L], location[2L]] - private$lon_[location[1L] - 1L, location[2L]]
       else
-        (private$lon_[location[1L] + 1L, location[2L]] - private$lon_[location[1L] - 1L, location[2L]]) * 0.5
+        (private$lon_[location[1L] + 1L, location[2L]] - private$lon_[location[1L] - 1L, location[2L]]) * 0.5)
 
-      private$res_[2L] <- if (location[2L] == 1L)
+      private$res_[2L] <- abs(if (location[2L] == 1L)
         private$lat_[location[1L], location[2L] + 1L] - private$lat_[location[1L], location[2L]]
       else if (location[2L] == dim[2L])
         private$lat_[location[1L], location[2L]] - private$lat_[location[1L], location[2L] - 1L]
       else
-        (private$lat_[location[1L], location[2L] + 1L] - private$lat_[location[1L], location[2L] - 1L]) * 0.5
+        (private$lat_[location[1L], location[2L] + 1L] - private$lat_[location[1L], location[2L] - 1L]) * 0.5)
     },
 
     setAOI = function(aoi) {

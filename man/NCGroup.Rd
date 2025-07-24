@@ -78,7 +78,8 @@ a valid CF name. The name of the root group cannot be changed.}
 \item{\code{root}}{(read-only) Retrieve the root group.}
 
 \item{\code{data_set}}{(read-only) Retrieve the \link{CFDataset} that the group
-belongs to.}
+belongs to. If the group is not attached to a \code{CFDataset}, returns
+\code{NULL}.}
 }
 \if{html}{\out{</div>}}
 }

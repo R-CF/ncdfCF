@@ -19,8 +19,8 @@ climate change scientists and the Intergovernmental Panel on Climate Change
 Landsat and MODIS.
 }
 \details{
-This package currently supports group traversal with scoping rules, axis
-determination and interpretation, including auxiliary axes, time axis
+This package currently supports most common features of the CF conventions,
+including group traversal with scoping rules, auxiliary axes, time axis
 interpretation with all defined calendars, grid mapping, use of bounds data,
 manipulating and interpreting attributes of groups (including global
 attributes) and variables, search for and use of standard names. Some
@@ -34,6 +34,7 @@ using coordinate values along the axes (such as latitude values, or points in
 time) rather than index values into the array.
 \item Use of auxiliary grids to warp data variables using a non-default grid to
 a regular latitude-longitude grid.
+\item Calculate coordinate fields for parametric vertical axes.
 }
 
 Properties of the netCDF resource objects are easily examined using common R
@@ -74,7 +75,7 @@ Metadata Conventions use a "CF-1.*" label.
 \item \code{variables()}, \code{axes()}, \code{attributes()}: Return a \code{list} or \code{data.frame} with
 all objects of the specific type found in the data set.
 \item \code{find_by_name()}: Find a named object in the data set. This can be a data
-variable, an axis, or a grid mapping object. A short-hand method to achieve
+variable, an axis, or any other named object. A short-hand method to achieve
 the same is the \code{[[} operator. This also supports scanning for objects in
 hierarchical groups in \code{netcdf4} resources.
 \item \code{objects_by_standard_name()}: Find objects that use a specific value for
@@ -108,8 +109,8 @@ variable uses.
 \item \code{attribute()}: Retrieve the values of an attribute of the data variable.
 \item \code{crs}: The so-called grid-mapping object that contains information
 on the coordinate reference system (CRS) of the data variable.
-\item \code{crs_wkt2}: The CRS of the data variable, in WKT2 format. This is derived from
-the data in the grid-mapping object.
+\item \code{crs_wkt2}: The CRS of the data variable, in WKT2 format. This is derived
+from the data in the grid-mapping object.
 }
 
 \emph{\strong{Data extraction}}
@@ -125,6 +126,9 @@ function can be built-in (such as \code{min()} and \code{max()}) or a user-devel
 function. The function may also return a vector with multiple values (such as
 \code{range()}) and then a list of \code{CFArray} objects is returned, one for each
 result of the function.
+\item \code{profile()}: Extract a profile of data from the variable into a \code{CFArray}
+or a \code{data.table}. Profiles can be for a single location, or zonal (e.g.
+across a longitude); multiple profiles can be extracted in a single call.
 }
 
 \emph{\strong{S3 methods for CFVariable}}
@@ -171,7 +175,6 @@ Methods for \code{CFAxis} instances:
 \item \code{show()}, \code{brief()}, and \code{shard()}: Print to the console or return to the
 caller (increasingly more compact) information on an axis.
 \item \code{name}, \code{id}: Basic properties of the axis.
-\item \code{coordinates}: Get a vector of coordinate values of the axis.
 }
 
 \emph{\strong{Extraction}}
@@ -194,6 +197,7 @@ either an instance of \link{CFLabel} or an \link{CFAxis} descendant.
 \item \code{coordinates}: Retrieve the coordinates of the active coordinate set. This may
 be the coordinate values of the axis (say, longitude values) or a set of
 auxiliary coordinates associated with the axis.
+\item \code{coordinate_range}: A vector with the extreme coordinate values of the axis.
 }
 
 \emph{\strong{S3 methods for CFAxis}}
@@ -203,7 +207,7 @@ auxiliary coordinates associated with the axis.
 
 \strong{Data}
 
-The \code{CFVariable::data()} and \code{CFVariable::subset()} methods return a
+The \code{CFVariable::data()}, \code{subset()} and \code{profile()} methods return a
 \link{CFArray} object to the caller. The \code{CFArray} object contains the data from
 the netCDF resource, as well as important metadata from the data variable:
 axes, CRS and attributes. The data is easily accessed as a raw array, or
@@ -237,6 +241,12 @@ object as a \code{terra::SpatRaster} (2 or 3 dimensions) or
 the data object as a \code{data.table} where every row consists of the permutation
 of the axis values and a final data value.
 }
+
+\emph{\strong{New data arrays}}
+
+New \code{CFArray} objects can be constructed from R vectors, matrices or arrays,
+optionally creating axes from dimnames on the R object, using the
+\code{as_CFArray()} function.
 }
 \seealso{
 Useful links:

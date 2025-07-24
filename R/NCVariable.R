@@ -89,6 +89,22 @@ NCVariable <- R6::R6Class("NCVariable",
       if (length(self$dimids))
         sum(self$dimids > -1L)
       else 0L
+    },
+
+    #' @description Read (a chunk of) data from the netCDF file. Degenerate
+    #' dimensions are maintained and data is always returned in its smallest
+    #' type.
+    #'
+    #' @param start A vector of indices specifying the element where reading
+    #'   starts along each dimension of the data. When `NA`, all data are read
+    #'   from the start of the array.
+    #' @param count An integer vector specifying the number of values to read
+    #'   along each dimension of the data. Any `NA` value in vector count
+    #'   indicates that the corresponding dimension should be read from the
+    #'   start index to the end of the dimension.
+    #' @return An array with the requested data, or an error object.
+    get_data = function(start = NA, count = NA) {
+      RNetCDF::var.get.nc(self$group$handle, self$name, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
     }
   ),
   active = list(

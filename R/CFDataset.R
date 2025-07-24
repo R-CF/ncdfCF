@@ -83,9 +83,9 @@ CFDataset <- R6::R6Class("CFDataset",
         vars <- as.data.frame(vars[lengths(vars) > 0L])
         print(.slim.data.frame(vars, ...), right = FALSE, row.names = FALSE)
 
-        ev <- self$attribute("external_variables")
-        if (!is.na(ev))
-          cat("\nExternal variable", if (length(ev) > 1L) "s", ": ", ev, "\n", sep = "")
+        ev <- self$root$CFmeasures
+        if (length(ev))
+          cat("\nExternal variable", if (length(ev) > 1L) "s", ": ", paste(names(ev), collapse = ", "), "\n", sep = "")
       }
 
       self$root$print_attributes(...)
@@ -224,14 +224,20 @@ CFDataset <- R6::R6Class("CFDataset",
 
     #' @field var_names (read-only) Vector of names of variables in this data set.
     var_names = function(value) {
-      if (missing(value))
-        sapply(self$variables(), function(v) v$name)
+      if (missing(value)) {
+        nm <- sapply(self$variables(), function(v) v$name)
+        names(nm) <- NULL
+        nm
+      }
     },
 
     #' @field axis_names (read-only) Vector of names of axes in this data set.
     axis_names = function(value) {
-      if (missing(value))
-        sapply(self$axes(), function(ax) ax$name)
+      if (missing(value)) {
+        nms <- sapply(self$axes(), function(ax) ax$name)
+        names(nms) <- NULL
+        nms
+      }
     }
   )
 )

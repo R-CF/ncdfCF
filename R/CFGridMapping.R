@@ -711,7 +711,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
     #' @param h Handle to the netCDF file opened for writing.
     #' @return Self, invisibly.
     write = function(h) {
-      RNetCDF::var.def.nc(h, self$name, "NC_CHAR", NA)
+      self$id <- RNetCDF::var.def.nc(h, self$name, "NC_CHAR", NA)
       self$write_attributes(h, self$name)
       invisible(self)
     }

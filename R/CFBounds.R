@@ -87,7 +87,7 @@ CFBounds <- R6::R6Class("CFBounds",
     #'
     #' @return A `CFBounds` instance covering the indicated range of indices.
     sub_bounds = function(group, rng) {
-      var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 2L, NULL)
+      var <- NCVariable$new(CF$newVarId(), self$name, group, "NC_DOUBLE", 2L, NULL)
       CFBounds$new(var, self$NCdim, private$values[, rng[1L]:rng[2L], drop = FALSE])
     },
 
@@ -99,7 +99,7 @@ CFBounds <- R6::R6Class("CFBounds",
     #' an axis but could also be an auxiliary CV or a parametric Z axis.
     write = function(h, object_name) {
       self$NCdim$write(h)
-      RNetCDF::var.def.nc(h, self$name, self$NCvar$vtype, c(self$NCdim$name, object_name))
+      self$id <- RNetCDF::var.def.nc(h, self$name, self$NCvar$vtype, c(self$NCdim$name, object_name))
       self$write_attributes(h, self$name)
       RNetCDF::var.put.nc(h, self$name, private$values)
     }

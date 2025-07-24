@@ -64,8 +64,8 @@ CFLabel <- R6::R6Class("CFLabel",
       if (rng[1L] < 1L || rng[2L] > length(private$values))
         NULL
       else {
-        dim <- NCDimension$new(-1L, self$name, rng[2L] - rng[1L] + 1L, FALSE)
-        var <- NCVariable$new(-1L, self$name, grp, "NC_STRING", 1L, NULL)
+        dim <- NCDimension$new(CF$newDimId(), self$name, rng[2L] - rng[1L] + 1L, FALSE)
+        var <- NCVariable$new(CF$newVarId(), self$name, grp, "NC_STRING", 1L, NULL)
         CFLabel$new(var, dim, private$values[rng[1L]:rng[2L]])
       }
     },
@@ -80,7 +80,7 @@ CFLabel <- R6::R6Class("CFLabel",
       # FIXME: Does this work with non-character labels? Conventions require NC_STRING or NC_CHAR
       h <- if (inherits(nc, "NetCDF")) nc else self$group$handle
       self$NCdim$write(h)
-      RNetCDF::var.def.nc(h, self$name, self$NCvar$vtype, self$NCdim$name)
+      self$id <- RNetCDF::var.def.nc(h, self$name, self$NCvar$vtype, self$NCdim$name)
       self$write_attributes(h, self$name)
       RNetCDF::var.put.nc(h, self$name, private$values)
     }

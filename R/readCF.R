@@ -68,6 +68,7 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   add_dims <- all_var_dims[!(all_var_dims %in% c(all_axis_dims, bnds))]
   if (length(add_dims)) {
     axes <- append(axes, .addBareDimensions(root, add_dims))
+    axes <- axes[lengths(axes) > 0L]
     names(root$CFaxes) <- sapply(root$CFaxes, function(x) x$name)
     names(root$NCvars) <- sapply(root$NCvars, function(v) v$name)
   }
@@ -92,7 +93,10 @@ open_ncdf <- function(resource, keep_open = FALSE) {
       "CORDEX"
     else "Generic netCDF data"
 
-    vars <- .buildVariables(root, axes)
+    # Configure any parametric vertical axes
+    lapply(root$CFaxes, function(ax) ax$configure_terms(root$CFaxes))
+
+    vars <- .buildVariables(root, root$CFaxes)
   } else {
     # Try L3b
     units <- root$attribute("units")
@@ -237,19 +241,17 @@ peek_ncdf <- function(resource) {
 
 # Create an `CFAxis` from an NC variable and dimension
 #
-# This method creates the various kinds of axes, with the exception of
-# [CFAxisVertical] and [CFAxisTime], which are passed off to `.makeAxisParametric`
-# once a parametric Z-axis is detected, or `.makeTimeAxis()` for a possible
-# time axis.
+# This method creates the various kinds of axes.
 #
 # @param grp Group in which the NC variable is defined.
 # @param var `NCVariable` instance to create the axis from.
 #
 # @return An instance of `CFAxis`.
+# @noRd
 .makeAxis <- function(grp, var) {
   h <- grp$handle
   dim <- if (var$ndims == 0L)
-    NCDimension$new(-1L, var$name, 1L, FALSE) # Scalar variable
+    NCDimension$new(CF$newDimId(), var$name, 1L, FALSE) # Scalar variable
   else
     grp$find_dim_by_id(var$dimids[1L]) # FIXME: What about NC_CHAR axis?
 
@@ -288,11 +290,7 @@ peek_ncdf <- function(resource) {
     else if (standard %in% Z_parametric_standard_names ||
              !is.na(var$attribute("positive"))) orient <- "Z"
   }
-  if (is.na(orient)) {
-    # Desperate option: try name of NC variable - non-standard
-    nm <- toupper(var$name)
-    orient <- if (match(nm, c("X", "Y", "Z", "T"), nomatch = 0L)) nm else ""
-  }
+  if (is.na(orient)) orient <- ""
 
   axis <- switch(orient,
                  "X" = CFAxisLongitude$new(var, dim, vals),
@@ -317,7 +315,7 @@ peek_ncdf <- function(resource) {
   if (length(grp$NCdims) > 0L) {
     axes <- lapply(grp$NCdims, function(d) {
       if (d$id %in% add_dims) {
-        v <- NCVariable$new(-2L, d$name, grp, "NC_INT", 1L, d$id)
+        v <- NCVariable$new(CF$newVarId(), d$name, grp, "NC_INT", 1L, d$id)
         axis <- CFAxisDiscrete$new(v, d, "", dim_only = TRUE)
         grp$NCvars <- append(grp$NCvars, v)
         grp$CFaxes <- append(grp$CFaxes, axis)
@@ -469,28 +467,32 @@ peek_ncdf <- function(resource) {
       if (!length(v$CF) && !is.na(meas <- v$attribute("cell_measures"))) {
         meas <- trimws(strsplit(meas, " ", fixed = TRUE)[[1L]], whitespace = "[ \t\r\n\\:]")
         meas <- meas[which(nzchar(meas))]
-        m <- grp$find_by_name(meas[2L], "NC")
-        if (is.null(m)) {
-          # External variable
-          root <- grp$root
-          ev <- root$attribute("external_variables")
-          if (is.na(ev) || !(meas[2L] %in% trimws(strsplit(ev, " ", fixed = TRUE)[[1L]]))) {
-            # FIXME: warning
-            warning("Unmatched `cell_measures` value '", meas[2L], "' found in variable '", v$name, "'", call. = FALSE)
-            next
+        for (m in 1:(length(meas) * 0.5)) {
+          nm <- grp$find_by_name(meas[m * 2L], "NC")
+          if (is.null(nm)) {
+            # External variable
+            root <- grp$root
+            ev <- root$attribute("external_variables")
+            if (is.na(ev) || !(meas[m * 2L] %in% trimws(strsplit(ev, " ", fixed = TRUE)[[1L]]))) {
+              # FIXME: warning
+              warning("Unmatched `cell_measures` value '", meas[meas * 2L], "' found in variable '", v$name, "'", call. = FALSE)
+            } else {
+              # If it exists, move on, else create a cell measure variable
+              cmv <- grp$find_by_name(meas[m * 2L])
+              if (!inherits(cmv, "CFCellMeasure")) {
+                cm <- CFCellMeasure$new(root, meas[m * 2L - 1L], meas[m * 2L])
+                root$addCellMeasure(cm)
+              }
+            }
+          } else {
+            # Cell measures variable is internal. If it already exists, simply
+            # continue with the next iteration.
+            if (!length(nm$CF)) {
+              ax <- .buildVariableAxisList(nm, axes)
+              cm <- CFCellMeasure$new(nm$group, meas[m * 2L - 1L], meas[m * 2L], nm, ax)
+              nm$group$addCellMeasure(cm)
+            }
           }
-          # If it exists, move on, else create a cell measure variable
-          cmv <- grp$find_by_name(meas[2L])
-          if (inherits(cmv, "CFCellMeasure")) next
-          cm <- CFCellMeasure$new(root, meas[1L], meas[2L])
-          root$addCellMeasure(cm)
-        } else {
-          # Cell measures variable is internal. If it already exists, simply
-          # continue with the next iteration.
-          if (length(m$CF)) next
-          ax <- .buildVariableAxisList(m, axes)
-          cm <- CFCellMeasure$new(m$group, meas[1L], meas[2L], m, ax)
-          m$group$addCellMeasure(cm)
         }
       }
     }
@@ -618,11 +620,15 @@ peek_ncdf <- function(resource) {
 
         # Add cell_measures
         if (!is.na(cm <- v$attribute("cell_measures"))) {
-          meas <- trimws(strsplit(cm, " ", fixed = TRUE)[[1L]][2L])
-          cmv <- v$group$find_by_name(meas, "CF")
-          if (inherits(cmv, "CFCellMeasure")) {
-            var$cell_measure <- cmv
-            cmv$register(var)
+          cms <- strsplit(cm, " ", fixed = TRUE)[[1L]]
+          len <- as.integer(length(cms) * 0.5)
+          var$cell_measures <- vector ("list", len)
+          for (i in 1L:len) {
+            cmv <- v$group$find_by_name(cms[i * 2L], "CF")
+            if (inherits(cmv, "CFCellMeasure")) {
+              var$cell_measures[[i]] <- cmv
+              cmv$register(var)
+            }
           }
         }
 
@@ -657,18 +663,21 @@ peek_ncdf <- function(resource) {
 #' @noRd
 .buildVariableAxisList <- function(ncvar, axes) {
   xids <- lapply(axes, function(x) x$dimid)
-  ax <- vector("list", ncvar$ndims)
-  for (x in 1:ncvar$ndims) {
-    ndx <- which(sapply(xids, function(e) ncvar$dimids[x] %in% e))
-    if (!length(ndx)) {
-      warning(paste0("Possible variable '", ncvar$name, "' cannot be constructed because of unknown axis identifier ", ncvar$dimids[x]))
-      # FIXME
-      return(NULL)
+  nd <- ncvar$ndims
+  if (nd > 0L) {
+    ax <- vector("list", nd)
+    for (x in 1:nd) {
+      ndx <- which(sapply(xids, function(e) ncvar$dimids[x] %in% e))
+      if (!length(ndx)) {
+        browser()
+        warning(paste0("Possible variable '", ncvar$name, "' cannot be constructed because of unknown axis identifier ", ncvar$dimids[x]))
+        return(NULL)
+      }
+      ax[[x]] <- axes[[ndx]]
     }
-    ax[[x]] <- axes[[ndx]]
-  }
-  names(ax) <- sapply(ax, function(x) x$name)
-  ax
+    names(ax) <- sapply(ax, function(x) x$name)
+    ax
+  } else list()
 }
 
 # Read the attributes for a group or a variable

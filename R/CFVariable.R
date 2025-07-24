@@ -12,9 +12,6 @@
 CFVariable <- R6::R6Class("CFVariable",
   inherit = CFVariableBase,
   private = list(
-    # Auxiliary coordinates reference, if the data variable uses them.
-    llgrid = NULL,
-
     .varProperties = function() {
       unit <- self$attribute("units")
       if (is.na(unit)) unit <- ""
@@ -53,17 +50,16 @@ CFVariable <- R6::R6Class("CFVariable",
     },
 
     # Do the auxiliary grid interpolation. Argument "subset" is passed from the
-    # `subset()` method. Argument "aoi" is an AOI, if supplied by the caller
-    # to `subset()`. Return a list of useful objects to `subset()`.
-    auxiliary_interpolation = function(subset, aoi) {
+    # `subset()` method. Argument "ll_names" give the auxiliary longitude and
+    # latitude names. Return a list of useful objects to `subset()`.
+    auxiliary_interpolation = function(subset, ll_names) {
       # This code assumes that the grid orientation of the data variable is the
       # same as that of the longitude-latitude grid
-      private$llgrid$aoi <- if (is.null(aoi)) {
-        ext <- private$llgrid$extent
-        Xrng <- if (is.na(subset$X[[1L]])) ext[1:2] else range(subset$X)
-        Yrng <- if (is.na(subset$Y[[1L]])) ext[3:4] else range(subset$Y)
-        aoi(Xrng[1L], Xrng[2L], Yrng[1L], Yrng[2L])
-      } else aoi
+      ext <- private$llgrid$extent
+      sel_names <- names(subset)
+      Xrng <- if (ll_names[1L] %in% sel_names) range(subset[[ ll_names[1L] ]]) else ext[1L:2L]
+      Yrng <- if (ll_names[2L] %in% sel_names) range(subset[[ ll_names[2L] ]]) else ext[3L:4L]
+      private$llgrid$aoi <-  aoi(Xrng[1L], Xrng[2L], Yrng[1L], Yrng[2L])
 
       index <- private$llgrid$grid_index()
       dim_index <- dim(index)
@@ -99,13 +95,13 @@ CFVariable <- R6::R6Class("CFVariable",
 
     # Read a chunk of data from file
     read_chunk = function(start, count) {
-      RNetCDF::var.get.nc(self$NCvar$group$handle, self$name, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+      self$NCvar$get_data(start, count)
     },
 
     # Read all the data values from file. Note that this may overwhelm computer
     # memory if the data is large.
     get_values = function() {
-      RNetCDF::var.get.nc(self$NCvar$group$handle, self$name, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+      self$NCvar$get_data()
     },
 
     # Internal apply/tapply method for this class. If the size of the data
@@ -127,7 +123,6 @@ CFVariable <- R6::R6Class("CFVariable",
       lvls <- nlevels(fac)
       d <- vector("list", lvls)
       ndx <- as.integer(fac)
-      h <- self$NCvar$group$handle
       nm <- self$name
       for (l in 1L:lvls) {
         indices <- which(ndx == l)
@@ -136,13 +131,13 @@ CFVariable <- R6::R6Class("CFVariable",
           rng <- range(indices)
           start[tdim] <- rng[1L]
           count[tdim] <- rng[2L] - rng[1L] + 1L
-          values <- RNetCDF::var.get.nc(h, nm, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+          values <- self$NCvar$get_data(start, count)
         } else {                    # Era factors have disparate indices
           cutoffs <- c(0L, which(c(dff, 2L) > 1L))
           values <- lapply(2L:length(cutoffs), function(i) {
             start[tdim] <- indices[cutoffs[i - 1L] + 1L]
             count[tdim] <- cutoffs[i] - cutoffs[i - 1L]
-            RNetCDF::var.get.nc(h, nm, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+            self$NCvar$get_data(start, count)
           })
           values <- abind::abind(values, along = num_dims)
         }
@@ -227,8 +222,11 @@ CFVariable <- R6::R6Class("CFVariable",
         print(.slim.data.frame(axes, ...), right = FALSE, row.names = FALSE)
       } else cat(" (none)\n")
 
-      if (!is.null(self$cell_measure)) {
-        cat("\nCell measure: ", self$cell_measure$name, " (", self$cell_measure$measure, ")\n", sep = "")
+      len <- length(self$cell_measures)
+      if (len) {
+        cat("\nCell measure", if (len > 1L) "s", ": ",
+            paste(sapply(self$cell_measures, function(cm) paste0(cm$name, " (", cm$measure, ")")), collapse = "; "),
+            "\n", sep = "")
       }
 
       if (!is.null(private$llgrid)) {
@@ -287,11 +285,10 @@ CFVariable <- R6::R6Class("CFVariable",
       out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), "): CFVariable::data()"))
 
       axes <- lapply(self$axes, function(ax) ax$clone())
-      d <- RNetCDF::var.get.nc(self$NCvar$group$handle, self$name, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
       atts <- self$attributes
       atts <- atts[!(atts$name == "coordinates"), ]
 
-      CFArray$new(self$name, out_group, d, private$values_type, axes, self$crs, atts)
+      CFArray$new(self$name, out_group, self$NCvar$get_data(), private$values_type, axes, self$crs, atts)
     },
 
     #' @description This method extracts a subset of values from the array of
@@ -299,25 +296,25 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   coordinate values of the domain of each axis.
     #'
     #' @details The range of values along each axis to be subset is expressed in
-    #'   coordinates of the domain of the axis. Any axes for which no
-    #'   selection is made in the `...` argument are extracted in
-    #'   whole. Coordinates can be specified in a variety of ways that are
-    #'   specific to the nature of the axis. For numeric axes it should (resolve
-    #'   to) be a vector of real values. A range (e.g. `100:200`), a vector
-    #'   (`c(23, 46, 3, 45, 17`), a sequence (`seq(from = 78, to = 100, by =
-    #'   2`), all work. Note, however, that only a single range is generated
-    #'   from the vector so these examples resolve to `(100, 200)`, `(3, 46)`,
-    #'   and `(78, 100)`, respectively. For time axes a vector of character
-    #'   timestamps, `POSIXct` or `Date` values must be specified. As with
-    #'   numeric values, only the two extreme values in the vector will be used.
+    #'   coordinates of the domain of the axis. Any axes for which no selection
+    #'   is made in the `...` argument are extracted in whole. Coordinates can
+    #'   be specified in a variety of ways that are specific to the nature of
+    #'   the axis. For numeric axes it should (resolve to) be a vector of real
+    #'   values. A range (e.g. `100:200`), a vector (`c(23, 46, 3, 45, 17`), a
+    #'   sequence (`seq(from = 78, to = 100, by = 2`), all work. Note, however,
+    #'   that only a single range is generated from the vector so these examples
+    #'   resolve to `(100, 200)`, `(3, 46)`, and `(78, 100)`, respectively. For
+    #'   time axes a vector of character timestamps, `POSIXct` or `Date` values
+    #'   must be specified. As with numeric values, only the two extreme values
+    #'   in the vector will be used.
     #'
-    #'   If the range of coordinate values for an axis in argument `...`
-    #'   extend the valid range of the axis in `x`, the extracted data will
-    #'   start at the beginning for smaller values and extend to the end for
-    #'   larger values. If the values envelope the valid range the entire axis
-    #'   will be extracted in the result. If the range of coordinate values for
-    #'   any axis are all either smaller or larger than the valid range of the
-    #'   axis then nothing is extracted and `NULL` is returned.
+    #'   If the range of coordinate values for an axis in argument `...` extend
+    #'   the valid range of the axis in `self`, the extracted data will start at
+    #'   the beginning for smaller values and extend to the end for larger
+    #'   values. If the values envelope the valid range the entire axis will be
+    #'   extracted in the result. If the range of coordinate values for any axis
+    #'   are all either smaller or larger than the valid range of the axis then
+    #'   nothing is extracted and `NULL` is returned.
     #'
     #'   The extracted data has the same dimensional structure as the data in
     #'   the variable, with degenerate dimensions dropped. The order of the axes
@@ -327,14 +324,11 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   As an example, to extract values of a variable for Australia for the
     #'   year 2020, where the first axis in `x` is the longitude, the second
     #'   axis is the latitude, both in degrees, and the third (and final) axis
-    #'   is time, the values are extracted by
-    #'   `x$subset(X = c(112, 154), Y = c(-9, -44), T = c("2020-01-01", "2021-01-01"))`.
-    #'   You could take the longitude-latitude values from `sf::st_bbox()` or
-    #'   `terra::ext()` if you
-    #'   have specific spatial geometries for whom you want to extract data.
-    #'   Note that this works equally well for projected coordinate reference
-    #'   systems - the key is that the specification in argument `...` uses
-    #'   the same domain of values as the respective axes in `x` use.
+    #'   is time, the values are extracted by `x$subset(X = c(112, 154), Y =
+    #'   c(-9, -44), T = c("2020-01-01", "2021-01-01"))`. Note that this works
+    #'   equally well for projected coordinate reference systems - the key is
+    #'   that the specification in argument `...` uses the same domain of values
+    #'   as the respective axes in `x` use.
     #'
     #'   ## Auxiliary coordinate variables
     #'
@@ -345,29 +339,18 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   two grids with the same dimension as the horizontal axes of the data
     #'   variable where each pixel gives the corresponding value for the
     #'   longitude and latitude. If the variable has such *auxiliary coordinate
-    #'   variables* then they will be used automatically if, and only if, the
-    #'   axes are labeled in argument `...` as `X` and `Y`. The resolution of
-    #'   the grid that is produced by this method is automatically calculated.
-    #'   If you want to subset those axes then specify values in decimal
-    #'   degrees; if you want to extract the full extent, specify `NA` for both
-    #'   `X` and `Y`. **Note** that if you want to extract the data in the
-    #'   original grid, you should use the horizontal axis names in argument
-    #'   `...`.
-    #' @param ... One or more arguments of the form `axis = range`. The
-    #'   "axis" part should be the name of an axis or its orientation `X`, `Y`,
-    #'   `Z` or `T`. The "range" part is a vector of values representing
-    #'   coordinates along the axis where to extract data. Axis designators and
-    #'   names are case-sensitive and can be specified in any order. If values
-    #'   for the range per axis fall outside of the extent of the axis, the
-    #'   range is clipped to the extent of the axis.
-    #' @param .aoi Optional, an area-of-interest instance of class `AOI` created
-    #'   with the [aoi()] function to indicate the horizontal area that should
-    #'   be extracted. The longitude and latitude coordinates must be included;
-    #'   the X and Y resolution will be calculated if not given. When provided,
-    #'   this argument will take precedence over the corresponding axis
-    #'   information for the X and Y axes in the `subset` argument. You must
-    #'   use the argument name when specifying this, like `.aoi = my_aoi`, to
-    #'   avoid the argument being treated as an axis name.
+    #'   variables* then you can specify their names (instead of specifying the
+    #'   names of the primary planar axes). The resolution of the grid that is
+    #'   produced by this method is automatically calculated. If you want to
+    #'   subset those axes then specify values in decimal degrees; if you want
+    #'   to extract the full extent, specify `NA` for both `X` and `Y`.
+    #' @param ... One or more arguments of the form `axis = range`. The "axis"
+    #'   part should be the name of an axis or its orientation `X`, `Y`, `Z` or
+    #'   `T`. The "range" part is a vector of values representing coordinates
+    #'   along the axis where to extract data. Axis designators and names are
+    #'   case-sensitive and can be specified in any order. If values for the
+    #'   range per axis fall outside of the extent of the axis, the range is
+    #'   clipped to the extent of the axis.
     #' @param rightmost.closed Single logical value to indicate if the upper
     #'   boundary of range in each axis should be included. You must use the
     #'   argument name when specifying this, like `rightmost.closed = TRUE`, to
@@ -378,23 +361,28 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   Note that degenerate dimensions (having `length(.) == 1`) are dropped
     #'   from the array but the corresponding axis is maintained in the result
     #'   as a scalar axis.
-    subset = function(..., .aoi = NULL, rightmost.closed = FALSE) {
+    subset = function(..., rightmost.closed = FALSE) {
       num_axes <- private$num_dim_axes()
       if (!num_axes)
         stop("Cannot subset a scalar variable", call. = FALSE)
-      if (!is.null(.aoi) && is.null(.aoi$lonMin))
-        stop("Argument `.aoi` must have coordinates set", call. = FALSE)
 
       # Organize the selectors
       selectors <- list(...)
+      if (is.list(selectors[[1L]]))
+        selectors <- selectors[[1L]]
       sel_names <- names(selectors)
       axis_names <- self$axis_names
       axis_order <- private$check_names(sel_names)
 
-      if ((all(c("X", "Y") %in% sel_names) || !missing(.aoi)) && inherits(private$llgrid, "CFAuxiliaryLongLat")) {
-        aux <- private$auxiliary_interpolation(selectors, .aoi)
-        sel_names <- sel_names[!grepl("X|Y", sel_names)]
-      } else aux <- NULL
+      aux <- NULL
+      if (inherits(private$llgrid, "CFAuxiliaryLongLat")) {
+        aux_names <- c(private$llgrid$varLong$name, private$llgrid$varLat$name)
+        if (any(aux_names %in% sel_names)) {
+          aux <- private$auxiliary_interpolation(selectors, aux_names)
+          sel_names <- sel_names[-which(sel_names %in% aux_names)]
+          ll_dimids <- private$llgrid$varLong$dimids # lat and long have identical dimids
+        }
+      }
 
       out_group <- makeGroup()
       out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
@@ -403,28 +391,24 @@ CFVariable <- R6::R6Class("CFVariable",
       start <- rep(1L, num_axes)
       count <- rep(NA_integer_, num_axes)
       ZT_dim <- vector("integer")
-      out_axes_dim <- list()
-      out_axes_other <- list()
+      out_axes_dim <- list(); ax_nm_dim <- list()
+      out_axes_other <- list(); ax_nm_other <- list()
       for (ax in 1:num_axes) {
         axis <- self$axes[[ax]]
         orient <- axis$orientation
+        ax_dimid <- axis$dimid
 
         # In every section, set start and count values and create a corresponding axis
-        if (!is.null(aux) && orient == "X") {
+        if (!is.null(aux) && ax_dimid == ll_dimids[1L]) {
           start[ax] <- aux$X[1L]
           count[ax] <- aux$X[2L]
           out_axis <- makeLongitudeAxis(private$llgrid$varLong$name, out_group, aux$aoi$dimnames[[2L]], aux$aoi$bounds(out_group)$lon$coordinates)
-        } else if (!is.null(aux) && orient == "Y") {
+        } else if (!is.null(aux) && ax_dimid == ll_dimids[2L]) {
           start[ax] <- aux$Y[1L]
           count[ax] <- aux$Y[2L]
           out_axis <- makeLatitudeAxis(private$llgrid$varLat$name, out_group, aux$aoi$dimnames[[1L]], aux$aoi$bounds(out_group)$lat$coordinates)
         } else { # No auxiliary coordinates
-          rng <- NULL
-          if (!is.null(.aoi))
-            rng <- if (orient == "X") c(.aoi$lonMin, .aoi$lonMax)
-                   else if (orient == "Y") c(.aoi$latMin, .aoi$latMax)
-                   else NULL
-          if (is.null(rng)) rng <- selectors[[ axis_names[ax] ]]
+          rng <- selectors[[ axis_names[ax] ]]
           if (is.null(rng)) rng <- selectors[[ orient ]]
           if (is.null(rng)) { # Axis not specified so take the whole axis
             ZT_dim <- c(ZT_dim, axis$length)
@@ -443,21 +427,30 @@ CFVariable <- R6::R6Class("CFVariable",
         out_axis$active_coordinates <- axis$active_coordinates
 
         # Collect axes for result
-        if (out_axis$length == 1L)
+        if (out_axis$length == 1L) {
           out_axes_other <- append(out_axes_other, out_axis)
-        else
+          ax_nm_other <- append(ax_nm_other, axis$name)
+        } else {
           out_axes_dim <- append(out_axes_dim, out_axis)
+          ax_nm_dim <- append(ax_nm_dim, axis$name)
+        }
       }
 
       # Read the data, index as required
-
       d <- private$read_chunk(start, count)
       if (!is.null(aux)) {
-        dim(d) <- c(aux$X[2L] * aux$Y[2L], prod(ZT_dim))
+        dim(d) <- dim_in <- c(aux$X[2L] * aux$Y[2L], prod(ZT_dim))
         d <- d[aux$index, ]
-        dim(d) <- c(aux$box, ZT_dim)
+        dim(d) <- dim_out <- c(aux$box, ZT_dim)
       }
       d <- drop(d)
+
+      # Put the dimensional axes in one list, with original names
+      axes <- c(out_axes_dim, out_axes_other)
+      names(axes) <- unlist(c(ax_nm_dim, ax_nm_other))
+
+      # If there is a vertical axis, subset any parametric terms
+      lapply(axes, function(ax) if (ax$is_parametric) ax$parametric_subset(axes, start, count, aux$index, dim_in, dim_out))
 
       # Sanitize the attributes for the result, as required, and get a CRS
       if (is.null(aux)) {
@@ -471,9 +464,8 @@ CFVariable <- R6::R6Class("CFVariable",
       }
 
       # Assemble the CFArray instance
-      scalars <- self$axes[-(1L:num_axes)]
-      axes <- c(out_axes_dim, out_axes_other, scalars)
-      names(axes) <- sapply(axes, function(a) a$name)
+      axes <- c(axes, self$axes[-(1L:num_axes)])      # Add the scalar axes to the list
+      names(axes) <- sapply(axes, function(a) a$name) # New axis names
       CFArray$new(self$name, out_group, d, private$values_type, axes, crs, atts)
     }
   ),
@@ -484,8 +476,20 @@ CFVariable <- R6::R6Class("CFVariable",
         "Variable"
     },
 
-    #' @field gridLongLat The grid of longitude and latitude values of every
-    #' grid cell when the main variable grid has a different coordinate system.
+    #' @field auxiliary_names (read-only) Retrieve the names of the auxiliary
+    #'   longitude and latitude grids as a vector of two character strings, in
+    #'   that order. If no auxiliary grids are defined, returns `NULL`.
+    auxiliary_names = function(value) {
+      if (missing(value)) {
+        if (!is.null(private$llgrid))
+          c(private$llgrid$varLong$name, private$llgrid$varLat$name)
+        else NULL
+      }
+    },
+
+    #' @field gridLongLat  Retrieve or set the grid of longitude and latitude
+    #'   values of every grid cell when the main variable grid has a different
+    #'   coordinate system.
     gridLongLat = function(value) {
       if (missing(value))
         private$llgrid
@@ -640,7 +644,7 @@ dimnames.CFVariable <- function(x) {
       }
     }
   }
-  data <- RNetCDF::var.get.nc(x$NCvar$group$handle, x$name, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+  data <- x$NCvar$get_data(start, count)
 
   # Apply dimension data and other attributes
   if (length(x$axes) && length(dim(data)) == length(dnames)) { # dimensions may have been dropped automatically, e.g. NC_CHAR to character string

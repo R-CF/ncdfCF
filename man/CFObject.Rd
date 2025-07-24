@@ -21,7 +21,12 @@ class as ancestor.
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{id}}{(read-only) The identifier of the CF object.}
+\item{\code{id}}{Set or retrieve the identifier of the CF object. In general,
+the \code{id} value is immutable so it should never be set to a new value.
+Setting the \code{id} value is only useful when writing a CF object to a new
+netCDF file and this is managed by the underlying NC objects once a new
+\code{id} value is reported by the \code{netcdf} library. Setting a wrong value
+may invalidate the entire CF object and everything that depends on it.}
 
 \item{\code{name}}{Set or retrieve the name of the CF object.}
 

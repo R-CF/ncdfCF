@@ -14,8 +14,8 @@
 #' (IPCC), as well as large collections of satellite imagery, including from
 #' Landsat and MODIS.
 #'
-#' This package currently supports group traversal with scoping rules, axis
-#' determination and interpretation, including auxiliary axes, time axis
+#' This package currently supports most common features of the CF conventions,
+#' including group traversal with scoping rules, auxiliary axes, time axis
 #' interpretation with all defined calendars, grid mapping, use of bounds data,
 #' manipulating and interpreting attributes of groups (including global
 #' attributes) and variables, search for and use of standard names. Some
@@ -28,6 +28,7 @@
 #' time) rather than index values into the array.
 #'  * Use of auxiliary grids to warp data variables using a non-default grid to
 #' a regular latitude-longitude grid.
+#'  * Calculate coordinate fields for parametric vertical axes.
 #'
 #' Properties of the netCDF resource objects are easily examined using common R
 #' commands. Access to the data in the variables can be had using similarly
@@ -66,7 +67,7 @@
 #' * `variables()`, `axes()`, `attributes()`: Return a `list` or `data.frame` with
 #' all objects of the specific type found in the data set.
 #' * `find_by_name()`: Find a named object in the data set. This can be a data
-#' variable, an axis, or a grid mapping object. A short-hand method to achieve
+#' variable, an axis, or any other named object. A short-hand method to achieve
 #' the same is the `[[` operator. This also supports scanning for objects in
 #' hierarchical groups in `netcdf4` resources.
 #' * `objects_by_standard_name()`: Find objects that use a specific value for
@@ -98,8 +99,8 @@
 #' * `attribute()`: Retrieve the values of an attribute of the data variable.
 #' * `crs`: The so-called grid-mapping object that contains information
 #' on the coordinate reference system (CRS) of the data variable.
-#' * `crs_wkt2`: The CRS of the data variable, in WKT2 format. This is derived from
-#' the data in the grid-mapping object.
+#' * `crs_wkt2`: The CRS of the data variable, in WKT2 format. This is derived
+#' from the data in the grid-mapping object.
 #'
 #' ***Data extraction***
 #'
@@ -114,6 +115,9 @@
 #' function. The function may also return a vector with multiple values (such as
 #' `range()`) and then a list of `CFArray` objects is returned, one for each
 #' result of the function.
+#' * `profile()`: Extract a profile of data from the variable into a `CFArray`
+#' or a `data.table`. Profiles can be for a single location, or zonal (e.g.
+#' across a longitude); multiple profiles can be extracted in a single call.
 #'
 #' ***S3 methods for CFVariable***
 #'
@@ -157,7 +161,6 @@
 #' * `show()`, `brief()`, and `shard()`: Print to the console or return to the
 #' caller (increasingly more compact) information on an axis.
 #' * `name`, `id`: Basic properties of the axis.
-#' * `coordinates`: Get a vector of coordinate values of the axis.
 #'
 #' ***Extraction***
 #'
@@ -178,6 +181,7 @@
 #' * `coordinates`: Retrieve the coordinates of the active coordinate set. This may
 #' be the coordinate values of the axis (say, longitude values) or a set of
 #' auxiliary coordinates associated with the axis.
+#' * `coordinate_range`: A vector with the extreme coordinate values of the axis.
 #'
 #' ***S3 methods for CFAxis***
 #'
@@ -185,7 +189,7 @@
 #'
 #' **Data**
 #'
-#' The `CFVariable::data()` and `CFVariable::subset()` methods return a
+#' The `CFVariable::data()`, `subset()` and `profile()` methods return a
 #' [CFArray] object to the caller. The `CFArray` object contains the data from
 #' the netCDF resource, as well as important metadata from the data variable:
 #' axes, CRS and attributes. The data is easily accessed as a raw array, or
@@ -217,6 +221,12 @@
 #' * `data.table()`: (requires the `data.table` package) The data values from
 #' the data object as a `data.table` where every row consists of the permutation
 #' of the axis values and a final data value.
+#'
+#' ***New data arrays***
+#'
+#' New `CFArray` objects can be constructed from R vectors, matrices or arrays,
+#' optionally creating axes from dimnames on the R object, using the
+#' `as_CFArray()` function.
 #'
 #' @keywords internal
 #' @aliases ncdfCF-package

@@ -200,16 +200,22 @@ NCObject <- R6::R6Class("NCObject",
     }
   ),
   active = list(
-    #' @field id (read-only) Retrieve the identifier of the netCDF object.
+    #' @field id Set or retrieve the identifier of the netCDF object. In
+    #'   general, the `id` value is immutable so it should never be set to a new
+    #'   value. Setting the `id` value is only useful when writing a CF object
+    #'   to a new netCDF file and this is managed by the respective NC objects
+    #'   once a new `id` value is reported by the `netcdf` library.
     id = function(value) {
       if (missing(value))
         private$id_
+      else
+        private$id_ <- value
     },
 
     #' @field name Set or retrieve the name of the object. Note that the name
-    #' comply with CF requirements: start with a letter, followed by lettters,
-    #' numbers or underscores, and having a maximum length of 255 characters.
-    #' Multi-byte characters are not allowed in names.
+    #'   must comply with CF requirements: start with a letter, followed by
+    #'   lettters, numbers or underscores, and having a maximum length of 255
+    #'   characters. Multi-byte characters are not allowed in names.
     name = function(value) {
       if (missing(value))
         private$name_

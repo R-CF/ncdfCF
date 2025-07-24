@@ -4,11 +4,9 @@
 \alias{makeGroup}
 \title{Create a group in memory to hold CF objects}
 \usage{
-makeGroup(id = -1L, name = "/", parent = NULL)
+makeGroup(name = "/", parent = NULL)
 }
 \arguments{
-\item{id}{The id of the group, default -1L.}
-
 \item{name}{The name of the group, default "/".}
 
 \item{parent}{Optionally, a parent group to which the new group will be added

@@ -26,7 +26,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     },
 
     dimvalues_short = function() {
-      crds <- self$coordinates
+      crds <- private$get_coordinates()
       nv <- length(crds)
       if (!nv) # it happens...
         "(no values)"
@@ -176,7 +176,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @return A `CFAxisTime` instance covering the indicated range of indices.
     #'   If the value of the argument is `NULL`, return the entire axis.
     subset = function(group, rng = NULL) {
-      var <- NCVariable$new(-1L, self$name, group, "NC_DOUBLE", 1L, NULL)
+      var <- NCVariable$new(CF$newVarId(), self$name, group, "NC_DOUBLE", 1L, NULL)
       time <- private$tm
 
       if (is.null(rng)) {
@@ -187,7 +187,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         rng <- range(rng)
         idx <- time$indexOf(seq(from = rng[1L], to = rng[2L], by = 1L))
         tm <- attr(idx, "CFTime")
-        dim <- NCDimension$new(-1L, self$name, length(idx), FALSE)
+        dim <- NCDimension$new(CF$newDimId(), self$name, length(idx), FALSE)
         t <- CFAxisTime$new(var, dim, tm)
         private$subset_coordinates(t, idx)
         t$set_attribute("actual_range", self$NCvar$vtype, range(tm$offsets))
@@ -211,9 +211,19 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
 
       bnds <- time$get_bounds()
       if (!is.null(bnds)) {
-        try(RNetCDF::dim.def.nc(nc, "nv2", 2L), silent = TRUE) # FIXME: nv2 could already exist with a different length
+        # Do we have to record did somewhere??
+        dnm <- "nv"
+        did <- try(RNetCDF::dim.def.nc(nc, dnm, 2L), silent = TRUE)
+        if (inherits(did, "try-error")) {
+          did <- RNetCDF::dim.inq.nc(nc, dnm)
+          did <- if (did$length == 2L) did$id
+                 else {
+                   dnm <- paste(sample(letters, 8, TRUE), collapse = "") # Random name
+                   RNetCDF::dim.def.nc(nc, dnm, 2L)
+                 }
+        }
         nm <- if (inherits(time, "CFClimatology")) self$attribute("climatology") else self$attribute("bounds")
-        RNetCDF::var.def.nc(nc, nm, "NC_DOUBLE", c("nv2", self$name))
+        RNetCDF::var.def.nc(nc, nm, "NC_DOUBLE", c(dnm, self$name))
         RNetCDF::var.put.nc(nc, nm, bnds)
       }
     }

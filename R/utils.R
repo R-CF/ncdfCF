@@ -4,13 +4,6 @@ netcdf_data_types <- c("NC_BYTE", "NC_UBYTE", "NC_CHAR", "NC_SHORT",
                        "NC_USHORT", "NC_INT", "NC_UINT", "NC_INT64",
                        "NC_UINT64", "NC_FLOAT", "NC_DOUBLE", "NC_STRING")
 
-# Standard names used for parametric Z axes
-Z_parametric_standard_names <- c("atmosphere_ln_pressure_coordinate",
-  "atmosphere_sigma_coordinate", "atmosphere_hybrid_sigma_pressure_coordinate",
-  "atmosphere_hybrid_height_coordinate", "atmosphere_sleve_coordinate",
-  "ocean_sigma_coordinate", "ocean_s_coordinate", "ocean_s_coordinate_g1",
-  "ocean_s_coordinate_g2", "ocean_sigma_z_coordinate", "ocean_double_sigma_coordinate")
-
 # This function is a bare-bones implementation of `apply(X, MARGIN, tapply, INDEX, FUN, ...)`,
 # i.e. apply a factor over a dimension of an array. There are several restrictions
 # compared to the base::apply/tapply pair (but note that function arguments are

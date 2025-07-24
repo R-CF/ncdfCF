@@ -108,8 +108,23 @@ CFStandardNames <- R6::R6Class("CFStandardNames",
         desc <- sapply(nodes, function(n) xml2::xml_text(xml2::xml_find_first(n, "description")))
         data.frame(name = names[found], units = cu, description = desc)
       } else NULL
+    },
+
+    #' @description Load the standard names table so that it's contents may be
+    #' used in display and analysis. Note that the table may be downloaded
+    #' (4.3MB at version 91) if not available or stale.
+    #' @return Self, invisibly.
+    load = function() {
+      private$retrieve()
+      invisible(self)
     }
   ),
   active = list(
+    #' @field is_loaded (read-only) Flag to determine if the standard names
+    #'   table is available.
+    is_loaded = function(value) {
+      if (missing(value))
+        !is.null(names)
+    }
   )
 )

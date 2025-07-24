@@ -16,12 +16,16 @@ this class manages the attributes for its descendent classes.
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
-\item{\code{id}}{(read-only) Retrieve the identifier of the netCDF object.}
+\item{\code{id}}{Set or retrieve the identifier of the netCDF object. In
+general, the \code{id} value is immutable so it should never be set to a new
+value. Setting the \code{id} value is only useful when writing a CF object
+to a new netCDF file and this is managed by the respective NC objects
+once a new \code{id} value is reported by the \code{netcdf} library.}
 
 \item{\code{name}}{Set or retrieve the name of the object. Note that the name
-comply with CF requirements: start with a letter, followed by lettters,
-numbers or underscores, and having a maximum length of 255 characters.
-Multi-byte characters are not allowed in names.}
+must comply with CF requirements: start with a letter, followed by
+lettters, numbers or underscores, and having a maximum length of 255
+characters. Multi-byte characters are not allowed in names.}
 
 \item{\code{attributes}}{Read or set the attributes of the object. The
 attributes are stored in a \code{data.frame} with columns "id" (integer),

@@ -26,7 +26,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     },
 
     dimvalues_short = function() {
-      crds <- self$coordinates
+      crds <- private$get_coordinates()
       nv <- length(private$values)
       if (nv == 1L)
         paste0("[", crds[1L], "]")

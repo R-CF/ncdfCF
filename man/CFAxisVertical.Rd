@@ -6,30 +6,18 @@
 \title{Vertical CF axis object}
 \description{
 This class represents a vertical axis, which may be parametric.
-It is defined through an index value that is contained in the axis, with
-additional \link{NCVariable} instances that hold ancillary data with which to
-calculate dimensional axis values. It is used in atmosphere and ocean data
-sets. Non-parametric vertical axes are stored in an \link{CFAxisNumeric}
-instance.
+A regular vertical axis behaves like any other numeric axis. A parametric
+vertical axis, on the other hand, is defined through an index value that is
+contained in the axis coordinates, with additional data variables that hold
+ancillary "formula terms" with which to calculate dimensional axis
+coordinates. It is used in atmosphere and ocean data sets.
 }
 \references{
-https://cfconventions.org/Data/cf-conventions/cf-conventions-1.12/cf-conventions.html#parametric-vertical-coordinate
+https://cfconventions.org/Data/cf-conventions/cf-conventions.html#parametric-vertical-coordinate
+https://www.myroms.org/wiki/Vertical_S-coordinate
 }
 \section{Super classes}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFAxis]{ncdfCF::CFAxis}} -> \code{\link[ncdfCF:CFAxisNumeric]{ncdfCF::CFAxisNumeric}} -> \code{CFAxisVertical}
-}
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{parameter_name}}{The 'standard_name' attribute of the \link{NCVariable}
-that identifies the parametric form of this axis.}
-
-\item{\code{computed_name}}{The standard name for the computed values of the
-axis.}
-
-\item{\code{computed_units}}{The unit of the computed values of the axis.}
-}
-\if{html}{\out{</div>}}
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
@@ -38,6 +26,20 @@ axis.}
 
 \item{\code{formula_terms}}{(read-only) A \code{data.frame} with the "formula_terms"
 to calculate the parametric axis values.}
+
+\item{\code{is_parametric}}{(read-only) Logical flag that indicates if the
+coordinates of the axis are parametric.}
+
+\item{\code{parametric_coordinates}}{(read-only) Retrieve the parametric
+coordinates of this vertical axis as a \link{CFArray}.}
+
+\item{\code{computed_name}}{(read-only) The name of the computed parameterised
+coordinates. If the parameterised coordinates have not been computed yet
+the computed name is an empty string.}
+
+\item{\code{computed_units}}{(read-only) Return the units of the computed
+parameterised coordinates, if computed, otherwise return \code{NULL}. This
+will access the standard names table.}
 }
 \if{html}{\out{</div>}}
 }
@@ -45,6 +47,8 @@ to calculate the parametric axis values.}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFAxisVertical-new}{\code{CFAxisVertical$new()}}
+\item \href{#method-CFAxisVertical-configure_terms}{\code{CFAxisVertical$configure_terms()}}
+\item \href{#method-CFAxisVertical-parametric_subset}{\code{CFAxisVertical$parametric_subset()}}
 \item \href{#method-CFAxisVertical-clone}{\code{CFAxisVertical$clone()}}
 }
 }
@@ -97,6 +101,76 @@ particular, the "standard_name may indicate that this is a parametric
 vertical axis.}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisVertical-configure_terms"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisVertical-configure_terms}{}}}
+\subsection{Method \code{configure_terms()}}{
+Configure the formula terms of a parametric vertical axis.
+If the vertical axis has a \code{formula_terms} attribute it has a
+parametric coordinate space that is calculated from the formula terms.
+This method sets up the axis instance to calculate the dimensional
+coordinate space (but it does not do the actual calculation; call the
+\code{parametric_coordinates} method to gain access to the dimensional
+coordinates).
+
+This method is called automatically when opening a netCDF file. It is
+not intended to be called otherwise.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$configure_terms(axes)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{axes}}{List of \code{CFAxis} instances to use with the formula term
+objects.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisVertical-parametric_subset"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisVertical-parametric_subset}{}}}
+\subsection{Method \code{parametric_subset()}}{
+This method subsets the parametric terms after the axis has
+been subset. This method is called by \code{CFVariable$subset()} and should
+not be called otherwise. Parametric terms must have been configured
+before calling this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$parametric_subset(axes, start, count, index, dim_in, dim_out)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{axes}}{The list of dimensional axes that the data variable uses. The
+axes are named after the original axes (some may have been renamed in
+the preceding process).}
+
+\item{\code{start}}{A vector of indices where to start reading in the terms, in
+the original axis order.}
+
+\item{\code{count}}{A vector of lengths to read along each axis, in the original
+axis order.}
+
+\item{\code{index}}{Optional index vector when auxiliary coordinates are to be
+used to warp rotated planar coordinates to lat-long coordinates.}
+
+\item{\code{dim_in}}{Optional list of dimensions to use with argument \code{index}
+for the original data.}
+
+\item{\code{dim_out}}{Optional list of dimensions to use with argument \code{index}
+for the warped data.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

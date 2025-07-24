@@ -31,7 +31,6 @@ dimension.}
 \itemize{
 \item \href{#method-NCDimension-new}{\code{NCDimension$new()}}
 \item \href{#method-NCDimension-print}{\code{NCDimension$print()}}
-\item \href{#method-NCDimension-shard}{\code{NCDimension$shard()}}
 \item \href{#method-NCDimension-write}{\code{NCDimension$write()}}
 \item \href{#method-NCDimension-clone}{\code{NCDimension$clone()}}
 }
@@ -92,21 +91,6 @@ Summary of the NC dimension printed to the console.
 \item{\code{...}}{Passed on to other methods.}
 }
 \if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-NCDimension-shard"></a>}}
-\if{latex}{\out{\hypertarget{method-NCDimension-shard}{}}}
-\subsection{Method \code{shard()}}{
-Very concise information on the dimension. The information
-returned by this function is very concise and most useful when combined
-with similar information from other dimensions.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCDimension$shard()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-Character string with very basic dimension information.
 }
 }
 \if{html}{\out{<hr>}}

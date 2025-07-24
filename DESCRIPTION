@@ -46,6 +46,7 @@ Collate:
     'CFVariable.R'
     'CFVariableBase.R'
     'CFVariableL3b.R'
+    'CFVerticalParametricTerm.R'
     'NCDimension.R'
     'NCGroup.R'
     'NCUDT.R'

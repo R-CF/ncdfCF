@@ -13,6 +13,11 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
     # The netCDF type of the unpacked data of the variable.
     values_type = NA_character_,
 
+    # Auxiliary coordinates reference, if the data variable uses them. Only
+    # applicable to CFVariable but it is here to allow referencing it in
+    # check_names()
+    llgrid = NULL,
+
     # Return the R order of dimensional axes that "receive special treatment".
     # Scalar axes are not considered here.
     YXZT = function() {
@@ -77,6 +82,21 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
 
       ax_na <- which(is.na(is_axis))
       is_axis[ax_na] <- is_orient[ax_na]
+      if (!any(is.na(is_axis)))
+        return(is_axis)
+
+      if (!is.null(private$llgrid)) {
+        aux_ll <- c(private$llgrid$varLong$name, private$llgrid$varLat$name)
+        is_aux <- match(nm, aux_ll)
+        if (anyDuplicated(is_aux, incomparables = NA))
+          stop("Duplicated auxiliary axis names not allowed", call. = FALSE)
+        if (!any(is.na(is_aux)))
+          return(is_aux)
+
+        ax_na <- which(is.na(is_axis))
+        is_axis[ax_na] <- is_aux[ax_na]
+      }
+
       if (anyDuplicated(is_axis, incomparables = NA))
         stop("Duplicated axis names and orientations not allowed", call. = FALSE)
       if (any(is.na(is_axis)))
@@ -95,7 +115,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
       if (!any(keep))
         return(atts[!(atts$name == "coordinates"), ])
 
-      crds <- paste(crds[keep])
+      crds <- paste(crds[keep], collapse = " ")
       atts[atts$name == "coordinates", ]$length <- nchar(crds)
       atts[atts$name == "coordinates", ]$value <- crds
       atts
@@ -114,9 +134,9 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
     #'   component of the axes are in decimal degrees of longitude and latitude.
     crs = NULL,
 
-    #' @field cell_measure The [CFCellMeasure] object of this variable, if
-    #'   defined.
-    cell_measure = NULL,
+    #' @field cell_measures List of the [CFCellMeasure] objects of this
+    #'   variable, if defined.
+    cell_measures = list(),
 
     #' @description Create an instance of this class.
     #' @param var The NC variable that describes this data object.
@@ -125,7 +145,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
     #' @param crs The [CFGridMapping] instance of this data object, or `NULL`
     #'   when no grid mapping is available.
     #' @return An instance of this class.
-    initialize = function(var, axes, crs) {
+    initialize = function(var, axes, crs = NULL) {
       super$initialize(var)
       self$axes <- axes
       self$crs <- crs
@@ -221,13 +241,13 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
 
       res <- lapply(f, function(fac) {
         # Create a new group for the result
-        grp <- makeGroup(-1L, "/", "/")
+        grp <- makeGroup()
 
         # Make a new time axis for the result
         new_tm <- attr(fac, "CFTime")
-        var <- NCVariable$new(-1L, tax$name, grp, tax$NCvar$vtype, 1L, NULL)
+        var <- NCVariable$new(CF$newVarId(), tax$name, grp, tax$NCvar$vtype, 1L, NULL)
         len <- length(new_tm)
-        dim <- NCDimension$new(-1L, tax$name, len, FALSE)
+        dim <- NCDimension$new(CF$newDimId(), tax$name, len, FALSE)
         new_ax <- CFAxisTime$new(var, dim, new_tm)
         if (len == 1L) {
           ax <- c(self$axes[-tm], new_ax)
@@ -461,8 +481,11 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
     #' @field axis_names (read-only) Return the names of all axes defined for
     #' the data variable.
     axis_names = function(value) {
-      if (missing(value))
-        sapply(self$axes, function(ax) ax$name)
+      if (missing(value)) {
+        nms <- sapply(self$axes, function(ax) ax$name)
+        names(nms) <- NULL
+        nms
+      }
     }
   )
 )

@@ -110,4 +110,6 @@ ggplot(Tjuly) + geom_line(aes(depth, Tyrrhenian_Sea)) + theme_bw() + xlim(0, 400
   labs(x = "Depth (m)", y = "Temperature (°C)", title =  "Tyrrhenian Sea", subtitle = "Location: 12.71E - 40.33N  Month: July 2024")
 ```
 
-(The warning is innocuous: Recall that the 141 depth values go down to almost 6,000m. Here the seafloor is at about 3,600m and the remaining depth values are set to NaN (not a number). These can obviously not be plotted.)
+The temperature drops off very rapidly in the first 100m, then slowly decreases to its lowest level at the bottom of the sea.
+
+(The warning is harmless: Recall that the 141 depth values go down to almost 6,000m. Here the seafloor is at about 3,600m and the remaining depth values are set to NaN (not a number). These can obviously not be plotted.)

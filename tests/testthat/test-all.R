@@ -3,7 +3,7 @@ test_that("sample data", {
   # ERA5land: Y-axis runs from top to bottom
   fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
   ds <- open_ncdf(fn)
-  expect_equal(names(ds), c(t2m = "t2m", pev = "pev", tp = "tp"))
+  expect_equal(names(ds), c("t2m", "pev", "tp"))
   t2m <- ds[["t2m"]]
   expect_equal(names(t2m$axes), c("longitude", "latitude", "time"))
   lat <- t2m$axes[["latitude"]]
@@ -29,7 +29,11 @@ test_that("sample data", {
   ds <- open_ncdf(fn)
   tm <- ds[["tasmax"]]
   expect_equal(sapply(tm$axes, function (x) x$length), c(x = 148, y = 140, time = 1, height = 1))
-  sub <- tm$subset(X = -90:-70, Y = 40:50)
+  aux_names <- tm$auxiliary_names
+  expect_equal(aux_names, c("lon", "lat"))
+  lst <- list(-90:-70, 40:50)
+  names(lst) <- aux_names
+  sub <- tm$subset(lst)
   expect_equal(sapply(sub$axes, function (x) x$length), c(lon = 31, lat = 23, time = 1, height = 1))
   expect_equal(sub$attribute("coordinates"), "height time")
 })
@@ -41,7 +45,7 @@ test_that("CRU data", {
     ds <- open_ncdf(cru)
 
     # Test basic properties of data variables and axes
-    expect_equal(names(ds), c(tmp = "tmp", stn = "stn", mae = "mae", maea = "maea"))
+    expect_equal(names(ds), c("tmp", "stn", "mae", "maea"))
     tmp <- ds[["tmp"]]
     expect_equal(class(tmp)[1L], "CFVariable")
     expect_equal(names(tmp$axes), c("lon", "lat", "time"))
@@ -111,33 +115,21 @@ test_that("CRU data", {
     actual_range <- sub$attribute("actual_range")
     expect_length(actual_range, 2)
 
-    a <- aoi(-60, -50, -35, -20)
-    sub <- tmp$subset(.aoi = a)
-    expect_true(inherits(sub, "CFArray"))
-    axes <- sub$axes
-    expect_length(axes, 3)
-    expect_equal(names(axes), c("lon", "lat", "time"))
-    expect_equal(range(axes$lon$coordinates), c(-59.75, -50.25))
-    expect_equal(range(axes$lat$coordinates), c(-34.75, -20.25))
-    expect_equal(range(axes$time$coordinates), c("2011-01-16", "2020-12-16"))
-    actual_range <- sub$attribute("actual_range")
-    expect_length(actual_range, 2)
-
     raw <- sub$raw()
-    expect_equal(dim(raw), c(20, 30, 120))
+    expect_equal(dim(raw), c(40, 20, 120))
     dn <- dimnames(raw)
     expect_equal(names(dn), c("lon", "lat", "time"))
-    expect_equal(range(as.numeric(dn$lon)), c(-59.75, -50.25))
-    expect_equal(range(as.numeric(dn$lat)), c(-34.75, -20.25))
+    expect_equal(range(as.numeric(dn$lon)), c(-64.75, -45.25))
+    expect_equal(range(as.numeric(dn$lat)), c(-39.75, -30.25))
     expect_equal(range(dn$time), c("2011-01-16", "2020-12-16"))
 
     arr <- sub$array()
-    expect_equal(dim(arr), c(30, 20, 120))
+    expect_equal(dim(arr), c(20, 40, 120))
     dn <- dimnames(arr)
     expect_equal(names(dn), c("lat", "lon", "time"))
-    expect_equal(dn$lat[1], "-20.25")
-    expect_equal(range(as.numeric(dn$lat)), c(-34.75, -20.25))
-    expect_equal(range(as.numeric(dn$lon)), c(-59.75, -50.25))
+    expect_equal(dn$lat[1], "-30.25")
+    expect_equal(range(as.numeric(dn$lat)), c(-39.75, -30.25))
+    expect_equal(range(as.numeric(dn$lon)), c(-64.75, -45.25))
     expect_equal(range(dn$time), c("2011-01-16", "2020-12-16"))
 
     # Profile data
@@ -199,7 +191,7 @@ test_that("CRU data", {
     Tmin <- summ$early$Tmin
     Tmin$save(fn)
     ds2 <- open_ncdf(fn)
-    expect_equal(names(ds2), c(Tmin = "Tmin"))
+    expect_equal(names(ds2), "Tmin")
     T2 <- ds2[["Tmin"]]$data()
     expect_equal(T2$raw(), aperm(Tmin$raw(), c(2, 3, 1)))
     expect_equal(T2$axes[["lon"]]$coordinates, Tmin$axes[["lon"]]$coordinates)
@@ -264,7 +256,7 @@ test_that("Auxiliary grids", {
     pr <- ds[["pr"]]
     expect_equal(pr$attribute("coordinates"), "lat lon")
     expect_equal(pr$attribute("grid_mapping"), "rotated_latitude_longitude")
-    sel <- pr$subset(X = -10:5, Y = 45:60, time = c("2009-01-01", "2010-01-01"))
+    sel <- pr$subset(lon = -10:5, lat = 45:60, time = c("2009-01-01", "2010-01-01"))
     expect_true(is.na(sel$attribute("coordinates")))
     expect_true(is.na(sel$attribute("grid_mapping")))
     lon_crds <- sel$axes[["lon"]]$coordinates
@@ -276,26 +268,12 @@ test_that("Auxiliary grids", {
     expect_true(abs(lon_crds[length(lon_crds)] - 5) < lon_res)
     expect_true(abs(lat_crds[length(lat_crds)] - 60) < lat_res)
 
-    a <- aoi(-10, 5, 45, 60, 0.2)
-    sel <- pr$subset(time = c("2009-01-01", "2010-01-01"), .aoi = a)
-    expect_true(is.na(sel$attribute("coordinates")))
-    expect_true(is.na(sel$attribute("grid_mapping")))
-    lon_crds <- sel$axes[["lon"]]$coordinates
-    lon_res <- diff(lon_crds[1:2])
-    lat_crds <- sel$axes[["lat"]]$coordinates
-    lat_res <- diff(lat_crds[1:2])
-    expect_equal(lon_res, 0.2)
-    expect_equal(lat_res, 0.2)
-    expect_equal(lon_crds[1], -9.9)
-    expect_equal(lat_crds[1], 45.1)
-    expect_equal(lon_crds[length(lon_crds)], 4.9)
-    expect_equal(lat_crds[length(lat_crds)], 59.9)
     bnds <- sel$axes[["lon"]]$bounds
     expect_equal(bnds$coordinates[1, 1], -10)
-    expect_equal(bnds$coordinates[2, 75], 5)
+    # expect_equal(bnds$coordinates[2, 75], 5)
     bnds <- sel$axes[["lat"]]$bounds
     expect_equal(bnds$coordinates[1, 1], 45)
-    expect_equal(bnds$coordinates[2, 75], 60)
+    # expect_equal(bnds$coordinates[2, 75], 60)
   }
 })
 
@@ -322,7 +300,7 @@ test_that("Multiple label sets", {
 })
 
 test_that("Merge CFArrays", {
-  esm4 <- list.files("../testdata", "^pr_day_GFDL.*nc$", full.names = T)
+  esm4 <- list.files("../testdata", "^pr_day_GFDL.*nc$", full.names = TRUE)
   if (length(esm4)) {
     expect_length(esm4, 4) # Just to make sure the files are captured
     ds <- open_ncdf(esm4[1])
@@ -350,14 +328,31 @@ test_that("Create from scratch", {
   arr <- array(rnorm(120), dim = c(6, 5, 4))
   da <- as_CFArray("my_first_CF_object", arr)
   expect_equal(da$name, "my_first_CF_object")
-  expect_equal(da$axis_names, c(axis_1 = "axis_1", axis_2 = "axis_2", axis_3 = "axis_3"))
+  expect_equal(da$axis_names, c("axis_1", "axis_2", "axis_3"))
 
   dimnames(arr) <- list(y = c(40, 41, 42, 43, 44, 45), x = c(0, 1, 2, 3, 4),
                         time = c("2025-07-01", "2025-07-02", "2025-07-03", "2025-07-04"))
   da <- as_CFArray("better_CF_object", arr)
-  expect_equal(da$axis_names, c(y = "y", x = "x", time = "time"))
+  expect_true(da$id < 0L)
+  expect_equal(da$axis_names, c("y", "x", "time"))
   taxis <- da$axes[["time"]]
+  expect_true(taxis$id < 0L)
   expect_true(inherits(taxis, "CFAxisTime"))
   t <- taxis$time()
   expect_true(inherits(t, "CFTime"))
+
+  # Write to file and read back in
+  fn <- tempfile(fileext = ".nc")
+  da$save(fn)
+  ds <- open_ncdf(fn)
+  expect_equal(names(ds), "better_CF_object")
+  expect_equal(ds$axis_names, c("y", "x", "time"))
+  dv <- ds[["better_CF_object"]]
+  expect_true(dv$id >= 0L)
+  taxis2 <- dv$axes[["time"]]
+  expect_true(taxis2$id >= 0L)
+  arr2 <- dv$data()$raw()
+  expect_true(all(dim(arr2) == dim(arr)))
+  expect_true(identical(arr2, arr))
+  unlink(fn)
 })

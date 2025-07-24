@@ -133,7 +133,7 @@ CFArray <- R6::R6Class("CFArray",
     #'   data in argument `values`.
     #' @return An instance of this class.
     initialize = function(name, group, values, values_type, axes, crs, attributes) {
-      var <- NCVariable$new(-1L, name, group, values_type, 0L, NULL)
+      var <- NCVariable$new(CF$newVarId(), name, group, values_type, 0L, NULL)
       var$attributes <- attributes
       super$initialize(var, axes, crs)
 
@@ -366,7 +366,7 @@ CFArray <- R6::R6Class("CFArray",
       dt <- private$orient("CF")
       axes <- attr(dt, "axes")
       dim_axes <- length(axes)
-      if (dim_axes > 0L)
+      self$id <- if (dim_axes > 0L)
         RNetCDF::var.def.nc(nc, self$name, if (pack) "NC_SHORT" else private$values_type, axes)
       else
         RNetCDF::var.def.nc(nc, self$name, if (pack) "NC_SHORT" else private$values_type, NA)

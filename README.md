@@ -39,8 +39,8 @@ Metadata Conventions to interpret the data. This currently applies to:
   labels are provided, these will be used as `dimnames` for the axis.
   (Note that this also applies to generic numeric axes with labels
   defined.)
-- **Parametric vertical coordinates** are read, including variables
-  listed in the `formula_terms` attribute.
+- **Parametric vertical coordinates** are computed using the
+  `formula_terms` attribute, for two ocean formulations.
 - **Auxiliary coordinates** are identified and read. This applies also
   to **scalar axes** and **auxiliary longitude-latitude grids**.
   Auxiliary coordinates can be activated by the user and then used in
@@ -95,8 +95,7 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 
 # ...or very brief details
 ds$var_names
-#>   t2m   pev    tp 
-#> "t2m" "pev"  "tp"
+#> [1] "t2m" "pev" "tp"
 ds$axis_names
 #>        time   longitude    latitude 
 #>      "time" "longitude"  "latitude"
@@ -219,7 +218,7 @@ There are four ways to read data for a data variable from the resource:
   profile in the physical space of the data variable.
 
 ``` r
-# Extract a timeseries for a specific location
+# Extract a timeseries for a specific location - see also the `profile()` method
 ts <- t2m[5, 4, ]
 str(ts)
 #>  num [1, 1, 1:24] 293 292 292 291 291 ...
@@ -357,29 +356,29 @@ axis coordinates you get progressively higher-order results. To get a
 latitudinal transect, for instance, provide only a longitude coordinate:
 
 ``` r
-(trans30 <- t2m$profile(longitude = 30, .names = "lon_30"))
-#> <Data array> lon_30 
+(trans30 <- t2m$profile(longitude = 29.74, .names = "lon_29_74"))
+#> <Data array> lon_29_74 
 #> Long name: 2 metre temperature 
 #> 
-#> Values: [286.4614 ... 300.0948] K
+#> Values: [286.5394 ... 298.963] K
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
 #>  axis name      length unlim values                                       
 #>  Y    latitude  21           [-1 ... -3]                                  
 #>  T    time      24     U     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
-#>  X    longitude  1           [30]                                         
+#>  X    longitude  1           [29.74]                                      
 #>  unit                             
 #>  degrees_north                    
 #>  hours since 1900-01-01 00:00:00.0
 #>  degrees_east                     
 #> 
 #> Attributes:
-#>  name         type      length value                 
-#>  long_name    NC_CHAR   19     2 metre temperature   
-#>  units        NC_CHAR    1     K                     
-#>  coordinates  NC_CHAR    9     longitude             
-#>  actual_range NC_DOUBLE  2     286.461377, 300.094771
+#>  name         type      length value                
+#>  long_name    NC_CHAR   19     2 metre temperature  
+#>  units        NC_CHAR    1     K                    
+#>  coordinates  NC_CHAR    9     longitude            
+#>  actual_range NC_DOUBLE  2     286.539447, 298.96298
 ```
 
 Note that there is only a single longitude coordinate left, at exactly
@@ -513,7 +512,7 @@ arr <- array(rnorm(120), dim = c(6, 5, 4))
 as_CFArray("my_first_CF_object", arr)
 #> <Data array> my_first_CF_object 
 #> 
-#> Values: [-2.416518 ... 2.849734] 
+#> Values: [-2.301656 ... 3.317959] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -524,7 +523,7 @@ as_CFArray("my_first_CF_object", arr)
 #> 
 #> Attributes:
 #>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -2.416518, 2.849734
+#>  actual_range NC_DOUBLE 2      -2.301656, 3.317959
 ```
 
 Usable but not very impressive. The axes have dull names without any
@@ -546,7 +545,7 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 (obj <- as_CFArray("a_better_CF_object", arr))
 #> <Data array> a_better_CF_object 
 #> 
-#> Values: [-2.416518 ... 2.849734] 
+#> Values: [-2.301656 ... 3.317959] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -557,7 +556,7 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 #> 
 #> Attributes:
 #>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -2.416518, 2.849734
+#>  actual_range NC_DOUBLE 2      -2.301656, 3.317959
 
 # Axes are of a specific type and have basic attributes set
 obj$axes[["lat"]]
@@ -664,39 +663,36 @@ More comprehensive support for DSG is in the development plan.
 
 ## Development plan
 
-Package `ncdfCF` is in the early phases of development. It supports
-reading of all data objects from netCDF resources in “classic” and
-“netcdf4” formats; and can write single data arrays back to a netCDF
-file. From the CF Metadata Conventions it supports identification of
-axes, interpretation of the “time” axis, name resolution when using
-groups, reading of grid cell boundary information, auxiliary coordinate
-variables, labels, cell measures, attributes and grid mapping
-information.
+Package `ncdfCF` is still being developed. It supports reading of all
+data objects from netCDF resources in “classic” and “netcdf4” formats;
+and can write single data arrays back to a netCDF file. From the CF
+Metadata Conventions it supports identification of axes, interpretation
+of the “time” axis, name resolution when using groups, reading of grid
+cell boundary information, auxiliary coordinate variables, labels, cell
+measures, attributes and grid mapping information, among others.
 
 Development plans for the near future focus on supporting the below
 features:
 
 ##### netCDF
 
-- Support for writing of data sets (`CFArray` instances can already be
-  written to file).
+- Support for writing of complex data sets (single `CFArray` instances
+  can already be written to file).
 
 ##### CF Metadata Conventions
 
-- Calculate parametric vertical coordinates.
+- Cell methods
 - Aggregation, using the CFA convention.
 - Support for discrete sampling geometries.
-- Interface to “standard_name” libraries and other “defined
-  vocabularies”.
 - Compliance with CMIP5 / CMIP6 requirements.
 
 ## Installation
 
-Package `ncdfCF` is still in the early phases of development. While
-extensively tested on multiple well-structured datasets, errors may
-still occur, particularly in datasets that do not adhere to the CF
-Metadata Conventions. The API may still change and although care is
-taken not to make breaking changes, sometimes this is unavoidable.
+Package `ncdfCF` is still being developed. While extensively tested on
+multiple well-structured datasets, errors may still occur, particularly
+in datasets that do not adhere to the CF Metadata Conventions. The API
+may still change and although care is taken not to make breaking
+changes, sometimes this is unavoidable.
 
 Installation from CRAN of the latest release:
 

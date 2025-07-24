@@ -125,10 +125,17 @@ CFObject <- R6::R6Class("CFObject",
         "Generic CF object"
     },
 
-    #' @field id (read-only) The identifier of the CF object.
+    #' @field id Set or retrieve the identifier of the CF object. In general,
+    #'   the `id` value is immutable so it should never be set to a new value.
+    #'   Setting the `id` value is only useful when writing a CF object to a new
+    #'   netCDF file and this is managed by the underlying NC objects once a new
+    #'   `id` value is reported by the `netcdf` library. Setting a wrong value
+    #'   may invalidate the entire CF object and everything that depends on it.
     id = function(value) {
       if (missing(value))
         self$NCvar$id
+      else
+        self$NCvar$id <- value
     },
 
     #' @field name Set or retrieve the name of the CF object.

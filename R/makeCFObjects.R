@@ -5,17 +5,16 @@
 #' writing them to file. Extracting data from a `CFVariable` into a [CFArray]
 #' instance will also create a virtual group.
 #'
-#' @param id The id of the group, default -1L.
 #' @param name The name of the group, default "/".
 #' @param parent Optionally, a parent group to which the new group will be added
 #' as a child.
 #'
 #' @return A `NCGroup` instance.
 #' @export
-makeGroup <- function(id = -1L, name = "/", parent = NULL) {
+makeGroup <- function(name = "/", parent = NULL) {
   if (name != "/" && !.is_valid_name(name))
     stop("Name for group is not valid", call. = FALSE)
-  NCGroup$new(id, name, parent, NULL)
+  NCGroup$new(CF$newGroupId(), name, parent, NULL)
 }
 
 #' Create an axis
@@ -58,23 +57,23 @@ makeAxis <- function(name, group, orientation, values, bounds = NULL) {
         makeLatitudeAxis(name, group, values, bounds)
       else {
         # Make a generic axis
-        var <- NCVariable$new(-1L, name, group, "NC_DOUBLE", 1L, NULL)
-        dim <- NCDimension$new(-1L, name, length(values), FALSE)
+        var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", 1L, NULL)
+        dim <- NCDimension$new(CF$newDimId(), name, length(values), FALSE)
         axis <- CFAxisNumeric$new(var, dim, "", values)
 
         axis$set_attribute("actual_range", "NC_DOUBLE", range(values))
         if (!is.null(bounds)) {
           nm <- paste0(name, "_bnds")
-          var <- NCVariable$new(-1L, nm, group, "NC_DOUBLE", 2L, NULL)
-          dim <- NCDimension$new(-1L, "nv", 2L, FALSE)
+          var <- NCVariable$new(CF$newVarId(), nm, group, "NC_DOUBLE", 2L, NULL)
+          dim <- NCDimension$new(CF$newDimId(), "nv", 2L, FALSE)
           axis$bounds <- CFBounds$new(var, dim, bounds)
           axis$set_attribute("bounds", "NC_CHAR", nm)
         }
         axis
       }
     } else if (is.character(values)) {
-      var <- NCVariable$new(-1L, name, group, "NC_STRING", 1L, NULL)
-      dim <- NCDimension$new(-1L, name, length(values), FALSE)
+      var <- NCVariable$new(CF$newVarId(), name, group, "NC_STRING", 1L, NULL)
+      dim <- NCDimension$new(CF$newDimId(), name, length(values), FALSE)
       CFAxisCharacter$new(var, dim, "", values)
     }
   } else stop("Bad `orientation` value for axis creation.", call. = FALSE)
@@ -99,8 +98,8 @@ makeLongitudeAxis <- function(name, group, values, bounds = NULL) {
   # FIXME: Check domain
   # FIXME: Arguments should not be NULL
 
-  var <- NCVariable$new(-1L, name, group, "NC_DOUBLE", 1L, NULL)
-  dim <- NCDimension$new(-1L, name, length(values), FALSE)
+  var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", 1L, NULL)
+  dim <- NCDimension$new(CF$newDimId(), name, length(values), FALSE)
   axis <- CFAxisLongitude$new(var, dim, values)
 
   axis$set_attribute("standard_name", "NC_CHAR", "longitude")
@@ -109,8 +108,8 @@ makeLongitudeAxis <- function(name, group, values, bounds = NULL) {
   axis$set_attribute("axis", "NC_CHAR", "X")
   if (!is.null(bounds)) {
     nm <- paste0(name, "_bnds")
-    var <- NCVariable$new(-1L, nm, group, "NC_DOUBLE", 2L, NULL)
-    dim <- NCDimension$new(-1L, "nv", 2L, FALSE)
+    var <- NCVariable$new(CF$newVarId(), nm, group, "NC_DOUBLE", 2L, NULL)
+    dim <- NCDimension$new(CF$newDimId(), "nv", 2L, FALSE)
     axis$bounds <- CFBounds$new(var, dim, bounds)
     axis$set_attribute("bounds", "NC_CHAR", nm)
   }
@@ -134,8 +133,8 @@ makeLatitudeAxis <- function(name, group, values, bounds) {
     stop("Name for axis is not valid", call. = FALSE)
   # FIXME: Check domain
 
-  var <- NCVariable$new(-1L, name, group, "NC_DOUBLE", 1L, NULL)
-  dim <- NCDimension$new(-1L, name, length(values), FALSE)
+  var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", 1L, NULL)
+  dim <- NCDimension$new(CF$newDimId(), name, length(values), FALSE)
   axis <- CFAxisLatitude$new(var, dim, values)
 
   axis$set_attribute("standard_name", "NC_CHAR", "latitude")
@@ -144,8 +143,8 @@ makeLatitudeAxis <- function(name, group, values, bounds) {
   axis$set_attribute("actual_range", "NC_DOUBLE", range(values))
   if (!is.null(bounds)) {
     nm <- paste0(name, "_bnds")
-    var <- NCVariable$new(-1L, nm, group, "NC_DOUBLE", 2L, NULL)
-    dim <- NCDimension$new(-1L, "nv", 2L, FALSE)
+    var <- NCVariable$new(CF$newVarId(), nm, group, "NC_DOUBLE", 2L, NULL)
+    dim <- NCDimension$new(CF$newDimId(), "nv", 2L, FALSE)
     axis$bounds <- CFBounds$new(var, dim, bounds)
     axis$set_attribute("bounds", "NC_CHAR", nm)
   }
@@ -172,16 +171,16 @@ makeVerticalAxis <- function(name, group, values, bounds) {
     stop("Name for axis is not valid", call. = FALSE)
   # FIXME: Check domain
 
-  var <- NCVariable$new(-1L, name, group, "NC_DOUBLE", 1L, NULL)
-  dim <- NCDimension$new(-1L, name, length(values), FALSE)
+  var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", 1L, NULL)
+  dim <- NCDimension$new(CF$newDimId(), name, length(values), FALSE)
   axis <- CFAxisVertical$new(var, dim, values, "depth")
 
   axis$set_attribute("axis", "NC_CHAR", "Z")
   axis$set_attribute("actual_range", "NC_DOUBLE", range(values))
   if (!is.null(bounds)) {
     nm <- paste0(name, "_bnds")
-    var <- NCVariable$new(-1L, nm, group, "NC_DOUBLE", 2L, NULL)
-    dim <- NCDimension$new(-1L, "nv", 2L, FALSE)
+    var <- NCVariable$new(CF$newVarId(), nm, group, "NC_DOUBLE", 2L, NULL)
+    dim <- NCDimension$new(CF$newDimId(), "nv", 2L, FALSE)
     axis$bounds <- CFBounds$new(var, dim, bounds)
     axis$set_attribute("bounds", "NC_CHAR", nm)
   }
@@ -203,8 +202,8 @@ makeTimeAxis <- function(name, group, values) {
   if (!.is_valid_name(name))
     stop("Name for axis is not valid", call. = FALSE)
 
-  var <- NCVariable$new(-1L, name, group, "NC_DOUBLE", 1L, NULL)
-  dim <- NCDimension$new(-1L, name, length(values), FALSE)
+  var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", 1L, NULL)
+  dim <- NCDimension$new(CF$newDimId(), name, length(values), FALSE)
   axis <- CFAxisTime$new(var, dim, values)
 
   axis$set_attribute("standard_name", "NC_CHAR", "time")
@@ -214,8 +213,8 @@ makeTimeAxis <- function(name, group, values) {
   axis$set_attribute("actual_range", "NC_DOUBLE", range(values$offsets))
   if (!is.null(values$bounds)) {
     nm <- paste0(name, "_bnds")
-    var <- NCVariable$new(-1L, nm, group, "NC_DOUBLE", 2L, NULL)
-    dim <- NCDimension$new(-1L, "nv", 2L, FALSE)
+    var <- NCVariable$new(CF$newVarId(), nm, group, "NC_DOUBLE", 2L, NULL)
+    dim <- NCDimension$new(CF$newDimId(), "nv", 2L, FALSE)
     axis$bounds <- CFBounds$new(var, dim, values$get_bounds())
     axis$set_attribute("bounds", "NC_CHAR", nm)
   }
@@ -239,8 +238,8 @@ makeDiscreteAxis <- function(name, group, length) {
     stop("Name for axis is not valid", call. = FALSE)
 
   length <- as.integer(length)
-  var <- NCVariable$new(-1L, name, group, "NC_INT", 1L, NULL)
-  dim <- NCDimension$new(-1L, name, length, FALSE)
+  var <- NCVariable$new(CF$newVarId(), name, group, "NC_INT", 1L, NULL)
+  dim <- NCDimension$new(CF$newDimId(), name, length, FALSE)
   axis <- CFAxisDiscrete$new(var, dim, "")
 
   axis$set_attribute("actual_range", "NC_INT", c(1L, length))
@@ -262,8 +261,8 @@ makeCharacterAxis <- function(name, group, values) {
   if (!.is_valid_name(name))
     stop("Name for axis is not valid", call. = FALSE)
 
-  var <- NCVariable$new(-1L, name, group, "NC_STRING", 1L, NULL) # FIXME: Make this NC_CHAR for netcdf3 support -> extra dim!
-  dim <- NCDimension$new(-1L, name, length(values), FALSE)
+  var <- NCVariable$new(CF$newVarId(), name, group, "NC_STRING", 1L, NULL) # FIXME: Make this NC_CHAR for netcdf3 support -> extra dim!
+  dim <- NCDimension$new(CF$newDimId(), name, length(values), FALSE)
   axis <- CFAxisCharacter$new(var, dim, "", values)
 
   axis

@@ -22,9 +22,6 @@ processing is selectable through methods and fields in this class.
 \describe{
 \item{\code{NCdim}}{The \link{NCDimension} that stores the netCDF dimension details.}
 
-\item{\code{orientation}}{A character "X", "Y", "Z" or "T" to indicate the
-orientation of the axis, or an empty string if not known or different.}
-
 \item{\code{bounds}}{The boundary values of this axis, if set.}
 }
 \if{html}{\out{</div>}}
@@ -38,6 +35,12 @@ orientation of the axis, or an empty string if not known or different.}
 
 \item{\code{length}}{(read-only) The declared length of this axis.}
 
+\item{\code{orientation}}{Set or retrieve the orientation of the axis, a single
+character with a value of "X", "Y", "Z", "T". Setting the orientation
+of the axis should only be done when the current orientation is
+unknown. Setting a wrong value may give unexpected errors in processing
+of data variables.}
+
 \item{\code{values}}{(read-only) Retrieve the raw values of the axis. In general
 you should use the \code{coordinates} field rather than this one.}
 
@@ -50,11 +53,15 @@ descendant, which is added to the end of the list of coordinate sets.
 On retrieval, the active \code{CFLabel} or \code{CFAxis} instance or \code{NULL} when
 the active coordinate set is the primary axis coordinates.}
 
-\item{\code{coordinate_names}}{Retrieve the names of the coordinate sets
-defined for the axis, as a character vector. The first element in the
-vector is the name of the axis and it refers to the values of the
+\item{\code{coordinate_names}}{(read-only) Retrieve the names of the coordinate
+sets defined for the axis, as a character vector. The first element in
+the vector is the name of the axis and it refers to the values of the
 coordinates as stored in the netCDF file. Following elements refer to
 auxiliary coordinates.}
+
+\item{\code{coordinate_range}}{(read-only) Retrieve the range of the coordinates
+of the axis as a vector of two values. The mode of the result depends on
+the sub-type of the axis.}
 
 \item{\code{active_coordinates}}{Set or retrieve the name of the coordinate set
 to use with the axis for printing to the console as well as for
@@ -62,6 +69,10 @@ processing methods such as \code{subset()}.}
 
 \item{\code{unlimited}}{(read-only) Logical to indicate if the axis has an
 unlimited dimension.}
+
+\item{\code{is_parametric}}{Logical flag that indicates if the axis has
+dimensional coordinates. Always \code{FALSE} for all axes except for
+\link{CFAxisVertical} which overrides this method.}
 }
 \if{html}{\out{</div>}}
 }
@@ -74,6 +85,7 @@ unlimited dimension.}
 \item \href{#method-CFAxis-shard}{\code{CFAxis$shard()}}
 \item \href{#method-CFAxis-peek}{\code{CFAxis$peek()}}
 \item \href{#method-CFAxis-time}{\code{CFAxis$time()}}
+\item \href{#method-CFAxis-configure_terms}{\code{CFAxis$configure_terms()}}
 \item \href{#method-CFAxis-identical}{\code{CFAxis$identical()}}
 \item \href{#method-CFAxis-can_append}{\code{CFAxis$can_append()}}
 \item \href{#method-CFAxis-subset}{\code{CFAxis$subset()}}
@@ -215,14 +227,35 @@ with no result for the other descendant classes.
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-configure_terms"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-configure_terms}{}}}
+\subsection{Method \code{configure_terms()}}{
+Configure the function terms of a parametric vertical axis.
+This method is only useful for \code{CFAxisVertical} instances having a
+parametric formulation. This stub is here to make the call to this
+method succeed with no result for the other descendant classes.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$configure_terms(axes)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{axes}}{List of \code{CFAxis} instances.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{NULL}
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-identical"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-identical}{}}}
 \subsection{Method \code{identical()}}{
 Tests if the axis passed to this method is identical to
-\code{self}. This only tests for generic properties - class, length and name
-\itemize{
-\item with further assessment done in sub-classes.
-}
+\code{self}. This only tests for generic properties - class, length and name - with
+further assessment done in sub-classes.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxis$identical(axis)}\if{html}{\out{</div>}}
 }
@@ -336,8 +369,7 @@ Write the axis to a netCDF file, including its attributes.
 \describe{
 \item{\code{nc}}{The handle of the netCDF file opened for writing or a group in
 the netCDF file. If \code{NULL}, write to the file or group where the axis
-was read from (the file must have been opened for writing). If not
-\code{NULL}, the handle to a netCDF file or a group therein.}
+was read from (the file must have been opened for writing).}
 }
 \if{html}{\out{</div>}}
 }

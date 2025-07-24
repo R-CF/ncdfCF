@@ -58,7 +58,7 @@
 #' @examples
 #' (aoi <- aoi(20, 60, -40, -20, 0.5))
 aoi <- function(lonMin, lonMax, latMin, latMax, resX, resY) {
-  if (missing(resX)) resolution <- c(NULL, NULL)
+  if (missing(resX)) resolution <- NULL
   else {
     if (missing(resY)) resY <- resX
     resolution <- c(resX, resY)

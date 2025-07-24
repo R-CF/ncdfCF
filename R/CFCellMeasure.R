@@ -75,7 +75,7 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
         stop("Invalid 'measure' for cell measure variable.", call. = FALSE)
 
       if (!(is.null(nc_var) || is.null(axes))) {
-        private$var <- CFVariable$new(grp, nc_var, axes)
+        private$var <- CFVariable$new(nc_var, axes)
         self$name <- nc_var$name
         private$axes <- axes
       } else {

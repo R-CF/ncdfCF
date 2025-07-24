@@ -51,6 +51,7 @@ path from the root group.}
 \item \href{#method-NCVariable-print}{\code{NCVariable$print()}}
 \item \href{#method-NCVariable-shard}{\code{NCVariable$shard()}}
 \item \href{#method-NCVariable-array_dims}{\code{NCVariable$array_dims()}}
+\item \href{#method-NCVariable-get_data}{\code{NCVariable$get_data()}}
 \item \href{#method-NCVariable-clone}{\code{NCVariable$clone()}}
 }
 }
@@ -144,6 +145,35 @@ the number of axes of a CF data variable.
 
 \subsection{Returns}{
 Integer value with the number of dimensional axes.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCVariable-get_data"></a>}}
+\if{latex}{\out{\hypertarget{method-NCVariable-get_data}{}}}
+\subsection{Method \code{get_data()}}{
+Read (a chunk of) data from the netCDF file. Degenerate
+dimensions are maintained and data is always returned in its smallest
+type.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCVariable$get_data(start = NA, count = NA)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{start}}{A vector of indices specifying the element where reading
+starts along each dimension of the data. When \code{NA}, all data are read
+from the start of the array.}
+
+\item{\code{count}}{An integer vector specifying the number of values to read
+along each dimension of the data. Any \code{NA} value in vector count
+indicates that the corresponding dimension should be read from the
+start index to the end of the dimension.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+An array with the requested data, or an error object.
 }
 }
 \if{html}{\out{<hr>}}

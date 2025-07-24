@@ -453,7 +453,8 @@ NCGroup <- R6::R6Class("NCGroup",
     },
 
     #' @field data_set (read-only) Retrieve the [CFDataset] that the group
-    #' belongs to.
+    #'   belongs to. If the group is not attached to a `CFDataset`, returns
+    #'   `NULL`.
     data_set = function(value) {
       if (missing(value)) {
         g <- self

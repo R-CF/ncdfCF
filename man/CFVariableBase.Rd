@@ -27,8 +27,8 @@ any axes \verb{n+1..m} are scalar axes.)}
 instance of \link{CFGridMapping}. If this field is \code{NULL}, the horizontal
 component of the axes are in decimal degrees of longitude and latitude.}
 
-\item{\code{cell_measure}}{The \link{CFCellMeasure} object of this variable, if
-defined.}
+\item{\code{cell_measures}}{List of the \link{CFCellMeasure} objects of this
+variable, if defined.}
 }
 \if{html}{\out{</div>}}
 }
@@ -69,7 +69,7 @@ the data variable.}
 \subsection{Method \code{new()}}{
 Create an instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariableBase$new(var, axes, crs)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariableBase$new(var, axes, crs = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
