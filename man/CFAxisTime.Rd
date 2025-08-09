@@ -29,12 +29,12 @@ vector.}
 \item \href{#method-CFAxisTime-brief}{\code{CFAxisTime$brief()}}
 \item \href{#method-CFAxisTime-time}{\code{CFAxisTime$time()}}
 \item \href{#method-CFAxisTime-identical}{\code{CFAxisTime$identical()}}
+\item \href{#method-CFAxisTime-copy}{\code{CFAxisTime$copy()}}
 \item \href{#method-CFAxisTime-append}{\code{CFAxisTime$append()}}
 \item \href{#method-CFAxisTime-indexOf}{\code{CFAxisTime$indexOf()}}
 \item \href{#method-CFAxisTime-slice}{\code{CFAxisTime$slice()}}
 \item \href{#method-CFAxisTime-subset}{\code{CFAxisTime$subset()}}
 \item \href{#method-CFAxisTime-write}{\code{CFAxisTime$write()}}
-\item \href{#method-CFAxisTime-clone}{\code{CFAxisTime$clone()}}
 }
 }
 \if{html}{\out{
@@ -148,6 +148,26 @@ Tests if the axis passed to this method is identical to
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisTime-copy"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisTime-copy}{}}}
+\subsection{Method \code{copy()}}{
+Create a copy of this axis. The copy is completely separate
+from \code{self}, meaning that both \code{self} and all of its components are made
+from new instances.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$copy(group)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{group}}{The group in which to place the new axis. If the argument is
+missing, a new group will be greated for the axis.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisTime-append"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisTime-append}{}}}
 \subsection{Method \code{append()}}{
@@ -246,8 +266,9 @@ the returned axis.}
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A \code{CFAxisTime} instance covering the indicated range of indices.
-If the value of the argument is \code{NULL}, return the entire axis.
+A new \code{CFAxisTime} instance covering the indicated range of
+indices. If the value of the argument is \code{NULL}, return a copy of
+\code{self} as the new axis.
 }
 }
 \if{html}{\out{<hr>}}
@@ -273,23 +294,6 @@ was read from (the file must have been opened for writing). If not
 }
 \subsection{Returns}{
 Self, invisibly.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisTime-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisTime-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$clone(deep = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
 }
 }
 }

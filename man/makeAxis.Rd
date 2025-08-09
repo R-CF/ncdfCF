@@ -4,7 +4,7 @@
 \alias{makeAxis}
 \title{Create an axis}
 \usage{
-makeAxis(name, group, orientation, values, bounds = NULL)
+makeAxis(name, group, orientation, values, bounds = NULL, attributes = NULL)
 }
 \arguments{
 \item{name}{Name of the axis.}
@@ -17,8 +17,12 @@ respectively. For any other axis, indicate an empty string ""}
 
 \item{values}{The coordinate values. In the case of an axis with \code{orientation = "T"} this must be a \code{CFTime} instance.}
 
-\item{bounds}{The bounds of the coordinate values, or \code{NULL} if not
+\item{bounds}{The boundary values of the coordinates, or \code{NULL} if not
 available.}
+
+\item{attributes}{\code{data.frame} with the attributes of the axis to create.
+Depending on which axis is created one or more attributes may be added or
+amended.}
 }
 \value{
 An instance of a class descending from \link{CFAxis}.

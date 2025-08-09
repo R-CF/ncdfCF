@@ -25,7 +25,6 @@ that crosses the 0-360 degree boundary.)
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFAxisLongitude-new}{\code{CFAxisLongitude$new()}}
-\item \href{#method-CFAxisLongitude-clone}{\code{CFAxisLongitude$clone()}}
 }
 }
 \if{html}{\out{
@@ -46,6 +45,7 @@ that crosses the 0-360 degree boundary.)
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="write"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-write'><code>ncdfCF::CFAxis$write()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="append"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-append'><code>ncdfCF::CFAxisNumeric$append()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="brief"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-brief'><code>ncdfCF::CFAxisNumeric$brief()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="copy"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-copy'><code>ncdfCF::CFAxisNumeric$copy()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="identical"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-identical'><code>ncdfCF::CFAxisNumeric$identical()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="indexOf"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-indexOf'><code>ncdfCF::CFAxisNumeric$indexOf()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="print"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-print'><code>ncdfCF::CFAxisNumeric$print()</code></a></span></li>
@@ -74,23 +74,6 @@ Creating a new longitude axis is more easily done with the
 \item{\code{nc_dim}}{The netCDF dimension that describes the dimensionality.}
 
 \item{\code{values}}{The coordinates of this axis.}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisLongitude-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisLongitude-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisLongitude$clone(deep = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
 }
 \if{html}{\out{</div>}}
 }

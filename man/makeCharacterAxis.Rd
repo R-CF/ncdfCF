@@ -4,7 +4,7 @@
 \alias{makeCharacterAxis}
 \title{Create a character axis}
 \usage{
-makeCharacterAxis(name, group, values)
+makeCharacterAxis(name, group, values, attributes = NULL)
 }
 \arguments{
 \item{name}{Name of the axis.}
@@ -12,6 +12,8 @@ makeCharacterAxis(name, group, values)
 \item{group}{Group to place the axis in.}
 
 \item{values}{The character coordinate values of the axis.}
+
+\item{attributes}{\code{data.frame} with the attributes of the axis to create.}
 }
 \value{
 A \link{CFAxisCharacter} instance.

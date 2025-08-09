@@ -10,3 +10,4 @@ Local_resources
 docs
 tests/testdata
 revdep
+coverage.R

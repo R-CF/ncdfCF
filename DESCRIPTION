@@ -53,6 +53,7 @@ Collate:
     'NCVariable.R'
     'makeCFObjects.R'
     'ncdfCF-package.R'
+    'ops.R'
     'readCF.R'
     'utils.R'
     'wkt2.R'

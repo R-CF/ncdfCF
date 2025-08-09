@@ -31,10 +31,10 @@ of auxiliary coordinates, if they have been set.}
 \item \href{#method-CFAxisNumeric-brief}{\code{CFAxisNumeric$brief()}}
 \item \href{#method-CFAxisNumeric-range}{\code{CFAxisNumeric$range()}}
 \item \href{#method-CFAxisNumeric-indexOf}{\code{CFAxisNumeric$indexOf()}}
+\item \href{#method-CFAxisNumeric-copy}{\code{CFAxisNumeric$copy()}}
 \item \href{#method-CFAxisNumeric-identical}{\code{CFAxisNumeric$identical()}}
 \item \href{#method-CFAxisNumeric-append}{\code{CFAxisNumeric$append()}}
 \item \href{#method-CFAxisNumeric-subset}{\code{CFAxisNumeric$subset()}}
-\item \href{#method-CFAxisNumeric-clone}{\code{CFAxisNumeric$clone()}}
 }
 }
 \if{html}{\out{
@@ -162,6 +162,27 @@ returned as \code{NA}.
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisNumeric-copy"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisNumeric-copy}{}}}
+\subsection{Method \code{copy()}}{
+Create a copy of this axis. The copy is completely separate
+from \code{self}, meaning that both \code{self} and all of its components are made
+from new instances. This can copy a \code{CFAxisNumeric} instance, but also a
+\code{CFAxisLongitude} or \code{CFAxisLatitude} instance.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$copy(group)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{group}}{The group in which to place the new axis. If the argument is
+missing, a new group will be greated for the axis.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisNumeric-identical"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisNumeric-identical}{}}}
 \subsection{Method \code{identical()}}{
@@ -227,26 +248,9 @@ the returned axis.}
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A \code{CFAxisNumeric} instance covering the indicated range of
-indices. If the value of the argument is \code{NULL}, return the entire
-axis.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisNumeric-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisNumeric-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$clone(deep = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
+A new \code{CFAxisNumeric} instance covering the indicated range of
+indices. If the value of the argument is \code{NULL}, return a copy of
+\code{self} as the new axis.
 }
 }
 }

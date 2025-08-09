@@ -57,7 +57,7 @@ ds[["longitude"]]
 
 # Regular base R operations simplify life further
 dimnames(ds[["pev"]]) # A variable: list of axis names
-dimnames(ds[["longitude"]]) # An axis: vector of axis coordinates
+dimnames(ds[["longitude"]]) # An axis: vector of axis coordinate values
 
 # Access attributes
 ds[["pev"]]$attribute("long_name")
@@ -235,7 +235,7 @@ Development plans for the near future focus on supporting the below features:
 
 ## Installation
 
-Package `ncdfCF` is still being developed. While extensively tested on multiple well-structured datasets, errors may still occur, particularly in datasets that do not adhere to the CF Metadata Conventions. The API may still change and although care is taken not to make breaking changes, sometimes this is unavoidable.
+Package `ncdfCF` is still being developed. While extensively tested on multiple well-structured data sets, errors may still occur, particularly in data sets that do not adhere to the CF Metadata Conventions. The API may still change and although care is taken not to make breaking changes, sometimes this is unavoidable.
 
 Installation from CRAN of the latest release:
 

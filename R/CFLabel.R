@@ -78,7 +78,7 @@ CFLabel <- R6::R6Class("CFLabel",
     #' @return Self, invisibly.
     write = function(nc) {
       # FIXME: Does this work with non-character labels? Conventions require NC_STRING or NC_CHAR
-      h <- if (inherits(nc, "NetCDF")) nc else self$group$handle
+      h <- if (inherits(nc, "NetCDF")) nc else self$NCvar$handle
       self$NCdim$write(h)
       self$id <- RNetCDF::var.def.nc(h, self$name, self$NCvar$vtype, self$NCdim$name)
       self$write_attributes(h, self$name)

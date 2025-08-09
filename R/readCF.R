@@ -26,11 +26,11 @@
 open_ncdf <- function(resource, keep_open = FALSE) {
   # Parameter check
   if (length(resource) != 1L && !is.character(resource))
-    stop("Argument `resource` must be a single character string pointing to a netCDF resource.")
+    stop("Argument `resource` must be a single character string pointing to a netCDF resource.", call. = FALSE) # nocov
 
   res <- CFResource$new(resource)
   if (is.character(res))
-    stop(res)
+    stop(res) # nocov
 
   h <- res$handle
   g <- RNetCDF::file.inq.nc(h)
@@ -148,7 +148,7 @@ peek_ncdf <- function(resource) {
          variables  = do.call(rbind, lapply(ds$variables(), function(v) v$peek(grps))),
          axes       = do.call(rbind, lapply(ds$axes(), function(a) a$peek(grps))),
          attributes = ds$attributes())
-  } else list()
+  } else list() # nocov
 }
 
 #' Read a group from a netCDF dataset
@@ -669,7 +669,6 @@ peek_ncdf <- function(resource) {
     for (x in 1:nd) {
       ndx <- which(sapply(xids, function(e) ncvar$dimids[x] %in% e))
       if (!length(ndx)) {
-        browser()
         warning(paste0("Possible variable '", ncvar$name, "' cannot be constructed because of unknown axis identifier ", ncvar$dimids[x]))
         return(NULL)
       }

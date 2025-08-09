@@ -284,7 +284,7 @@ CFVariable <- R6::R6Class("CFVariable",
       out_group$set_attribute("title", "NC_CHAR", paste("Data copy of variable", self$name))
       out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), "): CFVariable::data()"))
 
-      axes <- lapply(self$axes, function(ax) ax$clone())
+      axes <- lapply(self$axes, function(ax) ax$copy(out_group))
       atts <- self$attributes
       atts <- atts[!(atts$name == "coordinates"), ]
 
@@ -402,11 +402,11 @@ CFVariable <- R6::R6Class("CFVariable",
         if (!is.null(aux) && ax_dimid == ll_dimids[1L]) {
           start[ax] <- aux$X[1L]
           count[ax] <- aux$X[2L]
-          out_axis <- makeLongitudeAxis(private$llgrid$varLong$name, out_group, aux$aoi$dimnames[[2L]], aux$aoi$bounds(out_group)$lon$coordinates)
+          out_axis <- makeLongitudeAxis(private$llgrid$varLong$name, out_group, aux$aoi$dimnames[[2L]], aux$aoi$bounds(out_group)$lon$coordinates, axis$attributes)
         } else if (!is.null(aux) && ax_dimid == ll_dimids[2L]) {
           start[ax] <- aux$Y[1L]
           count[ax] <- aux$Y[2L]
-          out_axis <- makeLatitudeAxis(private$llgrid$varLat$name, out_group, aux$aoi$dimnames[[1L]], aux$aoi$bounds(out_group)$lat$coordinates)
+          out_axis <- makeLatitudeAxis(private$llgrid$varLat$name, out_group, aux$aoi$dimnames[[1L]], aux$aoi$bounds(out_group)$lat$coordinates, axis$attributes)
         } else { # No auxiliary coordinates
           rng <- selectors[[ axis_names[ax] ]]
           if (is.null(rng)) rng <- selectors[[ orient ]]

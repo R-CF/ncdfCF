@@ -8,6 +8,7 @@
 #' @export
 CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
   inherit = CFAxisNumeric,
+  cloneable = FALSE,
   public = list(
 
     #' @description Create a new instance of this class.

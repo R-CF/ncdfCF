@@ -3,6 +3,8 @@
 S3method("[",CFVariable)
 S3method("[",CFVariableL3b)
 S3method("[[",CFDataset)
+S3method(Math,CFArray)
+S3method(Ops,CFArray)
 S3method(dim,AOI)
 S3method(dim,CFAxis)
 S3method(dim,CFVariable)

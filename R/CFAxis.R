@@ -12,6 +12,7 @@
 #' @docType class
 CFAxis <- R6::R6Class("CFAxis",
   inherit = CFObject,
+  cloneable = FALSE,
   private = list(
     # A character "X", "Y", "Z" or "T" to indicate the
     # orientation of the axis, or an empty string if not known or different.
@@ -44,7 +45,7 @@ CFAxis <- R6::R6Class("CFAxis",
     # ax will receive the auxiliary coordinates subsetted by argument rng.
     subset_coordinates = function(ax, rng) {
       if (length(private$aux)) {
-        grp <- makeGroup()
+        grp <- ax$group
         lapply(private$aux, function(x) ax$auxiliary <- x$subset(grp, rng))
       }
     }

@@ -47,9 +47,9 @@ will access the standard names table.}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFAxisVertical-new}{\code{CFAxisVertical$new()}}
+\item \href{#method-CFAxisVertical-copy}{\code{CFAxisVertical$copy()}}
 \item \href{#method-CFAxisVertical-configure_terms}{\code{CFAxisVertical$configure_terms()}}
 \item \href{#method-CFAxisVertical-parametric_subset}{\code{CFAxisVertical$parametric_subset()}}
-\item \href{#method-CFAxisVertical-clone}{\code{CFAxisVertical$clone()}}
 }
 }
 \if{html}{\out{
@@ -99,6 +99,30 @@ Create a new instance of this class.
 defines the meaning, and processing of coordinates, of this axis. In
 particular, the "standard_name may indicate that this is a parametric
 vertical axis.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisVertical-copy"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisVertical-copy}{}}}
+\subsection{Method \code{copy()}}{
+Create a copy of this axis. The copy is completely separate
+from \code{self}, meaning that both \code{self} and all of its components are made
+from new instances. Note that the parametric terms, if any, are not
+copied here. If needed, copy the terms by calling the \code{copy_terms()}
+method \strong{after} all axes that the terms refer to have been copied to
+the \code{group} used for this axis (or another group that is reachable from
+the \code{group}).
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$copy(group)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{group}}{The group in which to place the new axis. If the argument is
+missing, a new group will be created for the axis.}
 }
 \if{html}{\out{</div>}}
 }
@@ -171,23 +195,6 @@ for the warped data.}
 }
 \subsection{Returns}{
 Self, invisibly.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisVertical-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisVertical-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$clone(deep = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
 }
 }
 }

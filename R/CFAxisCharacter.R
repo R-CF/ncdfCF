@@ -11,6 +11,7 @@
 #' @export
 CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
   inherit = CFAxis,
+  cloneable = FALSE,
   private = list(
     # The character labels of this axis.
     values = NULL,
@@ -49,6 +50,20 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
       out
     },
 
+    #' @description Create a copy of this axis. The copy is completely separate
+    #' from `self`, meaning that both `self` and all of its components are made
+    #' from new instances.
+    #' @param group The group in which to place the new axis. If the argument is
+    #' missing, a new group will be greated for the axis.
+    copy = function(group) {
+      if (missing(group))
+        group <- makeGroup()
+
+      ax <- makeCharacterAxis(self$name, group, private$values, self$attributes)
+      private$subset_coordinates(ax, c(1L, self$length))
+      ax
+    },
+
     #' @description Tests if the axis passed to this method is identical to
     #'   `self`.
     #' @param axis The `CFAxisCharacter` instance to test.
@@ -66,9 +81,7 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
     #'   `from` axis appended.
     append = function(from) {
       if (super$can_append(from) && !any(from$values %in% private$values)) {
-        axis <- makeAxis(self$name, makeGroup(), "", c(private$values, from$values))
-        axis$attributes <- self$attributes
-        axis
+        makeCharacterAxis(self$name, makeGroup(), c(private$values, from$values), self$attributes)
       } else
         stop("Axis values are not unique after appending.", call. = FALSE)
     },

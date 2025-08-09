@@ -97,8 +97,7 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 ds$var_names
 #> [1] "t2m" "pev" "tp"
 ds$axis_names
-#>        time   longitude    latitude 
-#>      "time" "longitude"  "latitude"
+#> [1] "time"      "longitude" "latitude"
 
 # Variables and axes can be accessed through standard list-type extraction syntax
 (t2m <- ds[["t2m"]])
@@ -138,7 +137,7 @@ ds[["longitude"]]
 # Regular base R operations simplify life further
 dimnames(ds[["pev"]]) # A variable: list of axis names
 #> [1] "longitude" "latitude"  "time"
-dimnames(ds[["longitude"]]) # An axis: vector of axis coordinates
+dimnames(ds[["longitude"]]) # An axis: vector of axis coordinate values
 #>  [1] 28.0 28.1 28.2 28.3 28.4 28.5 28.6 28.7 28.8 28.9 29.0 29.1 29.2 29.3 29.4
 #> [16] 29.5 29.6 29.7 29.8 29.9 30.0 30.1 30.2 30.3 30.4 30.5 30.6 30.7 30.8 30.9
 #> [31] 31.0
@@ -257,14 +256,14 @@ attributes:
 #> <Data array> t2m 
 #> Long name: 2 metre temperature 
 #> 
-#> Values: [283.0182 ... 302.0447] K
+#> Values: [283.0182 ... 299.917] K
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  axis name      length unlim values                                       
-#>  X    longitude 31           [28 ... 31]                                  
-#>  Y    latitude  21           [-1 ... -3]                                  
-#>  T    time      24     U     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  axis name      length values                                       
+#>  X    longitude 10     [29 ... 29.9]                                
+#>  Y    latitude  10     [-1.1 ... -2]                                
+#>  T    time      24     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    
@@ -274,7 +273,7 @@ attributes:
 #>  name         type      length value                
 #>  long_name    NC_CHAR   19     2 metre temperature  
 #>  units        NC_CHAR    1     K                    
-#>  actual_range NC_DOUBLE  2     283.018168, 302.04472
+#>  actual_range NC_DOUBLE  2     283.018168, 299.91697
 
 # Extract specific time slices for a specific region
 # Note that the dimensions are specified out of order and using alternative
@@ -285,14 +284,14 @@ attributes:
 #> <Data array> t2m 
 #> Long name: 2 metre temperature 
 #> 
-#> Values: [283.0182 ... 302.0447] K
+#> Values: [288.2335 ... 299.917] K
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  axis name      length unlim values                                       
-#>  X    longitude 31           [28 ... 31]                                  
-#>  Y    latitude  21           [-1 ... -3]                                  
-#>  T    time      24     U     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  axis name      length values                                       
+#>  X    longitude  7     [28.9 ... 29.5]                              
+#>  Y    latitude  10     [-1.1 ... -2]                                
+#>  T    time       6     [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    
@@ -302,7 +301,7 @@ attributes:
 #>  name         type      length value                
 #>  long_name    NC_CHAR   19     2 metre temperature  
 #>  units        NC_CHAR    1     K                    
-#>  actual_range NC_DOUBLE  2     283.018168, 302.04472
+#>  actual_range NC_DOUBLE  2     288.233524, 299.91697
 ```
 
 The latter two methods will read only as much data from the netCDF
@@ -364,10 +363,10 @@ latitudinal transect, for instance, provide only a longitude coordinate:
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  axis name      length unlim values                                       
-#>  Y    latitude  21           [-1 ... -3]                                  
-#>  T    time      24     U     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
-#>  X    longitude  1           [29.74]                                      
+#>  axis name      length values                                       
+#>  Y    latitude  21     [-1 ... -3]                                  
+#>  T    time      24     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  X    longitude  1     [29.74]                                      
 #>  unit                             
 #>  degrees_north                    
 #>  hours since 1900-01-01 00:00:00.0
@@ -512,7 +511,7 @@ arr <- array(rnorm(120), dim = c(6, 5, 4))
 as_CFArray("my_first_CF_object", arr)
 #> <Data array> my_first_CF_object 
 #> 
-#> Values: [-2.301656 ... 3.317959] 
+#> Values: [-2.508989 ... 2.278751] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -523,7 +522,7 @@ as_CFArray("my_first_CF_object", arr)
 #> 
 #> Attributes:
 #>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -2.301656, 3.317959
+#>  actual_range NC_DOUBLE 2      -2.508989, 2.278751
 ```
 
 Usable but not very impressive. The axes have dull names without any
@@ -545,7 +544,7 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 (obj <- as_CFArray("a_better_CF_object", arr))
 #> <Data array> a_better_CF_object 
 #> 
-#> Values: [-2.301656 ... 3.317959] 
+#> Values: [-2.508989 ... 2.278751] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -556,11 +555,11 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 #> 
 #> Attributes:
 #>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -2.301656, 3.317959
+#>  actual_range NC_DOUBLE 2      -2.508989, 2.278751
 
 # Axes are of a specific type and have basic attributes set
 obj$axes[["lat"]]
-#> <Latitude axis> [-1] lat
+#> <Latitude axis> [-24] lat
 #> Length     : 6
 #> Axis       : Y 
 #> Coordinates: 45, 44, 43, 42, 41, 40 (degrees_north)
@@ -568,13 +567,13 @@ obj$axes[["lat"]]
 #> 
 #> Attributes:
 #>  name          type      length value        
-#>  axis          NC_CHAR    1     Y            
-#>  actual_range  NC_DOUBLE  2     40, 45       
 #>  standard_name NC_CHAR    8     latitude     
 #>  units         NC_CHAR   13     degrees_north
+#>  axis          NC_CHAR    1     Y            
+#>  actual_range  NC_DOUBLE  2     40, 45
 
 obj$axes[["time"]]
-#> <Time axis> [-1] time
+#> <Time axis> [-26] time
 #> Length     : 4
 #> Axis       : T 
 #> Calendar   : standard 
@@ -583,10 +582,10 @@ obj$axes[["time"]]
 #> 
 #> Attributes:
 #>  name          type      length value                         
-#>  axis          NC_CHAR    1     T                             
+#>  standard_name NC_CHAR    4     time                          
 #>  units         NC_CHAR   30     days since 1970-01-01T00:00:00
 #>  calendar      NC_CHAR    8     standard                      
-#>  standard_name NC_CHAR    4     time                          
+#>  axis          NC_CHAR    1     T                             
 #>  actual_range  NC_DOUBLE  2     20270, 20273
 ```
 
@@ -607,12 +606,12 @@ library(data.table)
 head(dt <- ts$data.table())
 #>    longitude latitude                time      t2m
 #>        <num>    <num>              <char>    <num>
-#> 1:      28.0       -1 2016-01-01T00:00:00 293.8875
-#> 2:      28.1       -1 2016-01-01T00:00:00 294.4015
-#> 3:      28.2       -1 2016-01-01T00:00:00 294.4972
-#> 4:      28.3       -1 2016-01-01T00:00:00 293.9426
-#> 5:      28.4       -1 2016-01-01T00:00:00 293.6339
-#> 6:      28.5       -1 2016-01-01T00:00:00 293.0206
+#> 1:      28.9     -1.1 2016-01-01T09:00:00 294.9227
+#> 2:      29.0     -1.1 2016-01-01T09:00:00 295.8135
+#> 3:      29.1     -1.1 2016-01-01T09:00:00 297.0929
+#> 4:      29.2     -1.1 2016-01-01T09:00:00 297.4697
+#> 5:      29.3     -1.1 2016-01-01T09:00:00 298.5419
+#> 6:      29.4     -1.1 2016-01-01T09:00:00 299.8894
 
 #install.packages("terra")
 suppressMessages(library(terra))
@@ -689,8 +688,8 @@ features:
 ## Installation
 
 Package `ncdfCF` is still being developed. While extensively tested on
-multiple well-structured datasets, errors may still occur, particularly
-in datasets that do not adhere to the CF Metadata Conventions. The API
+multiple well-structured data sets, errors may still occur, particularly
+in data sets that do not adhere to the CF Metadata Conventions. The API
 may still change and although care is taken not to make breaking
 changes, sometimes this is unavoidable.
 

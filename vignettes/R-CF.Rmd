@@ -85,7 +85,7 @@ Ok, that's a lot more information. Let's focus on a few important things:
 
 It should be obvious that correctly interpreting a netCDF file requires a package that not only provides easy access to the attributes of the file, but that also applies the CF conventions to put all the pieces together in such a way that the data set is presented to the user of the data - that would be you - as the data producers intended.
 
-The issues arising from the particularities of CF on top of the netCDF format are presented and discussed in the remainder of this document, seen from the perspective of the R user, with examples using the `ncdfCF` package. At the end of this vignette is a feature matrix that indicates the support for each CF element in package `ncdfCF`.
+The issues arising from the pecularities of CF on top of the netCDF format are presented and discussed in the remainder of this document, seen from the perspective of the R user, with examples using the `ncdfCF` package. At the end of this vignette is a feature matrix that indicates the support for each CF element in package `ncdfCF`.
 
 > Please note that I have nothing against `ncdf4` or `RNetCDF` packages. In fact, package `ncdfCF` is built on top of `RNetCDF`. My point is merely to demonstrate how CF-compliant netCDF files, of which there are *very* many out there on the internet, require you to look beyond the basic netCDF building blocks and use the attributes. If your netCDF files do not use the CF conventions, then by all means use `ncdf4` if you prefer. I would suggest, though, to read the next section to understand better how data structures in netCDF differ from R standard practices.
 
@@ -97,7 +97,7 @@ In R, matrices and arrays are stored in column-major ordering, meaning that succ
 matrix(1:12, nrow = 3, ncol = 4)
 ```
 
-In netCDF files matrices and arrays are stored in row-major ordering, starting from the top-left, progressing to the end of the row and then down the rows to the bottom-left. This can be performed in R with the `byrow` argument of the `matrix()` function:
+In netCDF files matrices and arrays are stored in row-major ordering, starting from the left, progressing to the end of the row and then to the next row. This can be performed in R with the `byrow` argument of the `matrix()` function, with data starting from the top-left:
 
 ```{r matrix-by-row}
 matrix(1:12, nrow = 3, ncol = 4, byrow = TRUE)

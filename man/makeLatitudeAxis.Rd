@@ -4,7 +4,7 @@
 \alias{makeLatitudeAxis}
 \title{Create a latitude axis}
 \usage{
-makeLatitudeAxis(name, group, values, bounds)
+makeLatitudeAxis(name, group, values, bounds, attributes = NULL)
 }
 \arguments{
 \item{name}{Name of the axis.}
@@ -14,6 +14,10 @@ makeLatitudeAxis(name, group, values, bounds)
 \item{values}{The coordinate values.}
 
 \item{bounds}{The bounds of the coordinate values, or \code{NULL} if not available.}
+
+\item{attributes}{\code{data.frame} with the attributes of the axis to create.
+Attributes "standard_name", "units", "actual_range" and "axis" will be set
+or updated.}
 }
 \value{
 A \link{CFAxisLatitude} instance.

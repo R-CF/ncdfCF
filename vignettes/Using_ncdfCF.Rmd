@@ -2,7 +2,7 @@
 title: "1. Using ncdfCF"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{1. Using_ncdfCF}
+  %\VignetteIndexEntry{1. Using ncdfCF}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,11 +14,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-## What is netCDF
+## What is netCDF?
 
 *"NetCDF (Network Common Data Form) is a set of software libraries and machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. It is also a community standard for sharing scientific data."*
 
-NetCDF is [developed by UCAR/Unidata](https://www.unidata.ucar.edu/software/netcdf/) and is widely used for climate and weather data as well as for other environmental data sets. The `netcdf` library is ported to a wide variety ofoperating systems and platforms, from laptop computers to large mainframes. Data sets are typically large arrays with axes for longitude, latitude and time, with other axes, such as depth, added according to the nature of the data. Other types of data are also commonly found.
+NetCDF is [developed by UCAR/Unidata](https://www.unidata.ucar.edu/software/netcdf/) and is widely used for climate and weather data as well as for other environmental data sets. The `netcdf` library is ported to a wide variety of operating systems and platforms, from laptop computers to large mainframes. Data sets are typically large arrays with axes for longitude, latitude and time, with other axes, such as depth, added according to the nature of the data. Other types of data are also commonly found.
 
 Importantly, *"a netCDF file includes information about the data it contains"*. This comes in two flavours:
 
@@ -51,7 +51,7 @@ Several packages have been developed to address some of these issues and make ac
 
 ### ncdfCF
 
-Package `ncdfCF` provides a high-level interface using functions and methods that are familiar to the R user. It reads the structural metadata and also the attributes upon opening the resource. In the process, the `ncdfCF` package also applies CF Metadata Conventions to interpret the data. This applies to:
+Package `ncdfCF` provides a high-level interface using functions and methods that are familiar to the R user. It reads the structural metadata and also the attributes upon opening the resource. In the process, the `ncdfCF` package also applies CF Metadata Conventions to interpret the data. This currently applies to:
 
  * **Groups** are a feature of the newer `netcdf4` format, allowing for a directory-like structure in the netCDF resource. The specific scoping rules to find related objects distributed over multiple groups are supported.
  * The **axis designation**. The three mechanisms to identify the axis each dimension represents are applied until an axis is determined.
@@ -63,6 +63,8 @@ Package `ncdfCF` provides a high-level interface using functions and methods tha
  * The **cell measure variables** are read and linked to any data variables referencing them. Cell measure variables that are external to the netCDF resource with the referring data variable can be linked to the data set and then they are immediately available to the referring data variables.
  * **Labels**, as separate variables identified through the `coordinates` attribute of axes, are read, including when multiple sets of labels are defined for a single axis. Users can select which set of labels to make active for display, selection and processing.
  * The **grid_mapping variables**, providing the coordinate reference system (CRS) of the data, with support for all defined objects in the latest EPSG database as well as "manual" construction of CRSs.
+ 
+More details on how package `ncdfCF` implements the CF Metadata Conventions, including a feature matrix of supported sections, can be found [here](`vignette("R-CF")`).
 
 ## Basic usage
 
@@ -80,13 +82,13 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 # Variables can be accessed through standard list-type extraction syntax
 (t2m <- ds[["t2m"]])
   
-# Same with dimensions, but now without first assigning the object to a symbol
+# Same with axes, but now without first assigning the object to a symbol
 ds[["longitude"]]
   
 # Regular base R operations simplify life further
-dimnames(ds[["pev"]]) # A variable: list of dimension names
+dimnames(ds[["pev"]]) # A data variable: list of axis names
   
-dimnames(ds[["longitude"]]) # A dimension: vector of dimension element values
+dimnames(ds[["longitude"]]) # An axis: vector of axis coordinate values
   
 # Access attributes
 ds[["pev"]]$attribute("long_name")
@@ -145,15 +147,40 @@ The approaches lend themselves well to the `apply()` family of functions for pro
 
 ## Working with the data
 
-The `data()`, `subset()` and `summarise()` methods return data from a variable in a `CFArray` instance. The `CFArray` instance holds the actual data, as well as important metadata of the data, including its axes, the coordinate reference system, and the attributes, among others. The `CFArray` instance also lets you manipulate the data in a way that is informed by the metadata. This overcomes a typical issue when working with netCDF data that adheres to the CF Metadata Conventions.
+The `data()`, `subset()` and `summarise()` methods return data from a variable in a `CFArray` instance. The `CFArray` instance holds the actual data, as well as important metadata of the data, including its axes, the coordinate reference system, and the attributes, among others.
 
-The ordering of the axes in a typical netCDF resource is different from the way that R orders its data. That leads to surprising results if you are not aware of this issue:
+### Processing data
+
+When working with netCDF data, you usually want to manipulate the data to implement a certain analysis. The basic R functions can operate directly on the `CFArray` instance, returning a new `CFArray` instance for further processing (more specifically: the functions in the S3 Ops and Math generic groups). Returning to the previous example, the temperature in units of Kelvin can be converted to degrees Celsius in the usual way:
+
+```{r KtoC}
+tsC <- ts - 273.15
+tsC$set_attribute("units", "NC_CHAR", "degrees_Celsius")
+tsC
+```
+
+You can also apply logical and comparison operators:
+
+```{r hot}
+# This produces a "logical" CFArray: all values are 0 (FALSE) or 1 (TRUE)
+tsHot <- tsC > 20
+tsHot$set_attribute("units", "NC_CHAR", "1")
+tsHot
+```
+
+It is also possible to chain operations and functions together. The above two statements could also be executed as `tsHot <- (ts - 273.15) > 20`.
+
+After processing `CFArray` data like this, you should update the attributes of the final result, as was done with the "units" attribute in the examples above. The "name" attribute will have a value that *somewhat creatively* describes the process chain (look at the example of `tsHot`) but you likely have a better description (like, `tsHot$name <- "toasty_places"`).
+
+### Orienting the data
+
+The `CFArray` instance also lets you manipulate the data in a way that is informed by the metadata. This overcomes a typical issue when working with netCDF data that adheres to the CF Metadata Conventions. The ordering of the axes in a typical netCDF resource is different from the way that R orders its data. That leads to surprising results if you are not aware of this issue:
 
 ```{r cfarray}
 # Open a file and read the data from a variable into a CFArray instance
 fn <- system.file("extdata", "tasmax_NAM-44_day_20410701-vncdfCF.nc", package = "ncdfCF")
 ds <- open_ncdf(fn)
-(tx <- ds[["tasmax"]]$data())
+tx <- ds[["tasmax"]]$data()
 
 # Use the terra package for plotting
 # install.packages("terra")

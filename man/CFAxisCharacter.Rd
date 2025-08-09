@@ -30,10 +30,10 @@ vector.}
 \itemize{
 \item \href{#method-CFAxisCharacter-new}{\code{CFAxisCharacter$new()}}
 \item \href{#method-CFAxisCharacter-brief}{\code{CFAxisCharacter$brief()}}
+\item \href{#method-CFAxisCharacter-copy}{\code{CFAxisCharacter$copy()}}
 \item \href{#method-CFAxisCharacter-identical}{\code{CFAxisCharacter$identical()}}
 \item \href{#method-CFAxisCharacter-append}{\code{CFAxisCharacter$append()}}
 \item \href{#method-CFAxisCharacter-indexOf}{\code{CFAxisCharacter$indexOf()}}
-\item \href{#method-CFAxisCharacter-clone}{\code{CFAxisCharacter$clone()}}
 }
 }
 \if{html}{\out{
@@ -95,6 +95,26 @@ Some details of the axis.
 
 \subsection{Returns}{
 A 1-row \code{data.frame} with some details of the axis.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisCharacter-copy"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisCharacter-copy}{}}}
+\subsection{Method \code{copy()}}{
+Create a copy of this axis. The copy is completely separate
+from \code{self}, meaning that both \code{self} and all of its components are made
+from new instances.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$copy(group)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{group}}{The group in which to place the new axis. If the argument is
+missing, a new group will be greated for the axis.}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
@@ -165,23 +185,6 @@ strings \code{x}, find their indices in the coordinates of the axis.
 \subsection{Returns}{
 Numeric vector of the same length as \code{x}. Values of \code{x} that are
 not equal to a coordinate of the axis are returned as \code{NA}.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisCharacter-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisCharacter-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$clone(deep = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
 }
 }
 }

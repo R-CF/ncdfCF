@@ -14,3 +14,4 @@
 ^pkgdown$
 ^tests/testdata$
 ^vignettes/articles$
+^coverage.R$

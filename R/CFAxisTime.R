@@ -10,6 +10,7 @@ NULL
 #' @export
 CFAxisTime <- R6::R6Class("CFAxisTime",
   inherit = CFAxis,
+  cloneable = FALSE,
   private = list(
     # The `CFTime` instance to manage CF time.
     tm = NULL,
@@ -112,6 +113,23 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       all(.near(private$tm$offsets, axis$time()$offsets))
     },
 
+    #' @description Create a copy of this axis. The copy is completely separate
+    #' from `self`, meaning that both `self` and all of its components are made
+    #' from new instances.
+    #' @param group The group in which to place the new axis. If the argument is
+    #' missing, a new group will be greated for the axis.
+    copy = function(group) {
+      if (missing(group))
+        group <- makeGroup()
+
+      time <- private$tm
+      idx <- time$indexOf(1L:self$length)
+      tm <- attr(idx, "CFTime")
+      t <- makeTimeAxis(self$name, group, tm, self$attributes)
+      private$subset_coordinates(t, c(1L, self$length))
+      t
+    },
+
     #' @description Append a vector of time values at the end of the current
     #'   values of the axis.
     #' @param from An instance of `CFAxisTime` whose values to append to the
@@ -128,9 +146,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
           time <- CFtime::CFTime$new(private$tm$cal$definition, private$tm$cal$name, c(private$tm$offsets, from$time()$offsets))
           time$bounds <- bnds
         }
-        axis <- makeTimeAxis(self$name, makeGroup(), time)
-        axis$attributes <- self$attributes
-        axis
+        makeTimeAxis(self$name, makeGroup(), time, self$attributes)
       } else
         stop("Axis values cannot be appended.", call. = FALSE)
     },
@@ -173,17 +189,15 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @param rng The range of indices whose values from this axis to include in
     #'   the returned axis.
     #'
-    #' @return A `CFAxisTime` instance covering the indicated range of indices.
-    #'   If the value of the argument is `NULL`, return the entire axis.
+    #' @return A new `CFAxisTime` instance covering the indicated range of
+    #'   indices. If the value of the argument is `NULL`, return a copy of
+    #'   `self` as the new axis.
     subset = function(group, rng = NULL) {
-      var <- NCVariable$new(CF$newVarId(), self$name, group, "NC_DOUBLE", 1L, NULL)
-      time <- private$tm
-
-      if (is.null(rng)) {
-        ax <- self$clone()
-        ax$group <- group
-        ax
-      } else {
+      if (is.null(rng))
+        self$copy(group)
+      else {
+        var <- NCVariable$new(CF$newVarId(), self$name, group, "NC_DOUBLE", 1L, NULL)
+        time <- private$tm
         rng <- range(rng)
         idx <- time$indexOf(seq(from = rng[1L], to = rng[2L], by = 1L))
         tm <- attr(idx, "CFTime")

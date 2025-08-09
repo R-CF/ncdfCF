@@ -4,7 +4,7 @@
 \alias{makeVerticalAxis}
 \title{Create a vertical axis}
 \usage{
-makeVerticalAxis(name, group, values, bounds)
+makeVerticalAxis(name, group, values, bounds, attributes = NULL)
 }
 \arguments{
 \item{name}{Name of the axis.}
@@ -15,6 +15,9 @@ makeVerticalAxis(name, group, values, bounds)
 
 \item{bounds}{The bounds of the coordinate values, or \code{NULL} if not
 available.}
+
+\item{attributes}{\code{data.frame} with the attributes of the axis to create.
+Attributes "actual_range" and "axis" will be set or updated.}
 }
 \value{
 A \link{CFAxisVertical} instance.

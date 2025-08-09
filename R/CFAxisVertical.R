@@ -23,6 +23,7 @@ Z_parametric_standard_names <-
 #' @export
 CFAxisVertical <- R6::R6Class("CFAxisVertical",
   inherit = CFAxisNumeric,
+  cloneable = FALSE,
   private = list(
     # The 'standard_name' attribute of the [NCVariable]
     # that identifies the parametric form of this axis.
@@ -55,6 +56,11 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
           cat(" Axes:", paste(sapply(private$computed_values$axes, function(ax) ax$shard())), "\n")
         }
       }
+    },
+
+    # Compile a list of axes used by the formula terms
+    gather_terms_axes = function() {
+       stop("Must implement this")
     },
 
     # This function computes the actual dimensional axis values from the terms.
@@ -189,6 +195,26 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
       super$initialize(nc_var, nc_dim, "Z", values)
       private$parameter_name <- standard_name
       self$set_attribute("actual_range", nc_var$vtype, range(values))
+    },
+
+    #' @description Create a copy of this axis. The copy is completely separate
+    #' from `self`, meaning that both `self` and all of its components are made
+    #' from new instances. Note that the parametric terms, if any, are not
+    #' copied here. If needed, copy the terms by calling the `copy_terms()`
+    #' method **after** all axes that the terms refer to have been copied to
+    #' the `group` used for this axis (or another group that is reachable from
+    #' the `group`).
+    #' @param group The group in which to place the new axis. If the argument is
+    #' missing, a new group will be created for the axis.
+    copy = function(group) {
+      if (missing(group))
+        group <- makeGroup()
+
+      bnds <- self$bounds
+      if (inherits(bnds, "CFBounds")) bnds <- bnds$coordinates
+      ax <- makeVerticalAxis(self$name, group, private$values, bnds, self$attributes)
+      private$subset_coordinates(ax, c(1L, self$length))
+      ax
     },
 
     #' @description Configure the formula terms of a parametric vertical axis.

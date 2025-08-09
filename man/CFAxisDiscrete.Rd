@@ -28,11 +28,11 @@ vector, or labels for every axis element if they have been set.}
 \item \href{#method-CFAxisDiscrete-new}{\code{CFAxisDiscrete$new()}}
 \item \href{#method-CFAxisDiscrete-print}{\code{CFAxisDiscrete$print()}}
 \item \href{#method-CFAxisDiscrete-brief}{\code{CFAxisDiscrete$brief()}}
+\item \href{#method-CFAxisDiscrete-copy}{\code{CFAxisDiscrete$copy()}}
 \item \href{#method-CFAxisDiscrete-append}{\code{CFAxisDiscrete$append()}}
 \item \href{#method-CFAxisDiscrete-indexOf}{\code{CFAxisDiscrete$indexOf()}}
 \item \href{#method-CFAxisDiscrete-subset}{\code{CFAxisDiscrete$subset()}}
 \item \href{#method-CFAxisDiscrete-write}{\code{CFAxisDiscrete$write()}}
-\item \href{#method-CFAxisDiscrete-clone}{\code{CFAxisDiscrete$clone()}}
 }
 }
 \if{html}{\out{
@@ -117,6 +117,26 @@ A 1-row \code{data.frame} with some details of the axis.
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisDiscrete-copy"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisDiscrete-copy}{}}}
+\subsection{Method \code{copy()}}{
+Create a copy of this axis. The copy is completely separate
+from \code{self}, meaning that both \code{self} and all of its components are made
+from new instances.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$copy(group)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{group}}{The group in which to place the new axis. If the argument is
+missing, a new group will be greated for the axis.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisDiscrete-append"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-append}{}}}
 \subsection{Method \code{append()}}{
@@ -191,9 +211,9 @@ axis.}
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A \code{CFAxisDiscrete} instance covering the indicated range of
-indices. If the value of the argument is \code{NULL}, return the entire
-axis.
+A new \code{CFAxisDiscrete} instance covering the indicated range of
+indices. If the value of the argument is \code{NULL}, return a copy of
+\code{self} as the new axis.
 }
 }
 \if{html}{\out{<hr>}}
@@ -218,23 +238,6 @@ was read from (the file must have been opened for writing). If not
 }
 \subsection{Returns}{
 Self, invisibly.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisDiscrete-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisDiscrete-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$clone(deep = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
 }
 }
 }

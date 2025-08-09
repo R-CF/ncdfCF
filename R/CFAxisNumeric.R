@@ -8,6 +8,7 @@
 #' @export
 CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
   inherit = CFAxis,
+  cloneable = FALSE,
   private = list(
     # The values of the axis, usually a numeric vector.
     values = NULL,
@@ -135,6 +136,23 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
         idx
     },
 
+    #' @description Create a copy of this axis. The copy is completely separate
+    #' from `self`, meaning that both `self` and all of its components are made
+    #' from new instances. This can copy a `CFAxisNumeric` instance, but also a
+    #' `CFAxisLongitude` or `CFAxisLatitude` instance.
+    #' @param group The group in which to place the new axis. If the argument is
+    #' missing, a new group will be greated for the axis.
+    copy = function(group) {
+      if (missing(group))
+        group <- makeGroup()
+
+      bnds <- self$bounds
+      if (inherits(bnds, "CFBounds")) bnds <- bnds$coordinates
+      ax <- makeAxis(self$name, group, self$orientation, private$values, bnds, self$attributes)
+      private$subset_coordinates(ax, c(1L, self$length))
+      ax
+    },
+
     #' @description Tests if the axis passed to this method is identical to
     #'   `self`.
     #' @param axis The `CFAxisNumeric` or sub-class instance to test.
@@ -154,9 +172,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       if (super$can_append(from) && .c_is_monotonic(private$values, from$values)) {
         bnds <- if (is.null(self$bounds) || is.null(from$bounds)) NULL
                 else cbind(self$bounds, from$bounds)
-        axis <- makeAxis(self$name, makeGroup(), axis$orientation, c(private$values, from$values), NULL)
-        axis$attributes <- self$attributes
-        axis
+        makeAxis(self$name, makeGroup(), axis$orientation, c(private$values, from$values), bnds, self$attributes)
       } else
         stop("Axis values cannot be appended.", call. = FALSE)
     },
@@ -169,22 +185,18 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #' @param rng The range of indices whose values from this axis to include in
     #'   the returned axis.
     #'
-    #' @return A `CFAxisNumeric` instance covering the indicated range of
-    #'   indices. If the value of the argument is `NULL`, return the entire
-    #'   axis.
+    #' @return A new `CFAxisNumeric` instance covering the indicated range of
+    #'   indices. If the value of the argument is `NULL`, return a copy of
+    #'   `self` as the new axis.
     subset = function(group, rng = NULL) {
-      if (is.null(rng)) {
-        ax <- self$clone()
-        ax$group <- group
-        ax
-      } else {
+      if (is.null(rng))
+        self$copy(group)
+      else {
         rng <- range(rng)
         bnds <- self$bounds
         if (inherits(bnds, "CFBounds")) bnds <- bnds$coordinates[, rng[1L]:rng[2L]]
-        ax <- makeAxis(self$name, group, self$orientation, private$values[rng[1L]:rng[2L]], bnds)
+        ax <- makeAxis(self$name, group, self$orientation, private$values[rng[1L]:rng[2L]], bnds, self$attributes)
         private$subset_coordinates(ax, rng)
-        ax$attributes <- self$attributes
-        ax$set_attribute("actual_range", self$NCvar$vtype, range(ax$values))
         ax
       }
     }

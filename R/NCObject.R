@@ -232,9 +232,11 @@ NCObject <- R6::R6Class("NCObject",
     #'   add attributes to the existing set. Upon reading, when there are no
     #'   attributes, an empty `data.frame` will be returned.
     attributes = function(value) {
-      if (missing(value)) {
+      if (missing(value))
         private$atts
-      } else if (is.data.frame(value) && nrow(value)) {
+      else if (is.null(value))
+        private$atts <- data.frame()
+      else if (is.data.frame(value) && nrow(value)) {
         req <- c("id", "name", "type", "length", "value")
         cols <- names(value)
         if (all(req %in% cols)) {

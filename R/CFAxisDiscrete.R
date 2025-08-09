@@ -8,6 +8,7 @@
 #' @export
 CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
   inherit = CFAxis,
+  cloneable = FALSE,
   private = list(
     # Flag if this axis is constructed from a bare dimension, i.e. there is no
     # NC variable associated with this axis in the netCDF file.
@@ -69,6 +70,20 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
       out
     },
 
+    #' @description Create a copy of this axis. The copy is completely separate
+    #' from `self`, meaning that both `self` and all of its components are made
+    #' from new instances.
+    #' @param group The group in which to place the new axis. If the argument is
+    #' missing, a new group will be greated for the axis.
+    copy = function(group) {
+      if (missing(group))
+        group <- makeGroup()
+
+      ax <- makeDiscreteAxis(self$name, group, self$length, self$attributes)
+      private$subset_coordinates(ax, c(1L, self$length))
+      ax
+    },
+
     #' @description Append a vector of values at the end of the current values
     #'   of the axis. In a discrete axis the values are always a simple sequence
     #'   so the appended values extend the sequence, rather than using the
@@ -79,9 +94,7 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #'   `from` axis.
     append = function(from) {
       if (super$can_append(from)) {
-        axis <- makeDiscreteAxis(self$name, makeGroup(), private$length + from$length)
-        axis$attributes <- self$attributes
-        axis
+        makeDiscreteAxis(self$name, makeGroup(), private$length + from$length, self$attributes)
       } else
         stop("Axis values cannot be appended.", call. = FALSE)
     },
@@ -110,20 +123,19 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #' @param rng The range of indices from this axis to include in the returned
     #'   axis.
     #'
-    #' @return A `CFAxisDiscrete` instance covering the indicated range of
-    #'   indices. If the value of the argument is `NULL`, return the entire
-    #'   axis.
+    #' @return A new `CFAxisDiscrete` instance covering the indicated range of
+    #'   indices. If the value of the argument is `NULL`, return a copy of
+    #'   `self` as the new axis.
     subset = function(group, rng = NULL) {
-      if (is.null(rng)) {
-        ax <- self$clone()
-        ax$group <- group
-      } else {
-        var <- NCVariable$new(CF$newVarId(), self$name, group, "NC_DOUBLE", 1L, -1L)
+      if (is.null(rng))
+        self$copy(group)
+      else {
+        var <- NCVariable$new(CF$newVarId(), self$name, group, "NC_INT", 1L, -1L)
         dim <- NCDimension$new(CF$newDimId(), self$name, rng[2L] - rng[1L] + 1L, FALSE)
         ax <- CFAxisDiscrete$new(var, dim, self$orientation)
         private$subset_coordinates(ax, rng)
+        ax
       }
-      ax
     },
 
     #' @description Write the axis to a netCDF file, including its attributes,
@@ -136,7 +148,7 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     write = function(nc = NULL) {
       if (private$dim_only) {
         # Write the dimension and any labels. No values or attributes to write.
-        h <- if (inherits(nc, "NetCDF")) nc else self$group$handle
+        h <- if (inherits(nc, "NetCDF")) nc else self$NCvar$handle
         self$NCdim$write(h)
         lapply(private$aux, function(x) x$write(nc))
       } else

@@ -4,7 +4,7 @@
 \alias{makeDiscreteAxis}
 \title{Create a discrete axis}
 \usage{
-makeDiscreteAxis(name, group, length)
+makeDiscreteAxis(name, group, length, attributes = NULL)
 }
 \arguments{
 \item{name}{Name of the axis.}
@@ -12,6 +12,9 @@ makeDiscreteAxis(name, group, length)
 \item{group}{Group to place the axis in.}
 
 \item{length}{The length of the axis.}
+
+\item{attributes}{\code{data.frame} with the attributes of the axis to create.
+Attribute "actual_range" will be set or updated.}
 }
 \value{
 A \link{CFAxisDiscrete} instance. The values will be a sequence of size

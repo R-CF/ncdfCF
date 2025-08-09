@@ -91,7 +91,6 @@ dimensional coordinates. Always \code{FALSE} for all axes except for
 \item \href{#method-CFAxis-subset}{\code{CFAxis$subset()}}
 \item \href{#method-CFAxis-indexOf}{\code{CFAxis$indexOf()}}
 \item \href{#method-CFAxis-write}{\code{CFAxis$write()}}
-\item \href{#method-CFAxis-clone}{\code{CFAxis$clone()}}
 }
 }
 \if{html}{\out{
@@ -375,23 +374,6 @@ was read from (the file must have been opened for writing).}
 }
 \subsection{Returns}{
 Self, invisibly.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxis-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxis-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$clone(deep = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
 }
 }
 }
