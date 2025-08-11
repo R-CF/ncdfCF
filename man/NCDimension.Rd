@@ -56,7 +56,7 @@ Create a new netCDF dimension. This class should not be
 instantiated directly, create CF objects instead. This class is
 instantiated when opening a netCDF resource.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCDimension$new(id, name, length, unlim)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{NCDimension$new(id, name, length, unlim, group)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -69,6 +69,8 @@ instantiated when opening a netCDF resource.
 \item{\code{length}}{Length of the dimension.}
 
 \item{\code{unlim}}{Is the dimension unlimited?}
+
+\item{\code{group}}{The group where the dimension is located.}
 }
 \if{html}{\out{</div>}}
 }

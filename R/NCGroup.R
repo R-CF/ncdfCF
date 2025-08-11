@@ -8,7 +8,8 @@
 #'   Direct access to groups is usually not necessary. The principal objects
 #'   held by the group, CF data variables and axes, are accessible via other
 #'   means. Only for access to the group attributes is a reference to a group
-#'   required.
+#'   required. Changing the properties of a group other than its name may very
+#'   well invalidate the CF objects or even the netCDF file.
 #'
 #' @docType class
 NCGroup <- R6::R6Class("NCGroup",
@@ -20,7 +21,9 @@ NCGroup <- R6::R6Class("NCGroup",
   ),
   public = list(
     #' @field resource Access to the underlying netCDF resource. This can be
-    #' `NULL` for instances created in memory.
+    #'   `NULL` for instances created in memory. Managed internally. Never
+    #'   change the `resource` as it will very likely lead to problems reading
+    #'   from and writing to file.
     resource  = NULL,
 
     #' @field parent Parent group of this group, the owning `CFDataset` for the

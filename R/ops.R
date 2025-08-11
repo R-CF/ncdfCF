@@ -4,12 +4,11 @@
 #' data of [CFArray] objects having a suitable data type, specifically the base
 #' R functions from the Ops and Math groups of the S3 [groupGeneric] functions.
 #'
-#' The functions always return a new CFArray object created in the group of the
-#' first CFArray argument and functions can thus be concatenated to create more
+#' The functions always return a new CFArray object created in a new group.
+#' Functions can thus be concatenated to create more
 #' complex expressions. The data type of the new object is determined by the
 #' base R function; its name is concatenated from the names in the argument
-#' object(s). Note that intermediate results are retained; these may be deleted
-#' after the complex operation completes, as desired.
+#' object(s).
 #'
 #' For the Ops functions with two arguments, if both arguments are a CFArray
 #' object they have to be compatible: same shape, axis coordinate values and
@@ -56,7 +55,7 @@ Ops.CFArray <- function(e1, e2) {
   if (inherits(e1, "CFArray")) {
     d1 <- e1$raw()
     name <- e1$name
-    grp <- e1$group
+    grp <- makeGroup()
     crs <- e1$crs
     axes <- e1$axes
   } else {
@@ -73,7 +72,7 @@ Ops.CFArray <- function(e1, e2) {
         if (!e1$is_coincident(e2))
           stop("CFArray objects are not coincident.", call. = FALSE)
       } else {
-        grp <- e2$group
+        grp <- makeGroup()
         crs <- e2$crs
         axes <- e2$axes
       }
@@ -114,5 +113,5 @@ Math.CFArray <- function(x, ...) {
                      "integer" = "NC_INT",
                      "logical" = "NC_SHORT",
                      stop("Must add type", storage.mode(res)))
-  CFArray$new(paste(.Generic, x$name, sep = "_"), x$group, res, datatype, x$axes, x$crs, NULL)
+  CFArray$new(paste(.Generic, x$name, sep = "_"), makeGroup(), res, datatype, x$axes, x$crs, NULL)
 }

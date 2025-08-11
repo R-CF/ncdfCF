@@ -119,20 +119,6 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
       atts[atts$name == "coordinates", ]$length <- nchar(crds)
       atts[atts$name == "coordinates", ]$value <- crds
       atts
-    },
-
-    # Tests if the "other" object is coincident with self: identical axes
-    is_coincident = function(other) {
-      inherits(other, "CFVariableBase") &&
-        {
-          other_axes <- other$axes
-          if (length(other_axes) != length(self$axes))
-            stop("Array `other` must have the same number of axes as this array.", call. = FALSE)
-          for (ax in seq_along(self$axes))
-            if (!self$axes[[ax]]$identical(other_axes[[ax]]))
-              stop(paste("Axis", ax, "is not identical between the two arrays."), call. = FALSE)
-          TRUE
-        }
     }
   ),
   public = list(
@@ -261,7 +247,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
         new_tm <- attr(fac, "CFTime")
         var <- NCVariable$new(CF$newVarId(), tax$name, grp, tax$NCvar$vtype, 1L, NULL)
         len <- length(new_tm)
-        dim <- NCDimension$new(CF$newDimId(), tax$name, len, FALSE)
+        dim <- NCDimension$new(CF$newDimId(), tax$name, len, FALSE, grp)
         new_ax <- CFAxisTime$new(var, dim, new_tm)
         if (len == 1L) {
           ax <- c(self$axes[-tm], new_ax)
@@ -409,7 +395,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
         .names <- .names[1L:total]
 
       # Group for results
-      out_group <- makeGroup()
+      out_group <- makeGroup(resource = self$group$resource)
       out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
       out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariable$profile()"))
 
@@ -435,13 +421,17 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
                 private$llgrid$varLong$name
               else
                 private$llgrid$varLat$name
+              if (total > 1L)
+                nm <- paste(nm, e, sep = "_")
               t <- axis$time()
               val <- if (inherits(t, "CFTime")) CFtime::CFTime$new(t$calendar$definition, t$calendar$name, selectors[[ax_ndx]][e])
                      else selectors[[ax_ndx]][e]
               x <- makeAxis(nm, out_group, orient, val, NULL, axis$attributes)
               out_axes_other <- append(out_axes_other, x)
             } else {
-              out_axes_dim <- append(out_axes_dim, axis$subset(out_group))
+              ax <- try(axis$subset(out_group), silent = TRUE)
+              if (inherits(ax, "CFAxis"))
+                out_axes_dim <- append(out_axes_dim, ax)
             }
           }
 
@@ -480,6 +470,20 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
       else
         names(out) <- .names
       out
+    },
+
+    #' @description Tests if the "other" object is coincident with `self`:
+    #'   identical axes.
+    #' @param other A CFArray instance to compare to `self`.
+    #' @return `TRUE` if the arrays are coincident, `FALSE` otherwise.
+    is_coincident = function(other) {
+      if (!inherits(other, "CFVariableBase")) return(FALSE)
+      other_axes <- other$axes
+      if (length(other_axes) != length(self$axes)) return(FALSE)
+      for (ax in seq_along(self$axes))
+        if (!self$axes[[ax]]$identical(other_axes[[ax]]))
+          return(FALSE)
+      TRUE
     }
   ),
   active = list(

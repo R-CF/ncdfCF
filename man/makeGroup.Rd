@@ -4,13 +4,16 @@
 \alias{makeGroup}
 \title{Create a group in memory to hold CF objects}
 \usage{
-makeGroup(name = "/", parent = NULL)
+makeGroup(name = "/", parent = NULL, resource = NULL)
 }
 \arguments{
 \item{name}{The name of the group, default "/".}
 
 \item{parent}{Optionally, a parent group to which the new group will be added
 as a child.}
+
+\item{resource}{Optionally, the netCDF resource that holds the data that the
+objects in this group use.}
 }
 \value{
 A \code{NCGroup} instance.
@@ -18,6 +21,6 @@ A \code{NCGroup} instance.
 \description{
 With this function a group is created in memory, i.e. not associated with a
 netCDF resource on file. This can be used to prepare new CF objects before
-writing them to file. Extracting data from a \code{CFVariable} into a \link{CFArray}
-instance will also create a virtual group.
+writing them to file. Several operations on a \link{CFVariable} or \link{CFArray}
+instance will create new virtual groups.
 }

@@ -30,12 +30,11 @@ data of \link{CFArray} objects having a suitable data type, specifically the bas
 R functions from the Ops and Math groups of the S3 \link{groupGeneric} functions.
 }
 \details{
-The functions always return a new CFArray object created in the group of the
-first CFArray argument and functions can thus be concatenated to create more
+The functions always return a new CFArray object created in a new group.
+Functions can thus be concatenated to create more
 complex expressions. The data type of the new object is determined by the
 base R function; its name is concatenated from the names in the argument
-object(s). Note that intermediate results are retained; these may be deleted
-after the complex operation completes, as desired.
+object(s).
 
 For the Ops functions with two arguments, if both arguments are a CFArray
 object they have to be compatible: same shape, axis coordinate values and

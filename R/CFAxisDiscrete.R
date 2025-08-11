@@ -74,10 +74,11 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #' from `self`, meaning that both `self` and all of its components are made
     #' from new instances.
     #' @param group The group in which to place the new axis. If the argument is
-    #' missing, a new group will be greated for the axis.
+    #' missing, a new group will be created for the axis with a link to the
+    #' netCDF resource of `self`, if set.
     copy = function(group) {
       if (missing(group))
-        group <- makeGroup()
+        group <- makeGroup(resource = self$group$resource)
 
       ax <- makeDiscreteAxis(self$name, group, self$length, self$attributes)
       private$subset_coordinates(ax, c(1L, self$length))
@@ -131,7 +132,7 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
         self$copy(group)
       else {
         var <- NCVariable$new(CF$newVarId(), self$name, group, "NC_INT", 1L, -1L)
-        dim <- NCDimension$new(CF$newDimId(), self$name, rng[2L] - rng[1L] + 1L, FALSE)
+        dim <- NCDimension$new(CF$newDimId(), self$name, rng[2L] - rng[1L] + 1L, FALSE, group)
         ax <- CFAxisDiscrete$new(var, dim, self$orientation)
         private$subset_coordinates(ax, rng)
         ax

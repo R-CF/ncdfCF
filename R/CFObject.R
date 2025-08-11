@@ -17,9 +17,8 @@ CFObject <- R6::R6Class("CFObject",
 
     #' @description Create a new CF object instance from a variable in a netCDF
     #'   resource. This method is called upon opening a netCDF resource. It is
-    #'   rarely, if ever, useful to call this constructor directly from the
-    #'   console. Instead, use the methods from higher-level classes such as
-    #'   [CFVariable].
+    #'   rarely, if ever, useful to call this constructor directly. Instead, use
+    #'   the methods from higher-level classes such as [CFVariable].
     #'
     #' @param nc_var The [NCVariable] instance upon which this CF object is
     #'   based.
@@ -177,27 +176,26 @@ CFObject <- R6::R6Class("CFObject",
 #' @name dimnames
 #' @title Names or axis values of an CF object
 #'
-#' @description Retrieve the variable or axis names of an `ncdfCF` object.
-#' The `names()` function gives the names of the variables in the data set,
-#' preceded by the path to the group if the resource uses groups.
-#' The return value of the `dimnames()` function differs depending on the type
-#' of object:
+#' @description Retrieve the variable or axis names of an `ncdfCF` object. The
+#'   `names()` function gives the names of the variables in the data set,
+#'   preceded by the path to the group if the resource uses groups. The return
+#'   value of the `dimnames()` function differs depending on the type of object:
 #' * `CFDataset`, `CFVariable`: The dimnames are returned as a vector of the
-#' names of the axes of the data set or variable, preceded with the path to the
-#' group if the resource uses groups. Note that this differs markedly from the
-#' `base::dimnames()` functionality.
+#'   names of the axes of the data set or variable, preceded with the path to
+#'   the group if the resource uses groups. Note that this differs markedly from
+#'   the `base::dimnames()` functionality.
 #' * `CFAxisNumeric`, `CFAxisLongitude`, `CFAxisLatitude`, `CFAxisVertical`: The
-#' values of the elements along the axis as a numeric vector.
-#' * `CFAxisTime`: The values of the elements along the axis as a
-#' character vector containing timestamps in ISO8601 format. This could be dates
-#' or date-times if time information is available in the axis.
-#' * `CFAxisCharacter`: The values of the elements along the axis as
-#' a character vector.
+#'   coordinate values along the axis as a numeric vector.
+#' * `CFAxisTime`: The coordinate values along the axis as a
+#'   character vector containing timestamps in ISO8601 format. This could be
+#'   dates or date-times if time information is available in the axis.
+#' * `CFAxisCharacter`: The coordinate values along the axis as
+#'   a character vector.
 #' * `CFAxisDiscrete`: The index values of the axis, from 1 to the
-#' length of the axis.
+#'   length of the axis.
 #'
 #' @param x An `CFObject` whose axis names to retrieve. This could be
-#' `CFDataset`, `CFVariable`, or a class descending from `CFAxis`.
+#'   `CFDataset`, `CFVariable`, or a class descending from `CFAxis`.
 #'
 #' @return A vector as described in the Description section.
 #' @examples

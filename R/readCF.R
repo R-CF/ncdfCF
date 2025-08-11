@@ -168,21 +168,15 @@ peek_ncdf <- function(resource) {
                      parent = parent, resource = parent$resource)
 
   # Read all the raw NC variables in the group
-  if (length(g$varids)) {
-    NCvars <- lapply(g$varids, function (v) .readNCVariable(grp, g$self, v))
-    names(NCvars) <- sapply(NCvars, function(v) v$name)
-    grp$NCvars <- NCvars
-  }
+  if (length(g$varids))
+    lapply(g$varids, function (v) .readNCVariable(grp, g$self, v))
 
   # Dimensions by dimid
-  if (length(g$dimids) && length(new_dims <- g$dimids[!(g$dimids %in% parent_dims)])) {
+  if (length(g$dimids) && length(new_dims <- g$dimids[!(g$dimids %in% parent_dims)]))
     dims <- lapply(new_dims, function (d) {
       dmeta <- RNetCDF::dim.inq.nc(h, d)
-      NCDimension$new(dmeta$id, dmeta$name, dmeta$length, dmeta$unlim)
+      NCDimension$new(dmeta$id, dmeta$name, dmeta$length, dmeta$unlim, grp)
     })
-    names(dims) <- sapply(dims, function(d) d$name)
-    grp$NCdims <- dims
-  }
 
   # UDTs
   if (length(g$typeids))
@@ -251,7 +245,7 @@ peek_ncdf <- function(resource) {
 .makeAxis <- function(grp, var) {
   h <- grp$handle
   dim <- if (var$ndims == 0L)
-    NCDimension$new(CF$newDimId(), var$name, 1L, FALSE) # Scalar variable
+    NCDimension$new(CF$newDimId(), var$name, 1L, FALSE, grp) # Scalar variable
   else
     grp$find_dim_by_id(var$dimids[1L]) # FIXME: What about NC_CHAR axis?
 

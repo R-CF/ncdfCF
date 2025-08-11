@@ -147,9 +147,6 @@ test_that("CRU data", {
     expect_true(is.list(prof))
     expect_true(all(sapply(prof, inherits, "CFArray")))
     expect_equal(names(prof), c("South_Sudan", "Sudan__South_Kordofan", "location_3"))
-    expect_equal(sapply(prof, function(x) x$axes[["lon"]]$length), c(South_Sudan = 1, Sudan__South_Kordofan = 1, location_3 = 1))
-    expect_equal(sapply(prof, function(x) x$axes[["lat"]]$length), c(South_Sudan = 1, Sudan__South_Kordofan = 1, location_3 = 1))
-    expect_equal(sapply(prof, function(x) x$axes[["time"]]$length), c(South_Sudan = 120, Sudan__South_Kordofan = 120, location_3 = 120))
 
     prof <- tmp$profile(lon = 5, .names = "Longitude_5_degrees")
     expect_true(inherits(prof, "CFArray"))

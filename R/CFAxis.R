@@ -154,6 +154,21 @@ CFAxis <- R6::R6Class("CFAxis",
       NULL
     },
 
+    #' @description Copy the parametric terms of a vertical axis. This method is
+    #'   only useful for `CFAxisVertical` instances having a parametric
+    #'   formulation. This stub is here to make the call to this method succeed
+    #'   with no result for the other descendant classes.
+    #' @param from A CFAxisVertical instance that will receive references to the
+    #' parametric terms.
+    #' @param original_axes List of `CFAxis` instances from the CF object that
+    #'   these parametric terms are copied from.
+    #' @param new_axes List of `CFAxis` instances to use with the formula term
+    #'   objects.
+    #' @return `NULL`
+    copy_terms = function(from, original_axes, new_axes) {
+      NULL
+    },
+
     #' @description Configure the function terms of a parametric vertical axis.
     #'   This method is only useful for `CFAxisVertical` instances having a
     #'   parametric formulation. This stub is here to make the call to this

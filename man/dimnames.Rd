@@ -21,22 +21,21 @@ groups(x)
 A vector as described in the Description section.
 }
 \description{
-Retrieve the variable or axis names of an \code{ncdfCF} object.
-The \code{names()} function gives the names of the variables in the data set,
-preceded by the path to the group if the resource uses groups.
-The return value of the \code{dimnames()} function differs depending on the type
-of object:
+Retrieve the variable or axis names of an \code{ncdfCF} object. The
+\code{names()} function gives the names of the variables in the data set,
+preceded by the path to the group if the resource uses groups. The return
+value of the \code{dimnames()} function differs depending on the type of object:
 \itemize{
 \item \code{CFDataset}, \code{CFVariable}: The dimnames are returned as a vector of the
-names of the axes of the data set or variable, preceded with the path to the
-group if the resource uses groups. Note that this differs markedly from the
-\code{base::dimnames()} functionality.
+names of the axes of the data set or variable, preceded with the path to
+the group if the resource uses groups. Note that this differs markedly from
+the \code{base::dimnames()} functionality.
 \item \code{CFAxisNumeric}, \code{CFAxisLongitude}, \code{CFAxisLatitude}, \code{CFAxisVertical}: The
-values of the elements along the axis as a numeric vector.
-\item \code{CFAxisTime}: The values of the elements along the axis as a
-character vector containing timestamps in ISO8601 format. This could be dates
-or date-times if time information is available in the axis.
-\item \code{CFAxisCharacter}: The values of the elements along the axis as
+coordinate values along the axis as a numeric vector.
+\item \code{CFAxisTime}: The coordinate values along the axis as a
+character vector containing timestamps in ISO8601 format. This could be
+dates or date-times if time information is available in the axis.
+\item \code{CFAxisCharacter}: The coordinate values along the axis as
 a character vector.
 \item \code{CFAxisDiscrete}: The index values of the axis, from 1 to the
 length of the axis.

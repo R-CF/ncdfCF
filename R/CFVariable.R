@@ -280,11 +280,13 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @description Retrieve all data of the variable.
     #' @return A [CFArray] instance with all data from this variable.
     data = function() {
-      out_group <- makeGroup()
+      out_group <- makeGroup(resource = self$group$resource)
       out_group$set_attribute("title", "NC_CHAR", paste("Data copy of variable", self$name))
       out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), "): CFVariable::data()"))
 
       axes <- lapply(self$axes, function(ax) ax$copy(out_group))
+      lapply(axes, function(ax) ax$copy_terms(self$group, self$axes, axes))
+
       atts <- self$attributes
       atts <- atts[!(atts$name == "coordinates"), ]
 
@@ -374,6 +376,10 @@ CFVariable <- R6::R6Class("CFVariable",
       axis_names <- self$axis_names
       axis_order <- private$check_names(sel_names)
 
+      out_group <- makeGroup(resource = self$group$resource)
+      out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
+      out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariable$subset()"))
+
       aux <- NULL
       if (inherits(private$llgrid, "CFAuxiliaryLongLat")) {
         aux_names <- c(private$llgrid$varLong$name, private$llgrid$varLat$name)
@@ -382,11 +388,8 @@ CFVariable <- R6::R6Class("CFVariable",
           sel_names <- sel_names[-which(sel_names %in% aux_names)]
           ll_dimids <- private$llgrid$varLong$dimids # lat and long have identical dimids
         }
+        aux_bounds <- aux$aoi$bounds(out_group)
       }
-
-      out_group <- makeGroup()
-      out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
-      out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariable$subset()"))
 
       start <- rep(1L, num_axes)
       count <- rep(NA_integer_, num_axes)
@@ -402,11 +405,11 @@ CFVariable <- R6::R6Class("CFVariable",
         if (!is.null(aux) && ax_dimid == ll_dimids[1L]) {
           start[ax] <- aux$X[1L]
           count[ax] <- aux$X[2L]
-          out_axis <- makeLongitudeAxis(private$llgrid$varLong$name, out_group, aux$aoi$dimnames[[2L]], aux$aoi$bounds(out_group)$lon$coordinates, axis$attributes)
+          out_axis <- makeLongitudeAxis(private$llgrid$varLong$name, out_group, aux$aoi$dimnames[[2L]], aux_bounds$lon$coordinates, axis$attributes)
         } else if (!is.null(aux) && ax_dimid == ll_dimids[2L]) {
           start[ax] <- aux$Y[1L]
           count[ax] <- aux$Y[2L]
-          out_axis <- makeLatitudeAxis(private$llgrid$varLat$name, out_group, aux$aoi$dimnames[[1L]], aux$aoi$bounds(out_group)$lat$coordinates, axis$attributes)
+          out_axis <- makeLatitudeAxis(private$llgrid$varLat$name, out_group, aux$aoi$dimnames[[1L]], aux_bounds$lat$coordinates, axis$attributes)
         } else { # No auxiliary coordinates
           rng <- selectors[[ axis_names[ax] ]]
           if (is.null(rng)) rng <- selectors[[ orient ]]

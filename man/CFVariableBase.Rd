@@ -47,6 +47,7 @@ the data variable.}
 \item \href{#method-CFVariableBase-time}{\code{CFVariableBase$time()}}
 \item \href{#method-CFVariableBase-summarise}{\code{CFVariableBase$summarise()}}
 \item \href{#method-CFVariableBase-profile}{\code{CFVariableBase$profile()}}
+\item \href{#method-CFVariableBase-is_coincident}{\code{CFVariableBase$is_coincident()}}
 \item \href{#method-CFVariableBase-clone}{\code{CFVariableBase$clone()}}
 }
 }
@@ -250,6 +251,27 @@ vectors of argument \code{...} and named with the respective \code{.names} value
 If \code{.as_table = TRUE}, a \code{data.table} with a row for each element along
 all profiles, with a ".variable" column using the values from the
 \code{.names} argument.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariableBase-is_coincident"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariableBase-is_coincident}{}}}
+\subsection{Method \code{is_coincident()}}{
+Tests if the "other" object is coincident with \code{self}:
+identical axes.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariableBase$is_coincident(other)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{other}}{A CFArray instance to compare to \code{self}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{TRUE} if the arrays are coincident, \code{FALSE} otherwise.
 }
 }
 \if{html}{\out{<hr>}}

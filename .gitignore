@@ -11,3 +11,5 @@ docs
 tests/testdata
 revdep
 coverage.R
+design.Rmd
+design.md

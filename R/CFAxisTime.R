@@ -117,10 +117,11 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' from `self`, meaning that both `self` and all of its components are made
     #' from new instances.
     #' @param group The group in which to place the new axis. If the argument is
-    #' missing, a new group will be greated for the axis.
+    #' missing, a new group will be created for the axis with a link to the
+    #' netCDF resource of `self`, if set.
     copy = function(group) {
       if (missing(group))
-        group <- makeGroup()
+        group <- makeGroup(resource = self$group$resource)
 
       time <- private$tm
       idx <- time$indexOf(1L:self$length)
@@ -201,7 +202,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         rng <- range(rng)
         idx <- time$indexOf(seq(from = rng[1L], to = rng[2L], by = 1L))
         tm <- attr(idx, "CFTime")
-        dim <- NCDimension$new(CF$newDimId(), self$name, length(idx), FALSE)
+        dim <- NCDimension$new(CF$newDimId(), self$name, length(idx), FALSE, group)
         t <- CFAxisTime$new(var, dim, tm)
         private$subset_coordinates(t, idx)
         t$set_attribute("actual_range", self$NCvar$vtype, range(tm$offsets))

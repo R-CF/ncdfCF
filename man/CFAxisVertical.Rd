@@ -48,6 +48,7 @@ will access the standard names table.}
 \itemize{
 \item \href{#method-CFAxisVertical-new}{\code{CFAxisVertical$new()}}
 \item \href{#method-CFAxisVertical-copy}{\code{CFAxisVertical$copy()}}
+\item \href{#method-CFAxisVertical-copy_terms}{\code{CFAxisVertical$copy_terms()}}
 \item \href{#method-CFAxisVertical-configure_terms}{\code{CFAxisVertical$configure_terms()}}
 \item \href{#method-CFAxisVertical-parametric_subset}{\code{CFAxisVertical$parametric_subset()}}
 }
@@ -122,9 +123,41 @@ the \code{group}).
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{group}}{The group in which to place the new axis. If the argument is
-missing, a new group will be created for the axis.}
+missing, a new group will be created for the axis with a link to the
+netCDF resource of \code{self}, if set.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The axis that is a copy of \code{self}.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisVertical-copy_terms"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisVertical-copy_terms}{}}}
+\subsection{Method \code{copy_terms()}}{
+Copy the parametric terms from \code{from} to the group of
+\code{self}. The parametric terms will be configured in \code{self}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$copy_terms(from, original_axes, new_axes)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{from}}{The \code{NCGroup} from which references to the parametric terms
+are accessible.}
+
+\item{\code{original_axes}}{List of \code{CFAxis} instances from the CF object that
+these parametric terms are copied from.}
+
+\item{\code{new_axes}}{List of \code{CFAxis} instances to use with the formula term
+objects.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}
@@ -135,11 +168,11 @@ Configure the formula terms of a parametric vertical axis.
 If the vertical axis has a \code{formula_terms} attribute it has a
 parametric coordinate space that is calculated from the formula terms.
 This method sets up the axis instance to calculate the dimensional
-coordinate space (but it does not do the actual calculation; call the
-\code{parametric_coordinates} method to gain access to the dimensional
-coordinates).
+coordinate space (but it does not do the actual calculation; access the
+\code{parametric_coordinates} field to get the dimensional coordinates).
 
-This method is called automatically when opening a netCDF file. It is
+This method is called automatically when opening a netCDF file. It
+should also be called after copying the axes that it refers to. It is
 not intended to be called otherwise.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$configure_terms(axes)}\if{html}{\out{</div>}}

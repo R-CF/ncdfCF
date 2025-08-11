@@ -28,11 +28,17 @@ NCDimension <- R6::R6Class("NCDimension",
     #' @param name Character string with the name of the netCDF dimension.
     #' @param length Length of the dimension.
     #' @param unlim Is the dimension unlimited?
+    #' @param group The group where the dimension is located.
     #' @return A `NCDimension` instance.
-    initialize = function(id, name, length, unlim) {
+    initialize = function(id, name, length, unlim, group) {
       super$initialize(id, name)
       self$length <- length
       self$unlim <- unlim
+
+      # Add self to the group
+      l <- list(self)
+      names(l) <- name
+      group$NCdims <- append(group$NCdims, l)
     },
 
     #' @description Summary of the NC dimension printed to the console.

@@ -13,7 +13,8 @@ group.
 Direct access to groups is usually not necessary. The principal objects
 held by the group, CF data variables and axes, are accessible via other
 means. Only for access to the group attributes is a reference to a group
-required.
+required. Changing the properties of a group other than its name may very
+well invalidate the CF objects or even the netCDF file.
 }
 \section{Super class}{
 \code{\link[ncdfCF:NCObject]{ncdfCF::NCObject}} -> \code{NCGroup}
@@ -22,7 +23,9 @@ required.
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
 \item{\code{resource}}{Access to the underlying netCDF resource. This can be
-\code{NULL} for instances created in memory.}
+\code{NULL} for instances created in memory. Managed internally. Never
+change the \code{resource} as it will very likely lead to problems reading
+from and writing to file.}
 
 \item{\code{parent}}{Parent group of this group, the owning \code{CFDataset} for the
 root group.}

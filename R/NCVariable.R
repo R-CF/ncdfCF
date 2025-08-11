@@ -57,6 +57,11 @@ NCVariable <- R6::R6Class("NCVariable",
       self$vtype <- vtype
       self$ndims <- ndims
       self$dimids <- dimids
+
+      # Add self to the group
+      l <- list(self)
+      names(l) <- name
+      group$NCvars <- append(group$NCvars, l)
     },
 
     #' @description Summary of the NC variable printed to the console.

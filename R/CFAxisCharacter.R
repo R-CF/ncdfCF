@@ -54,10 +54,11 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
     #' from `self`, meaning that both `self` and all of its components are made
     #' from new instances.
     #' @param group The group in which to place the new axis. If the argument is
-    #' missing, a new group will be greated for the axis.
+    #' missing, a new group will be created for the axis with a link to the
+    #' netCDF resource of `self`, if set.
     copy = function(group) {
       if (missing(group))
-        group <- makeGroup()
+        group <- makeGroup(resource = self$group$resource)
 
       ax <- makeCharacterAxis(self$name, group, private$values, self$attributes)
       private$subset_coordinates(ax, c(1L, self$length))

@@ -15,7 +15,7 @@ CF.options <- new.env(parent = emptyenv())
   # The below variables are used to generate unique id's for temporary objects.
   # When data sets or data arrays are written to file, new id's as reported by
   # the netCDF library are assigned. Don't use these variables directly, instead
-  # use functions .newVarId() and .newDimId().
+  # use functions .newGroupId(), .newVarId() and .newDimId().
   assign("currentGroupId", 0L, envir = CF)
   assign("currentVarId", 0L, envir = CF)
   assign("currentDimId", 0L, envir = CF)

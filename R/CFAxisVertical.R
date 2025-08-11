@@ -58,11 +58,6 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
       }
     },
 
-    # Compile a list of axes used by the formula terms
-    gather_terms_axes = function() {
-       stop("Must implement this")
-    },
-
     # This function computes the actual dimensional axis values from the terms.
     compute = function() {
       if (is.null(private$computed_values))
@@ -205,30 +200,90 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     #' the `group` used for this axis (or another group that is reachable from
     #' the `group`).
     #' @param group The group in which to place the new axis. If the argument is
-    #' missing, a new group will be created for the axis.
+    #' missing, a new group will be created for the axis with a link to the
+    #' netCDF resource of `self`, if set.
+    #' @return The axis that is a copy of `self`.
     copy = function(group) {
       if (missing(group))
-        group <- makeGroup()
+        group <- makeGroup(resource = self$group$resource)
+
+      var <- NCVariable$new(CF$newVarId(), self$name, group, "NC_DOUBLE", 1L, NULL)
+      dim <- NCDimension$new(CF$newDimId(), self$name, length(private$values), FALSE, group)
+      axis <- CFAxisVertical$new(var, dim, private$values, private$parameter_name)
+      axis$attributes <- self$attributes
 
       bnds <- self$bounds
-      if (inherits(bnds, "CFBounds")) bnds <- bnds$coordinates
-      ax <- makeVerticalAxis(self$name, group, private$values, bnds, self$attributes)
-      private$subset_coordinates(ax, c(1L, self$length))
-      ax
+      if (inherits(bnds, "CFBounds")) {
+        nm <- self$attribute("bounds")
+        var <- NCVariable$new(CF$newVarId(), nm, group, "NC_DOUBLE", 2L, NULL)
+        dim <- NCDimension$new(CF$newDimId(), "nv", 2L, FALSE, group)
+        axis$bounds <- CFBounds$new(var, dim, bnds$coordinates)
+      }
+
+      private$subset_coordinates(axis, c(1L, self$length))
+      axis
+    },
+
+    #' @description Copy the parametric terms from `from` to the group of
+    #'   `self`. The parametric terms will be configured in `self`.
+    #' @param from The `NCGroup` from which references to the parametric terms
+    #'   are accessible.
+    #' @param original_axes List of `CFAxis` instances from the CF object that
+    #'   these parametric terms are copied from.
+    #' @param new_axes List of `CFAxis` instances to use with the formula term
+    #'   objects.
+    #' @return Self, invisibly.
+    copy_terms = function(from, original_axes, new_axes) {
+      ft <- self$attribute("formula_terms")
+      if (!is.na(ft)) {
+        ft <- trimws(strsplit(ft, " ")[[1L]], whitespace = ":")
+        dim(ft) <- c(2, length(ft) * 0.5)
+        rownames(ft) <- c("term", "variable")
+        ft <- as.data.frame(t(ft))
+        ft$ParamTerm <- lapply(ft$variable, function(v) {
+          if (v == self$name) NULL
+          else {
+            ncvar <- from$find_by_name(v, "NC")
+            if (!is.null(ncvar)) {
+              xids <- lapply(original_axes, function(x) x$dimid)
+              nd <- ncvar$ndims
+              if (nd > 0L) {
+                ax <- vector("list", nd)
+                for (x in 1:nd) {
+                  ndx <- which(sapply(xids, function(e) ncvar$dimids[x] %in% e))
+                  if (!length(ndx)) {
+                    warning(paste0("Possible variable '", ncvar$name, "' cannot be constructed because of unknown axis identifier ", ncvar$dimids[x]))
+                    return(NULL)
+                  }
+                  ax[[x]] <- new_axes[[ndx]]
+                }
+                names(ax) <- sapply(ax, function(x) x$name)
+              } else ax <- list()
+              ncvar$group <- self$group
+
+              CFVerticalParametricTerm$new(ncvar, ax)
+            } else
+              CFVerticalParametricTerm$new(0, NULL)
+          }
+        })
+        private$terms <- ft
+      }
+
+      return(self)
     },
 
     #' @description Configure the formula terms of a parametric vertical axis.
     #'   If the vertical axis has a `formula_terms` attribute it has a
     #'   parametric coordinate space that is calculated from the formula terms.
     #'   This method sets up the axis instance to calculate the dimensional
-    #'   coordinate space (but it does not do the actual calculation; call the
-    #'   `parametric_coordinates` method to gain access to the dimensional
-    #'   coordinates).
+    #'   coordinate space (but it does not do the actual calculation; access the
+    #'   `parametric_coordinates` field to get the dimensional coordinates).
     #'
-    #'   This method is called automatically when opening a netCDF file. It is
+    #'   This method is called automatically when opening a netCDF file. It
+    #'   should also be called after copying the axes that it refers to. It is
     #'   not intended to be called otherwise.
     #' @param axes List of `CFAxis` instances to use with the formula term
-    #' objects.
+    #'   objects.
     #' @return Self, invisibly.
     configure_terms = function(axes) {
       ft <- self$attribute("formula_terms")

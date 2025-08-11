@@ -85,6 +85,7 @@ dimensional coordinates. Always \code{FALSE} for all axes except for
 \item \href{#method-CFAxis-shard}{\code{CFAxis$shard()}}
 \item \href{#method-CFAxis-peek}{\code{CFAxis$peek()}}
 \item \href{#method-CFAxis-time}{\code{CFAxis$time()}}
+\item \href{#method-CFAxis-copy_terms}{\code{CFAxis$copy_terms()}}
 \item \href{#method-CFAxis-configure_terms}{\code{CFAxis$configure_terms()}}
 \item \href{#method-CFAxis-identical}{\code{CFAxis$identical()}}
 \item \href{#method-CFAxis-can_append}{\code{CFAxis$can_append()}}
@@ -221,6 +222,36 @@ with no result for the other descendant classes.
 \if{html}{\out{<div class="r">}}\preformatted{CFAxis$time()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+\code{NULL}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-copy_terms"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-copy_terms}{}}}
+\subsection{Method \code{copy_terms()}}{
+Copy the parametric terms of a vertical axis. This method is
+only useful for \code{CFAxisVertical} instances having a parametric
+formulation. This stub is here to make the call to this method succeed
+with no result for the other descendant classes.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$copy_terms(from, original_axes, new_axes)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{from}}{A CFAxisVertical instance that will receive references to the
+parametric terms.}
+
+\item{\code{original_axes}}{List of \code{CFAxis} instances from the CF object that
+these parametric terms are copied from.}
+
+\item{\code{new_axes}}{List of \code{CFAxis} instances to use with the formula term
+objects.}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
 \code{NULL}
 }

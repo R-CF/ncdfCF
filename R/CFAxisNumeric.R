@@ -141,10 +141,11 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #' from new instances. This can copy a `CFAxisNumeric` instance, but also a
     #' `CFAxisLongitude` or `CFAxisLatitude` instance.
     #' @param group The group in which to place the new axis. If the argument is
-    #' missing, a new group will be greated for the axis.
+    #' missing, a new group will be created for the axis with a link to the
+    #' netCDF resource of `self`, if set.
     copy = function(group) {
       if (missing(group))
-        group <- makeGroup()
+        group <- makeGroup(resource = self$group$resource)
 
       bnds <- self$bounds
       if (inherits(bnds, "CFBounds")) bnds <- bnds$coordinates

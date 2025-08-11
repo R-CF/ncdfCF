@@ -60,7 +60,7 @@ CFVerticalParametricTerm <- R6::R6Class("CFVerticalParametricTerm",
     #'   in a different order than the axes of the term.
     #' @param start The indices to start reading data from the file, as an
     #'   integer vector at least as long as the number of axis for the term.
-    #' @param count The of values to read from the file, as an integer vector at
+    #' @param count The number of values to read from the file, as an integer vector at
     #'   least as long as the number of axis for the term.
     #' @return Self, invisibly.
     subset = function(start, count) {

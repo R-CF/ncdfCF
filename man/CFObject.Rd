@@ -59,9 +59,8 @@ the CF object.}
 \subsection{Method \code{new()}}{
 Create a new CF object instance from a variable in a netCDF
 resource. This method is called upon opening a netCDF resource. It is
-rarely, if ever, useful to call this constructor directly from the
-console. Instead, use the methods from higher-level classes such as
-\link{CFVariable}.
+rarely, if ever, useful to call this constructor directly. Instead, use
+the methods from higher-level classes such as \link{CFVariable}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFObject$new(nc_var)}\if{html}{\out{</div>}}
 }

@@ -72,7 +72,7 @@ AOI <- R6::R6Class("AOI",
       lat_vals <- seq(from = private$minLat, by = private$res[2L], length = dims[1L] + 1L)
       lat_vals <- rbind(lat_vals[1:dims[1L]], lat_vals[-1L])
 
-      dim <- NCDimension$new(CF$newDimId(), "nv", 2L, FALSE)
+      dim <- NCDimension$new(CF$newDimId(), "nv", 2L, FALSE, group)
 
       list(lon = CFBounds$new(lon_var, dim, lon_vals),
            lat = CFBounds$new(lat_var, dim, lat_vals))
