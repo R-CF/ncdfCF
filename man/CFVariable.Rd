@@ -243,7 +243,7 @@ variables} then you can specify their names (instead of specifying the
 names of the primary planar axes). The resolution of the grid that is
 produced by this method is automatically calculated. If you want to
 subset those axes then specify values in decimal degrees; if you want
-to extract the full extent, specify \code{NA} for both \code{X} and \code{Y}.
+to extract the full extent, specify \code{NA} for both axes.
 }
 }
 

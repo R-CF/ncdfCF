@@ -352,13 +352,23 @@ A character vector with group names.
 \if{html}{\out{<a id="method-NCGroup-dimensions"></a>}}
 \if{latex}{\out{\hypertarget{method-NCGroup-dimensions}{}}}
 \subsection{Method \code{dimensions()}}{
-List all the dimensions that are visible from this group
-including those that are defined in parent groups (by names not defined
-by any of their child groups in direct lineage to the current group).
+List all the dimensions that are visible from this group,
+possibly including those that are defined in parent groups (by names
+not defined by any of their child groups in direct lineage to the
+current group).
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$dimensions()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$dimensions(scope = "all")}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{scope}}{Character string that indicates if only dimensions in the
+current group should be reported (\code{local}) or visible dimensions in
+parent groups as well (\code{all}, default).}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
 A vector of \link{NCDimension} objects.
 }

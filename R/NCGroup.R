@@ -340,12 +340,18 @@ NCGroup <- R6::R6Class("NCGroup",
       else self$fullname
     },
 
-    #' @description List all the dimensions that are visible from this group
-    #' including those that are defined in parent groups (by names not defined
-    #' by any of their child groups in direct lineage to the current group).
+    #' @description List all the dimensions that are visible from this group,
+    #'   possibly including those that are defined in parent groups (by names
+    #'   not defined by any of their child groups in direct lineage to the
+    #'   current group).
+    #' @param scope Character string that indicates if only dimensions in the
+    #'   current group should be reported (`local`) or visible dimensions in
+    #'   parent groups as well (`all`, default).
     #' @return A vector of [NCDimension] objects.
-    dimensions = function() {
+    dimensions = function(scope = "all") {
       dims <- self$NCdims
+      if (scope == "local") return(dims)
+
       if (private$nm == "/")
         dims
       else {

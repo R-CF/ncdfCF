@@ -214,8 +214,8 @@ peek_ncdf <- function(resource) {
 
 .buildAxes <- function(grp) {
   if (length(grp$NCvars) > 0L) {
-    # Create axis for variables with name equal to dimension names
-    dim_names <- sapply(grp$dimensions(), function(d) d$name)
+    # Create axis for local variables with name equal to visible dimensions
+    dim_names <- sapply(grp$dimensions("all"), function(d) d$name)
     if (length(dim_names)) {
       local_vars <- grp$NCvars[dim_names]
       local_CVs <- local_vars[lengths(local_vars) > 0L]
@@ -350,21 +350,20 @@ peek_ncdf <- function(resource) {
 #' Make CF constructs for "coordinates" references
 #'
 #' NC variables are scanned for a "coordinates" attribute (which must be a data
-#' variable, domain variable or geometry container variable). The NC variable
-#' referenced is converted into one of 3 objects, depending on context:
-#' 1. A scalar coordinate variable in the group where its NC variable is
-#' located;
-#' 2. A label variable in the group where its NC variable is located; multiple
-#' label coordinates (such as in the case of taxon name and identifier) are
-#' stored in a single label variable;
-#' 3. A long-lat auxiliary coordinate variable when both a longitude and
-#' latitude NC variable are found, in the group of the longitude NC variable.
+#' variable, domain variable or geometry container variable). If not already
+#' present, the NC variable referenced is converted into one of 3 objects,
+#' depending on context: 1. A scalar coordinate variable in the group where its
+#' NC variable is located; 2. A label variable in the group where its NC
+#' variable is located; multiple label coordinates (such as in the case of taxon
+#' name and identifier) are stored in a single label variable; 3. A long-lat
+#' auxiliary coordinate variable when both a longitude and latitude NC variable
+#' are found, in the group of the longitude NC variable.
 #'
 #' @param grp The group to scan.
 #'
-#' @return Nothing. CFAxis and CFAuxiliaryLongLat instances are created
-#' in the groups where the NC variables are found. These will later be picked up
-#' when CFvariables are created.
+#' @return Nothing. CFAxis and CFAuxiliaryLongLat instances are created in the
+#'   groups where the NC variables are found. These will later be picked up when
+#'   CFvariables are created.
 #' @noRd
 .makeCoordinates <- function(grp) {
   if (length(grp$NCvars) > 0L) {
@@ -410,9 +409,9 @@ peek_ncdf <- function(resource) {
                 aux$group$CFaux[[aux$name]] <- CFLabel$new(aux, dim, val)
                 found_one <- TRUE
               } else if (nd < 2L) {
-                # Scalar or auxiliary coordinate with a single dimension: make an axis out of it.
-                ax <- .makeAxis(grp, aux)
-                aux$group$CFaxes[[aux$name]] <- ax
+                # Scalar or auxiliary coordinate with a single dimension: make an axis out of it if it doesn't already exist.
+                if (is.null(grp$find_by_name(aux$name)))
+                  aux$group$CFaxes[[aux$name]] <- .makeAxis(grp, aux)
                 found_one <- TRUE
               }
             }

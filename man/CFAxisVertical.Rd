@@ -195,9 +195,8 @@ Self, invisibly.
 \if{latex}{\out{\hypertarget{method-CFAxisVertical-parametric_subset}{}}}
 \subsection{Method \code{parametric_subset()}}{
 This method subsets the parametric terms after the axis has
-been subset. This method is called by \code{CFVariable$subset()} and should
-not be called otherwise. Parametric terms must have been configured
-before calling this method.
+been subset. This method is called by \code{CFVariable$subset()} and
+\verb{$profile()} methods and should not be called otherwise.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$parametric_subset(axes, start, count, index, dim_in, dim_out)}\if{html}{\out{</div>}}
 }

@@ -103,7 +103,7 @@ dim.AOI <- function(x) {
   if (is.null(min) && is.null(max)) return()
   if (is.null(min) && (max > -180 && max <= 360)) return()
   if (is.null(max) && (min >= -180 && min < 360)) return()
-  if (min < -180 || (min < 0 && max > 180) || max > 360 || min >= max)
+  if (max - min > 360)
     stop("Longitude range is not valid", call. = FALSE)
 }
 

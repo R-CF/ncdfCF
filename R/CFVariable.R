@@ -57,8 +57,12 @@ CFVariable <- R6::R6Class("CFVariable",
       # same as that of the longitude-latitude grid
       ext <- private$llgrid$extent
       sel_names <- names(subset)
-      Xrng <- if (ll_names[1L] %in% sel_names) range(subset[[ ll_names[1L] ]]) else ext[1L:2L]
-      Yrng <- if (ll_names[2L] %in% sel_names) range(subset[[ ll_names[2L] ]]) else ext[3L:4L]
+      Xrng <- if (ll_names[1L] %in% sel_names && !is.na(subset[[ ll_names[1L] ]][1L]))
+                range(subset[[ ll_names[1L] ]])
+              else ext[1L:2L]
+      Yrng <- if (ll_names[2L] %in% sel_names && !is.na(subset[[ ll_names[2L] ]][1L]))
+                range(subset[[ ll_names[2L] ]])
+              else ext[3L:4L]
       private$llgrid$aoi <-  aoi(Xrng[1L], Xrng[2L], Yrng[1L], Yrng[2L])
 
       index <- private$llgrid$grid_index()
@@ -345,7 +349,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   names of the primary planar axes). The resolution of the grid that is
     #'   produced by this method is automatically calculated. If you want to
     #'   subset those axes then specify values in decimal degrees; if you want
-    #'   to extract the full extent, specify `NA` for both `X` and `Y`.
+    #'   to extract the full extent, specify `NA` for both axes.
     #' @param ... One or more arguments of the form `axis = range`. The "axis"
     #'   part should be the name of an axis or its orientation `X`, `Y`, `Z` or
     #'   `T`. The "range" part is a vector of values representing coordinates

@@ -310,9 +310,8 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     },
 
     #' @description This method subsets the parametric terms after the axis has
-    #'   been subset. This method is called by `CFVariable$subset()` and should
-    #'   not be called otherwise. Parametric terms must have been configured
-    #'   before calling this method.
+    #'   been subset. This method is called by `CFVariable$subset()` and
+    #'   `$profile()` methods and should not be called otherwise.
     #' @param axes The list of dimensional axes that the data variable uses. The
     #'   axes are named after the original axes (some may have been renamed in
     #'   the preceding process).
