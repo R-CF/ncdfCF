@@ -199,17 +199,10 @@ peek_ncdf <- function(resource) {
 #' @noRd
 .readNCVariable <- function(grp, h, vid) {
   vmeta <- RNetCDF::var.inq.nc(h, vid)
-  var <- NCVariable$new(id = as.integer(vmeta$id), name = vmeta$name, group = grp,
-                        vtype = vmeta$type, ndims = vmeta$ndims, dimids = vmeta$dimids)
-
-  if (length(vmeta) > 6L)
-    var$netcdf4 <- vmeta[-(1L:6L)]
-
-  # Get the attributes
-  if (vmeta$natts > 0L)
-    var$attributes <- .readAttributes(h, vmeta$name, vmeta$natts)
-
-  var
+  NCVariable$new(id = as.integer(vmeta$id), name = vmeta$name, group = grp,
+                 vtype = vmeta$type, ndims = vmeta$ndims, dimids = vmeta$dimids,
+                 attributes = .readAttributes(h, vmeta$name, vmeta$natts),
+                 netcdf4 = vmeta[-(1L:6L)])
 }
 
 .buildAxes <- function(grp) {
@@ -410,8 +403,11 @@ peek_ncdf <- function(resource) {
                 found_one <- TRUE
               } else if (nd < 2L) {
                 # Scalar or auxiliary coordinate with a single dimension: make an axis out of it if it doesn't already exist.
-                if (is.null(grp$find_by_name(aux$name)))
-                  aux$group$CFaxes[[aux$name]] <- .makeAxis(grp, aux)
+                if (is.null(grp$find_by_name(aux$name))) {
+                  new_ax <- list(.makeAxis(grp, aux))
+                  names(new_ax) <- aux$name
+                  aux$group$CFaxes <- append(aux$group$CFaxes, new_ax)
+                }
                 found_one <- TRUE
               }
             }
@@ -674,6 +670,7 @@ peek_ncdf <- function(resource) {
 
 # Read the attributes for a group or a variable
 .readAttributes <- function(h, name, num) {
+  if (num < 1L) return(data.frame())
   atts <- do.call(rbind, lapply(0L:(num - 1L), function (a) as.data.frame(RNetCDF::att.inq.nc(h, name, a))))
   atts$value <- lapply(0L:(num - 1L), function (a) RNetCDF::att.get.nc(h, name, a, fitnum = TRUE))
   atts

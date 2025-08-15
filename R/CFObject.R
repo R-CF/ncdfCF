@@ -149,19 +149,22 @@ CFObject <- R6::R6Class("CFObject",
     fullname = function(value) {
       if (missing(value)) {
         grp <- self$group$fullname
-        if (!(grp == "/")) grp <- paste0(grp, "/")
+        if (is.null(grp)) return(self$NCvar$name)
+        grp <- if (grp == "/") "" else paste0(grp, "/")
         paste0(grp, self$NCvar$name)
       }
     },
 
-    #' @field group Retrieve the [NCGroup] that this object is located in.
+    #' @field group (read-only) Retrieve the [NCGroup] that this object is
+    #'   located in.
     group = function(value) {
       if (missing(value))
         self$NCvar$group
       else
-        self$NCvar$group <- value
+        NULL #FIXME: Cannot change the NCGroup that an object relates to
     },
 
+    # FIXME: Make read-only, attributes are set at initialization or through methods
     #' @field attributes Set or retrieve a `data.frame` with the attributes of
     #'   the CF object.
     attributes = function(value) {

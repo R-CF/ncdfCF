@@ -6,7 +6,10 @@
 \title{NetCDF dimension object}
 \description{
 This class represents an netCDF dimensions. It contains the
-information on a dimension that is stored in an netCDF file.
+information on a dimension that is stored in an netCDF file. Consequently,
+the properties of this class are all read-only. The length of the dimension
+may change if data is written to an unlimited dimension, but that is
+managed internally.
 
 This class is not very useful for interactive use. Use the \link{CFAxis}
 descendent classes instead.
@@ -14,15 +17,15 @@ descendent classes instead.
 \section{Super class}{
 \code{\link[ncdfCF:NCObject]{ncdfCF::NCObject}} -> \code{NCDimension}
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
-\item{\code{length}}{The length of the dimension. If field \code{unlim = TRUE}, this
-field indicates the length of the data in this dimension written to file.}
+\item{\code{length}}{(read-only) The length of the dimension. If field \code{unlim = TRUE}, this field indicates the length of the data in this dimension
+written to file.}
 
-\item{\code{unlim}}{Logical flag to indicate if the dimension is unlimited, i.e.
-that additional data may be written to file incrementing in this
-dimension.}
+\item{\code{unlim}}{(read-only) Logical flag to indicate if the dimension is
+unlimited, i.e. that additional data may be written to file
+incrementing this dimension.}
 }
 \if{html}{\out{</div>}}
 }
@@ -110,6 +113,9 @@ Write the dimension to a netCDF file.
 \item{\code{h}}{The handle to the netCDF file to write.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

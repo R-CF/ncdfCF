@@ -1,25 +1,26 @@
 #' NetCDF dimension object
 #'
 #' @description This class represents an netCDF dimensions. It contains the
-#'   information on a dimension that is stored in an netCDF file.
+#'   information on a dimension that is stored in an netCDF file. Consequently,
+#'   the properties of this class are all read-only. The length of the dimension
+#'   may change if data is written to an unlimited dimension, but that is
+#'   managed internally.
 #'
-#' This class is not very useful for interactive use. Use the [CFAxis]
-#' descendent classes instead.
+#'   This class is not very useful for interactive use. Use the [CFAxis]
+#'   descendent classes instead.
 #'
 #' @docType class
 #'
 NCDimension <- R6::R6Class("NCDimension",
   inherit = NCObject,
+  private = list(
+    # The length of the dimension.
+    len = 0L,
+
+    # Flag to indicate if the dimension is unlimited.
+    u = FALSE
+  ),
   public = list(
-    #' @field length The length of the dimension. If field `unlim = TRUE`, this
-    #' field indicates the length of the data in this dimension written to file.
-    length = 0L,
-
-    #' @field unlim Logical flag to indicate if the dimension is unlimited, i.e.
-    #'   that additional data may be written to file incrementing in this
-    #'   dimension.
-    unlim  = FALSE,
-
     #' @description Create a new netCDF dimension. This class should not be
     #'   instantiated directly, create CF objects instead. This class is
     #'   instantiated when opening a netCDF resource.
@@ -32,10 +33,11 @@ NCDimension <- R6::R6Class("NCDimension",
     #' @return A `NCDimension` instance.
     initialize = function(id, name, length, unlim, group) {
       super$initialize(id, name)
-      self$length <- length
-      self$unlim <- unlim
+      private$len <- length
+      private$u <- unlim
 
       # Add self to the group
+      # FIXME: Must be a NCGroup method
       l <- list(self)
       names(l) <- name
       group$NCdims <- append(group$NCdims, l)
@@ -45,24 +47,43 @@ NCDimension <- R6::R6Class("NCDimension",
     #' @param ... Passed on to other methods.
     print = function(...) {
       cat("<netCDF dimension> [", self$id, "] ", self$name, "\n", sep = "")
-      cat("Length       :", self$length, "\n")
-      cat("Unlimited    :", self$unlim, "\n")
+      cat("Length       :", private$len, "\n")
+      cat("Unlimited    :", private$u, "\n")
     },
 
     #' @description Write the dimension to a netCDF file.
     #' @param h The handle to the netCDF file to write.
+    #' @return Self, invisibly.
     write = function(h) {
       # Error will be thrown when trying to write a dimension that's already
       # defined, such as when a dimension is shared between multiple objects.
       # This error can be safely ignored.
-      did <- try(if (self$unlim)
+      did <- try(if (private$u)
             RNetCDF::dim.def.nc(h, self$name, unlim = TRUE)
           else
-            RNetCDF::dim.def.nc(h, self$name, self$length),
+            RNetCDF::dim.def.nc(h, self$name, private$len),
           silent = TRUE)
       if (inherits(did, "try-error"))
         did <- RNetCDF::dim.inq.nc(h, self$name)$id
       self$id <- did
+      invisible(self)
+    }
+  ),
+  active = list(
+    #' @field length (read-only) The length of the dimension. If field `unlim =
+    #'   TRUE`, this field indicates the length of the data in this dimension
+    #'   written to file.
+    length = function(value) {
+      if (missing(value))
+        private$len
+    },
+
+    #' @field unlim (read-only) Logical flag to indicate if the dimension is
+    #'   unlimited, i.e. that additional data may be written to file
+    #'   incrementing this dimension.
+    unlim = function(value) {
+      if (missing(value))
+        private$u
     }
   )
 )

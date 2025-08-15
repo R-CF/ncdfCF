@@ -27,9 +27,11 @@ NCObject <- R6::R6Class("NCObject",
     #'
     #' @param id Numeric identifier of the netCDF object.
     #' @param name Character string with the name of the netCDF object.
-    initialize = function(id, name) {
+    #' @param attributes Optional, `data.frame` with attributes of the object.
+    initialize = function(id, name, attributes = data.frame()) {
       private$id_ <- id
       self$name <- name
+      private$atts <- attributes
     },
 
     #' @description This function prints the attributes of the netCDF object to

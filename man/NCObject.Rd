@@ -58,7 +58,7 @@ attributes, an empty \code{data.frame} will be returned.}
 Create a new netCDF object. This class should not be
 instantiated directly, create descendant objects instead.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCObject$new(id, name)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{NCObject$new(id, name, attributes = data.frame())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -67,6 +67,8 @@ instantiated directly, create descendant objects instead.
 \item{\code{id}}{Numeric identifier of the netCDF object.}
 
 \item{\code{name}}{Character string with the name of the netCDF object.}
+
+\item{\code{attributes}}{Optional, \code{data.frame} with attributes of the object.}
 }
 \if{html}{\out{</div>}}
 }

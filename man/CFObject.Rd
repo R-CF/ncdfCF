@@ -32,7 +32,8 @@ may invalidate the entire CF object and everything that depends on it.}
 
 \item{\code{fullname}}{(read-only) The fully-qualified name of the CF object.}
 
-\item{\code{group}}{Retrieve the \link{NCGroup} that this object is located in.}
+\item{\code{group}}{(read-only) Retrieve the \link{NCGroup} that this object is
+located in.}
 
 \item{\code{attributes}}{Set or retrieve a \code{data.frame} with the attributes of
 the CF object.}

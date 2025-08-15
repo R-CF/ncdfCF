@@ -16,28 +16,24 @@ properties are thus made accessible.
 \section{Super class}{
 \code{\link[ncdfCF:NCObject]{ncdfCF::NCObject}} -> \code{NCVariable}
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{group}}{NetCDF group where this variable is located.}
-
-\item{\code{vtype}}{The netCDF data type of this variable. This could be the
-packed type. Don't check this field but use the appropriate method in the
-class of the object whose data type you are looking for.}
-
-\item{\code{ndims}}{Number of dimensions that this variable uses.}
-
-\item{\code{dimids}}{Vector of dimension identifiers that this variable uses.
-These are the so-called "NUG coordinate variables".}
-
-\item{\code{netcdf4}}{Additional properties for a \code{netcdf4} resource.}
-}
-\if{html}{\out{</div>}}
-}
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
-\item{\code{CF}}{List of CF objects that use this netCDF variable.}
+\item{\code{group}}{(read-only) NetCDF group where this variable is located.}
+
+\item{\code{vtype}}{(read-only) The netCDF data type of this variable. This could be the
+packed type. Don't check this field but use the appropriate method in the
+class of the object whose data type you are looking for.}
+
+\item{\code{ndims}}{(read-only) Number of dimensions that this variable uses.}
+
+\item{\code{dimids}}{(read-only) Vector of dimension identifiers that this variable uses.
+These are the so-called "NUG coordinate variables".}
+
+\item{\code{netcdf4}}{(read-only) Additional properties for a \code{netcdf4} resource.}
+
+\item{\code{CF}}{Register CF object that uses this netCDF variable, or retrieve
+the list of registered CF objects.}
 
 \item{\code{fullname}}{(read-only) Name of the NC variable including the group
 path from the root group.}
@@ -76,7 +72,16 @@ Create a new netCDF variable. This class should not be
 instantiated directly, they are created automatically when opening a
 netCDF resource.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCVariable$new(id, name, group, vtype, ndims, dimids)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{NCVariable$new(
+  id,
+  name,
+  group,
+  vtype,
+  ndims,
+  dimids,
+  attributes = data.frame(),
+  netcdf4 = list()
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -93,6 +98,12 @@ netCDF resource.
 \item{\code{ndims}}{The number of dimensions this variable uses.}
 
 \item{\code{dimids}}{The identifiers of the dimensions this variable uses.}
+
+\item{\code{attributes}}{Optional, \code{data.frame} with the attributes of the
+object.}
+
+\item{\code{netcdf4}}{Optional, \code{netcdf4}-specific arguments in the format of
+RNetCDF.}
 }
 \if{html}{\out{</div>}}
 }
