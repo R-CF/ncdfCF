@@ -116,7 +116,7 @@ method \strong{after} all axes that the terms refer to have been copied to
 the \code{group} used for this axis (or another group that is reachable from
 the \code{group}).
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$copy(group)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$copy(group, name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -125,11 +125,14 @@ the \code{group}).
 \item{\code{group}}{The group in which to place the new axis. If the argument is
 missing, a new group will be created for the axis with a link to the
 netCDF resource of \code{self}, if set.}
+
+\item{\code{name}}{The name for the new axis. If argument \code{group} is given, the
+name must be unique among the objects in the group.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-The axis that is a copy of \code{self}.
+The newly created axis.
 }
 }
 \if{html}{\out{<hr>}}

@@ -46,7 +46,7 @@ CFAxis <- R6::R6Class("CFAxis",
     subset_coordinates = function(ax, rng) {
       if (length(private$aux)) {
         grp <- ax$group
-        lapply(private$aux, function(x) ax$auxiliary <- x$subset(grp, rng))
+        lapply(private$aux, function(x) ax$auxiliary <- x$subset(grp, x$name, rng))
       }
     }
   ),
@@ -208,11 +208,13 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   succeed with no result for the  `CFAxis` descendants that do not
     #'   implement this method.
     #' @param group The group to create the new axis in.
+    #' @param name The name for the new axis if the `rng` argument is provided.
+    #'   The name cannot already exist in the group.
     #' @param rng The range of indices whose values from this axis to include in
-    #'   the returned axis. If the value of the argument is `NULL`, return the
-    #'   entire axis.
+    #'   the returned axis. If the value of the argument is `NULL`, return a
+    #'   copy of the axis.
     #' @return `NULL`
-    subset = function(group, rng = NULL) {
+    subset = function(group, name, rng = NULL) {
       NULL
     },
 

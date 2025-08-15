@@ -125,7 +125,7 @@ Create a copy of this axis. The copy is completely separate
 from \code{self}, meaning that both \code{self} and all of its components are made
 from new instances.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$copy(group)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$copy(group, name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -134,8 +134,14 @@ from new instances.
 \item{\code{group}}{The group in which to place the new axis. If the argument is
 missing, a new group will be created for the axis with a link to the
 netCDF resource of \code{self}, if set.}
+
+\item{\code{name}}{The name for the new axis. If argument \code{group} is given, the
+name must be unique among the objects in the group.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The newly created axis.
 }
 }
 \if{html}{\out{<hr>}}
@@ -199,7 +205,7 @@ Return an axis spanning a smaller coordinate range. This
 method returns an axis which spans the range of indices given by the
 \code{rng} argument.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$subset(group, rng = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$subset(group, name, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -207,8 +213,12 @@ method returns an axis which spans the range of indices given by the
 \describe{
 \item{\code{group}}{The group to create the new axis in.}
 
-\item{\code{rng}}{The range of indices from this axis to include in the returned
-axis.}
+\item{\code{name}}{The name for the new axis if the \code{rng} argument is provided.
+The name cannot already exist in the group.}
+
+\item{\code{rng}}{The range of indices whose values from this axis to include in
+the returned axis. If the value of the argument is \code{NULL}, return a
+copy of the axis.}
 }
 \if{html}{\out{</div>}}
 }

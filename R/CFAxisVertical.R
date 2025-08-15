@@ -202,13 +202,15 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     #' @param group The group in which to place the new axis. If the argument is
     #' missing, a new group will be created for the axis with a link to the
     #' netCDF resource of `self`, if set.
-    #' @return The axis that is a copy of `self`.
-    copy = function(group) {
+    #' @param name The name for the new axis. If argument `group` is given, the
+    #'   name must be unique among the objects in the group.
+    #' @return The newly created axis.
+    copy = function(group, name) {
       if (missing(group))
         group <- makeGroup(resource = self$group$resource)
 
-      var <- NCVariable$new(CF$newVarId(), self$name, group, "NC_DOUBLE", 1L, NULL)
-      dim <- NCDimension$new(CF$newDimId(), self$name, length(private$values), FALSE, group)
+      var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", 1L, NULL)
+      dim <- NCDimension$new(CF$newDimId(), name, length(private$values), FALSE, group)
       axis <- CFAxisVertical$new(var, dim, private$values, private$parameter_name)
       axis$attributes <- self$attributes
 
@@ -259,7 +261,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
                 }
                 names(ax) <- sapply(ax, function(x) x$name)
               } else ax <- list()
-              ncvar$group <- self$group
+              #ncvar$group <- self$group
 
               CFVerticalParametricTerm$new(ncvar, ax)
             } else

@@ -57,15 +57,18 @@ CFLabel <- R6::R6Class("CFLabel",
 
     #' @description Retrieve a subset of the labels.
     #' @param grp The group to create the new label object in.
-    #' @param rng The range of indices to retrieve.
+    #' @param name The name for the new label set if the `rng` argument is
+    #'   provided. The name cannot already exist in the group.
+    #' @param rng The range of indices whose values from this axis to include in
+    #'   the returned axis.
     #' @return A `CFLabel` instance, or `NULL` if the `rng` values are invalid.
-    subset = function(grp, rng) {
+    subset = function(grp, name, rng) {
       rng <- range(rng)
       if (rng[1L] < 1L || rng[2L] > length(private$values))
         NULL
       else {
-        dim <- NCDimension$new(CF$newDimId(), self$name, rng[2L] - rng[1L] + 1L, FALSE, grp)
-        var <- NCVariable$new(CF$newVarId(), self$name, grp, "NC_STRING", 1L, NULL)
+        dim <- NCDimension$new(CF$newDimId(), name, rng[2L] - rng[1L] + 1L, FALSE, grp)
+        var <- NCVariable$new(CF$newVarId(), name, grp, "NC_STRING", 1L, NULL)
         CFLabel$new(var, dim, private$values[rng[1L]:rng[2L]])
       }
     },

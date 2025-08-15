@@ -334,7 +334,7 @@ than return \code{NULL}. This stub is here to make the call to this method
 succeed with no result for the  \code{CFAxis} descendants that do not
 implement this method.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$subset(group, rng = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$subset(group, name, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -342,9 +342,12 @@ implement this method.
 \describe{
 \item{\code{group}}{The group to create the new axis in.}
 
+\item{\code{name}}{The name for the new axis if the \code{rng} argument is provided.
+The name cannot already exist in the group.}
+
 \item{\code{rng}}{The range of indices whose values from this axis to include in
-the returned axis. If the value of the argument is \code{NULL}, return the
-entire axis.}
+the returned axis. If the value of the argument is \code{NULL}, return a
+copy of the axis.}
 }
 \if{html}{\out{</div>}}
 }

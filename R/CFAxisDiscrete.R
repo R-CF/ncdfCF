@@ -76,11 +76,14 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #' @param group The group in which to place the new axis. If the argument is
     #' missing, a new group will be created for the axis with a link to the
     #' netCDF resource of `self`, if set.
-    copy = function(group) {
+    #' @param name The name for the new axis. If argument `group` is given, the
+    #'   name must be unique among the objects in the group.
+    #' @return The newly created axis.
+    copy = function(group, name) {
       if (missing(group))
         group <- makeGroup(resource = self$group$resource)
 
-      ax <- makeDiscreteAxis(self$name, group, self$length, self$attributes)
+      ax <- makeDiscreteAxis(name, group, self$length, self$attributes)
       private$subset_coordinates(ax, c(1L, self$length))
       ax
     },
@@ -121,18 +124,20 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #'   `rng` argument.
     #'
     #' @param group The group to create the new axis in.
-    #' @param rng The range of indices from this axis to include in the returned
-    #'   axis.
-    #'
+    #' @param name The name for the new axis if the `rng` argument is provided.
+    #'   The name cannot already exist in the group.
+    #' @param rng The range of indices whose values from this axis to include in
+    #'   the returned axis. If the value of the argument is `NULL`, return a
+    #'   copy of the axis.
     #' @return A new `CFAxisDiscrete` instance covering the indicated range of
     #'   indices. If the value of the argument is `NULL`, return a copy of
     #'   `self` as the new axis.
-    subset = function(group, rng = NULL) {
+    subset = function(group, name, rng = NULL) {
       if (is.null(rng))
-        self$copy(group)
+        self$copy(group, name)
       else {
-        var <- NCVariable$new(CF$newVarId(), self$name, group, "NC_INT", 1L, -1L)
-        dim <- NCDimension$new(CF$newDimId(), self$name, rng[2L] - rng[1L] + 1L, FALSE, group)
+        var <- NCVariable$new(CF$newVarId(), name, group, "NC_INT", 1L, -1L)
+        dim <- NCDimension$new(CF$newDimId(), name, rng[2L] - rng[1L] + 1L, FALSE, group)
         ax <- CFAxisDiscrete$new(var, dim, self$orientation)
         private$subset_coordinates(ax, rng)
         ax

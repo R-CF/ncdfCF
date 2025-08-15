@@ -171,7 +171,7 @@ from \code{self}, meaning that both \code{self} and all of its components are ma
 from new instances. This can copy a \code{CFAxisNumeric} instance, but also a
 \code{CFAxisLongitude} or \code{CFAxisLatitude} instance.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$copy(group)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$copy(group, name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -180,8 +180,14 @@ from new instances. This can copy a \code{CFAxisNumeric} instance, but also a
 \item{\code{group}}{The group in which to place the new axis. If the argument is
 missing, a new group will be created for the axis with a link to the
 netCDF resource of \code{self}, if set.}
+
+\item{\code{name}}{The name for the new axis. If argument \code{group} is given, the
+name must be unique among the objects in the group.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The newly created axis.
 }
 }
 \if{html}{\out{<hr>}}
@@ -236,7 +242,7 @@ Return an axis spanning a smaller coordinate range. This
 method returns an axis which spans the range of indices given by the
 \code{rng} argument.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$subset(group, rng = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$subset(group, name, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -244,8 +250,12 @@ method returns an axis which spans the range of indices given by the
 \describe{
 \item{\code{group}}{The group to create the new axis in.}
 
+\item{\code{name}}{The name for the new axis if the \code{rng} argument is provided.
+The name cannot already exist in the group.}
+
 \item{\code{rng}}{The range of indices whose values from this axis to include in
-the returned axis.}
+the returned axis. If the value of the argument is \code{NULL}, return a
+copy of the axis.}
 }
 \if{html}{\out{</div>}}
 }

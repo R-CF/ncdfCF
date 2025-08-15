@@ -288,7 +288,7 @@ CFVariable <- R6::R6Class("CFVariable",
       out_group$set_attribute("title", "NC_CHAR", paste("Data copy of variable", self$name))
       out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), "): CFVariable::data()"))
 
-      axes <- lapply(self$axes, function(ax) ax$copy(out_group))
+      axes <- lapply(self$axes, function(ax) ax$copy(out_group, ax$name))
       lapply(axes, function(ax) ax$copy_terms(self$group, self$axes, axes))
 
       atts <- self$attributes
@@ -423,14 +423,14 @@ CFVariable <- R6::R6Class("CFVariable",
           if (is.null(rng)) rng <- selectors[[ orient ]]
           if (is.null(rng)) { # Axis not specified so take the whole axis
             ZT_dim <- c(ZT_dim, axis$length)
-            out_axis <- axis$subset(out_group, NULL)
+            out_axis <- axis$subset(out_group, axis$name)
           } else { # Subset the axis
             idx <- private$range2index(axis, rng, rightmost.closed)
             if (is.null(idx)) return(NULL)
             start[ax] <- idx[1L]
             count[ax] <- idx[2L] - idx[1L] + 1L
             ZT_dim <- c(ZT_dim, count[ax])
-            out_axis <- axis$subset(out_group, idx)
+            out_axis <- axis$subset(out_group, axis$name, idx)
           }
         }
 

@@ -1,13 +1,14 @@
 # ncdfCF (development version)
 - Dependency on R bumped from version 3.5 to 4.0.
 - With the `as_CFArray()` function you can create a CFArray instance from an R object such as a vector, matrix or array using logical, integer, double or character mode. Axes are created from dimnames, using names when set (such as in `dimnames(arr) <- list(X = 40:43, Y = 50:54, Z = 60:65)`) and possibly with latitude, longitude and time axes generated.
-- Functions from the Ops and Math group of S3 generic functions are now supported. This means that expressions can be written directly on CFArray instances.
+- Functions from the Ops and Math groups of S3 generic functions are now supported. This means that expressions can be written directly on CFArray instances.
 - All CFAxis descendant classes now have a `copy()` method which creates a deep copy of the axis.
 - All CF objects that derive from a CF object read from file have access to the file as long as the data is not modified. Thus in statement `axisB <- axisA$copy()`, the new `axisB` instance will have file access (assuming that `axisA` has it too). Same with `CFVariable$data()`, `$subset()` and `$profile()`. `CFVariable$summarise()` does not retain access because the array values are modified. Math and Ops function results likewise do not have file access.
 - `CFAxisVertical` can now calculate parametric coordinates for two ocean formulations (other formulations will be added as sample data becomes available to test new code on - open an [issue](https://github.com/R-CF/ncdfCF/issues) if you have such data and are looking for support). Optional use of the `units` package to deal with the various pressure units. This package is recommended if you work with data on the atmosphere or the ocean.
 - The standard names table of the CF Metadata Conventions is now accessible. The table is automatically downloaded and made available when first used; it will not be downloaded or loaded into memory when not accessed. Find standard names using the `CF$standard_names$find()` method. The table (currently 4.3MB) will be stored in the local cache of the ncdfCF package and periodically updated with the latest version.
 - New `CFAxis$coordinate_range` field to retrieve the range of the coordinates of the axis.
 - Names of CF objects (variables, axes, etc) can be modified. Strict checking of allowable names (i.e. only letters, numbers and underscores).
+- Axis names in new groups are ensured to be unique after subsetting, profiling, etc.
 - Fully-qualified names of groups generated on-the-fly.
 - Correctly link multiple cell measure variables.
 - Several minor improvements and code fixes.

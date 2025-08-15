@@ -119,14 +119,17 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @param group The group in which to place the new axis. If the argument is
     #' missing, a new group will be created for the axis with a link to the
     #' netCDF resource of `self`, if set.
-    copy = function(group) {
+    #' @param name The name for the new axis. If argument `group` is given, the
+    #'   name must be unique among the objects in the group.
+    #' @return The newly created axis.
+    copy = function(group, name) {
       if (missing(group))
         group <- makeGroup(resource = self$group$resource)
 
       time <- private$tm
       idx <- time$indexOf(1L:self$length)
       tm <- attr(idx, "CFTime")
-      t <- makeTimeAxis(self$name, group, tm, self$attributes)
+      t <- makeTimeAxis(name, group, tm, self$attributes)
       private$subset_coordinates(t, c(1L, self$length))
       t
     },
@@ -187,22 +190,24 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #'   `rng` argument.
     #'
     #' @param group The group to create the new axis in.
+    #' @param name The name for the new axis if the `rng` argument is provided.
+    #'   The name cannot already exist in the group.
     #' @param rng The range of indices whose values from this axis to include in
-    #'   the returned axis.
-    #'
+    #'   the returned axis. If the value of the argument is `NULL`, return a
+    #'   copy of the axis.
     #' @return A new `CFAxisTime` instance covering the indicated range of
     #'   indices. If the value of the argument is `NULL`, return a copy of
     #'   `self` as the new axis.
-    subset = function(group, rng = NULL) {
+    subset = function(group, name, rng = NULL) {
       if (is.null(rng))
-        self$copy(group)
+        self$copy(group, name)
       else {
-        var <- NCVariable$new(CF$newVarId(), self$name, group, "NC_DOUBLE", 1L, NULL)
+        var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", 1L, NULL)
         time <- private$tm
         rng <- range(rng)
         idx <- time$indexOf(seq(from = rng[1L], to = rng[2L], by = 1L))
         tm <- attr(idx, "CFTime")
-        dim <- NCDimension$new(CF$newDimId(), self$name, length(idx), FALSE, group)
+        dim <- NCDimension$new(CF$newDimId(), name, length(idx), FALSE, group)
         t <- CFAxisTime$new(var, dim, tm)
         private$subset_coordinates(t, idx)
         t$set_attribute("actual_range", self$NCvar$vtype, range(tm$offsets))

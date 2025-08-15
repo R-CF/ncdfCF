@@ -103,10 +103,10 @@ A 1-row \code{data.frame} with some details of the axis.
 \if{latex}{\out{\hypertarget{method-CFAxisCharacter-copy}{}}}
 \subsection{Method \code{copy()}}{
 Create a copy of this axis. The copy is completely separate
-from \code{self}, meaning that both \code{self} and all of its components are made
-from new instances.
+from \code{self}, meaning that both \code{self} and all of its components are
+made from new instances.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$copy(group)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$copy(group, name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -115,8 +115,14 @@ from new instances.
 \item{\code{group}}{The group in which to place the new axis. If the argument is
 missing, a new group will be created for the axis with a link to the
 netCDF resource of \code{self}, if set.}
+
+\item{\code{name}}{The name for the new axis. If argument \code{group} is given, the
+name must be unique among the objects in the group.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The newly created axis.
 }
 }
 \if{html}{\out{<hr>}}

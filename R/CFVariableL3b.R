@@ -246,11 +246,11 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
         if (is.null(rng)) rng <- selectors[[ axis_names[ax] ]]
         if (is.null(rng)) rng <- selectors[[ orient ]]
         if (is.null(rng)) {
-          out_axis <- axis$subset(out_group, NULL)
+          out_axis <- axis$subset(out_group)
         } else {
           idx <- private$range2index(axis, rng, rightmost.closed)
           if (is.null(idx)) return(NULL)
-          out_axis <- axis$subset(out_group, idx)
+          out_axis <- axis$subset(out_group, axis$name, idx)
         }
         rng <- range(rng)
         len <- out_axis$length

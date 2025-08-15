@@ -429,7 +429,8 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
               x <- makeAxis(nm, out_group, orient, val, NULL, axis$attributes)
               out_axes_other <- append(out_axes_other, x)
             } else {
-              ax <- try(axis$subset(out_group), silent = TRUE)
+              nm <- if (total > 1L) paste(axis$name, e, sep = "_") else axis$name
+              ax <- try(axis$subset(out_group, nm), silent = TRUE)
               if (inherits(ax, "CFAxis"))
                 out_axes_dim <- append(out_axes_dim, ax)
             }

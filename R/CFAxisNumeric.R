@@ -143,13 +143,16 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #' @param group The group in which to place the new axis. If the argument is
     #' missing, a new group will be created for the axis with a link to the
     #' netCDF resource of `self`, if set.
-    copy = function(group) {
+    #' @param name The name for the new axis. If argument `group` is given, the
+    #'   name must be unique among the objects in the group.
+    #' @return The newly created axis.
+    copy = function(group, name) {
       if (missing(group))
         group <- makeGroup(resource = self$group$resource)
 
       bnds <- self$bounds
       if (inherits(bnds, "CFBounds")) bnds <- bnds$coordinates
-      ax <- makeAxis(self$name, group, self$orientation, private$values, bnds, self$attributes)
+      ax <- makeAxis(name, group, self$orientation, private$values, bnds, self$attributes)
       private$subset_coordinates(ax, c(1L, self$length))
       ax
     },
@@ -183,20 +186,22 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #'   `rng` argument.
     #'
     #' @param group The group to create the new axis in.
+    #' @param name The name for the new axis if the `rng` argument is provided.
+    #'   The name cannot already exist in the group.
     #' @param rng The range of indices whose values from this axis to include in
-    #'   the returned axis.
-    #'
+    #'   the returned axis. If the value of the argument is `NULL`, return a
+    #'   copy of the axis.
     #' @return A new `CFAxisNumeric` instance covering the indicated range of
     #'   indices. If the value of the argument is `NULL`, return a copy of
     #'   `self` as the new axis.
-    subset = function(group, rng = NULL) {
+    subset = function(group, name, rng = NULL) {
       if (is.null(rng))
-        self$copy(group)
+        self$copy(group, name)
       else {
         rng <- range(rng)
         bnds <- self$bounds
         if (inherits(bnds, "CFBounds")) bnds <- bnds$coordinates[, rng[1L]:rng[2L]]
-        ax <- makeAxis(self$name, group, self$orientation, private$values[rng[1L]:rng[2L]], bnds, self$attributes)
+        ax <- makeAxis(name, group, self$orientation, private$values[rng[1L]:rng[2L]], bnds, self$attributes)
         private$subset_coordinates(ax, rng)
         ax
       }
