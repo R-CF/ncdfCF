@@ -11,20 +11,35 @@ NULL
 #'
 #' @docType class
 CFObject <- R6::R6Class("CFObject",
-  public = list(
-    #' @field NCvar The [NCVariable] instance that this CF object represents.
-    NCvar = NULL,
+  private = list(
+    # The NCVariable instance that this CF object represents if it was read from
+    # file.
+    .NC = NULL,
 
-    #' @description Create a new CF object instance from a variable in a netCDF
+    # The id and name of this object. They are taken from the NCVariable upon
+    # creation, if supplied, otherwise the name should be supplied and the id
+    # will be generated.
+    .id = integer(0),
+    .name = ""
+  ),
+  public = list(
+    #' @description Create a new CFobject instance from a variable in a netCDF
     #'   resource. This method is called upon opening a netCDF resource. It is
     #'   rarely, if ever, useful to call this constructor directly. Instead, use
     #'   the methods from higher-level classes such as [CFVariable].
     #'
-    #' @param nc_var The [NCVariable] instance upon which this CF object is
-    #'   based.
+    #' @param var The [NCVariable] instance upon which this CF object is
+    #'   based, or the name for the object new CF object to be created.
     #' @return A `CFobject` instance.
-    initialize = function(nc_var) {
-      self$NCvar <- nc_var
+    initialize = function(var) {
+      if (is.character(var)) {
+        private$.name <- var
+        private$.id <- CF$newVarId()
+      } else {
+        private$.NC <- var
+        private$.id <- var$id
+        private$.name <- var$name
+      }
     },
 
     #' @description Retrieve attributes of any CF object.
@@ -37,7 +52,7 @@ CFObject <- R6::R6Class("CFObject",
     #'   when the attribute has multiple values. If no attribute is named with a
     #'   value of argument `att` `NA` is returned.
     attribute = function(att, field = "value") {
-      self$NCvar$attribute(att, field)
+      private$.NC$attribute(att, field)
     },
 
     #' @description Print the attributes of the CF object to the console.
@@ -45,7 +60,7 @@ CFObject <- R6::R6Class("CFObject",
     #' @param width The maximum width of each column in the `data.frame` when
     #' printed to the console.
     print_attributes = function(width = 50L) {
-      self$NCvar$print_attributes(width)
+      private$.NC$print_attributes(width)
     },
 
     #' @description Add an attribute. If an attribute `name` already exists, it
@@ -65,7 +80,7 @@ CFObject <- R6::R6Class("CFObject",
     #'   coerced to their common mode.
     #' @return Self, invisibly.
     set_attribute = function(name, type, value) {
-      self$NCvar$set_attribute(name, type, value)
+      private$.NC$set_attribute(name, type, value)
       invisible(self)
     },
 
@@ -85,7 +100,7 @@ CFObject <- R6::R6Class("CFObject",
     #'   before the existing value. Default is `FALSE`.
     #' @return Self, invisibly.
     append_attribute = function(name, value, sep = "; ", prepend = FALSE) {
-      self$NCvar$append_attribute(name, value, sep, prepend)
+      private$.NC$append_attribute(name, value, sep, prepend)
       invisible(self)
     },
 
@@ -94,7 +109,7 @@ CFObject <- R6::R6Class("CFObject",
     #' @param name The name of the attribute to delete.
     #' @return Self, invisibly.
     delete_attribute = function(name) {
-      self$NCvar$delete_attribute(name)
+      private$.NC$delete_attribute(name)
       invisible(self)
     },
 
@@ -103,7 +118,7 @@ CFObject <- R6::R6Class("CFObject",
     #' @param nm The NC variable name or "NC_GLOBAL" to write the attributes to.
     #' @return Self, invisibly.
     write_attributes = function(nc, nm) {
-      self$NCvar$write_attributes(nc, nm)
+      private$.NC$write_attributes(nc, nm)
       invisible(self)
     },
 
@@ -112,7 +127,7 @@ CFObject <- R6::R6Class("CFObject",
     #' @param crds Vector of axis names to add to the attribute.
     #' @return Self, invisibly.
     add_coordinates = function(crds) {
-      self$NCvar$add_coordinates(crds)
+      private$.NC$add_coordinates(crds)
       invisible(self)
     }
   ),
@@ -124,6 +139,12 @@ CFObject <- R6::R6Class("CFObject",
         "Generic CF object"
     },
 
+    #' @field NCvar (read-only) The [NCVariable] instance that this CF object represents.
+    NCvar = function(value) {
+      if (missing(value))
+        private$.NC
+    },
+
     #' @field id Set or retrieve the identifier of the CF object. In general,
     #'   the `id` value is immutable so it should never be set to a new value.
     #'   Setting the `id` value is only useful when writing a CF object to a new
@@ -132,26 +153,29 @@ CFObject <- R6::R6Class("CFObject",
     #'   may invalidate the entire CF object and everything that depends on it.
     id = function(value) {
       if (missing(value))
-        self$NCvar$id
+        private$.id
       else
-        self$NCvar$id <- value
+        private$.id <- value
     },
 
     #' @field name Set or retrieve the name of the CF object.
     name = function(value) {
       if (missing(value))
-        self$NCvar$name
+        private$.name
+      else if (.is_valid_name(value))
+        private$.name <- value
       else
-        self$NCvar$name <- value
+        stop("Invalid name for a CF object.", call. = FALSE)
     },
 
     #' @field fullname (read-only) The fully-qualified name of the CF object.
     fullname = function(value) {
       if (missing(value)) {
-        grp <- self$group$fullname
-        if (is.null(grp)) return(self$NCvar$name)
-        grp <- if (grp == "/") "" else paste0(grp, "/")
-        paste0(grp, self$NCvar$name)
+        private$.name
+        # grp <- self$group$fullname
+        # if (is.null(grp)) return(private$NC$name)
+        # grp <- if (grp == "/") "" else paste0(grp, "/")
+        # paste0(grp, private$NC$name)
       }
     },
 
@@ -159,7 +183,7 @@ CFObject <- R6::R6Class("CFObject",
     #'   located in.
     group = function(value) {
       if (missing(value))
-        self$NCvar$group
+        private$.NC$group
       else
         NULL #FIXME: Cannot change the NCGroup that an object relates to
     },
@@ -169,9 +193,9 @@ CFObject <- R6::R6Class("CFObject",
     #'   the CF object.
     attributes = function(value) {
       if (missing(value))
-        self$NCvar$attributes
+        private$.NC$attributes
       else
-        self$NCvar$attributes <- value
+        private$.NC$attributes <- value
     }
   )
 )

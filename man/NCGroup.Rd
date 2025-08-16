@@ -284,8 +284,8 @@ List of \link{NCVariable}.
 \subsection{Method \code{addAuxiliaryLongLat()}}{
 Add an auxiliary long-lat variable to the group. This method
 creates a \link{CFAuxiliaryLongLat} from the arguments and adds it to the
-group \code{CFlonglat} list, but only if the combination of \code{lon}, \code{lat} isn't
-already present.
+group \code{CFlonglat} list, but only if the combination of \code{lon}, \code{lat}
+isn't already present.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{NCGroup$addAuxiliaryLongLat(lon, lat, bndsLong, bndsLat)}\if{html}{\out{</div>}}
 }
@@ -293,8 +293,8 @@ already present.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{lon, lat}}{Instances of \link{NCVariable} having a two-dimensional grid of
-longitude and latitude values, respectively.}
+\item{\code{lon, lat}}{Instances of \link{CFVariable}, each having a two-dimensional
+grid of longitude and latitude values.}
 
 \item{\code{bndsLong, bndsLat}}{Instances of \link{CFBounds} with the 2D bounds of the
 longitude and latitude grid values, respectively, or \code{NULL} when not

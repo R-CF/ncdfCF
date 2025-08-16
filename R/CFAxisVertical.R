@@ -217,9 +217,11 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
       bnds <- self$bounds
       if (inherits(bnds, "CFBounds")) {
         nm <- self$attribute("bounds")
-        var <- NCVariable$new(CF$newVarId(), nm, group, "NC_DOUBLE", 2L, NULL)
-        dim <- NCDimension$new(CF$newDimId(), "nv", 2L, FALSE, group)
-        axis$bounds <- CFBounds$new(var, dim, bnds$coordinates)
+        ncvar <- bnds$NCvar
+        if (is.null(ncvar))
+          axis$bounds <- CFBounds$new(nm, values = bnds$values)
+        else
+          axis$bounds <- CFBounds$new(ncvar)
       }
 
       private$subset_coordinates(axis, c(1L, self$length))

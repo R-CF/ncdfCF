@@ -297,10 +297,10 @@ NCGroup <- R6::R6Class("NCGroup",
 
     #' @description Add an auxiliary long-lat variable to the group. This method
     #'   creates a [CFAuxiliaryLongLat] from the arguments and adds it to the
-    #'   group `CFlonglat` list, but only if the combination of `lon`, `lat` isn't
-    #'   already present.
-    #' @param lon,lat Instances of [NCVariable] having a two-dimensional grid of
-    #'   longitude and latitude values, respectively.
+    #'   group `CFlonglat` list, but only if the combination of `lon`, `lat`
+    #'   isn't already present.
+    #' @param lon,lat Instances of [CFVariable], each having a two-dimensional
+    #'   grid of longitude and latitude values.
     #' @param bndsLong,bndsLat Instances of [CFBounds] with the 2D bounds of the
     #'   longitude and latitude grid values, respectively, or `NULL` when not
     #'   set.

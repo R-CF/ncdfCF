@@ -386,13 +386,13 @@ CFVariable <- R6::R6Class("CFVariable",
 
       aux <- NULL
       if (inherits(private$llgrid, "CFAuxiliaryLongLat")) {
-        aux_names <- c(private$llgrid$varLong$name, private$llgrid$varLat$name)
+        aux_names <- private$llgrid$grid_names
         if (any(aux_names %in% sel_names)) {
           aux <- private$auxiliary_interpolation(selectors, aux_names)
           sel_names <- sel_names[-which(sel_names %in% aux_names)]
-          ll_dimids <- private$llgrid$varLong$dimids # lat and long have identical dimids
+          ll_dimids <- private$llgrid$dimids # lat and long have identical dimids
         }
-        aux_bounds <- aux$aoi$bounds(out_group)
+        aoi_bounds <- aux$aoi$bounds()
       }
 
       start <- rep(1L, num_axes)
@@ -411,13 +411,13 @@ CFVariable <- R6::R6Class("CFVariable",
           count[ax] <- aux$X[2L]
           atts <- axis$attributes
           atts <- atts[!atts$name %in% c("standard_name", "units"), ]
-          out_axis <- makeLongitudeAxis(private$llgrid$varLong$name, out_group, aux$aoi$dimnames[[2L]], aux_bounds$lon$coordinates, atts)
+          out_axis <- makeLongitudeAxis(aux_names[1L], out_group, aux$aoi$dimnames[[2L]], aoi_bounds$lon$values, atts)
         } else if (!is.null(aux) && ax_dimid == ll_dimids[2L]) {
           start[ax] <- aux$Y[1L]
           count[ax] <- aux$Y[2L]
           atts <- axis$attributes
           atts <- atts[!atts$name %in% c("standard_name", "units"), ]
-          out_axis <- makeLatitudeAxis(private$llgrid$varLat$name, out_group, aux$aoi$dimnames[[1L]], aux_bounds$lat$coordinates, atts)
+          out_axis <- makeLatitudeAxis(aux_names[2L], out_group, aux$aoi$dimnames[[1L]], aoi_bounds$lat$values, atts)
         } else { # No auxiliary coordinates
           rng <- selectors[[ axis_names[ax] ]]
           if (is.null(rng)) rng <- selectors[[ orient ]]
@@ -468,8 +468,7 @@ CFVariable <- R6::R6Class("CFVariable",
         atts <- self$attributes
         crs <- self$crs
       } else {
-        atts <- private$dropCoordinates(self$attributes,
-                                        c(private$llgrid$varLong$name, private$llgrid$varLat$name))
+        atts <- private$dropCoordinates(self$attributes, private$llgrid$grid_names)
         atts <- atts[!(atts$name == "grid_mapping"), ]  # drop: warped to lat-long
         crs <- NULL
       }
@@ -487,14 +486,20 @@ CFVariable <- R6::R6Class("CFVariable",
         "Variable"
     },
 
+    #' @field dimids (read-only) Retrieve the dimension ids used by the
+    #'   NC variable used by this variable.
+    dimids = function(value) {
+      if (missing(value))
+        self$NCvar$dimids
+    },
+
     #' @field auxiliary_names (read-only) Retrieve the names of the auxiliary
     #'   longitude and latitude grids as a vector of two character strings, in
     #'   that order. If no auxiliary grids are defined, returns `NULL`.
     auxiliary_names = function(value) {
       if (missing(value)) {
-        if (!is.null(private$llgrid))
-          c(private$llgrid$varLong$name, private$llgrid$varLat$name)
-        else NULL
+        if (is.null(private$llgrid)) NULL
+        else private$llgrid$grid_names
       }
     },
 

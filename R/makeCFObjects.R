@@ -70,9 +70,7 @@ makeAxis <- function(name, group, orientation, values, bounds = NULL, attributes
         axis$set_attribute("actual_range", "NC_DOUBLE", range(values))
         if (!is.null(bounds)) {
           nm <- paste0(name, "_bnds")
-          var <- NCVariable$new(CF$newVarId(), nm, group, "NC_DOUBLE", 2L, NULL)
-          dim <- NCDimension$new(CF$newDimId(), "nv", 2L, FALSE, group)
-          axis$bounds <- CFBounds$new(var, dim, bounds)
+          axis$bounds <- CFBounds$new(nm, bounds)
           axis$set_attribute("bounds", "NC_CHAR", nm)
         }
         axis
@@ -121,9 +119,7 @@ makeLongitudeAxis <- function(name, group, values, bounds = NULL, attributes = N
   axis$set_attribute("axis", "NC_CHAR", "X")
   if (!is.null(bounds)) {
     nm <- paste0(name, "_bnds")
-    var <- NCVariable$new(CF$newVarId(), nm, group, "NC_DOUBLE", 2L, NULL)
-    dim <- NCDimension$new(CF$newDimId(), "nv", 2L, FALSE, group)
-    axis$bounds <- CFBounds$new(var, dim, bounds)
+    axis$bounds <- CFBounds$new(nm, bounds)
     axis$set_attribute("bounds", "NC_CHAR", nm)
   }
   axis
@@ -162,9 +158,7 @@ makeLatitudeAxis <- function(name, group, values, bounds, attributes = NULL) {
   axis$set_attribute("actual_range", "NC_DOUBLE", range(values))
   if (!is.null(bounds)) {
     nm <- paste0(name, "_bnds")
-    var <- NCVariable$new(CF$newVarId(), nm, group, "NC_DOUBLE", 2L, NULL)
-    dim <- NCDimension$new(CF$newDimId(), "nv", 2L, FALSE, group)
-    axis$bounds <- CFBounds$new(var, dim, bounds)
+    axis$bounds <- CFBounds$new(nm, bounds)
     axis$set_attribute("bounds", "NC_CHAR", nm)
   }
   axis
@@ -201,9 +195,7 @@ makeVerticalAxis <- function(name, group, values, bounds, attributes = NULL) {
   axis$set_attribute("actual_range", "NC_DOUBLE", range(values))
   if (!is.null(bounds)) {
     nm <- paste0(name, "_bnds")
-    var <- NCVariable$new(CF$newVarId(), nm, group, "NC_DOUBLE", 2L, NULL)
-    dim <- NCDimension$new(CF$newDimId(), "nv", 2L, FALSE, group)
-    axis$bounds <- CFBounds$new(var, dim, bounds)
+    axis$bounds <- CFBounds$new(nm, bounds)
     axis$set_attribute("bounds", "NC_CHAR", nm)
   }
   axis
@@ -240,9 +232,7 @@ makeTimeAxis <- function(name, group, values, attributes = NULL) {
   axis$set_attribute("actual_range", "NC_DOUBLE", range(values$offsets))
   if (!is.null(values$bounds)) {
     nm <- paste0(name, "_bnds")
-    var <- NCVariable$new(CF$newVarId(), nm, group, "NC_DOUBLE", 2L, NULL)
-    dim <- NCDimension$new(CF$newDimId(), "nv", 2L, FALSE, group)
-    axis$bounds <- CFBounds$new(var, dim, values$get_bounds())
+    axis$bounds <- CFBounds$new(nm, values$get_bounds())
     axis$set_attribute("bounds", "NC_CHAR", nm)
   }
   axis

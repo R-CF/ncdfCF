@@ -1,18 +1,18 @@
 #' CF auxiliary longitude-latitude variable
 #'
 #' @description This class represents the longitude and latitude variables that
-#' compose auxiliary coordinate variable axes for X-Y grids that are not
-#' longitude-latitude.
+#'   compose auxiliary coordinate variable axes for X-Y grids that are not
+#'   longitude-latitude.
 #'
-#' The class provides access to the data arrays for longitude and
-#' latitude from the netCDF resource, as well as all the details that have been
-#' associated with both axes. Additionally, this class can generate the index
-#' to extract values on a long-lat grid of the associated X-Y grid data variable
-#' using a user-selectable extent and resolution.
+#'   The class provides access to the data arrays for longitude and latitude
+#'   from the netCDF resource, as well as all the details that have been
+#'   associated with both axes. Additionally, this class can generate the index
+#'   to extract values on a long-lat grid of the associated X-Y grid data
+#'   variable using a user-selectable extent and resolution.
 #'
-#' Auxiliary longitude-latitude grids are only supported for reading from a
-#' netCDF resource. Creating an instance manually therefore has no practical
-#' purpose.
+#'   Auxiliary longitude-latitude grids are only supported for reading from a
+#'   netCDF resource. Creating an instance of this class manually therefore has
+#'   no practical purpose.
 #'
 #' @docType class
 CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
@@ -25,16 +25,24 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     aoi_   = NULL, # The AOI for the grid
     index_ = NULL, # The index values into the linearized grids that cover the AOI
 
+    # The [CFVariable] instance of the longitude values.
+    varLong = NULL,
+
+    # The [CFVariable] instance of the latitude values.
+    varLat = NULL,
+
+    # The [CFBounds] instance for the longitude values of the grid.
+    boundsLong = NULL,
+
+    # The [CFBounds] instance for the latitude values of the grid.
+    boundsLat = NULL,
+
     loadData = function() {
       if (is.null(private$lon_)) {
-        private$lon_ <- try(RNetCDF::var.get.nc(self$varLong$group$handle, self$varLong$name), silent = TRUE)
-        if (inherits(private$lon_, "try-error"))
-          stop("Could not read longitude data for auxiliary long-lat grid", call. = FALSE)
+        private$lon_ <- private$varLong$data()$raw()
       }
       if (is.null(private$lat_)) {
-        private$lat_ <- try(RNetCDF::var.get.nc(self$varLat$group$handle, self$varLat$name), silent = TRUE)
-        if (inherits(private$lat_, "try-error"))
-          stop("Could not read latitude data for auxiliary long-lat grid", call. = FALSE)
+        private$lat_ <- private$varLat$data()$raw()
       }
 
       private$setResolution()
@@ -105,20 +113,6 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     }
   ),
   public = list(
-    #' @field varLong The [NCVariable] instance of the longitude values.
-    varLong = NULL,
-
-    #' @field varLat The [NCVariable] instance of the latitude values.
-    varLat = NULL,
-
-    #' @field boundsLong The [CFBounds] instance for the longitude values of the
-    #' grid.
-    boundsLong = NULL,
-
-    #' @field boundsLat The [CFBounds] instance for the latitude values of the
-    #' grid.
-    boundsLat = NULL,
-
     #' @field axis_order Either `c("X", "Y")` (default) or `c("Y", "X")` to
     #' indicate the orientation of the latitude and longitude grids.
     axis_order = c("X", "Y"),
@@ -131,23 +125,20 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     #' @param boundsLong,boundsLat The bounds of the grid cells for the
     #'   longitude and latitude, respectively, if set.
     initialize = function(varLong, varLat, boundsLong, boundsLat) {
-      self$varLong <- varLong
-      self$varLat <- varLat
-      self$boundsLong <- boundsLong
-      self$boundsLat <- boundsLat
-
-      varLong$CF <- self
-      varLat$CF <- self
+      private$varLong <- varLong
+      private$varLat <- varLat
+      private$boundsLong <- boundsLong
+      private$boundsLat <- boundsLat
     },
 
     #' @description Summary of the auxiliary longitude-latitude variable printed
     #'   to the console.
     print = function() {
       cat("<", self$friendlyClassName, ">\n", sep = "")
-      cat("Longitude grid :", self$varLong$name, "\n")
-      cat("Latitude grid  :", self$varLat$name, "\n")
-      grpLon <- self$varLong$group$name
-      grpLat <- self$varLat$group$name
+      cat("Longitude grid :", private$varLong$name, "\n")
+      cat("Latitude grid  :", private$varLat$name, "\n")
+      grpLon <- private$varLong$group$name
+      grpLat <- private$varLat$group$name
       if (identical(grpLon, grpLat)) {
         if (grpLon != "/")
           cat("Group          :", grpLon, "\n")
@@ -173,8 +164,8 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     #' @description Some details of the auxiliary longitude-latitude grid.
     #' @return A 2-row `data.frame` with some details of the grid components.
     brief = function() {
-      lon <- self$varLong
-      lat <- self$varLat
+      lon <- private$varLong
+      lat <- private$varLat
       out <- data.frame(axis = c("X", "Y"),
                         name = c(lon$name, lat$name))
 
@@ -315,7 +306,21 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     #' @field name (read-only) The name of the auxiliary lon-lat grid.
     name = function(value) {
       if (missing(value))
-        paste(self$varLong$name, self$varLat$name, sep = "_")
+        paste(private$varLong$name, private$varLat$name, sep = "_")
+    },
+
+    #' @field grid_names (read-only) Read the names of the longitude and
+    #'   latitude grid as a vector of length 2.
+    grid_names = function(value) {
+      if (missing(value))
+        c(private$varLong$name, private$varLat$name)
+    },
+
+    #' @field dimids (read-only) Retrieve the dimension ids used by the
+    #'   longitude and latitude grids.
+    dimids = function(value) {
+      if (missing(value))
+        private$varLong$dimids
     },
 
     #' @field aoi Set or retrieve the AOI for the long-lat grid.
@@ -329,13 +334,13 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     #' @field lon (read-only) Retrieve the longitude grid.
     lon = function(value) {
       if (missing(value))
-        private$lon_
+        private$varLong
     },
 
     #' @field lat (read-only) Retrieve the latitude grid.
     lat = function(value) {
       if (missing(value))
-        private$lat_
+        private$varLat
     },
 
     #' @field extent (read-only) Retrieve the extent of the longitude and
@@ -345,8 +350,8 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     extent = function(value) {
       if (missing(value)) {
         if (is.null(private$ext_)) {
-          if (inherits(self$boundsLong, "CFBounds")) {
-            private$ext_ <- c(self$boundsLong$range(), self$boundsLat$range())
+          if (inherits(private$boundsLong, "CFBounds")) {
+            private$ext_ <- c(private$boundsLong$range(), private$boundsLat$range())
           } else {
             private$loadData()
             private$ext_ <- c(range(private$lon_), range(private$lat_))
@@ -363,12 +368,6 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
         private$loadData()
         dim(private$lon_)
       }
-    },
-
-    #' @field dimids (read-only) The dimids of the longitude and latitude grids.
-    dimids = function(value) {
-      if (missing(value))
-        self$varLong$dimids
     }
   )
 )

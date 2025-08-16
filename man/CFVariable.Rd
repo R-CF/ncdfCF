@@ -21,6 +21,9 @@ mapping parameters, etc. The actual data array can be accessed through the
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
+\item{\code{dimids}}{(read-only) Retrieve the dimension ids used by the
+NC variable used by this variable.}
+
 \item{\code{auxiliary_names}}{(read-only) Retrieve the names of the auxiliary
 longitude and latitude grids as a vector of two character strings, in
 that order. If no auxiliary grids are defined, returns \code{NULL}.}

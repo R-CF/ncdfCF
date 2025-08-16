@@ -261,8 +261,11 @@ peek_ncdf <- function(resource) {
   standard <- var$attribute("standard_name")
   units    <- var$attribute("units")
 
+  # Read the boundary values
+  bnds <- .readBounds(grp, var$attribute("bounds"))
+
   # See if we can make time
-  t <- .makeTimeObject(var, units, vals)
+  t <- .makeTimeObject(var, units, vals, bnds)
   if (!is.null(t)) return(CFAxisTime$new(var, dim, t))
 
   # Orientation of the axis
@@ -284,7 +287,7 @@ peek_ncdf <- function(resource) {
                  "Y" = CFAxisLatitude$new(var, dim, vals),
                  "Z" = CFAxisVertical$new(var, dim, vals, standard),
                  CFAxisNumeric$new(var, dim, orient, vals))
-  axis$bounds <- .readBounds(grp, var$attribute("bounds"))
+  axis$bounds <- bnds
   axis
 }
 
@@ -325,18 +328,16 @@ peek_ncdf <- function(resource) {
 #' including its bounds if set. If it fails it will return NULL, otherwise the
 #' object.
 #' @noRd
-.makeTimeObject <- function(var, units, vals) {
+.makeTimeObject <- function(var, units, vals, bnds) {
   if (is.na(units)) return(NULL)
   cal <- if (is.na(cal <- var$attribute("calendar"))) "standard" else cal
-  clim <- .readBounds(var$group, var$attribute("climatology")) # Climatology must have bounds
+  clim <- if (is.null(bnds)) .readBounds(var$group, var$attribute("climatology")) # Climatology must have bounds
+          else NULL
   t <- if (is.null(clim)) try(CFtime::CFTime$new(units, cal, vals), silent = TRUE)
-       else try(CFtime::CFClimatology$new(units, cal, vals, clim$coordinates), silent = TRUE)
+       else try(CFtime::CFClimatology$new(units, cal, vals, clim$values), silent = TRUE)
   if (inherits(t, "try-error")) return(NULL)
-  if (is.null(clim)) {
-    bnds <- .readBounds(var$group, var$attribute("bounds"))
-    if (inherits(bnds, "CFBounds"))
-      t$bounds <- bnds$coordinates
-  }
+  if (is.null(clim) && inherits(bnds, "CFBounds"))
+    t$bounds <- bnds$values
   t
 }
 
@@ -421,7 +422,13 @@ peek_ncdf <- function(resource) {
         # they have identical dimensions, in the varLon group.
         if ((inherits(varLon, "NCVariable") && inherits(varLat, "NCVariable")) &&
             identical(varLon$dimids, varLat$dimids)) {
-          varLon$group$addAuxiliaryLongLat(varLon, varLat, bndsLon, bndsLat)
+          ax <- lapply(varLon$dimids, function(did) {
+            dname <- varLon$group$find_dim_by_id(did)$name
+            varLon$group$find_by_name(dname, "NC")$CF[[1L]]
+          })
+          lonCF <- CFVariable$new(varLon, ax)
+          latCF <- CFVariable$new(varLat, ax)
+          varLon$group$addAuxiliaryLongLat(lonCF, latCF, bndsLon, bndsLat)
         }
       }
     }
@@ -531,17 +538,7 @@ peek_ncdf <- function(resource) {
   else {
     NCbounds <- grp$find_by_name(bounds, "NC")
     if (is.null(NCbounds)) NULL
-    else {
-      bnds <- try(RNetCDF::var.get.nc(NCbounds$group$handle, bounds, collapse = FALSE), silent = TRUE)
-      if (inherits(bnds, "try-error") || !length(bnds)) NULL
-      else {
-        if (length(dim(bnds)) == 3L && axis_dims == 1L) { # Never seen more dimensions than this
-          # FIXME: Flag non-standard item
-          bnds <- bnds[, , 1L]
-        }
-        CFBounds$new(NCbounds, grp$find_dim_by_id(NCbounds$dimids[1L]), bnds)
-      }
-    }
+    else CFBounds$new(NCbounds)
   }
 }
 

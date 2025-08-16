@@ -86,8 +86,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
         return(is_axis)
 
       if (!is.null(private$llgrid)) {
-        aux_ll <- c(private$llgrid$varLong$name, private$llgrid$varLat$name)
-        is_aux <- match(nm, aux_ll)
+        is_aux <- match(nm, private$llgrid$grid_names)
         if (anyDuplicated(is_aux, incomparables = NA))
           stop("Duplicated auxiliary axis names not allowed", call. = FALSE)
         if (!any(is.na(is_aux)))

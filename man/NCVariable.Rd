@@ -48,6 +48,7 @@ path from the root group.}
 \item \href{#method-NCVariable-shard}{\code{NCVariable$shard()}}
 \item \href{#method-NCVariable-array_dims}{\code{NCVariable$array_dims()}}
 \item \href{#method-NCVariable-get_data}{\code{NCVariable$get_data()}}
+\item \href{#method-NCVariable-dimension}{\code{NCVariable$dimension()}}
 \item \href{#method-NCVariable-clone}{\code{NCVariable$clone()}}
 }
 }
@@ -185,6 +186,28 @@ start index to the end of the dimension.}
 }
 \subsection{Returns}{
 An array with the requested data, or an error object.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCVariable-dimension"></a>}}
+\if{latex}{\out{\hypertarget{method-NCVariable-dimension}{}}}
+\subsection{Method \code{dimension()}}{
+Get the \link{NCDimension} object(s) that this variable uses.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCVariable$dimension(id = NA)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{id}}{The identifier of the dimension. If \code{NA}, all dimensions of
+this variable are returned.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A NCDimension object or a list thereof. If no NCDimensions were
+found, return \code{NULL}.
 }
 }
 \if{html}{\out{<hr>}}

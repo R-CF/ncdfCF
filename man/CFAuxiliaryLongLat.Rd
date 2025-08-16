@@ -9,15 +9,15 @@ This class represents the longitude and latitude variables that
 compose auxiliary coordinate variable axes for X-Y grids that are not
 longitude-latitude.
 
-The class provides access to the data arrays for longitude and
-latitude from the netCDF resource, as well as all the details that have been
+The class provides access to the data arrays for longitude and latitude
+from the netCDF resource, as well as all the details that have been
 associated with both axes. Additionally, this class can generate the index
-to extract values on a long-lat grid of the associated X-Y grid data variable
-using a user-selectable extent and resolution.
+to extract values on a long-lat grid of the associated X-Y grid data
+variable using a user-selectable extent and resolution.
 
 Auxiliary longitude-latitude grids are only supported for reading from a
-netCDF resource. Creating an instance manually therefore has no practical
-purpose.
+netCDF resource. Creating an instance of this class manually therefore has
+no practical purpose.
 }
 \section{Super class}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFAuxiliaryLongLat}
@@ -25,16 +25,6 @@ purpose.
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{varLong}}{The \link{NCVariable} instance of the longitude values.}
-
-\item{\code{varLat}}{The \link{NCVariable} instance of the latitude values.}
-
-\item{\code{boundsLong}}{The \link{CFBounds} instance for the longitude values of the
-grid.}
-
-\item{\code{boundsLat}}{The \link{CFBounds} instance for the latitude values of the
-grid.}
-
 \item{\code{axis_order}}{Either \code{c("X", "Y")} (default) or \code{c("Y", "X")} to
 indicate the orientation of the latitude and longitude grids.}
 }
@@ -46,6 +36,12 @@ indicate the orientation of the latitude and longitude grids.}
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
 \item{\code{name}}{(read-only) The name of the auxiliary lon-lat grid.}
+
+\item{\code{grid_names}}{(read-only) Read the names of the longitude and
+latitude grid as a vector of length 2.}
+
+\item{\code{dimids}}{(read-only) Retrieve the dimension ids used by the
+longitude and latitude grids.}
 
 \item{\code{aoi}}{Set or retrieve the AOI for the long-lat grid.}
 
@@ -60,8 +56,6 @@ longitude and minimum and maximum latitude.}
 
 \item{\code{dim}}{(read-only) The dimensions of the longitude and latitude
 grids.}
-
-\item{\code{dimids}}{(read-only) The dimids of the longitude and latitude grids.}
 }
 \if{html}{\out{</div>}}
 }

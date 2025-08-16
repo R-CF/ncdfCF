@@ -266,11 +266,11 @@ test_that("Auxiliary grids", {
     expect_true(abs(lat_crds[length(lat_crds)] - 60) < lat_res)
 
     bnds <- sel$axes[["lon"]]$bounds
-    expect_equal(bnds$coordinates[1, 1], -10)
-    # expect_equal(bnds$coordinates[2, 75], 5)
+    expect_equal(bnds$values[1, 1], -10)
+    # expect_equal(bnds$values[2, 75], 5)
     bnds <- sel$axes[["lat"]]$bounds
-    expect_equal(bnds$coordinates[1, 1], 45)
-    # expect_equal(bnds$coordinates[2, 75], 60)
+    expect_equal(bnds$values[1, 1], 45)
+    # expect_equal(bnds$values[2, 75], 60)
   }
 })
 

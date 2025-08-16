@@ -120,6 +120,19 @@ NCVariable <- R6::R6Class("NCVariable",
     #' @return An array with the requested data, or an error object.
     get_data = function(start = NA, count = NA) {
       RNetCDF::var.get.nc(private$grp$handle, self$name, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+    },
+
+    #' @description Get the [NCDimension] object(s) that this variable uses.
+    #' @param id The identifier of the dimension. If `NA`, all dimensions of
+    #' this variable are returned.
+    #' @return A NCDimension object or a list thereof. If no NCDimensions were
+    #' found, return `NULL`.
+    dimension = function(id = NA) {
+      if (is.na(id)) {
+        lapply(private$dids, function(did) private$grp$find_dim_by_id(did))
+      } else {
+        private$grp$find_dim_by_id(id)
+      }
     }
   ),
   active = list(
@@ -128,7 +141,7 @@ NCVariable <- R6::R6Class("NCVariable",
       if (missing(value))
         private$grp
       else {
-        #browser()
+        # FIXME: Some code deep down calls this. Should be resolved when CFobjects no longer have group references
         #stop("Cannot set the group of a NC object.", call. = FALSE)
       }
     },
@@ -174,11 +187,9 @@ NCVariable <- R6::R6Class("NCVariable",
       if (missing(value))
         private$CFobjects
       else {
-        if (inherits(value, "CFObject")) {
-          nm <- value$fullname
-          if (is.null(nm)) nm <- value$name
-          private$CFobjects[[nm]] <- value
-        } else
+        if (inherits(value, "CFObject"))
+          private$CFobjects[[value$fullname]] <- value
+        else
           warning("Can only reference an object descending from `CFObject` from an `NCVariable`", call. = FALSE)
       }
     },

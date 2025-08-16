@@ -5,7 +5,7 @@
 \alias{CFBounds}
 \title{CF bounds variable}
 \description{
-This class represents the bounds of an axis or an auxiliary
+This class represents the boundaries of an axis or an auxiliary
 longitude-latitude grid.
 
 The class manages the bounds information for an axis (2 vertices per
@@ -14,21 +14,14 @@ element) or an auxiliary longitude-latitude grid (4 vertices per element).
 \section{Super class}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFBounds}
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{NCdim}}{The \link{NCDimension} that stores the netCDF dimension details
-of the bounds dimension (as opposed to the dimension of the associated
-axis).}
-}
-\if{html}{\out{</div>}}
-}
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{coordinates}}{(read-only) Retrieve the boundary values.}
+\item{\code{NCvarx}}{Retrieve the NCVariable object that \code{self} refers to.}
+
+\item{\code{valuesx}}{(read-only) Retrieve the boundary values.}
 }
 \if{html}{\out{</div>}}
 }
@@ -62,7 +55,7 @@ axis).}
 \subsection{Method \code{new()}}{
 Create an instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$new(nc_var, nc_dim, values)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFBounds$new(nc_var, start = NA, count = NA)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -70,9 +63,13 @@ Create an instance of this class.
 \describe{
 \item{\code{nc_var}}{The NC variable that describes this instance.}
 
-\item{\code{nc_dim}}{The NC dimension that defines the vertices of the bounds.}
+\item{\code{start}}{Optional. Vector of indices where to start reading boundary
+data along the dimensions of the data. The vector must be \code{NA} to read
+all data, otherwise it must have \code{length = 2}.}
 
-\item{\code{values}}{A matrix with the bounds values.}
+\item{\code{count}}{Optional. Vector of number of elements to read along each
+dimension of the boundary data. The vector must be \code{NA} to read to the
+end of each dimension, otherwise it must have \code{length = 2}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -109,19 +106,20 @@ Retrieve the lowest and highest value in the bounds.
 \if{html}{\out{<a id="method-CFBounds-sub_bounds"></a>}}
 \if{latex}{\out{\hypertarget{method-CFBounds-sub_bounds}{}}}
 \subsection{Method \code{sub_bounds()}}{
-Return bounds spanning a smaller coordinate range.
+Return a boundary variable spanning a smaller coordinate
+range.
 
-This method returns bounds which spans the range of indices given by
-the \code{rng} argument.
+This method returns boundary values which span the range of indices
+given by the \code{rng} argument. This method currently only works for
+boundary values along axes, i.e. 1D coordinate values with boundary
+values over two vertices, that have been read from a netCDF file.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$sub_bounds(group, rng)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFBounds$sub_bounds(rng)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{group}}{The group to create the new bounds in.}
-
 \item{\code{rng}}{The range of values from this bounds object to include in the
 returned object.}
 }
