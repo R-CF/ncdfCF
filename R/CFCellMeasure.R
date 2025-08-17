@@ -11,22 +11,22 @@
 #' @docType class
 CFCellMeasure <- R6::R6Class("CFCellMeasure",
   private = list(
-    # The actual data object for the class. This is an instance of CFVariable
-    # but it is only present when the cell measure variable is internal to the
-    # file or after an external file has been linked.
-    var = NULL,
+    # The data object for the class. This is an instance of CFVariable but it is
+    # only present when the cell measure variable is internal to the file or
+    # after an external file has been linked.
+    .var = NULL,
 
-    # The [CFDataset] from the external variable, if linked.
-    ext = NULL,
+    # The CFDataset from the external variable, if linked.
+    .ext = NULL,
 
-    # A list of the [CFVariable] instances linking to this instance.
-    variables = list(),
+    # A list of the CFVariable instances linking to this instance.
+    .links = list(),
 
     # A list of the axes that this cell measure variable uses, from the internal
     # variable or from an external file after it is linked.
-    axes = list(),
+    .axes = list(),
 
-    # Get the names of the private$variables or private$axes
+    # Get the names of the private$.links or private$.axes
     names_of = function(lst) {
       sapply(lst, function(el) el$name)
     },
@@ -34,7 +34,7 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
     # This method checks that a CFVariable, v, has (a subset of) axes that are
     # compatible with this cell measure variable. If not, an error is thrown.
     compatible = function(v) {
-      lapply(private$axes, function(ax) {
+      lapply(private$.axes, function(ax) {
         tst <- v$axes[[ax$name]]
         if (is.null(tst))
           stop("Incompatible sets of axes between data variable and cell measure variable.", call. = FALSE)
@@ -75,9 +75,9 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
         stop("Invalid 'measure' for cell measure variable.", call. = FALSE)
 
       if (!(is.null(nc_var) || is.null(axes))) {
-        private$var <- CFVariable$new(nc_var, axes)
+        private$.var <- CFVariable$new(nc_var, axes)
         self$name <- nc_var$name
-        private$axes <- axes
+        private$.axes <- axes
       } else {
         if (is.null(name))
           stop("Name of external variable must be specified.", call. = FALSE)
@@ -95,37 +95,37 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
       cat("Name     :", self$name, "\n")
       cat("Measure  :", self$measure, "\n")
 
-      if (is.null(private$var))
+      if (is.null(private$.var))
         cat("Data     : external (not linked)\n")
       else {
-        if (!is.null(private$ext))
-          cat("Location :", private$ext$uri, "\n")
-        else if (private$var$group$name != "/")
-          cat("Location :", private$var$group$name, "\n")
+        if (!is.null(private$.ext))
+          cat("Location :", private$.ext$uri, "\n")
+        else if (private$.var$group$name != "/")
+          cat("Location :", private$.var$group$name, "\n")
 
-        longname <- private$var$attribute("long_name")
+        longname <- private$.var$attribute("long_name")
         if (!is.na(longname) && longname != self$name)
           cat("Long name:", longname, "\n")
 
-        if (length(private$variables))
-          cat("Linked to:", private$names_of(private$variables), "\n")
+        if (length(private$.links))
+          cat("Linked to:", private$names_of(private$.links), "\n")
 
         cat("\nAxes:\n")
-        axes <- do.call(rbind, lapply(private$var$axes, function(a) a$brief()))
+        axes <- do.call(rbind, lapply(private$.var$axes, function(a) a$brief()))
         axes <- lapply(axes, function(c) if (all(c == "")) NULL else c)
         if (all(axes$group == "/")) axes$group <- NULL
         axes <- as.data.frame(axes[lengths(axes) > 0L])
         print(.slim.data.frame(axes, ...), right = FALSE, row.names = FALSE)
 
-        private$var$print_attributes(...)
+        private$.var$print_attributes(...)
       }
     },
 
     #' @description Retrieve the values of the cell measure variable.
     #' @return The values of the cell measure as a [CFArray] instance.
     data = function() {
-      if (is.null(private$var)) NULL
-      else private$var$data()
+      if (is.null(private$.var)) NULL
+      else private$.var$data()
     },
 
     #' @description Register a [CFVariable] which is using this cell measure
@@ -135,8 +135,8 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
     #' @return Self, invisibly.
     register = function(var) {
       private$compatible(var)
-      private$variables <- append(private$variables, var)
-      names(private$variables) <- private$names_of(private$variables)
+      private$.links <- append(private$.links, var)
+      names(private$.links) <- private$names_of(private$.links)
     },
 
     #' @description Link the cell measure variable to an external netCDF
@@ -152,10 +152,11 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
       if (inherits(ds, "CFDataset")) {
         var <- ds[[self$name]]
         if (inherits(var, "CFVariable")) {
-          private$axes <- var$axes
-          lapply(private$variables, private$compatible) # May throw an error
-          private$ext <- ds
-          private$var <- var
+          private$.axes <- var$axes
+          # FIXME: Is the below stament correct???
+          lapply(private$.links, private$compatible) # May throw an error
+          private$.ext <- ds
+          private$.var <- var
           return(invisible(self))
         }
       }

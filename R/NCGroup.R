@@ -311,7 +311,7 @@ NCGroup <- R6::R6Class("NCGroup",
         self$CFlonglat <- list(CFAuxiliaryLongLat$new(lon, lat, bndsLong, bndsLat))
         names(self$CFlonglat) <- nm
       } else {
-        known <- lapply(self$CFlonglat, function(a) c(a$varLong$id, a$varLat$id))
+        known <- lapply(self$CFlonglat, function(a) c(a$lon$id, a$lat$id))
         if (!any(sapply(known, function(k) k[1L] == lon$id && k[2L] == lat$id)))
           self$CFlonglat[[nm]] <- CFAuxiliaryLongLat$new(lon, lat, bndsLong, bndsLat)
       }

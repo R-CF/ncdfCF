@@ -11,6 +11,7 @@
 - Axis names in new groups are ensured to be unique after subsetting, profiling, etc.
 - Fully-qualified names of groups generated on-the-fly.
 - Correctly link multiple cell measure variables.
+- Disentangling CF objects from the NC hierarchy. The NC hierarchy represents what is on file, the CF objects are mutable. This is a works in progress and has currently been implemented on CFBounds, CFAuxiliaryLongLat and AOI classes, with plumbing done in CFObject, for testing. This will be rolled out to CFAxis and CFVariableBase hierarchies in the near future.
 - Several minor improvements and code fixes.
 - Documentation updated.
 

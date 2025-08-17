@@ -10,11 +10,11 @@ CFLabel <- R6::R6Class("CFLabel",
   inherit = CFObject,
   private = list(
     # The label values, a character vector.
-    values = NULL,
+    .values = NULL,
 
     # Method to be consistent with CFAxis retrieval patterns.
     get_values = function() {
-      private$values
+      private$.values
     }
   ),
   public = list(
@@ -30,9 +30,9 @@ CFLabel <- R6::R6Class("CFLabel",
       self$NCdim <- nc_dim
 
       dim(values) <- NULL
-      private$values <- values
+      private$.values <- values
       if(nc_var$vtype %in% c("NC_CHAR", "NC_STRING"))
-        private$values <- trimws(private$values)
+        private$.values <- trimws(private$.values)
 
       nc_var$CF <- self
     },
@@ -40,7 +40,6 @@ CFLabel <- R6::R6Class("CFLabel",
     #' @description  Prints a summary of the labels to the console.
     #' @param ... Arguments passed on to other functions. Of particular interest
     #' is `width = ` to indicate a maximum width of attribute columns.
-    #' @return `self`, invisibly.
     print = function(...) {
       cat("<Label set> ", self$name, "\n", sep = "")
       if (self$group$name != "/")
@@ -64,12 +63,12 @@ CFLabel <- R6::R6Class("CFLabel",
     #' @return A `CFLabel` instance, or `NULL` if the `rng` values are invalid.
     subset = function(grp, name, rng) {
       rng <- range(rng)
-      if (rng[1L] < 1L || rng[2L] > length(private$values))
+      if (rng[1L] < 1L || rng[2L] > length(private$.values))
         NULL
       else {
         dim <- NCDimension$new(CF$newDimId(), name, rng[2L] - rng[1L] + 1L, FALSE, grp)
         var <- NCVariable$new(CF$newVarId(), name, grp, "NC_STRING", 1L, NULL)
-        CFLabel$new(var, dim, private$values[rng[1L]:rng[2L]])
+        CFLabel$new(var, dim, private$.values[rng[1L]:rng[2L]])
       }
     },
 
@@ -85,7 +84,7 @@ CFLabel <- R6::R6Class("CFLabel",
       self$NCdim$write(h)
       self$id <- RNetCDF::var.def.nc(h, self$name, self$NCvar$vtype, self$NCdim$name)
       self$write_attributes(h, self$name)
-      RNetCDF::var.put.nc(h, self$name, private$values)
+      RNetCDF::var.put.nc(h, self$name, private$.values)
     }
   ),
   active = list(

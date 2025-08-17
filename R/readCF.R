@@ -49,12 +49,10 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   # Find the id's of any "bounds" variables
   bnds <- sapply(root$NCvars, function(v) { # FIXME: what about dims in subgroups?
     nm <- v$attribute("bounds")
+    # FIXME: climatology
     if (!is.na(nm)) {
       obj <- v$group$find_by_name(nm, "NC")
-      if (is.null(obj)) {
-        # FIXME: warning
-        -1L
-      } else obj$dimids[1L] # By definition, bounds dimid comes first
+      obj$dimids[1L] # By definition, bounds dimid comes first
     } else -1L # Flag no bounds
   })
   if (length(bnds))
@@ -69,8 +67,8 @@ open_ncdf <- function(resource, keep_open = FALSE) {
   if (length(add_dims)) {
     axes <- append(axes, .addBareDimensions(root, add_dims))
     axes <- axes[lengths(axes) > 0L]
-    names(root$CFaxes) <- sapply(root$CFaxes, function(x) x$name)
-    names(root$NCvars) <- sapply(root$NCvars, function(v) v$name)
+    #names(root$CFaxes) <- sapply(root$CFaxes, function(x) x$name)
+    #names(root$NCvars) <- sapply(root$NCvars, function(v) v$name)
   }
 
   # Auxiliary CVs and scalar CVs
@@ -305,10 +303,11 @@ peek_ncdf <- function(resource) {
   if (length(grp$NCdims) > 0L) {
     axes <- lapply(grp$NCdims, function(d) {
       if (d$id %in% add_dims) {
-        v <- NCVariable$new(CF$newVarId(), d$name, grp, "NC_INT", 1L, d$id)
+        nm <- d$name
+        v <- NCVariable$new(CF$newVarId(), nm, grp, "NC_INT", 1L, d$id)
         axis <- CFAxisDiscrete$new(v, d, "", dim_only = TRUE)
-        grp$NCvars <- append(grp$NCvars, v)
-        grp$CFaxes <- append(grp$CFaxes, axis)
+        lx <- list(axis); names(lx) <- nm
+        grp$CFaxes <- append(grp$CFaxes, lx)
         add_dims <- add_dims[-which(add_dims == d$id)]
         axis
       }
@@ -407,7 +406,7 @@ peek_ncdf <- function(resource) {
                 if (is.null(grp$find_by_name(aux$name))) {
                   new_ax <- list(.makeAxis(grp, aux))
                   names(new_ax) <- aux$name
-                  aux$group$CFaxes <- append(aux$group$CFaxes, new_ax)
+                  aux$group$CFaux <- append(aux$group$CFaux, new_ax)
                 }
                 found_one <- TRUE
               }
@@ -471,7 +470,7 @@ peek_ncdf <- function(resource) {
             ev <- root$attribute("external_variables")
             if (is.na(ev) || !(meas[m * 2L] %in% trimws(strsplit(ev, " ", fixed = TRUE)[[1L]]))) {
               # FIXME: warning
-              warning("Unmatched `cell_measures` value '", meas[meas * 2L], "' found in variable '", v$name, "'", call. = FALSE)
+              warning("Unmatched `cell_measures` value '", meas[m * 2L], "' found in variable '", v$name, "'", call. = FALSE)
             } else {
               # If it exists, move on, else create a cell measure variable
               cmv <- grp$find_by_name(meas[m * 2L])
