@@ -162,7 +162,12 @@ peek_ncdf <- function(resource) {
 #' @noRd
 .readGroup <- function(parent, h, parent_dims) {
   g <- RNetCDF::grp.inq.nc(h)
-  grp <- NCGroup$new(id = as.integer(g$self), name = g$name,
+
+  # Global attributes
+  atts <- if (g$ngatts) .readAttributes(h, "NC_GLOBAL", g$ngatts)
+          else data.frame()
+
+  grp <- NCGroup$new(id = as.integer(g$self), name = g$name, atts,
                      parent = parent, resource = parent$resource)
 
   # Read all the raw NC variables in the group
@@ -179,10 +184,6 @@ peek_ncdf <- function(resource) {
   # UDTs
   if (length(g$typeids))
     grp$NCudts <- lapply(g$typeids, function(t) RNetCDF::type.inq.nc(h, t, fields = TRUE))
-
-  # Global attributes
-  if (g$ngatts)
-    grp$attributes <- .readAttributes(h, "NC_GLOBAL", g$ngatts)
 
   # Subgroups
   if (length(g$grps)) {

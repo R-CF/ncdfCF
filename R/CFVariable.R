@@ -285,8 +285,8 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @return A [CFArray] instance with all data from this variable.
     data = function() {
       out_group <- makeGroup(resource = self$group$resource)
-      out_group$set_attribute("title", "NC_CHAR", paste("Data copy of variable", self$name))
-      out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), "): CFVariable::data()"))
+      # out_group$set_attribute("title", "NC_CHAR", paste("Data copy of variable", self$name))
+      # out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), "): CFVariable::data()"))
 
       axes <- lapply(self$axes, function(ax) ax$copy(out_group, ax$name))
       lapply(axes, function(ax) ax$copy_terms(self$group, self$axes, axes))
@@ -381,8 +381,8 @@ CFVariable <- R6::R6Class("CFVariable",
       axis_order <- private$check_names(sel_names)
 
       out_group <- makeGroup(resource = self$group$resource)
-      out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
-      out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariable$subset()"))
+      # out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
+      # out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariable$subset()"))
 
       aux <- NULL
       if (inherits(private$llgrid, "CFAuxiliaryLongLat")) {

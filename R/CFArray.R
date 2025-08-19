@@ -130,13 +130,12 @@ CFArray <- R6::R6Class("CFArray",
     #'   axes of the argument `values`.
     #' @param crs The [CFGridMapping] instance of this data object, or `NULL`
     #'   when no grid mapping is available.
-    #' @param attributes A `data.frame` with the attributes associated with the
+    #' @param attributes Optional. A `data.frame` with the attributes associated with the
     #'   data in argument `values`.
     #' @return An instance of this class.
-    initialize = function(name, group, values, values_type, axes, crs, attributes) {
-      var <- NCVariable$new(CF$newVarId(), name, group, values_type, NA)
-      var$attributes <- attributes
-      super$initialize(var, axes, crs)
+    initialize = function(name, group, values, values_type, axes, crs = NULL, attributes = data.frame()) {
+      #var <- NCVariable$new(CF$newVarId(), name, group, values_type, NA)
+      super$initialize(name, axes, attributes, crs)
 
       # Set the coordinates attribute for scalar axes
       scalars <- sapply(axes, function(x) if (x$length == 1L) x$name)
@@ -343,8 +342,7 @@ CFArray <- R6::R6Class("CFArray",
         stop("Could not create the netCDF file. Please check that the location of the supplied file name is writable.", call. = FALSE)
 
       # Global attributes
-      self$group$set_attribute("Conventions", "NC_CHAR", "CF-1.12")
-      self$group$write_attributes(nc, "NC_GLOBAL")
+      #self$group$write_attributes(nc, "NC_GLOBAL")
 
       # Axes
       lbls <- unlist(sapply(self$axes, function(ax) {ax$write(nc); ax$coordinate_names}), use.names = FALSE)

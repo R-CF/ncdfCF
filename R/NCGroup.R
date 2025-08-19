@@ -74,12 +74,13 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @description Create a new instance of this class.
     #' @param id The identifier of the group.
     #' @param name The name of the group.
+    #' @param attributes Optional, a `data.frame` with group attributes.
     #' @param parent The parent group of this group. the owning [CFDataset] for
     #'   the root group.
     #' @param resource Reference to the [CFResource] instance that provides
     #'   access to the netCDF resource. For in-memory groups this can be `NULL`.
-    initialize = function(id, name, parent, resource) {
-      super$initialize(id, "group")
+    initialize = function(id, name, attributes = data.frame(), parent, resource) {
+      super$initialize(id, "group", attributes)
       private$nm <- name
       self$parent <- parent
       self$resource <- resource

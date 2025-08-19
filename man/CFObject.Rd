@@ -29,18 +29,21 @@ and the underscore, and be at most 255 characters long.}
 \item{\code{group}}{(read-only) Retrieve the \link{NCGroup} that this object is
 located in.}
 
-\item{\code{attributes}}{Set or retrieve a \code{data.frame} with the attributes of
-the CF object.}
+\item{\code{attributes}}{(read-only) Retrieve a \code{data.frame} with the attributes
+of the CF object.}
 
-\item{\code{has_resource}}{Flag that indicates if this object has an underlying
-netCDF resource.}
+\item{\code{has_resource}}{(read-only) Flag that indicates if this object has an
+underlying netCDF resource.}
 
 \item{\code{data_type}}{Set or retrieve the data type of the data in the object.
 If this CF object is backed by a netCDF resource, the data type cannot
 be set, only retrieved. If the CF object exists in memory, the
 descending CF object must set the data type upon receiving its values.
 The data type must be one of the allowable netCDF types. Do not set the
-data type otherwise.}
+data type otherwise.
+
+\strong{Note:} Any data values in the object will be deleted after setting
+the data type. Set the data type before adding values.}
 }
 \if{html}{\out{</div>}}
 }
@@ -70,7 +73,7 @@ resource. This method is called upon opening a netCDF resource. It is
 rarely, if ever, useful to call this constructor directly. Instead, use
 the methods from higher-level classes such as \link{CFVariable}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$new(var, start = NA, count = NA)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFObject$new(var, start = NA, count = NA, attributes = data.frame())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -91,6 +94,9 @@ dimension of the array on file. The vector must be \code{NA} to read to the
 end of each dimension, otherwise its value must agree with the
 corresponding \code{start} value and the dimension of the array on file.
 Ignored when argument \code{var} is not an NCVariable instance.}
+
+\item{\code{attributes}}{Optional. A \code{data.frame} with the attributes of the
+object. Ignored when argument \code{var} is an NCVariable instance.}
 }
 \if{html}{\out{</div>}}
 }
@@ -149,7 +155,7 @@ length for. If omitted, retrieve the lengths of all dimensions.}
 \if{html}{\out{<a id="method-CFObject-attribute"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-attribute}{}}}
 \subsection{Method \code{attribute()}}{
-Retrieve attributes of any CF object.
+Retrieve an attribute of a CF object.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFObject$attribute(att, field = "value")}\if{html}{\out{</div>}}
 }
@@ -157,7 +163,7 @@ Retrieve attributes of any CF object.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{att}}{Vector of character strings of attributes to return.}
+\item{\code{att}}{Single character string of attribute to return.}
 
 \item{\code{field}}{The field of the attribute to return values from. This must
 be "value" (default) or "type".}

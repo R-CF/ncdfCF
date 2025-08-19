@@ -91,7 +91,15 @@ recognized by the different format.
 \subsection{Method \code{new()}}{
 Create an instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFArray$new(name, group, values, values_type, axes, crs, attributes)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFArray$new(
+  name,
+  group,
+  values,
+  values_type,
+  axes,
+  crs = NULL,
+  attributes = data.frame()
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -114,7 +122,7 @@ axes of the argument \code{values}.}
 \item{\code{crs}}{The \link{CFGridMapping} instance of this data object, or \code{NULL}
 when no grid mapping is available.}
 
-\item{\code{attributes}}{A \code{data.frame} with the attributes associated with the
+\item{\code{attributes}}{Optional. A \code{data.frame} with the attributes associated with the
 data in argument \code{values}.}
 }
 \if{html}{\out{</div>}}

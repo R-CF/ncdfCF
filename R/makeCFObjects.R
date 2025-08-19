@@ -16,7 +16,7 @@
 makeGroup <- function(name = "/", parent = NULL, resource = NULL) {
   if (name != "/" && !.is_valid_name(name))
     stop("Name for group is not valid", call. = FALSE)
-  NCGroup$new(CF$newGroupId(), name, parent, resource)
+  NCGroup$new(CF$newGroupId(), name, parent = parent, resource = resource)
 }
 
 #' Create an axis
@@ -364,6 +364,6 @@ as_CFArray <- function(name, values) {
   if (length(axes))
     names(axes) <- sapply(axes, function(ax) ax$name)
 
-  CFArray$new(name, grp, values, dt, axes, NULL, NULL)
+  CFArray$new(name, grp, values, dt, axes)
 }
 

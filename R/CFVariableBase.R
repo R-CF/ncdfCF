@@ -141,11 +141,12 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
     #' @param var The NC variable that describes this data object.
     #' @param axes A `list` of [CFAxis] descendant instances that describe the
     #'   axes of the data object.
+    #' @param attributes Optional. The attributes of the instance.
     #' @param crs The [CFGridMapping] instance of this data object, or `NULL`
     #'   when no grid mapping is available.
     #' @return An instance of this class.
-    initialize = function(var, axes, crs = NULL) {
-      super$initialize(var)
+    initialize = function(var, axes, attributes = data.frame(), crs = NULL) {
+      super$initialize(var, attributes = attributes)
       self$axes <- axes
       self$crs <- crs
     },
@@ -395,8 +396,8 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
 
       # Group for results
       out_group <- makeGroup(resource = self$group$resource)
-      out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
-      out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariable$profile()"))
+      # out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
+      # out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariable$profile()"))
 
       out <- vector("list", total)
       for (e in 1L:total) {

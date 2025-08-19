@@ -107,14 +107,10 @@ belongs to. If the group is not attached to a \code{CFDataset}, returns
 }
 }
 \if{html}{\out{
-<details><summary>Inherited methods</summary>
+<details open><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="add_coordinates"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-add_coordinates'><code>ncdfCF::NCObject$add_coordinates()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="append_attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-append_attribute'><code>ncdfCF::NCObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-attribute'><code>ncdfCF::NCObject$attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="delete_attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-delete_attribute'><code>ncdfCF::NCObject$delete_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="print_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-print_attributes'><code>ncdfCF::NCObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="set_attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-set_attribute'><code>ncdfCF::NCObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="write_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-write_attributes'><code>ncdfCF::NCObject$write_attributes()</code></a></span></li>
 </ul>
 </details>
@@ -125,7 +121,7 @@ belongs to. If the group is not attached to a \code{CFDataset}, returns
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$new(id, name, parent, resource)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$new(id, name, attributes = data.frame(), parent, resource)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -134,6 +130,8 @@ Create a new instance of this class.
 \item{\code{id}}{The identifier of the group.}
 
 \item{\code{name}}{The name of the group.}
+
+\item{\code{attributes}}{Optional, a \code{data.frame} with group attributes.}
 
 \item{\code{parent}}{The parent group of this group. the owning \link{CFDataset} for
 the root group.}

@@ -5,10 +5,9 @@
 #' R functions from the Ops and Math groups of the S3 [groupGeneric] functions.
 #'
 #' The functions always return a new CFArray object created in a new group.
-#' Functions can thus be concatenated to create more
-#' complex expressions. The data type of the new object is determined by the
-#' base R function; its name is concatenated from the names in the argument
-#' object(s).
+#' Functions can thus be concatenated to create more complex expressions. The
+#' data type of the new object is determined by the base R function; its name is
+#' concatenated from the names in the argument object(s).
 #'
 #' For the Ops functions with two arguments, if both arguments are a CFArray
 #' object they have to be compatible: same shape, axis coordinate values and
@@ -23,11 +22,11 @@
 #' @param e1,e2 CFArray objects, or a single numeric value.
 #'
 #' @return A new CFArray object. The object will have the same coordinate space
-#' as the CFArray object used as argument. Arguments are not copied and the new
-#' object will only have the "actual_range" attribute set.
+#'   as the CFArray object used as argument. Arguments are not copied and the
+#'   new object will only have the "actual_range" attribute set.
 #'
-#' Results that are logical (see the examples) are stored using the `NC_SHORT`
-#' data type because netCDF does not have a native logical data type.
+#'   Results that are logical (see the examples) are stored using the `NC_SHORT`
+#'   data type because netCDF does not have a native logical data type.
 #' @rdname arrayOps
 #' @export
 #' @examples
@@ -93,7 +92,7 @@ Ops.CFArray <- function(e1, e2) {
                      "integer" = "NC_INT",
                      "logical" = "NC_SHORT",
                      stop("Must add type", storage.mode(res)))
-  CFArray$new(name, grp, res, datatype, axes, crs, NULL)
+  CFArray$new(name, grp, res, datatype, axes, crs)
 }
 
 #' Mathematical operations on CFArray objects.
@@ -113,5 +112,5 @@ Math.CFArray <- function(x, ...) {
                      "integer" = "NC_INT",
                      "logical" = "NC_SHORT",
                      stop("Must add type", storage.mode(res)))
-  CFArray$new(paste(.Generic, x$name, sep = "_"), makeGroup(), res, datatype, x$axes, x$crs, NULL)
+  CFArray$new(paste(.Generic, x$name, sep = "_"), makeGroup(), res, datatype, x$axes, x$crs)
 }

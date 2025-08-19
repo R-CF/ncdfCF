@@ -30,7 +30,11 @@ CFObject <- R6::R6Class("CFObject",
     # The data type of the data in the object. Taken from NCvar if set,
     # otherwise the descending class must set it explicitly when receiving its
     # data values.
-    .data_type = NULL
+    .data_type = NULL,
+
+    # The attributes of the CF object. Upon read from a netCDF resource they are
+    # copied from the NCVariable. For a new CF object, just an empty data.frame.
+    .attributes = data.frame()
   ),
   public = list(
     #' @description Create a new CFobject instance from a variable in a netCDF
@@ -51,11 +55,14 @@ CFObject <- R6::R6Class("CFObject",
     #'   end of each dimension, otherwise its value must agree with the
     #'   corresponding `start` value and the dimension of the array on file.
     #'   Ignored when argument `var` is not an NCVariable instance.
+    #' @param attributes Optional. A `data.frame` with the attributes of the
+    #' object. Ignored when argument `var` is an NCVariable instance.
     #' @return A `CFObject` instance.
-    initialize = function(var, start = NA, count = NA) {
+    initialize = function(var, start = NA, count = NA, attributes = data.frame()) {
       if (is.character(var)) {
         private$.id <- CF$newVarId()
         private$.name <- var
+        private$.attributes <- attributes
       } else {
         private$.NCvar <- var
         private$.id <- var$id
@@ -63,6 +70,7 @@ CFObject <- R6::R6Class("CFObject",
         private$.start <- start
         private$.count <- count
         private$.data_type <- var$vtype
+        private$.attributes <- var$attributes[-1L]
       }
     },
 
@@ -101,9 +109,9 @@ CFObject <- R6::R6Class("CFObject",
       } else NULL
     },
 
-    #' @description Retrieve attributes of any CF object.
+    #' @description Retrieve an attribute of a CF object.
     #'
-    #' @param att Vector of character strings of attributes to return.
+    #' @param att Single character string of attribute to return.
     #' @param field The field of the attribute to return values from. This must
     #'   be "value" (default) or "type".
     #' @return If the `field` argument is "type", a character string. If `field`
@@ -111,7 +119,15 @@ CFObject <- R6::R6Class("CFObject",
     #'   when the attribute has multiple values. If no attribute is named with a
     #'   value of argument `att` `NA` is returned.
     attribute = function(att, field = "value") {
-      private$.NCvar$attribute(att, field)
+      if (length(att) > 1L)
+        stop("Can extract only one attribute at a time.", call. = FALSE)
+
+      atts <- private$.attributes
+      if (!nrow(atts)) return(NA)
+      val <- atts[atts$name == att, ]
+      if (!nrow(val)) return(NA)
+
+      val[[field]][[1L]]
     },
 
     #' @description Print the attributes of the CF object to the console.
@@ -119,7 +135,10 @@ CFObject <- R6::R6Class("CFObject",
     #' @param width The maximum width of each column in the `data.frame` when
     #' printed to the console.
     print_attributes = function(width = 50L) {
-      private$.NCvar$print_attributes(width)
+      if (nrow(private$.attributes)) {
+        cat("\nAttributes:\n")
+        print(.slim.data.frame(private$.attributes, width), right = FALSE, row.names = FALSE)
+      }
     },
 
     #' @description Add an attribute. If an attribute `name` already exists, it
@@ -139,7 +158,43 @@ CFObject <- R6::R6Class("CFObject",
     #'   coerced to their common mode.
     #' @return Self, invisibly.
     set_attribute = function(name, type, value) {
-      private$.NCvar$set_attribute(name, type, value)
+      if (is.na(name) || !is.character(name) || length(name) != 1L)
+        stop("Must name one attribute to set values for.", call. = FALSE) # nocov
+      if (!type %in% netcdf_data_types)
+        stop("Invalid netCDF data type.", call. = FALSE) # nocov
+
+      # Prepare values
+      value <- unlist(value, use.names = FALSE)
+      if (is.list(value) || is.array(value))
+        stop("Unsupported value for attribute (compound list, matrix, array?).", call. = FALSE) # nocov
+      if (is.character(value)) {
+        if (type == "NC_STRING") len <- length(value)
+        else if (type == "NC_CHAR") {
+          value <- paste(value, sep = ", ")
+          len <- nchar(value)
+        } else stop("Wrong attribute type for string value.", call. = FALSE) # nocov
+      } else {
+        if (is.logical(value)) value <- as.integer(value)
+        if (is.numeric(value)) len <- length(value)
+        else stop("Unsupported value for attribute.", call. = FALSE) # nocov
+      }
+      if (type != "NC_CHAR") value <- list(value)
+
+      # Check if the name refers to an existing attribute
+      if (nrow(private$.attributes) && nrow(private$.attributes[private$.attributes$name == name, ])) {
+        # If so, replace its type and value
+        private$.attributes[private$.attributes$name == name, ]$type <- type
+        private$.attributes[private$.attributes$name == name, ]$length <- len
+        private$.attributes[private$.attributes$name == name, ]$value <- value
+      } else {
+        # If not, create a new attribute
+        if (!.is_valid_name(name))
+          stop("Attribute name is not valid.", call. = FALSE) # nocov
+
+        df <- data.frame(name = name, type = type, length = len)
+        df$value <- value # Preserve lists
+        private$.attributes <- rbind(private$.attributes, df)
+      }
       invisible(self)
     },
 
@@ -159,7 +214,24 @@ CFObject <- R6::R6Class("CFObject",
     #'   before the existing value. Default is `FALSE`.
     #' @return Self, invisibly.
     append_attribute = function(name, value, sep = "; ", prepend = FALSE) {
-      private$.NCvar$append_attribute(name, value, sep, prepend)
+      if (is.na(name) || !is.character(name) || length(name) != 1L)
+        stop("Must name one attribute to append values for.", call. = FALSE)
+      if (is.na(name) || !is.character(name) || length(name) != 1L)
+        stop("Value to append must be a single character string.", call. = FALSE)
+
+      if (nchar(value) > 0L) {
+        # Check if the name refers to an existing attribute
+        if (nrow(private$.attributes[private$.attributes$name == name, ])) {
+          new_val <- if (prepend)
+            paste0(value, sep, private$.attributes[private$.attributes$name == name, ]$value)
+          else
+            paste0(private$.attributes[private$.attributes$name == name, ]$value, sep, value)
+          private$.attributes[private$.attributes$name == name, ]$value <- new_val
+          private$.attributes[private$.attributes$name == name, ]$length <- nchar(new_val)
+        } else # else create a new attribute
+          self$set_attribute(name, "NC_STRING", value)
+      }
+
       invisible(self)
     },
 
@@ -168,7 +240,7 @@ CFObject <- R6::R6Class("CFObject",
     #' @param name The name of the attribute to delete.
     #' @return Self, invisibly.
     delete_attribute = function(name) {
-      private$.NCvar$delete_attribute(name)
+      private$.attributes <- private$.attributes[!private$.attributes$name %in% name, ]
       invisible(self)
     },
 
@@ -177,7 +249,11 @@ CFObject <- R6::R6Class("CFObject",
     #' @param nm The NC variable name or "NC_GLOBAL" to write the attributes to.
     #' @return Self, invisibly.
     write_attributes = function(nc, nm) {
-      private$.NCvar$write_attributes(nc, nm)
+      if ((num_atts <- nrow(private$.attributes)) > 0L)
+        for (a in 1L:num_atts) {
+          attr <- private$.attributes[a,]
+          RNetCDF::att.put.nc(nc, nm, attr$name, attr$type, unlist(attr$value, use.names = FALSE))
+        }
       invisible(self)
     },
 
@@ -186,7 +262,15 @@ CFObject <- R6::R6Class("CFObject",
     #' @param crds Vector of axis names to add to the attribute.
     #' @return Self, invisibly.
     add_coordinates = function(crds) {
-      private$.NCvar$add_coordinates(crds)
+      current <- private$.attributes[private$.attributes$name == "coordinates", ]
+      if (nrow(current)) {
+        # There is a "coordinates" attribute already so append values
+        new_val <- paste(unique(c(strsplit(current[[1L, "value"]], " ")[[1L]], crds)), collapse = " ")
+        private$.attributes[private$.attributes$name == "coordinates", ]$value <- new_val
+        private$.attributes[private$.attributes$name == "coordinates", ]$length <- nchar(new_val)
+      } else
+        # Make a new "coordinates" attribute
+        self$set_attribute("coordinates", "NC_CHAR", paste(crds, collapse = " "))
       invisible(self)
     }
   ),
@@ -245,18 +329,17 @@ CFObject <- R6::R6Class("CFObject",
         NULL #FIXME: Cannot change the NCGroup that an object relates to
     },
 
-    # FIXME: Make read-only, attributes are set at initialization or through methods
-    #' @field attributes Set or retrieve a `data.frame` with the attributes of
-    #'   the CF object.
+    #' @field attributes (read-only) Retrieve a `data.frame` with the attributes
+    #'   of the CF object.
     attributes = function(value) {
       if (missing(value))
-        private$.NCvar$attributes
-      else
-        private$.NCvar$attributes <- value
+        private$.attributes
+      # else
+      #   private$.attributes <- value
     },
 
-    #' @field has_resource Flag that indicates if this object has an underlying
-    #' netCDF resource.
+    #' @field has_resource (read-only) Flag that indicates if this object has an
+    #'   underlying netCDF resource.
     has_resource = function(value) {
       !is.null(private$.NCvar)
     },
@@ -267,14 +350,18 @@ CFObject <- R6::R6Class("CFObject",
     #'   descending CF object must set the data type upon receiving its values.
     #'   The data type must be one of the allowable netCDF types. Do not set the
     #'   data type otherwise.
+    #'
+    #'   **Note:** Any data values in the object will be deleted after setting
+    #'   the data type. Set the data type before adding values.
     data_type = function(value) {
       if (missing(value))
         private$.data_type
-      else if (!is.null(private$.NCvar))
+      else if (self$has_resource)
         stop("Cannot set the data type of a variable present on file.", call. = FALSE) # nocov
-      else if (value %in% netcdf_data_types)
+      else if (value %in% netcdf_data_types) {
         private$.data_type <- value
-      else
+        private$.values <- NULL
+      } else
         stop("Unrecognized data type for a netCDF variable.", call. = FALSE) # nocov
     }
   )

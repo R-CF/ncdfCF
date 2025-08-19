@@ -73,7 +73,7 @@ the data variable.}
 \subsection{Method \code{new()}}{
 Create an instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariableBase$new(var, axes, crs = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariableBase$new(var, axes, attributes = data.frame(), crs = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -83,6 +83,8 @@ Create an instance of this class.
 
 \item{\code{axes}}{A \code{list} of \link{CFAxis} descendant instances that describe the
 axes of the data object.}
+
+\item{\code{attributes}}{Optional. The attributes of the instance.}
 
 \item{\code{crs}}{The \link{CFGridMapping} instance of this data object, or \code{NULL}
 when no grid mapping is available.}
