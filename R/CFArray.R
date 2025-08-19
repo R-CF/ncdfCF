@@ -27,6 +27,7 @@
 #'   points on individual rows. Metadata is not maintained. Package `data.table`
 #'   must be installed for this to work.
 #'
+#'
 #'   The temporal axis of the data, if present, may be summarised using the
 #'   `summarise()` method. The data is returned as a new `CFArray` instance.
 #'
@@ -133,7 +134,7 @@ CFArray <- R6::R6Class("CFArray",
     #'   data in argument `values`.
     #' @return An instance of this class.
     initialize = function(name, group, values, values_type, axes, crs, attributes) {
-      var <- NCVariable$new(CF$newVarId(), name, group, values_type, 0L, NULL)
+      var <- NCVariable$new(CF$newVarId(), name, group, values_type, NA)
       var$attributes <- attributes
       super$initialize(var, axes, crs)
 

@@ -14,13 +14,23 @@ CFObject <- R6::R6Class("CFObject",
   private = list(
     # The NCVariable instance that this CF object represents if it was read from
     # file.
-    .NC = NULL,
+    .NCvar = NULL,
 
     # The id and name of this object. They are taken from the NCVariable upon
     # creation, if supplied, otherwise the name should be supplied and the id
     # will be generated.
-    .id = integer(0),
-    .name = ""
+    .id = -1L,
+    .name = "",
+
+    # Start and count vectors for reading data from file. The length of  the
+    # vectors must agree with the array on file or be `NA`.
+    .start = NA,
+    .count = NA,
+
+    # The data type of the data in the object. Taken from NCvar if set,
+    # otherwise the descending class must set it explicitly when receiving its
+    # data values.
+    .data_type = NULL
   ),
   public = list(
     #' @description Create a new CFobject instance from a variable in a netCDF
@@ -28,18 +38,67 @@ CFObject <- R6::R6Class("CFObject",
     #'   rarely, if ever, useful to call this constructor directly. Instead, use
     #'   the methods from higher-level classes such as [CFVariable].
     #'
-    #' @param var The [NCVariable] instance upon which this CF object is
-    #'   based, or the name for the object new CF object to be created.
-    #' @return A `CFobject` instance.
-    initialize = function(var) {
+    #' @param var The [NCVariable] instance upon which this CF object is based
+    #'   when read from a netCDF resource, or the name for the object new CF
+    #'   object to be created.
+    #' @param start Optional. Vector of indices where to start reading data
+    #'   along the dimensions of the array on file. The vector must be `NA` to
+    #'   read all data, otherwise it must have agree with the dimensions of the
+    #'   array on file. Ignored when argument `var` is not an NCVariable
+    #'   instance.
+    #' @param count Optional. Vector of number of elements to read along each
+    #'   dimension of the array on file. The vector must be `NA` to read to the
+    #'   end of each dimension, otherwise its value must agree with the
+    #'   corresponding `start` value and the dimension of the array on file.
+    #'   Ignored when argument `var` is not an NCVariable instance.
+    #' @return A `CFObject` instance.
+    initialize = function(var, start = NA, count = NA) {
       if (is.character(var)) {
-        private$.name <- var
         private$.id <- CF$newVarId()
+        private$.name <- var
       } else {
-        private$.NC <- var
+        private$.NCvar <- var
         private$.id <- var$id
         private$.name <- var$name
+        private$.start <- start
+        private$.count <- count
+        private$.data_type <- var$vtype
       }
+    },
+
+    #' @description Detach the current object from its underlying netCDF
+    #'   resource.
+    detach = function() {
+      private$.NCvar$detach(self)
+      private$.NCvar <- NULL
+    },
+
+    #' @description Read the data of the CF object from file.
+    #' @return An array of data, as prescribed by the `start` and `count` values
+    #'   used to create this object. If the object is not backed by a netCDF
+    #'   resource, returns `NULL`.
+    read_data = function() {
+      if (is.null(private$.NCvar)) NULL
+      else private$.NCvar$get_data(private$.start, private$.count)
+    },
+
+    #' @description Retrieve the dimensions of the data of this object in the
+    #'   netCDF resource. If this object is not backed by a netCDF resource,
+    #'   returns `NULL`. Descendant classes should get the dimensions from the
+    #'   values array they themselves manage.
+    #' @param dimension Optional. The index of the dimension to retrieve the
+    #' length for. If omitted, retrieve the lengths of all dimensions.
+    dim = function(dimension) {
+      if (self$has_resource) {
+        if (is.na(private$.count[1L])) {
+          cnt <- private$.NCvar$dim(dimension)
+          stt <- if (is.na(private$.start[1L])) 1L else private$.start
+          if (missing(dimension))
+            cnt - stt + 1L
+          else
+            (cnt - stt + 1L)[dimension]
+        } else private$.count
+      } else NULL
     },
 
     #' @description Retrieve attributes of any CF object.
@@ -52,7 +111,7 @@ CFObject <- R6::R6Class("CFObject",
     #'   when the attribute has multiple values. If no attribute is named with a
     #'   value of argument `att` `NA` is returned.
     attribute = function(att, field = "value") {
-      private$.NC$attribute(att, field)
+      private$.NCvar$attribute(att, field)
     },
 
     #' @description Print the attributes of the CF object to the console.
@@ -60,7 +119,7 @@ CFObject <- R6::R6Class("CFObject",
     #' @param width The maximum width of each column in the `data.frame` when
     #' printed to the console.
     print_attributes = function(width = 50L) {
-      private$.NC$print_attributes(width)
+      private$.NCvar$print_attributes(width)
     },
 
     #' @description Add an attribute. If an attribute `name` already exists, it
@@ -80,7 +139,7 @@ CFObject <- R6::R6Class("CFObject",
     #'   coerced to their common mode.
     #' @return Self, invisibly.
     set_attribute = function(name, type, value) {
-      private$.NC$set_attribute(name, type, value)
+      private$.NCvar$set_attribute(name, type, value)
       invisible(self)
     },
 
@@ -100,7 +159,7 @@ CFObject <- R6::R6Class("CFObject",
     #'   before the existing value. Default is `FALSE`.
     #' @return Self, invisibly.
     append_attribute = function(name, value, sep = "; ", prepend = FALSE) {
-      private$.NC$append_attribute(name, value, sep, prepend)
+      private$.NCvar$append_attribute(name, value, sep, prepend)
       invisible(self)
     },
 
@@ -109,7 +168,7 @@ CFObject <- R6::R6Class("CFObject",
     #' @param name The name of the attribute to delete.
     #' @return Self, invisibly.
     delete_attribute = function(name) {
-      private$.NC$delete_attribute(name)
+      private$.NCvar$delete_attribute(name)
       invisible(self)
     },
 
@@ -118,7 +177,7 @@ CFObject <- R6::R6Class("CFObject",
     #' @param nm The NC variable name or "NC_GLOBAL" to write the attributes to.
     #' @return Self, invisibly.
     write_attributes = function(nc, nm) {
-      private$.NC$write_attributes(nc, nm)
+      private$.NCvar$write_attributes(nc, nm)
       invisible(self)
     },
 
@@ -127,11 +186,10 @@ CFObject <- R6::R6Class("CFObject",
     #' @param crds Vector of axis names to add to the attribute.
     #' @return Self, invisibly.
     add_coordinates = function(crds) {
-      private$.NC$add_coordinates(crds)
+      private$.NCvar$add_coordinates(crds)
       invisible(self)
     }
   ),
-
   active = list(
     #' @field friendlyClassName (read-only) A nice description of the class.
     friendlyClassName = function(value) {
@@ -139,18 +197,15 @@ CFObject <- R6::R6Class("CFObject",
         "Generic CF object"
     },
 
-    #' @field NCvar (read-only) The [NCVariable] instance that this CF object represents.
+    #' @field NCvar (read-only) The [NCVariable] instance that this CF object
+    #'   represents, or `NULL` if not set.
     NCvar = function(value) {
       if (missing(value))
-        private$.NC
+        private$.NCvar
     },
 
     #' @field id Set or retrieve the identifier of the CF object. In general,
     #'   the `id` value is immutable so it should never be set to a new value.
-    #'   Setting the `id` value is only useful when writing a CF object to a new
-    #'   netCDF file and this is managed by the underlying NC objects once a new
-    #'   `id` value is reported by the `netcdf` library. Setting a wrong value
-    #'   may invalidate the entire CF object and everything that depends on it.
     id = function(value) {
       if (missing(value))
         private$.id
@@ -158,14 +213,16 @@ CFObject <- R6::R6Class("CFObject",
         private$.id <- value
     },
 
-    #' @field name Set or retrieve the name of the CF object.
+    #' @field name Set or retrieve the name of the CF object. The name must be a
+    #'   valid netCDF name: start with a character, use only characters, numbers
+    #'   and the underscore, and be at most 255 characters long.
     name = function(value) {
       if (missing(value))
         private$.name
       else if (.is_valid_name(value))
         private$.name <- value
       else
-        stop("Invalid name for a CF object.", call. = FALSE)
+        stop("Invalid name for a CF object.", call. = FALSE) # nocov
     },
 
     #' @field fullname (read-only) The fully-qualified name of the CF object.
@@ -183,7 +240,7 @@ CFObject <- R6::R6Class("CFObject",
     #'   located in.
     group = function(value) {
       if (missing(value))
-        private$.NC$group
+        private$.NCvar$group
       else
         NULL #FIXME: Cannot change the NCGroup that an object relates to
     },
@@ -193,9 +250,32 @@ CFObject <- R6::R6Class("CFObject",
     #'   the CF object.
     attributes = function(value) {
       if (missing(value))
-        private$.NC$attributes
+        private$.NCvar$attributes
       else
-        private$.NC$attributes <- value
+        private$.NCvar$attributes <- value
+    },
+
+    #' @field has_resource Flag that indicates if this object has an underlying
+    #' netCDF resource.
+    has_resource = function(value) {
+      !is.null(private$.NCvar)
+    },
+
+    #' @field data_type Set or retrieve the data type of the data in the object.
+    #'   If this CF object is backed by a netCDF resource, the data type cannot
+    #'   be set, only retrieved. If the CF object exists in memory, the
+    #'   descending CF object must set the data type upon receiving its values.
+    #'   The data type must be one of the allowable netCDF types. Do not set the
+    #'   data type otherwise.
+    data_type = function(value) {
+      if (missing(value))
+        private$.data_type
+      else if (!is.null(private$.NCvar))
+        stop("Cannot set the data type of a variable present on file.", call. = FALSE) # nocov
+      else if (value %in% netcdf_data_types)
+        private$.data_type <- value
+      else
+        stop("Unrecognized data type for a netCDF variable.", call. = FALSE) # nocov
     }
   )
 )

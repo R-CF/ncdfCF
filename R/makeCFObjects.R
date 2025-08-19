@@ -62,7 +62,7 @@ makeAxis <- function(name, group, orientation, values, bounds = NULL, attributes
         makeLatitudeAxis(name, group, values, bounds, attributes)
       else {
         # Make a generic axis
-        var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", 1L, NULL)
+        var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", NA)
         dim <- NCDimension$new(CF$newDimId(), name, length(values), FALSE, group)
         axis <- CFAxisNumeric$new(var, dim, "", values)
         axis$attributes <- attributes
@@ -76,7 +76,7 @@ makeAxis <- function(name, group, orientation, values, bounds = NULL, attributes
         axis
       }
     } else if (is.character(values)) {
-      var <- NCVariable$new(CF$newVarId(), name, group, "NC_STRING", 1L, NULL)
+      var <- NCVariable$new(CF$newVarId(), name, group, "NC_STRING", NA)
       dim <- NCDimension$new(CF$newDimId(), name, length(values), FALSE, group)
       axis <- CFAxisCharacter$new(var, dim, "", values)
       axis$attributes <- attributes
@@ -106,7 +106,7 @@ makeLongitudeAxis <- function(name, group, values, bounds = NULL, attributes = N
   # FIXME: Check domain
   # FIXME: Arguments should not be NULL
 
-  var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", 1L, NULL)
+  var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", NA)
   dim <- NCDimension$new(CF$newDimId(), name, length(values), FALSE, group)
   axis <- CFAxisLongitude$new(var, dim, values)
   axis$attributes <- attributes
@@ -145,7 +145,7 @@ makeLatitudeAxis <- function(name, group, values, bounds, attributes = NULL) {
     stop("Name for axis is not valid", call. = FALSE)
   # FIXME: Check domain
 
-  var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", 1L, NULL)
+  var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", NA)
   dim <- NCDimension$new(CF$newDimId(), name, length(values), FALSE, group)
   axis <- CFAxisLatitude$new(var, dim, values)
   axis$attributes <- attributes
@@ -186,7 +186,7 @@ makeVerticalAxis <- function(name, group, values, bounds, attributes = NULL) {
     stop("Name for axis is not valid", call. = FALSE)
   # FIXME: Check domain
 
-  var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", 1L, NULL)
+  var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", NA)
   dim <- NCDimension$new(CF$newDimId(), name, length(values), FALSE, group)
   axis <- CFAxisVertical$new(var, dim, values, "depth")
   axis$attributes <- attributes
@@ -219,7 +219,7 @@ makeTimeAxis <- function(name, group, values, attributes = NULL) {
   if (!.is_valid_name(name))
     stop("Name for axis is not valid", call. = FALSE)
 
-  var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", 1L, NULL)
+  var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", NA)
   dim <- NCDimension$new(CF$newDimId(), name, length(values), FALSE, group)
   axis <- CFAxisTime$new(var, dim, values)
   axis$attributes <- attributes
@@ -257,7 +257,7 @@ makeDiscreteAxis <- function(name, group, length, attributes = NULL) {
     stop("Name for axis is not valid", call. = FALSE)
 
   length <- as.integer(length)
-  var <- NCVariable$new(CF$newVarId(), name, group, "NC_INT", 1L, NULL)
+  var <- NCVariable$new(CF$newVarId(), name, group, "NC_INT", NA)
   dim <- NCDimension$new(CF$newDimId(), name, length, FALSE, group)
   axis <- CFAxisDiscrete$new(var, dim, "")
   axis$attributes <- attributes
@@ -282,7 +282,7 @@ makeCharacterAxis <- function(name, group, values, attributes = NULL) {
   if (!.is_valid_name(name))
     stop("Name for axis is not valid", call. = FALSE)
 
-  var <- NCVariable$new(CF$newVarId(), name, group, "NC_STRING", 1L, NULL) # FIXME: Make this NC_CHAR for netcdf3 support -> extra dim!
+  var <- NCVariable$new(CF$newVarId(), name, group, "NC_STRING", NA) # FIXME: Make this NC_CHAR for netcdf3 support -> extra dim!
   dim <- NCDimension$new(CF$newDimId(), name, length(values), FALSE, group)
   axis <- CFAxisCharacter$new(var, dim, "", values)
   axis$attributes <- attributes

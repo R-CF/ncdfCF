@@ -38,7 +38,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
     num_dim_axes = function() {
       if (length(self$axes))
         #sum(sapply(self$axes, function(x) x$NCvar$ndims > 0L && x$length > 1L))
-        self$NCvar$array_dims()
+        self$NCvar$ndims #FIXME: Must call a CFObject method here
       else 0L
     },
 
@@ -244,7 +244,7 @@ CFVariableBase <- R6::R6Class("CFVariableBase",
 
         # Make a new time axis for the result
         new_tm <- attr(fac, "CFTime")
-        var <- NCVariable$new(CF$newVarId(), tax$name, grp, tax$NCvar$vtype, 1L, NULL)
+        var <- NCVariable$new(CF$newVarId(), tax$name, grp, tax$data_type, NA)
         len <- length(new_tm)
         dim <- NCDimension$new(CF$newDimId(), tax$name, len, FALSE, grp)
         new_ax <- CFAxisTime$new(var, dim, new_tm)

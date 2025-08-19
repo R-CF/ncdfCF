@@ -15,10 +15,10 @@ NCDimension <- R6::R6Class("NCDimension",
   inherit = NCObject,
   private = list(
     # The length of the dimension.
-    len = 0L,
+    .length = 0L,
 
     # Flag to indicate if the dimension is unlimited.
-    u = FALSE
+    .unlim = FALSE
   ),
   public = list(
     #' @description Create a new netCDF dimension. This class should not be
@@ -33,8 +33,8 @@ NCDimension <- R6::R6Class("NCDimension",
     #' @return A `NCDimension` instance.
     initialize = function(id, name, length, unlim, group) {
       super$initialize(id, name)
-      private$len <- length
-      private$u <- unlim
+      private$.length <- length
+      private$.unlim <- unlim
 
       # Add self to the group
       # FIXME: Must be a NCGroup method
@@ -47,8 +47,8 @@ NCDimension <- R6::R6Class("NCDimension",
     #' @param ... Passed on to other methods.
     print = function(...) {
       cat("<netCDF dimension> [", self$id, "] ", self$name, "\n", sep = "")
-      cat("Length       :", private$len, "\n")
-      cat("Unlimited    :", private$u, "\n")
+      cat("Length       :", private$.length, "\n")
+      cat("Unlimited    :", private$.unlim, "\n")
     },
 
     #' @description Write the dimension to a netCDF file.
@@ -58,10 +58,10 @@ NCDimension <- R6::R6Class("NCDimension",
       # Error will be thrown when trying to write a dimension that's already
       # defined, such as when a dimension is shared between multiple objects.
       # This error can be safely ignored.
-      did <- try(if (private$u)
+      did <- try(if (private$.unlim)
             RNetCDF::dim.def.nc(h, self$name, unlim = TRUE)
           else
-            RNetCDF::dim.def.nc(h, self$name, private$len),
+            RNetCDF::dim.def.nc(h, self$name, private$.length),
           silent = TRUE)
       if (inherits(did, "try-error"))
         did <- RNetCDF::dim.inq.nc(h, self$name)$id
@@ -75,7 +75,7 @@ NCDimension <- R6::R6Class("NCDimension",
     #'   written to file.
     length = function(value) {
       if (missing(value))
-        private$len
+        private$.length
     },
 
     #' @field unlim (read-only) Logical flag to indicate if the dimension is
@@ -83,7 +83,7 @@ NCDimension <- R6::R6Class("NCDimension",
     #'   incrementing this dimension.
     unlim = function(value) {
       if (missing(value))
-        private$u
+        private$.unlim
     }
   )
 )

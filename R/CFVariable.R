@@ -250,7 +250,7 @@ CFVariable <- R6::R6Class("CFVariable",
       ax <- sapply(self$axes, function(x) x$name)
       data.frame(group = self$group$fullname, name = self$name,
                  long_name = props$longname, units = props$unit,
-                 data_type = self$NCvar$vtype, axes = paste(ax, collapse = ", "))
+                 data_type = self$data_type, axes = paste(ax, collapse = ", "))
     },
 
     #' @description The information returned by this method is very concise
@@ -418,7 +418,7 @@ CFVariable <- R6::R6Class("CFVariable",
           atts <- axis$attributes
           atts <- atts[!atts$name %in% c("standard_name", "units"), ]
           out_axis <- makeLatitudeAxis(aux_names[2L], out_group, aux$aoi$dimnames[[1L]], aoi_bounds$lat$values, atts)
-        } else { # No auxiliary coordinates
+        } else { # No auxiliary long-lat coordinates
           rng <- selectors[[ axis_names[ax] ]]
           if (is.null(rng)) rng <- selectors[[ orient ]]
           if (is.null(rng)) { # Axis not specified so take the whole axis

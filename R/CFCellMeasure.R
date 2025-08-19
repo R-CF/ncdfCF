@@ -16,6 +16,9 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
     # after an external file has been linked.
     .var = NULL,
 
+    # The name of this object.
+    .name = "",
+
     # The CFDataset from the external variable, if linked.
     .ext = NULL,
 
@@ -25,6 +28,9 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
     # A list of the axes that this cell measure variable uses, from the internal
     # variable or from an external file after it is linked.
     .axes = list(),
+
+    # The measure of the variable, either "area" or "volume".
+    .measure = "",
 
     # Get the names of the private$.links or private$.axes
     names_of = function(lst) {
@@ -45,55 +51,37 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
     }
   ),
   public = list(
-    #' @field group The [NCGroup] that this object is located in.
-    group = NULL,
-
-    #' @field measure The measure of this instance. Either "area" or "volume".
-    measure = "",
-
-    #' @field name The name of this instance, which must refer to a NC variable
-    #' or an external variable.
-    name = "",
-
     #' @description Create an instance of this class.
     #'
-    #' @param grp The group that this CF cell measure variable lives in.
     #' @param measure The measure of this object. Must be either of "area" or
-    #' "volume".
-    #' @param name The name of the cell measure variable. May be omitted if
-    #' argument `nc_var` is specified.
+    #'   "volume".
+    #' @param name The name of the cell measure variable. Ignored if argument
+    #'   `nc_var` is specified.
     #' @param nc_var The netCDF variable that defines this CF cell measure
     #'   object. `NULL` for an external variable.
     #' @param axes List of [CFAxis] instances that describe the dimensions of
     #'   the cell measure object. `NULL` for an external variable.
     #' @return An instance of this class.
-    initialize = function(grp, measure, name = NULL, nc_var = NULL, axes = NULL) {
-      self$group <- grp
+    initialize = function(measure, name, nc_var = NULL, axes = NULL) {
       if (measure %in% c("area", "volume"))
-        self$measure <- measure
+        private$.measure <- measure
       else
         stop("Invalid 'measure' for cell measure variable.", call. = FALSE)
 
       if (!(is.null(nc_var) || is.null(axes))) {
         private$.var <- CFVariable$new(nc_var, axes)
-        self$name <- nc_var$name
+        private$.name <- nc_var$name
         private$.axes <- axes
-      } else {
-        if (is.null(name))
-          stop("Name of external variable must be specified.", call. = FALSE)
-        self$name <- name
-      }
+      } else
+        private$.name <- name
     },
 
     #' @description Print a summary of the cell measure variable to the console.
     #' @param ... Arguments passed on to other functions. Of particular interest
     #' is `width = ` to indicate a maximum width of attribute columns.
     print = function(...) {
-      cat("<Cell measure>", self$name, "\n")
-      if (self$group$name != "/")
-        cat("Group    :", self$group$fullname, "\n")
-      cat("Name     :", self$name, "\n")
-      cat("Measure  :", self$measure, "\n")
+      cat("<Cell measure>", private$.name, "\n")
+      cat("Measure  :", private$.measure, "\n")
 
       if (is.null(private$.var))
         cat("Data     : external (not linked)\n")
@@ -104,7 +92,7 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
           cat("Location :", private$.var$group$name, "\n")
 
         longname <- private$.var$attribute("long_name")
-        if (!is.na(longname) && longname != self$name)
+        if (!is.na(longname) && longname != private$.name)
           cat("Long name:", longname, "\n")
 
         if (length(private$.links))
@@ -150,17 +138,36 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
     link = function(resource) {
       ds <- open_ncdf(resource)
       if (inherits(ds, "CFDataset")) {
-        var <- ds[[self$name]]
+        var <- ds[[private$.name]]
         if (inherits(var, "CFVariable")) {
           private$.axes <- var$axes
-          # FIXME: Is the below stament correct???
+          # FIXME: Is the below statement correct???
           lapply(private$.links, private$compatible) # May throw an error
           private$.ext <- ds
           private$.var <- var
-          return(invisible(self))
+          invisible(self)
         }
-      }
-      stop("Invalid resource for cell measure variable.", call. = FALSE)
+      } else
+        stop("Invalid resource for cell measure variable.", call. = FALSE)
+    }
+  ),
+  active = list(
+    #' @field measure (read-only) Retrieve the measure of this instance. Either
+    #'   "area" or "volume".
+    measure = function(value) {
+      if (missing(value))
+        private$.measure
+    },
+
+    #' @field name The name of this instance, which must refer to a NC variable
+    #' or an external variable.
+    name = function(value) {
+      if (missing(value))
+        private$.name
+      else if (.is_valid_name(value))
+        private$.name <- value # Should this be disallowed when .var is set?
+      else
+        stop("Invalid name for a CF object.", call. = FALSE) # nocov
     }
   )
 )

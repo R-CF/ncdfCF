@@ -19,9 +19,16 @@ element) or an auxiliary longitude-latitude grid (4 vertices per element).
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{NCvarx}}{Retrieve the NCVariable object that \code{self} refers to.}
+\item{\code{length}}{(read-only) The length of the second dimension of the data, i.e. the
+number of boundary values.}
 
-\item{\code{valuesx}}{(read-only) Retrieve the boundary values.}
+\item{\code{vertices}}{(read-only) The length of the first dimension of the data, i.e. the
+number of vertices that make up a boundary.}
+
+\item{\code{values}}{Set or retrieve the boundary values of this object. Upon
+retrieval, values are read from the netCDF resource, if there is one,
+upon first access and cached thereafter. Upon setting values, if there
+is a linked netCDF resource, this object will be detached from it.}
 }
 \if{html}{\out{</div>}}
 }
@@ -43,7 +50,10 @@ element) or an auxiliary longitude-latitude grid (4 vertices per element).
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-detach'><code>ncdfCF::CFObject$detach()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="dim"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-dim'><code>ncdfCF::CFObject$dim()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="read_data"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-read_data'><code>ncdfCF::CFObject$read_data()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
 </ul>
@@ -55,13 +65,21 @@ element) or an auxiliary longitude-latitude grid (4 vertices per element).
 \subsection{Method \code{new()}}{
 Create an instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$new(nc_var, start = NA, count = NA)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFBounds$new(var, values = NA, start = NA, count = NA)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{nc_var}}{The NC variable that describes this instance.}
+\item{\code{var}}{The name of the boundary variable when creating a new boundary
+variable. When reading a boundary variable from file, the \link{NCVariable}
+object that describes this instance.}
+
+\item{\code{values}}{Optional. The values of the boundary variable. This must be
+a numeric matrix whose first dimension has a length equal to the number
+of vertices for each boundary, and the second dimension is as long as
+the CFObject instances that use these boundary values. Ignored when
+argument \code{var} is a NCVariable object.}
 
 \item{\code{start}}{Optional. Vector of indices where to start reading boundary
 data along the dimensions of the data. The vector must be \code{NA} to read
@@ -112,7 +130,7 @@ range.
 This method returns boundary values which span the range of indices
 given by the \code{rng} argument. This method currently only works for
 boundary values along axes, i.e. 1D coordinate values with boundary
-values over two vertices, that have been read from a netCDF file.
+values over two vertices.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFBounds$sub_bounds(rng)}\if{html}{\out{</div>}}
 }

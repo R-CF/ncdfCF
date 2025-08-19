@@ -19,9 +19,6 @@ Auxiliary longitude-latitude grids are only supported for reading from a
 netCDF resource. Creating an instance of this class manually therefore has
 no practical purpose.
 }
-\section{Super class}{
-\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFAuxiliaryLongLat}
-}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
@@ -71,19 +68,6 @@ grids.}
 \item \href{#method-CFAuxiliaryLongLat-clone}{\code{CFAuxiliaryLongLat$clone()}}
 }
 }
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
-<ul>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="add_coordinates"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-add_coordinates'><code>ncdfCF::CFObject$add_coordinates()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
-</ul>
-</details>
-}}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAuxiliaryLongLat-new"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAuxiliaryLongLat-new}{}}}
@@ -92,16 +76,16 @@ Creating a new instance. It should normally not be useful to
 create an instance of this class other than upon reading a netCDF
 resource.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$new(varLong, varLat, boundsLong, boundsLat)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$new(.varLong, .varLat, .boundsLong, .boundsLat)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{varLong, varLat}}{The \link{NCVariable} instances with the longitude and
+\item{\code{.varLong, .varLat}}{The \link{NCVariable} instances with the longitude and
 latitude grid values, respectively.}
 
-\item{\code{boundsLong, boundsLat}}{The bounds of the grid cells for the
+\item{\code{.boundsLong, .boundsLat}}{The bounds of the grid cells for the
 longitude and latitude, respectively, if set.}
 }
 \if{html}{\out{</div>}}

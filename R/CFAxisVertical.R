@@ -209,7 +209,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
       if (missing(group))
         group <- makeGroup(resource = self$group$resource)
 
-      var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", 1L, NULL)
+      var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", NA)
       dim <- NCDimension$new(CF$newDimId(), name, length(private$values), FALSE, group)
       axis <- CFAxisVertical$new(var, dim, private$values, private$parameter_name)
       axis$attributes <- self$attributes

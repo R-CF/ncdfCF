@@ -86,12 +86,12 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       grp$CFaxes <- axes
 
       # CRS
-      v <- NCVariable$new(CF$newVarId(), "latitude_longitude", grp, "NC_CHAR", 0L, NULL)
-      self$crs <- CFGridMapping$new(v, "latitude_longitude")
-      self$crs$set_attribute("grid_mapping_name", "NC_CHAR", "latitude_longitude")
-      self$crs$set_attribute("semi_major_axis", "NC_DOUBLE", 6378145)
-      self$crs$set_attribute("inverse_flattening", "NC_DOUBLE", 0)
-      self$crs$set_attribute("prime_meridian_name", "NC_CHAR", "Greenwich")
+      gm <- CFGridMapping$new("geo", "latitude_longitude")
+      gm$set_attribute("semi_major_axis", "NC_DOUBLE", 6378145)
+      gm$set_attribute("inverse_flattening", "NC_DOUBLE", 0)
+      gm$set_attribute("prime_meridian_name", "NC_CHAR", "Greenwich")
+      self$crs <- gm
+      self$set_attribute("grid_mapping", "NC_CHAR", "geo")
 
       # Construct the object
       super$initialize(var, axes)

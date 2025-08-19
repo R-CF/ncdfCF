@@ -8,13 +8,11 @@ CFVerticalParametricTerm <- R6::R6Class("CFVerticalParametricTerm",
   inherit = CFVariableBase,
   private = list(
     # Flag to indicate that the instance has no data
-    nodata = TRUE,
+    .nodata = TRUE,
 
-    # Starting indices for reading the data from file
-    start = NA,
-
-    # Count values for reading the data from file
-    count = NA
+    # Start and count indices for reading the data from file
+    .start = NA,
+    .count = NA
   ),
   public = list(
     #' @description Create an instance of this class.
@@ -25,7 +23,7 @@ CFVerticalParametricTerm <- R6::R6Class("CFVerticalParametricTerm",
     initialize = function(var, axes) {
       if (inherits(var, "NCVariable")) {
         super$initialize(var, axes)
-        private$nodata <- FALSE
+        private$.nodata <- FALSE
       }
     },
 
@@ -74,7 +72,7 @@ CFVerticalParametricTerm <- R6::R6Class("CFVerticalParametricTerm",
     #' data.
     has_data = function(value) {
       if (missing(value))
-        !private$nodata
+        !private$.nodata
     },
 
     #' @field values (read-only) The values of the parametric term. Depending on
@@ -84,8 +82,8 @@ CFVerticalParametricTerm <- R6::R6Class("CFVerticalParametricTerm",
     #'   Metadata Conventions.
     values = function(value) {
       if (missing(value)) {
-        if (private$nodata) 0
-        else self$NCvar$get_data(private$start, private$count)
+        if (private$.nodata) 0
+        else self$NCvar$get_data(private$.start, private$.count)
       }
     }
   )

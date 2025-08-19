@@ -13,12 +13,11 @@ If a cell measure variable is external to the current file, an instance
 will still be created for it, but the user must link the external file to
 this instance before it can be used in analysis.
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
-\item{\code{group}}{The \link{NCGroup} that this object is located in.}
-
-\item{\code{measure}}{The measure of this instance. Either "area" or "volume".}
+\item{\code{measure}}{(read-only) Retrieve the measure of this instance. Either
+"area" or "volume".}
 
 \item{\code{name}}{The name of this instance, which must refer to a NC variable
 or an external variable.}
@@ -42,19 +41,17 @@ or an external variable.}
 \subsection{Method \code{new()}}{
 Create an instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFCellMeasure$new(grp, measure, name = NULL, nc_var = NULL, axes = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFCellMeasure$new(measure, name, nc_var = NULL, axes = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{grp}}{The group that this CF cell measure variable lives in.}
-
 \item{\code{measure}}{The measure of this object. Must be either of "area" or
 "volume".}
 
-\item{\code{name}}{The name of the cell measure variable. May be omitted if
-argument \code{nc_var} is specified.}
+\item{\code{name}}{The name of the cell measure variable. Ignored if argument
+\code{nc_var} is specified.}
 
 \item{\code{nc_var}}{The netCDF variable that defines this CF cell measure
 object. \code{NULL} for an external variable.}

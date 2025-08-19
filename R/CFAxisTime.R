@@ -202,7 +202,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       if (is.null(rng))
         self$copy(group, name)
       else {
-        var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", 1L, NULL)
+        var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", NA)
         time <- private$tm
         rng <- range(rng)
         idx <- time$indexOf(seq(from = rng[1L], to = rng[2L], by = 1L))
@@ -210,7 +210,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         dim <- NCDimension$new(CF$newDimId(), name, length(idx), FALSE, group)
         t <- CFAxisTime$new(var, dim, tm)
         private$subset_coordinates(t, idx)
-        t$set_attribute("actual_range", self$NCvar$vtype, range(tm$offsets))
+        t$set_attribute("actual_range", self$data_type, range(tm$offsets))
         t
       }
     },

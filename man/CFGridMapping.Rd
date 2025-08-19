@@ -13,16 +13,10 @@ string in WKT2 format is returned, following the OGC standard.
 }
 \references{
 https://docs.ogc.org/is/18-010r11/18-010r11.pdf
+https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings
 }
 \section{Super class}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFGridMapping}
-}
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{grid_mapping_name}}{The name of the grid mapping.}
-}
-\if{html}{\out{</div>}}
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
@@ -49,7 +43,10 @@ https://docs.ogc.org/is/18-010r11/18-010r11.pdf
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-detach'><code>ncdfCF::CFObject$detach()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="dim"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-dim'><code>ncdfCF::CFObject$dim()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="read_data"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-read_data'><code>ncdfCF::CFObject$read_data()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
 </ul>
@@ -60,16 +57,27 @@ https://docs.ogc.org/is/18-010r11/18-010r11.pdf
 \if{latex}{\out{\hypertarget{method-CFGridMapping-new}{}}}
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
+
+Note that when a new grid mapping object is created (as opposed to
+reading from a netCDF resource), only the \code{grid_mapping_name} attribute
+will be set. The caller must set all other parameters through their
+respective attributes, following the CF Metadata Conventions.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$new(nc_var, name)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$new(var, grid_mapping_name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{nc_var}}{The netCDF variable that describes this instance.}
+\item{\code{var}}{When creating a new grid mapping object, the name of the
+object. When reading from a netCDF resource, the netCDF variable that
+describes this instance.}
 
-\item{\code{name}}{The formal grid mapping name from the attribute.}
+\item{\code{grid_mapping_name}}{Optional. When creating a new grid mapping
+object, the formal name of the grid mapping, as specified in the CF
+Metadata Conventions. This value is stored in the new object as
+attribute "grid_mapping_name". Ignored when argument \code{var} is a NC
+object.}
 }
 \if{html}{\out{</div>}}
 }

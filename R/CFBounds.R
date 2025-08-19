@@ -12,22 +12,8 @@
 CFBounds <- R6::R6Class("CFBounds",
   inherit = CFObject,
   private = list(
-    # Start and count vectors for reading boundary data from file. The vectors
-    # must have length 2 or be `NA`.
-    .start = NA,
-    .count = NA,
-
-    # A matrix with the boundary values.
-    .values = NULL,
-
-    load = function() {
-      if (!is.null(private$.values)) return()
-
-      private$.values <- self$NCvar$get_data(private$.start, private$.count)
-      # FIXME
-      if (!is.null(self$NCvar))
-        self$set_attribute("actual_range", "NC_DOUBLE", range(private$.values))
-    }
+    # The boundary values of this object
+    .values = NULL
   ),
   public = list(
     #' @description Create an instance of this class.
@@ -46,37 +32,32 @@ CFBounds <- R6::R6Class("CFBounds",
     #'   dimension of the boundary data. The vector must be `NA` to read to the
     #'   end of each dimension, otherwise it must have `length = 2`.
     initialize = function(var, values = NA, start = NA, count = NA) {
-      super$initialize(var)
-      private$.start <- start
-      private$.count <- count
-
-      if (is.character(var)) {
+      super$initialize(var, start, count)
+      if (is.character(var))
         private$.values <- values
-        if (!is.null(self$NCvar)) # FIXME
-          self$set_attribute("actual_range", "NC_DOUBLE", range(private$.values))
-      } else
-        self$NCvar$CF <- self
+      else
+        self$NCvar$CF <- self # Can this be done in CFObject?
     },
 
     #' @description Print a summary of the object to the console.
     #' @param ... Arguments passed on to other functions. Of particular interest
     #' is `width = ` to indicate a maximum width of attribute columns.
     print = function(...) {
-      private$load()
-      if (is.null(private$.values))
+      v <- self$values
+      if (is.null(v))
         cat("Bounds     : (no values)\n")
       else {
-        dims <- dim(private$.values)
+        dims <- dim(v)
         if (dims[1L] == 2L) {
           len <- dims[2L]
           if (len < 8L) {
-            from_vals <- trimws(formatC(private$.values[1L, ], digits = 8L))
-            to_vals   <- trimws(formatC(private$.values[2L, ], digits = 8L))
+            from_vals <- trimws(formatC(v[1L, ], digits = 8L))
+            to_vals   <- trimws(formatC(v[2L, ], digits = 8L))
             cat("Bounds     :", paste(from_vals, collapse = ", "), "\n")
             cat("           :", paste(to_vals, collapse = ", "), "\n")
           } else {
-            vals <- trimws(formatC(c(private$.values[1L, 1L:3L], private$.values[1L, (len-2L):len],
-                                     private$.values[2L, 1L:3L], private$.values[2L, (len-2L):len]), digits = 8L))
+            vals <- trimws(formatC(c(v[1L, 1L:3L], v[1L, (len-2L):len],
+                                     v[2L, 1L:3L], v[2L, (len-2L):len]), digits = 8L))
             cat("Bounds     : ", vals[1L], ", ", vals[2L], ", ", vals[3L], " ... ", vals[4L], ", ", vals[5L], ", ", vals[6L], "\n", sep = "")
             cat("           : ", vals[7L], ", ", vals[8L], ", ", vals[9L], " ... ", vals[10L], ", ", vals[11L], ", ", vals[12L], "\n", sep = "")
           }
@@ -89,15 +70,15 @@ CFBounds <- R6::R6Class("CFBounds",
 
     #' @description Retrieve the lowest and highest value in the bounds.
     range = function() {
-      private$load()
-      if (is.null(private$.values))
+      if (is.null(self$values))
         NULL
       else {
         rng <- self$attribute("actual_range")
-        if (any(is.na(rng)))
-          range(private$.values)
-        else
-          rng
+        if (any(is.na(rng))) {
+          rng <- range(self$values)
+          #self$set_attribute("actual_range", self$data_type, rng)
+        }
+        rng
       }
     },
 
@@ -115,7 +96,7 @@ CFBounds <- R6::R6Class("CFBounds",
     #' @return A `CFBounds` instance covering the indicated range of indices.
     sub_bounds = function(rng) {
       if (is.null(self$NCvar))
-        CFBounds$new(self$name, values = private$.values[, rng[1L]:rng[2L]])
+        CFBounds$new(self$name, values = self$values[, rng[1L]:rng[2L]])
       else
         CFBounds$new(self$NCvar, start = c(1L, rng[1L]), count = c(2L, rng[2L] - rng[1L] + 1L))
     },
@@ -127,12 +108,11 @@ CFBounds <- R6::R6Class("CFBounds",
     #' @param object_name The name of the object that uses these bounds, usually
     #' an axis but could also be an auxiliary CV or a parametric Z axis.
     write = function(h, object_name) {
-      private$load()
       dim <- self$NCvar$dimension(id)
       dim$write(h)
-      self$id <- RNetCDF::var.def.nc(h, self$name, self$NCvar$data_type, c(dim$name, object_name))
+      self$id <- RNetCDF::var.def.nc(h, self$name, self$data_type, c(dim$name, object_name))
       self$write_attributes(h, self$name)
-      RNetCDF::var.put.nc(h, self$name, private$.values)
+      RNetCDF::var.put.nc(h, self$name, self$values)
     }
   ),
   active = list(
@@ -142,11 +122,38 @@ CFBounds <- R6::R6Class("CFBounds",
         "Boundary values object"
     },
 
-    #' @field valuesx (read-only) Retrieve the boundary values.
+    #' @field length (read-only) The length of the second dimension of the data, i.e. the
+    #' number of boundary values.
+    length = function(value) {
+      if (missing(value)) {
+        if (!is.null(private$.values))
+          dim(private$.values)[2L]
+        else self$dim(2L)
+      }
+    },
+
+    #' @field vertices (read-only) The length of the first dimension of the data, i.e. the
+    #' number of vertices that make up a boundary.
+    vertices = function(value) {
+      if (missing(value)) {
+        if (!is.null(private$.values))
+          dim(private$.values)[1L]
+        else self$dim(1L)
+      }
+    },
+
+    #' @field values Set or retrieve the boundary values of this object. Upon
+    #'   retrieval, values are read from the netCDF resource, if there is one,
+    #'   upon first access and cached thereafter. Upon setting values, if there
+    #'   is a linked netCDF resource, this object will be detached from it.
     values = function(value) {
       if (missing(value)) {
-        private$load()
+        if (is.null(private$.values))
+          private$.values <- self$read_data()
         private$.values
+      } else {
+        private$.values <- value
+        self$detach()
       }
     }
   )

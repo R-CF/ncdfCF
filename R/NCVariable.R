@@ -16,29 +16,23 @@ NCVariable <- R6::R6Class("NCVariable",
     # one reference but there could be more in the file (e.g. terms for several
     # parametric vertical axes) and derivative CF objects that do not modify the
     # data retain the link to self as well.
-    CFobjects = list(),
+    .CFobjects = list(),
 
     # NetCDF group where this variable is located.
-    grp = NULL,
+    .group = NULL,
 
     # The netCDF data type of this variable. This could be the packed type.
     # Don't check this field but use the appropriate method in the class of the
     # object whose data type you are looking for.
-    data_type = NULL,
+    .vtype = NULL,
 
-    # Number of dimensions that this variable uses.
-    nd = -1L,
-
-    # Vector of dimension identifiers that this variable uses. These are the
-    # so-called "NUG coordinate variables".
-    dids  = NULL,
+    # Vector of dimension identifiers that this variable uses.
+    .dimids  = NULL,
 
     # Additional properties for a `netcdf4` resource.
-    ncdf4 = NULL
+    .ncdf4 = NULL
   ),
   public = list(
-    # FIXME: Drop ndims: it follows from length of dimids
-
     #' @description Create a new netCDF variable. This class should not be
     #'   instantiated directly, they are created automatically when opening a
     #'   netCDF resource.
@@ -47,25 +41,21 @@ NCVariable <- R6::R6Class("NCVariable",
     #' @param name Character string with the name of the netCDF object.
     #' @param group The [NCGroup] this variable is located in.
     #' @param vtype The netCDF data type of the variable.
-    #' @param ndims The number of dimensions this variable uses.
     #' @param dimids The identifiers of the dimensions this variable uses.
     #' @param attributes Optional, `data.frame` with the attributes of the
     #'   object.
     #' @param netcdf4 Optional, `netcdf4`-specific arguments in the format of
     #'   RNetCDF.
     #' @return An instance of this class.
-    initialize = function(id, name, group, vtype, ndims, dimids, attributes = data.frame(), netcdf4 = list()) {
-      if (group$has_name(name))
-        stop(paste0("Object with name '", name, "' already exists in the group."), call. = FALSE)
-
+    initialize = function(id, name, group, vtype, dimids, attributes = data.frame(), netcdf4 = list()) {
       super$initialize(id, name, attributes)
-      private$grp <- group
-      private$data_type <- vtype
-      private$nd <- ndims
-      private$dids <- dimids
+      private$.group <- group
+      private$.vtype <- vtype
+      if (!is.na(dimids[1L]))
+        private$.dimids <- dimids
 
       if (length(netcdf4))
-        private$ncdf4 <- netcdf4
+        private$.ncdf4 <- netcdf4
 
       # FIXME: Must be NCGroup method: group$append(self)
       # Add self to the group
@@ -78,9 +68,9 @@ NCVariable <- R6::R6Class("NCVariable",
     #' @param ... Passed on to other methods.
     print = function(...) {
       cat("<netCDF variable> [", self$id, "] ", self$name, "\n", sep = "")
-      cat("Group        :", private$grp$fullname, "\n")
-      cat("Data type    :", private$data_type, "\n")
-      cat("Dimension ids:", paste(private$dids, collapse = ", "), "\n")
+      cat("Group        :", private$.group$fullname, "\n")
+      cat("Data type    :", private$.vtype, "\n")
+      cat("Dimension ids:", paste(private$.dimids, collapse = ", "), "\n")
 
       self$print_attributes()
     },
@@ -95,15 +85,13 @@ NCVariable <- R6::R6Class("NCVariable",
       else NULL
     },
 
-    #' @description Return the number of dimensions of the array that this
-    #'   variable holds in the netCDF file. It is thus not necessarily equal to
-    #'   the number of axes of a CF data variable.
-    #'
-    #' @return Integer value with the number of dimensional axes.
-    array_dims = function() {
-      if (length(private$dids))
-        sum(private$dids > -1L)
-      else 0L
+    #' @description Detach the passed object from this NC variable.
+    #' @param obj The CFObject instance to detach from this NC variable.
+    #' @return `obj`, invisibly.
+    detach = function(obj) {
+      cf <- lapply(private$.CFobjects, function(o) if (identical(o, obj)) NULL else o)
+      private$.CFobjects <- cf[lengths(cf) > 0L]
+      invisible(obj)
     },
 
     #' @description Read (a chunk of) data from the netCDF file. Degenerate
@@ -119,27 +107,38 @@ NCVariable <- R6::R6Class("NCVariable",
     #'   start index to the end of the dimension.
     #' @return An array with the requested data, or an error object.
     get_data = function(start = NA, count = NA) {
-      RNetCDF::var.get.nc(private$grp$handle, self$name, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+      RNetCDF::var.get.nc(private$.group$handle, self$name, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
     },
 
     #' @description Get the [NCDimension] object(s) that this variable uses.
-    #' @param id The identifier of the dimension. If `NA`, all dimensions of
+    #' @param id The index of the dimension. If missing, all dimensions of
     #' this variable are returned.
     #' @return A NCDimension object or a list thereof. If no NCDimensions were
     #' found, return `NULL`.
-    dimension = function(id = NA) {
-      if (is.na(id)) {
-        lapply(private$dids, function(did) private$grp$find_dim_by_id(did))
+    dimension = function(id) {
+      if (missing(id)) {
+        lapply(private$.dimids, function(did) private$.group$find_dim_by_id(did))
       } else {
-        private$grp$find_dim_by_id(id)
+        private$.group$find_dim_by_id(private$.dimids[id])
       }
+    },
+
+    #' @description The lengths of the data dimensions of this object.
+    #' @param dimension Optional. The index of the dimension to retrieve the
+    #' length for. If omitted, retrieve the lengths of all dimensions.
+    dim = function(dimension) {
+      if (missing(dimension)) {
+        dims <- self$dimension()
+        sapply(dims, function(d) d$length)
+      } else
+        self$dimension(dimension)$length
     }
   ),
   active = list(
     #' @field group (read-only) NetCDF group where this variable is located.
     group = function(value) {
       if (missing(value))
-        private$grp
+        private$.group
       else {
         # FIXME: Some code deep down calls this. Should be resolved when CFobjects no longer have group references
         #stop("Cannot set the group of a NC object.", call. = FALSE)
@@ -151,7 +150,7 @@ NCVariable <- R6::R6Class("NCVariable",
     #' class of the object whose data type you are looking for.
     vtype = function(value) {
       if (missing(value))
-        private$data_type
+        private$.vtype
       else
         stop("Cannot set the data type of a NC object.", call. = FALSE)
     },
@@ -159,16 +158,16 @@ NCVariable <- R6::R6Class("NCVariable",
     #' @field ndims (read-only) Number of dimensions that this variable uses.
     ndims = function(value) {
       if (missing(value))
-        private$nd
+        length(private$.dimids)
       else
         stop("Cannot set the number of dimensions of a NC object.", call. = FALSE)
     },
 
-    #' @field dimids (read-only) Vector of dimension identifiers that this variable uses.
-    #'   These are the so-called "NUG coordinate variables".
+    #' @field dimids (read-only) Vector of dimension identifiers that this
+    #'   NCVariable uses.
     dimids  = function(value) {
       if (missing(value))
-        private$dids
+        private$.dimids
       else
         stop("Cannot set the dimids of a NC object.", call. = FALSE)
     },
@@ -176,7 +175,7 @@ NCVariable <- R6::R6Class("NCVariable",
     #' @field netcdf4 (read-only) Additional properties for a `netcdf4` resource.
     netcdf4 = function(value) {
       if (missing(value))
-        private$ncdf4
+        private$.ncdf4
       else
         stop("Cannot set the netcdf4 properties of a NC object.", call. = FALSE)
     },
@@ -185,20 +184,18 @@ NCVariable <- R6::R6Class("NCVariable",
     #' the list of registered CF objects.
     CF = function(value) {
       if (missing(value))
-        private$CFobjects
-      else {
-        if (inherits(value, "CFObject"))
-          private$CFobjects[[value$fullname]] <- value
-        else
-          warning("Can only reference an object descending from `CFObject` from an `NCVariable`", call. = FALSE)
-      }
+        private$.CFobjects
+      else if (inherits(value, "CFObject"))
+        private$.CFobjects[[value$fullname]] <- value
+      else
+        warning("Can only reference an object descending from `CFObject` from an `NCVariable`", call. = FALSE)
     },
 
-    #' @field fullname (read-only) Name of the NC variable including the group
-    #' path from the root group.
+    #' @field fullname (read-only) Name of this netCDF variable including the
+    #'   group path from the root group.
     fullname = function(value) {
       if (missing(value)) {
-        g <- private$grp$fullname
+        g <- private$.group$fullname
         if (g == "/") paste0("/", self$name)
         else paste0(g, "/", self$name)
       }

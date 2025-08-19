@@ -198,7 +198,7 @@ peek_ncdf <- function(resource) {
 .readNCVariable <- function(grp, h, vid) {
   vmeta <- RNetCDF::var.inq.nc(h, vid)
   NCVariable$new(id = as.integer(vmeta$id), name = vmeta$name, group = grp,
-                 vtype = vmeta$type, ndims = vmeta$ndims, dimids = vmeta$dimids,
+                 vtype = vmeta$type, dimids = vmeta$dimids,
                  attributes = .readAttributes(h, vmeta$name, vmeta$natts),
                  netcdf4 = vmeta[-(1L:6L)])
 }
@@ -304,7 +304,7 @@ peek_ncdf <- function(resource) {
     axes <- lapply(grp$NCdims, function(d) {
       if (d$id %in% add_dims) {
         nm <- d$name
-        v <- NCVariable$new(CF$newVarId(), nm, grp, "NC_INT", 1L, d$id)
+        v <- NCVariable$new(CF$newVarId(), nm, grp, "NC_INT", d$id)
         axis <- CFAxisDiscrete$new(v, d, "", dim_only = TRUE)
         lx <- list(axis); names(lx) <- nm
         grp$CFaxes <- append(grp$CFaxes, lx)
@@ -393,13 +393,7 @@ peek_ncdf <- function(resource) {
             if (!found_one) {
               if (nd > 0L && aux$vtype %in% c("NC_CHAR", "NC_STRING")) {
                 # Label
-                dim <- grp$find_dim_by_id(aux$dimids[length(aux$dimids)]) # If there are 2 dimids, the first is a string length for a NC_CHAR type
-                val <- try(RNetCDF::var.get.nc(grp$handle, aux$name), silent = TRUE)
-                if (inherits(val, "try-error")) {
-                  warning("Could not read data for `coordinates` value '", coords[cid], "' found in variable '", v$name, "'.", call. = FALSE)
-                  next
-                }
-                aux$group$CFaux[[aux$name]] <- CFLabel$new(aux, dim, val)
+                aux$group$CFaux[[aux$name]] <- CFLabel$new(aux)
                 found_one <- TRUE
               } else if (nd < 2L) {
                 # Scalar or auxiliary coordinate with a single dimension: make an axis out of it if it doesn't already exist.
@@ -475,7 +469,7 @@ peek_ncdf <- function(resource) {
               # If it exists, move on, else create a cell measure variable
               cmv <- grp$find_by_name(meas[m * 2L])
               if (!inherits(cmv, "CFCellMeasure")) {
-                cm <- CFCellMeasure$new(root, meas[m * 2L - 1L], meas[m * 2L])
+                cm <- CFCellMeasure$new(meas[m * 2L - 1L], meas[m * 2L])
                 root$addCellMeasure(cm)
               }
             }
@@ -484,7 +478,7 @@ peek_ncdf <- function(resource) {
             # continue with the next iteration.
             if (!length(nm$CF)) {
               ax <- .buildVariableAxisList(nm, axes)
-              cm <- CFCellMeasure$new(nm$group, meas[m * 2L - 1L], meas[m * 2L], nm, ax)
+              cm <- CFCellMeasure$new(meas[m * 2L - 1L], meas[m * 2L], nm, ax)
               nm$group$addCellMeasure(cm)
             }
           }
@@ -516,7 +510,7 @@ peek_ncdf <- function(resource) {
     for (refid in seq_along(grp$NCvars)) {
       v <- grp$NCvars[[refid]]
       if (!length(v$CF) && !is.na(gm <- v$attribute("grid_mapping_name")))
-        grp$CFcrs <- append(grp$CFcrs, CFGridMapping$new(v, gm))
+        grp$CFcrs <- append(grp$CFcrs, CFGridMapping$new(v))
     }
     if (length(grp$CFcrs))
       names(grp$CFcrs) <- sapply(grp$CFcrs, function(c) c$name)

@@ -9,26 +9,20 @@ This class is a basic ancestor to all classes that represent CF
 objects, specifically data variables and axes. More useful classes use this
 class as ancestor.
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{NCvar}}{The \link{NCVariable} instance that this CF object represents.}
-}
-\if{html}{\out{</div>}}
-}
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{id}}{Set or retrieve the identifier of the CF object. In general,
-the \code{id} value is immutable so it should never be set to a new value.
-Setting the \code{id} value is only useful when writing a CF object to a new
-netCDF file and this is managed by the underlying NC objects once a new
-\code{id} value is reported by the \code{netcdf} library. Setting a wrong value
-may invalidate the entire CF object and everything that depends on it.}
+\item{\code{NCvar}}{(read-only) The \link{NCVariable} instance that this CF object
+represents, or \code{NULL} if not set.}
 
-\item{\code{name}}{Set or retrieve the name of the CF object.}
+\item{\code{id}}{Set or retrieve the identifier of the CF object. In general,
+the \code{id} value is immutable so it should never be set to a new value.}
+
+\item{\code{name}}{Set or retrieve the name of the CF object. The name must be a
+valid netCDF name: start with a character, use only characters, numbers
+and the underscore, and be at most 255 characters long.}
 
 \item{\code{fullname}}{(read-only) The fully-qualified name of the CF object.}
 
@@ -37,6 +31,16 @@ located in.}
 
 \item{\code{attributes}}{Set or retrieve a \code{data.frame} with the attributes of
 the CF object.}
+
+\item{\code{has_resource}}{Flag that indicates if this object has an underlying
+netCDF resource.}
+
+\item{\code{data_type}}{Set or retrieve the data type of the data in the object.
+If this CF object is backed by a netCDF resource, the data type cannot
+be set, only retrieved. If the CF object exists in memory, the
+descending CF object must set the data type upon receiving its values.
+The data type must be one of the allowable netCDF types. Do not set the
+data type otherwise.}
 }
 \if{html}{\out{</div>}}
 }
@@ -44,6 +48,9 @@ the CF object.}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFObject-new}{\code{CFObject$new()}}
+\item \href{#method-CFObject-detach}{\code{CFObject$detach()}}
+\item \href{#method-CFObject-read_data}{\code{CFObject$read_data()}}
+\item \href{#method-CFObject-dim}{\code{CFObject$dim()}}
 \item \href{#method-CFObject-attribute}{\code{CFObject$attribute()}}
 \item \href{#method-CFObject-print_attributes}{\code{CFObject$print_attributes()}}
 \item \href{#method-CFObject-set_attribute}{\code{CFObject$set_attribute()}}
@@ -58,24 +65,84 @@ the CF object.}
 \if{html}{\out{<a id="method-CFObject-new"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-new}{}}}
 \subsection{Method \code{new()}}{
-Create a new CF object instance from a variable in a netCDF
+Create a new CFobject instance from a variable in a netCDF
 resource. This method is called upon opening a netCDF resource. It is
 rarely, if ever, useful to call this constructor directly. Instead, use
 the methods from higher-level classes such as \link{CFVariable}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$new(nc_var)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFObject$new(var, start = NA, count = NA)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{nc_var}}{The \link{NCVariable} instance upon which this CF object is
-based.}
+\item{\code{var}}{The \link{NCVariable} instance upon which this CF object is based
+when read from a netCDF resource, or the name for the object new CF
+object to be created.}
+
+\item{\code{start}}{Optional. Vector of indices where to start reading data
+along the dimensions of the array on file. The vector must be \code{NA} to
+read all data, otherwise it must have agree with the dimensions of the
+array on file. Ignored when argument \code{var} is not an NCVariable
+instance.}
+
+\item{\code{count}}{Optional. Vector of number of elements to read along each
+dimension of the array on file. The vector must be \code{NA} to read to the
+end of each dimension, otherwise its value must agree with the
+corresponding \code{start} value and the dimension of the array on file.
+Ignored when argument \code{var} is not an NCVariable instance.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A \code{CFobject} instance.
+A \code{CFObject} instance.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFObject-detach"></a>}}
+\if{latex}{\out{\hypertarget{method-CFObject-detach}{}}}
+\subsection{Method \code{detach()}}{
+Detach the current object from its underlying netCDF
+resource.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFObject$detach()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFObject-read_data"></a>}}
+\if{latex}{\out{\hypertarget{method-CFObject-read_data}{}}}
+\subsection{Method \code{read_data()}}{
+Read the data of the CF object from file.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFObject$read_data()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+An array of data, as prescribed by the \code{start} and \code{count} values
+used to create this object. If the object is not backed by a netCDF
+resource, returns \code{NULL}.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFObject-dim"></a>}}
+\if{latex}{\out{\hypertarget{method-CFObject-dim}{}}}
+\subsection{Method \code{dim()}}{
+Retrieve the dimensions of the data of this object in the
+netCDF resource. If this object is not backed by a netCDF resource,
+returns \code{NULL}. Descendant classes should get the dimensions from the
+values array they themselves manage.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFObject$dim(dimension)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{dimension}}{Optional. The index of the dimension to retrieve the
+length for. If omitted, retrieve the lengths of all dimensions.}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}

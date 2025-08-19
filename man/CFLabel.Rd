@@ -5,30 +5,29 @@
 \alias{CFLabel}
 \title{CF label object}
 \description{
-This class represent CF labels, i.e. an NC variable of character
+This class represent CF labels, i.e. a variable of character
 type that provides a textual label for a discrete or general numeric axis.
 See also \link{CFAxisCharacter}, which is an axis with character labels.
 }
 \section{Super class}{
 \code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFLabel}
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{NCdim}}{The \link{NCDimension} that stores the netCDF dimension details.}
-}
-\if{html}{\out{</div>}}
-}
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{coordinates}}{(read-only) The label set as a vector.}
+\item{\code{coordinates}}{Set or retrieve the labels of this object. Upon
+retrieval, label values are read from the netCDF resource, if there is
+one, upon first access and cached thereafter. Upon setting values, if
+there is a linked netCDF resource, this object will be detached from
+it.}
 
 \item{\code{length}}{(read-only) The number of labels in the set.}
 
-\item{\code{dimid}}{(read-only) The netCDF dimension id of this label set.}
+\item{\code{dimid}}{(read-only) The netCDF dimension id of this label set. This
+field should only be accessed if the label set is backed by a netCDF
+resource.}
 }
 \if{html}{\out{</div>}}
 }
@@ -49,7 +48,10 @@ See also \link{CFAxisCharacter}, which is an axis with character labels.
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-detach'><code>ncdfCF::CFObject$detach()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="dim"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-dim'><code>ncdfCF::CFObject$dim()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="read_data"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-read_data'><code>ncdfCF::CFObject$read_data()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
 </ul>
@@ -61,19 +63,34 @@ See also \link{CFAxisCharacter}, which is an axis with character labels.
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFLabel$new(nc_var, nc_dim, values)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFLabel$new(var, values = NA, start = NA, count = NA)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{nc_var}}{The netCDF variable that describes this instance.}
+\item{\code{var}}{The \link{NCVariable} instance upon which this CF object is based
+when read from a netCDF resource, or the name for the object new CF
+object to be created.}
 
-\item{\code{nc_dim}}{The netCDF dimension that describes the dimensionality.}
+\item{\code{values}}{Optional. The labels of the CF object. Ignored when
+argument \code{var} is a NCVariable object.}
 
-\item{\code{values}}{Character vector of the label values.}
+\item{\code{start}}{Optional. Integer index value indicating where to start
+reading data from the file. The value may be \code{NA} (default) to read all
+data, otherwise it must not be larger than the number of labels.
+Ignored when argument \code{var} is not an NCVariable instance.}
+
+\item{\code{count}}{Optional. Integer value indicating the number of labels to
+read from file. The value may be \code{NA} to read to the end of the labels,
+otherwise its value must agree with the corresponding \code{start} value and
+the number of labels on file. Ignored when argument \code{var} is not an
+NCVariable instance.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A \code{CFLabel} instance.
 }
 }
 \if{html}{\out{<hr>}}
@@ -93,9 +110,6 @@ is \verb{width = } to indicate a maximum width of attribute columns.}
 }
 \if{html}{\out{</div>}}
 }
-\subsection{Returns}{
-\code{self}, invisibly.
-}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFLabel-subset"></a>}}
@@ -103,16 +117,13 @@ is \verb{width = } to indicate a maximum width of attribute columns.}
 \subsection{Method \code{subset()}}{
 Retrieve a subset of the labels.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFLabel$subset(grp, name, rng)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFLabel$subset(name, rng)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{grp}}{The group to create the new label object in.}
-
-\item{\code{name}}{The name for the new label set if the \code{rng} argument is
-provided. The name cannot already exist in the group.}
+\item{\code{name}}{The name for the new label set, optional.}
 
 \item{\code{rng}}{The range of indices whose values from this axis to include in
 the returned axis.}

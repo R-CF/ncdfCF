@@ -1,4 +1,7 @@
 # ncdfCF (development version)
+
+This is a major restructuring of the code logic to better separate between file-based netCDF objects and in-memory CF objects. Additionally, there are important additions to the user-facing API, in particular with regards to arithmetic, math and logical expressions on CF objects.
+
 - Dependency on R bumped from version 3.5 to 4.0.
 - With the `as_CFArray()` function you can create a CFArray instance from an R object such as a vector, matrix or array using logical, integer, double or character mode. Axes are created from dimnames, using names when set (such as in `dimnames(arr) <- list(X = 40:43, Y = 50:54, Z = 60:65)`) and possibly with latitude, longitude and time axes generated.
 - Functions from the Ops and Math groups of S3 generic functions are now supported. This means that expressions can be written directly on CFArray instances.
@@ -11,7 +14,7 @@
 - Axis names in new groups are ensured to be unique after subsetting, profiling, etc.
 - Fully-qualified names of groups generated on-the-fly.
 - Correctly link multiple cell measure variables.
-- Disentangling CF objects from the NC hierarchy. The NC hierarchy represents what is on file, the CF objects are mutable. This is a works in progress and has currently been implemented on CFBounds, CFAuxiliaryLongLat and AOI classes, with plumbing done in CFObject, for testing. This will be rolled out to CFAxis and CFVariableBase hierarchies in the near future.
+- Disentangling CF objects from the NC hierarchy. The NC hierarchy represents what is on file, the CF objects are mutable. This is a works in progress and has currently been implemented on CFBounds, CFAuxiliaryLongLat, CFLabel, CFGridMapping and AOI classes, with plumbing done in CFObject, for testing. This will be rolled out to CFAxis and CFVariableBase hierarchies in the near future.
 - Several minor improvements and code fixes.
 - Documentation updated.
 

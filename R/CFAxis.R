@@ -46,7 +46,7 @@ CFAxis <- R6::R6Class("CFAxis",
     subset_coordinates = function(ax, rng) {
       if (length(private$aux)) {
         grp <- ax$group
-        lapply(private$aux, function(x) ax$auxiliary <- x$subset(grp, x$name, rng))
+        lapply(private$aux, function(x) ax$auxiliary <- x$subset(x$name, rng))
       }
     }
   ),
@@ -245,10 +245,10 @@ CFAxis <- R6::R6Class("CFAxis",
       h <- if (inherits(nc, "NetCDF")) nc else self$NCvar$handle
 
       self$id <- if (self$length == 1L) {
-        RNetCDF::var.def.nc(h, self$name, self$NCvar$vtype, NA)
+        RNetCDF::var.def.nc(h, self$name, self$data_type, NA)
       } else {
         self$NCdim$write(h)
-        RNetCDF::var.def.nc(h, self$name, self$NCvar$vtype, self$name)
+        RNetCDF::var.def.nc(h, self$name, self$data_type, self$name)
       }
 
       if (private$orient %in% c("X", "Y", "Z", "T"))

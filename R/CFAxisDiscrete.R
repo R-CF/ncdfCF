@@ -136,7 +136,7 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
       if (is.null(rng))
         self$copy(group, name)
       else {
-        var <- NCVariable$new(CF$newVarId(), name, group, "NC_INT", 1L, -1L)
+        var <- NCVariable$new(CF$newVarId(), name, group, "NC_INT", NA)
         dim <- NCDimension$new(CF$newDimId(), name, rng[2L] - rng[1L] + 1L, FALSE, group)
         ax <- CFAxisDiscrete$new(var, dim, self$orientation)
         private$subset_coordinates(ax, rng)

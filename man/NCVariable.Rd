@@ -27,16 +27,16 @@ class of the object whose data type you are looking for.}
 
 \item{\code{ndims}}{(read-only) Number of dimensions that this variable uses.}
 
-\item{\code{dimids}}{(read-only) Vector of dimension identifiers that this variable uses.
-These are the so-called "NUG coordinate variables".}
+\item{\code{dimids}}{(read-only) Vector of dimension identifiers that this
+NCVariable uses.}
 
 \item{\code{netcdf4}}{(read-only) Additional properties for a \code{netcdf4} resource.}
 
 \item{\code{CF}}{Register CF object that uses this netCDF variable, or retrieve
 the list of registered CF objects.}
 
-\item{\code{fullname}}{(read-only) Name of the NC variable including the group
-path from the root group.}
+\item{\code{fullname}}{(read-only) Name of this netCDF variable including the
+group path from the root group.}
 }
 \if{html}{\out{</div>}}
 }
@@ -46,9 +46,10 @@ path from the root group.}
 \item \href{#method-NCVariable-new}{\code{NCVariable$new()}}
 \item \href{#method-NCVariable-print}{\code{NCVariable$print()}}
 \item \href{#method-NCVariable-shard}{\code{NCVariable$shard()}}
-\item \href{#method-NCVariable-array_dims}{\code{NCVariable$array_dims()}}
+\item \href{#method-NCVariable-detach}{\code{NCVariable$detach()}}
 \item \href{#method-NCVariable-get_data}{\code{NCVariable$get_data()}}
 \item \href{#method-NCVariable-dimension}{\code{NCVariable$dimension()}}
+\item \href{#method-NCVariable-dim}{\code{NCVariable$dim()}}
 \item \href{#method-NCVariable-clone}{\code{NCVariable$clone()}}
 }
 }
@@ -78,7 +79,6 @@ netCDF resource.
   name,
   group,
   vtype,
-  ndims,
   dimids,
   attributes = data.frame(),
   netcdf4 = list()
@@ -95,8 +95,6 @@ netCDF resource.
 \item{\code{group}}{The \link{NCGroup} this variable is located in.}
 
 \item{\code{vtype}}{The netCDF data type of the variable.}
-
-\item{\code{ndims}}{The number of dimensions this variable uses.}
 
 \item{\code{dimids}}{The identifiers of the dimensions this variable uses.}
 
@@ -145,18 +143,23 @@ Character string with very basic variable information.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-NCVariable-array_dims"></a>}}
-\if{latex}{\out{\hypertarget{method-NCVariable-array_dims}{}}}
-\subsection{Method \code{array_dims()}}{
-Return the number of dimensions of the array that this
-variable holds in the netCDF file. It is thus not necessarily equal to
-the number of axes of a CF data variable.
+\if{html}{\out{<a id="method-NCVariable-detach"></a>}}
+\if{latex}{\out{\hypertarget{method-NCVariable-detach}{}}}
+\subsection{Method \code{detach()}}{
+Detach the passed object from this NC variable.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCVariable$array_dims()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{NCVariable$detach(obj)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{obj}}{The CFObject instance to detach from this NC variable.}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
-Integer value with the number of dimensional axes.
+\code{obj}, invisibly.
 }
 }
 \if{html}{\out{<hr>}}
@@ -194,13 +197,13 @@ An array with the requested data, or an error object.
 \subsection{Method \code{dimension()}}{
 Get the \link{NCDimension} object(s) that this variable uses.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCVariable$dimension(id = NA)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{NCVariable$dimension(id)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{id}}{The identifier of the dimension. If \code{NA}, all dimensions of
+\item{\code{id}}{The index of the dimension. If missing, all dimensions of
 this variable are returned.}
 }
 \if{html}{\out{</div>}}
@@ -208,6 +211,24 @@ this variable are returned.}
 \subsection{Returns}{
 A NCDimension object or a list thereof. If no NCDimensions were
 found, return \code{NULL}.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCVariable-dim"></a>}}
+\if{latex}{\out{\hypertarget{method-NCVariable-dim}{}}}
+\subsection{Method \code{dim()}}{
+The lengths of the data dimensions of this object.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCVariable$dim(dimension)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{dimension}}{Optional. The index of the dimension to retrieve the
+length for. If omitted, retrieve the lengths of all dimensions.}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
