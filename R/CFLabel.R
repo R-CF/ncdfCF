@@ -8,33 +8,27 @@
 #' @export
 CFLabel <- R6::R6Class("CFLabel",
   inherit = CFObject,
-  private = list(
-    # The label values of this object.
-    .values = NULL
-  ),
   public = list(
     #' @description Create a new instance of this class.
     #' @param var The [NCVariable] instance upon which this CF object is based
     #'   when read from a netCDF resource, or the name for the object new CF
     #'   object to be created.
     #' @param values Optional. The labels of the CF object. Ignored when
-    #'   argument `var` is a NCVariable object.
+    #'   argument `var` is a `NCVariable` object.
     #' @param start Optional. Integer index value indicating where to start
     #'   reading data from the file. The value may be `NA` (default) to read all
     #'   data, otherwise it must not be larger than the number of labels.
-    #'   Ignored when argument `var` is not an NCVariable instance.
+    #'   Ignored when argument `var` is not an `NCVariable` instance.
     #' @param count Optional. Integer value indicating the number of labels to
     #'   read from file. The value may be `NA` to read to the end of the labels,
     #'   otherwise its value must agree with the corresponding `start` value and
     #'   the number of labels on file. Ignored when argument `var` is not an
-    #'   NCVariable instance.
+    #'   `NCVariable` instance.
     #' @return A `CFLabel` instance.
     initialize = function(var, values = NA, start = NA, count = NA) {
-      super$initialize(var, start, count)
-      if (is.character(var))
-        private$.values <- values
-      else
-        self$NCvar$CF <- self
+      super$initialize(var, values = values, start = start, count = count)
+      if (is.null(values) || (length(values) == 1L && is.na(values)))
+        self$read_data()
     },
 
     #' @description  Prints a summary of the labels to the console.
@@ -42,8 +36,6 @@ CFLabel <- R6::R6Class("CFLabel",
     #' is `width = ` to indicate a maximum width of attribute columns.
     print = function(...) {
       cat("<Label set> ", self$name, "\n", sep = "")
-      if (self$group$name != "/")
-        cat("Group    :", self$group$fullname, "\n")
 
       longname <- self$attribute("long_name")
       if (!is.na(longname) && longname != self$name)
@@ -52,6 +44,22 @@ CFLabel <- R6::R6Class("CFLabel",
       cat("Length   :", self$length, "\n")
       cat("Data type:", self$data_type, "\n")
       self$print_attributes(...)
+    },
+
+    #' @description Given a range of domain coordinate values, returns the
+    #'   indices into the axis that fall within the supplied range.
+    #' @param rng A character vector whose extreme (alphabetic) values indicate
+    #'   the indices of coordinates to return.
+    #' @return An integer vector of length 2 with the lower and higher indices
+    #'   into the axis that fall within the range of coordinates in argument
+    #'   `rng`. Returns `NULL` if no values of the axis fall within the range of
+    #'   coordinates.
+    slice = function(rng) {
+      res <- range(match(rng, self$coordinates, nomatch = 0L), na.rm = TRUE)
+      if (all(res == 0L)) NULL
+      else if (res[1L] == 0L) c(res[2L], res[2L])
+      else if (res[2L] == 0L) c(res[1L], res[1L])
+      else res
     },
 
     #' @description Retrieve a subset of the labels.
@@ -66,7 +74,7 @@ CFLabel <- R6::R6Class("CFLabel",
         NULL
       else {
         if (self$has_resource) {
-          l <- CFLabel$new(self$NCvar, start = rng[1L], count = rng[2L] - rng[1L] + 1L)
+          l <- CFLabel$new(private$.NCvar, values = private$.values[rng[1L]:rng[2L]], start = rng[1L], count = rng[2L] - rng[1L] + 1L)
           l$name <- name
           l
         } else
@@ -131,8 +139,10 @@ CFLabel <- R6::R6Class("CFLabel",
     #'   field should only be accessed if the label set is backed by a netCDF
     #'   resource.
     dimid = function(value) {
-      if (missing(value))
-        self$NCvar$dimension(1L)$id
+      if (missing(value)) {
+        if (self$has_resource) private$.NCvar$dimids[1L]
+        else -1L
+      }
     }
   )
 )

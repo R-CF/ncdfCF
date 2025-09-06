@@ -130,26 +130,22 @@ netcdf_data_types <- c("NC_BYTE", "NC_UBYTE", "NC_CHAR", "NC_SHORT",
 #' Round values `x` with .5 being rounded up.
 #' Adapted from https://stackoverflow.com/a/12688836/3304426
 #' @noRd
-.round <- function(x) {
+.round.5up <- function(x) {
   posneg <- sign(x)
   trunc(abs(x) + 0.5 + CF$eps) * posneg
+}
+
+#' Round values `x` with .5 being rounded down.
+#' @noRd
+.round.5down <- function(x) {
+  posneg <- sign(x)
+  trunc(abs(x) + 0.5 - CF$eps) * posneg
 }
 
 #' Test if vectors `x` and `y` have near-identical values.
 #' @noRd
 .near <- function(x, y) {
   abs(x - y) < CF$eps
-}
-
-#' Get the range on the matches. Works on numeric and character data. Returns
-#' NULL if there is no match
-#' @noRd
-.range_match <- function(rng, match) {
-  res <- range(match(rng, match, nomatch = 0L), na.rm = TRUE)
-  if (all(res == 0L)) NULL
-  else if (res[1L] == 0L) c(res[2L], res[2L])
-  else if (res[2L] == 0L) c(res[1L], res[1L])
-  else res
 }
 
 #' Test if vector `x` is monotonic, either increasing or decreasing. Return value

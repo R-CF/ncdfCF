@@ -17,8 +17,6 @@
 #' @docType class
 CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
   private = list(
-    .lon   = NULL, # The longitude data
-    .lat   = NULL, # The latitude data
     .ext   = NULL, # The extent of the longitude and latitude grids, in lon min, max, lat min, max
     .res   = c(NULL, NULL), # Resolution of the lat/long grid, vector of (lon, lat)
     .aoi   = NULL, # The AOI for the grid
@@ -36,44 +34,38 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     # The [CFBounds] instance for the latitude values of the grid.
     .boundsLat = NULL,
 
-    loadData = function() {
-      if (is.null(private$.lon)) {
-        private$.lon <- private$.varLong$data()$raw()
-      }
-      if (is.null(private$.lat)) {
-        private$.lat <- private$.varLat$data()$raw()
-      }
-
-      private$setResolution()
-    },
+    # Either `c("X", "Y")` (default) or `c("Y", "X")` to
+    # indicate the orientation of the latitude and longitude grids.
+    .axis_order = c("X", "Y"),
 
     # Set the nominal resolution of the grid at the location indicated. If no
-    # location is indicated, use the center of the grids.
-    setResolution = function(location = NULL) {
-      dim <- dim(private$.lon)
+    # location is indicated, use the center of the grids. The location must be
+    # given as an integer vector of length with indices into the lat-long grids.
+    set_resolution = function(location = NULL) {
+      dim <- private$.varLong$dim()
       if (is.null(location))
         location <- as.integer(dim * 0.5)
 
+      lon <- private$.varLong$read_data()
+      lat <- private$.varLat$read_data()
       private$.res[1L] <- abs(if (location[1L] == 1L)
-        private$.lon[location[1L] + 1L, location[2L]] - private$.lon[location[1L], location[2L]]
+        lon[location[1L] + 1L, location[2L]] - lon[location[1L], location[2L]]
       else if (location[1L] == dim[1L])
-        private$.lon[location[1L], location[2L]] - private$.lon[location[1L] - 1L, location[2L]]
+        lon[location[1L], location[2L]] - lon[location[1L] - 1L, location[2L]]
       else
-        (private$.lon[location[1L] + 1L, location[2L]] - private$.lon[location[1L] - 1L, location[2L]]) * 0.5)
+        (lon[location[1L] + 1L, location[2L]] - lon[location[1L] - 1L, location[2L]]) * 0.5)
 
       private$.res[2L] <- abs(if (location[2L] == 1L)
-        private$.lat[location[1L], location[2L] + 1L] - private$.lat[location[1L], location[2L]]
+        lat[location[1L], location[2L] + 1L] - lat[location[1L], location[2L]]
       else if (location[2L] == dim[2L])
-        private$.lat[location[1L], location[2L]] - private$.lat[location[1L], location[2L] - 1L]
+        lat[location[1L], location[2L]] - lat[location[1L], location[2L] - 1L]
       else
-        (private$.lat[location[1L], location[2L] + 1L] - private$.lat[location[1L], location[2L] - 1L]) * 0.5)
+        (lat[location[1L], location[2L] + 1L] - lat[location[1L], location[2L] - 1L]) * 0.5)
     },
 
     setAOI = function(aoi) {
-      self$clear_cache(full = FALSE)
+      self$clear_cache()
       private$.aoi <- aoi
-
-      private$loadData()
 
       # If there are any NULL values in aoi, use the bounds or extent
       expand <- FALSE
@@ -92,7 +84,7 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
         center <- self$sample_index(aoi$lonMin + lonExt * 0.5, aoi$latMin + latExt * 0.5)[1L,]
         if (is.na(center[1L]))
           stop("Center of AOI contains no data so resolution cannot be derived. Please specify explicitly.", call. = FALSE)
-        private$setResolution(center)
+        private$set_resolution(center)
         aoi$resolution <- round(c(private$.res[1L], private$.res[2L]), CF.options$digits)
       }
 
@@ -112,22 +104,21 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     }
   ),
   public = list(
-    #' @field axis_order Either `c("X", "Y")` (default) or `c("Y", "X")` to
-    #' indicate the orientation of the latitude and longitude grids.
-    axis_order = c("X", "Y"),
-
     #' @description Creating a new instance. It should normally not be useful to
     #'   create an instance of this class other than upon reading a netCDF
     #'   resource.
-    #' @param .varLong,.varLat The [NCVariable] instances with the longitude and
+    #' @param varLong,varLat The [CFVariable] instances with the longitude and
     #'   latitude grid values, respectively.
-    #' @param .boundsLong,.boundsLat The bounds of the grid cells for the
-    #'   longitude and latitude, respectively, if set.
-    initialize = function(.varLong, .varLat, .boundsLong, .boundsLat) {
-      private$.varLong <- .varLong
-      private$.varLat <- .varLat
-      private$.boundsLong <- .boundsLong
-      private$.boundsLat <- .boundsLat
+    #' @param boundsLong,boundsLat The [CFBounds] instances of the grid cells
+    #'   for the longitude and latitude, respectively, if set. Defaults to
+    #'   `NULL`.
+    initialize = function(varLong, varLat, boundsLong = NULL, boundsLat = NULL) {
+      private$.varLong <- varLong
+      private$.varLat <- varLat
+      private$.boundsLong <- boundsLong
+      private$.boundsLat <- boundsLat
+
+      private$set_resolution()
     },
 
     #' @description Summary of the auxiliary longitude-latitude variable printed
@@ -136,13 +127,6 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
       cat("<", self$friendlyClassName, ">\n", sep = "")
       cat("Longitude grid :", private$.varLong$name, "\n")
       cat("Latitude grid  :", private$.varLat$name, "\n")
-      grpLon <- private$.varLong$group$name
-      grpLat <- private$.varLat$group$name
-      if (identical(grpLon, grpLat)) {
-        if (grpLon != "/")
-          cat("Group          :", grpLon, "\n")
-      } else
-        cat("Groups         :", grpLon, "(longitude) ||", grpLat, "(latitude)\n")
 
       ext <- self$extent
       cat(sprintf("\nLongitude range: [%5.3f ... %5.3f] degrees_east\n", ext[1], ext[2]))
@@ -152,10 +136,10 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
         aoi <- private$.aoi
         cat(sprintf("\nAOI  longitude : [%5.3f ... %5.3f] degrees_east\n", aoi$lonMin, aoi$lonMax))
         cat(sprintf("      latitude : [%5.3f ... %5.3f] degrees_north\n", aoi$latMin, aoi$latMax))
-        .aoidim <- aoi$dim
-        .aoires <- aoi$resolution
-        cat(sprintf("    resolution : [%5.3f degrees_east x %5.3f degrees_north]\n", .aoires[1L], .aoires[2L]))
-        cat(sprintf("        extent : [%d rows x %d columns]", .aoidim[1L], .aoidim[2L]))
+        aoidim <- aoi$dim
+        aoires <- aoi$resolution
+        cat(sprintf("    resolution : [%5.3f degrees_east x %5.3f degrees_north]\n", aoires[1L], aoires[2L]))
+        cat(sprintf("        extent : [%d rows x %d columns]", aoidim[1L], aoidim[2L]))
       } else
         cat("\nAOI            : (not set)\n")
     },
@@ -196,19 +180,20 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
       if (is.null(x) || is.null(y) || length(x) != length(y))
         stop("Arguments `x` and `y` must be vectors of the same length", call. = FALSE)
 
-      private$loadData()
       if (is.null(maxDist))
         maxDist <- max(private$.res)
 
+      varlon <- private$.varLong$read_data()
+      varlat <- private$.varLat$read_data()
       out <- mapply(function(lon, lat, max2) {
-        dlon <- private$.lon - lon
-        dlat <- private$.lat - lat
+        dlon <- varlon - lon
+        dlat <- varlat - lat
         dist2 <- dlon * dlon + dlat * dlat
         min <- which.min(dist2)
         if (dist2[min] <= max2) min else NA_integer_
       }, x, y, MoreArgs = list(max2 = maxDist * maxDist))
 
-      out <- arrayInd(out, dim(private$.lon))
+      out <- arrayInd(out, dim(varlon))
       colnames(out) <- c("X", "Y")
       out
     },
@@ -222,50 +207,51 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
       if (!is.null(private$.index)) return(private$.index)
 
       # Otherwise calculate it
-      private$loadData()
       if (is.null(private$.aoi))
         private$setAOI(aoi())
 
-      # Orient AOI with the grid (for .aoires and .aoidim). AOI is always North
+      # Orient AOI with the grid (for aoires and aoidim). AOI is always North
       # up but the grid may be oriented differently, hence why indices into AOI
-      # properties .aoires and .aoidim are determined based on the orientation.
+      # properties aoires and aoidim are determined based on the orientation.
       # Create vectors of AOI longitude and latitude coordinates.
-      .aoiext <- private$.aoi$extent
-      .aoidim <- private$.aoi$dim
-      .aoires <- private$.aoi$resolution
-      if (self$axis_order[1L] == "X") {
+      lat <- private$.varLat$read_data()
+      lon <- private$.varLong$read_data()
+      aoiext <- private$.aoi$extent
+      aoidim <- private$.aoi$dim
+      aoires <- private$.aoi$resolution
+      if (private$.axis_order[1L] == "X") {
         Xidx <- 1L; Yidx <- 2L
-        aoiY <- seq(from = .aoiext[1L] + .aoires[1L] * 0.5, by = .aoires[1L], length.out = .aoidim[2L])
-        aoiX <- seq(from = .aoiext[3L] + .aoires[2L] * 0.5, by = .aoires[2L], length.out = .aoidim[1L])
-        gridX <- private$.lat
-        gridY <- private$.lon
+        aoiY <- seq(from = aoiext[1L] + aoires[1L] * 0.5, by = aoires[1L], length.out = aoidim[2L])
+        aoiX <- seq(from = aoiext[3L] + aoires[2L] * 0.5, by = aoires[2L], length.out = aoidim[1L])
+        gridX <- lat
+        gridY <- lon
       } else {
         Xidx <- 2L; Yidx <- 1L
-        aoiX <- seq(from = .aoiext[1L] + .aoires[1L] * 0.5, by = .aoires[1L], length.out = .aoidim[2L])
-        aoiY <- seq(from = .aoiext[3L] + .aoires[2L] * 0.5, by = .aoires[2L], length.out = .aoidim[1L])
-        gridX <- private$.lon
-        gridY <- private$.lat
+        aoiX <- seq(from = aoiext[1L] + aoires[1L] * 0.5, by = aoires[1L], length.out = aoidim[2L])
+        aoiY <- seq(from = aoiext[3L] + aoires[2L] * 0.5, by = aoires[2L], length.out = aoidim[1L])
+        gridX <- lon
+        gridY <- lat
       }
 
       # Find pixels in the full grid that are within the AOI
-      grid <- (private$.lon >= .aoiext[1L]) & (private$.lon < .aoiext[2L]) &
-              (private$.lat >= .aoiext[3L]) & (private$.lat < .aoiext[4L])
+      grid <- (lon >= aoiext[1L]) & (lon < aoiext[2L]) &
+              (lat >= aoiext[3L]) & (lat < aoiext[4L])
       if (!any(grid)) {
-        private$.index <- matrix(NA_integer_, .aoidim[Yidx], .aoidim[Xidx])
+        private$.index <- matrix(NA_integer_, aoidim[Yidx], aoidim[Xidx])
         dimnames(private$.index) <- list(aoiY, aoiX)
         return(private$.index)
       }
 
-      grid_idx <- seq_len(prod(dim(private$.lon)))[grid]
+      grid_idx <- seq_len(prod(dim(lon)))[grid]
       gridX <- gridX[grid]
       gridY <- gridY[grid]
 
       # Build the index for the AOI extent
       out <- data.frame(aoiY)
-      for (x in 1L:.aoidim[Xidx]) {
-        nearx <- abs(gridX - aoiX[x]) < (.aoires[Xidx] * 2) # * 2 for buffer
+      for (x in 1L:aoidim[Xidx]) {
+        nearx <- abs(gridX - aoiX[x]) < (aoires[Xidx] * 2) # * 2 for buffer
         out[[x]] <- sapply(aoiY, function(y, dx, xidx, xlat) {
-          neary <- abs(xlat - y) < (.aoires[Yidx] * 2)
+          neary <- abs(xlat - y) < (aoires[Yidx] * 2)
           len <- sum(neary)
           if (len == 0L) return(NA_integer_)
           if (len == 1L) return(xidx[neary])
@@ -283,15 +269,8 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
 
     #' @description Clears the cache of pre-computed grid index values if an AOI
     #' has been set.
-    #' @param full Logical (default = `FALSE`) that indicates if longitude and
-    #' latitude grid arrays should be cleared as well to save space. These will
-    #' then be re-read from file if a new AOI is set.
-    clear_cache = function(full = FALSE) {
+    clear_cache = function() {
       private$.index <- NULL
-      if (full) {
-        private$.lon <- NULL
-        private$.lat <- NULL
-      }
       invisible(self)
     }
   ),
@@ -342,9 +321,23 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
         private$.varLat
     },
 
+    #' @field lon_bounds (read-only) Retrieve the boundary values of the
+    #'   longitude grid.
+    lon_bounds = function(value) {
+      if (missing(value))
+        private$.boundsLong
+    },
+
+    #' @field lat_bounds (read-only) Retrieve the boundary values of the
+    #'   latitude grid.
+    lat_bounds = function(value) {
+      if (missing(value))
+        private$.boundsLat
+    },
+
     #' @field extent (read-only) Retrieve the extent of the longitude and
     #'   latitude grids, including bounds if they have been set. The extent is
-    #'   reported as a numeric vector of the four elements minumum and maximum
+    #'   reported as a numeric vector of the four elements minimum and maximum
     #'   longitude and minimum and maximum latitude.
     extent = function(value) {
       if (missing(value)) {
@@ -352,8 +345,7 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
           if (inherits(private$.boundsLong, "CFBounds")) {
             private$.ext <- c(private$.boundsLong$range(), private$.boundsLat$range())
           } else {
-            private$loadData()
-            private$.ext <- c(range(private$.lon), range(private$.lat))
+            private$.ext <- c(range(private$.varLong$read_data()), range(private$.varLat$read_data()))
           }
         }
         private$.ext
@@ -363,10 +355,8 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     #' @field dim (read-only) The dimensions of the longitude and latitude
     #' grids.
     dim = function(value) {
-      if (missing(value)) {
-        private$loadData()
-        dim(private$.lon)
-      }
+      if (missing(value))
+        private$.varLong$dim()
     }
   )
 )

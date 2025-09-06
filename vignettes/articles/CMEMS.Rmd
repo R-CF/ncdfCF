@@ -96,7 +96,7 @@ You can make a temperature profile for a location and time (or a transect) very 
 # Make a vertical profile of temperature at a single location for the month of July 2024
 tprof <- thetao$profile(longitude = 12.71, latitude = 40.33, time = "2024-07-01", .names = "Tyrrhenian_Sea")
 
-# Turn the CFArray object into a data.table
+# Turn the CFVariable object into a data.table
 library(data.table)
 Tjuly <- tprof$data.table()
 head(Tjuly)

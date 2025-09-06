@@ -36,6 +36,7 @@ resource.}
 \itemize{
 \item \href{#method-CFLabel-new}{\code{CFLabel$new()}}
 \item \href{#method-CFLabel-print}{\code{CFLabel$print()}}
+\item \href{#method-CFLabel-slice}{\code{CFLabel$slice()}}
 \item \href{#method-CFLabel-subset}{\code{CFLabel$subset()}}
 \item \href{#method-CFLabel-write}{\code{CFLabel$write()}}
 \item \href{#method-CFLabel-clone}{\code{CFLabel$clone()}}
@@ -44,15 +45,16 @@ resource.}
 \if{html}{\out{
 <details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="add_coordinates"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-add_coordinates'><code>ncdfCF::CFObject$add_coordinates()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-detach'><code>ncdfCF::CFObject$detach()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="dim"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-dim'><code>ncdfCF::CFObject$dim()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="read_chunk"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-read_chunk'><code>ncdfCF::CFObject$read_chunk()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="read_data"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-read_data'><code>ncdfCF::CFObject$read_data()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="update_coordinates_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-update_coordinates_attribute'><code>ncdfCF::CFObject$update_coordinates_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
 </ul>
 </details>
@@ -74,18 +76,18 @@ when read from a netCDF resource, or the name for the object new CF
 object to be created.}
 
 \item{\code{values}}{Optional. The labels of the CF object. Ignored when
-argument \code{var} is a NCVariable object.}
+argument \code{var} is a \code{NCVariable} object.}
 
 \item{\code{start}}{Optional. Integer index value indicating where to start
 reading data from the file. The value may be \code{NA} (default) to read all
 data, otherwise it must not be larger than the number of labels.
-Ignored when argument \code{var} is not an NCVariable instance.}
+Ignored when argument \code{var} is not an \code{NCVariable} instance.}
 
 \item{\code{count}}{Optional. Integer value indicating the number of labels to
 read from file. The value may be \code{NA} to read to the end of the labels,
 otherwise its value must agree with the corresponding \code{start} value and
 the number of labels on file. Ignored when argument \code{var} is not an
-NCVariable instance.}
+\code{NCVariable} instance.}
 }
 \if{html}{\out{</div>}}
 }
@@ -109,6 +111,31 @@ Prints a summary of the labels to the console.
 is \verb{width = } to indicate a maximum width of attribute columns.}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFLabel-slice"></a>}}
+\if{latex}{\out{\hypertarget{method-CFLabel-slice}{}}}
+\subsection{Method \code{slice()}}{
+Given a range of domain coordinate values, returns the
+indices into the axis that fall within the supplied range.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFLabel$slice(rng)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{rng}}{A character vector whose extreme (alphabetic) values indicate
+the indices of coordinates to return.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+An integer vector of length 2 with the lower and higher indices
+into the axis that fall within the range of coordinates in argument
+\code{rng}. Returns \code{NULL} if no values of the axis fall within the range of
+coordinates.
 }
 }
 \if{html}{\out{<hr>}}

@@ -199,14 +199,14 @@ Get the \link{NCDimension} object(s) that this variable uses.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{id}}{The index of the dimension. If missing, all dimensions of
-this variable are returned.}
+\item{\code{id}}{The index of the dimension. If missing, all dimensions of this
+variable are returned.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A NCDimension object or a list thereof. If no NCDimensions were
-found, return \code{NULL}.
+A \code{NCDimension} object or a list thereof. If no \code{NCDimension}s
+were found, return \code{NULL}.
 }
 }
 \if{html}{\out{<hr>}}

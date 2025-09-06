@@ -4,12 +4,10 @@
 \alias{makeCharacterAxis}
 \title{Create a character axis}
 \usage{
-makeCharacterAxis(name, group, values, attributes = NULL)
+makeCharacterAxis(name, values, attributes = data.frame())
 }
 \arguments{
 \item{name}{Name of the axis.}
-
-\item{group}{Group to place the axis in.}
 
 \item{values}{The character coordinate values of the axis.}
 
@@ -19,6 +17,6 @@ makeCharacterAxis(name, group, values, attributes = NULL)
 A \link{CFAxisCharacter} instance.
 }
 \description{
-With this method you can create a character axis to use with new \link{CFArray}
+With this method you can create a character axis to use with new \link{CFVariable}
 instances.
 }

@@ -2,19 +2,27 @@
 
 This is a major restructuring of the code logic to better separate between file-based netCDF objects and in-memory CF objects. Additionally, there are important additions to the user-facing API, in particular with regards to arithmetic, math and logical expressions on CF objects.
 
-- Dependency on R bumped from version 3.5 to 4.0.
-- With the `as_CFArray()` function you can create a CFArray instance from an R object such as a vector, matrix or array using logical, integer, double or character mode. Axes are created from dimnames, using names when set (such as in `dimnames(arr) <- list(X = 40:43, Y = 50:54, Z = 60:65)`) and possibly with latitude, longitude and time axes generated.
-- Functions from the Ops and Math groups of S3 generic functions are now supported. This means that expressions can be written directly on CFArray instances.
-- All CFAxis descendant classes now have a `copy()` method which creates a deep copy of the axis.
-- All CF objects that derive from a CF object read from file have access to the file as long as the data is not modified. Thus in statement `axisB <- axisA$copy()`, the new `axisB` instance will have file access (assuming that `axisA` has it too). Same with `CFVariable$data()`, `$subset()` and `$profile()`. `CFVariable$summarise()` does not retain access because the array values are modified. Math and Ops function results likewise do not have file access.
+#### Conventions
 - `CFAxisVertical` can now calculate parametric coordinates for two ocean formulations (other formulations will be added as sample data becomes available to test new code on - open an [issue](https://github.com/R-CF/ncdfCF/issues) if you have such data and are looking for support). Optional use of the `units` package to deal with the various pressure units. This package is recommended if you work with data on the atmosphere or the ocean.
+- Boundary variables can have attributes.
 - The standard names table of the CF Metadata Conventions is now accessible. The table is automatically downloaded and made available when first used; it will not be downloaded or loaded into memory when not accessed. Find standard names using the `CF$standard_names$find()` method. The table (currently 4.3MB) will be stored in the local cache of the ncdfCF package and periodically updated with the latest version.
+
+#### API
+- The `CFArray` class has been merged with `CFVariable`. This makes for more concise code and easier combination of multiple operations on a single netCDF resource. All functionality remains.
+- With the `as_CF()` function you can create a `CFVariable` instance from an R object such as a vector, matrix or array using logical, integer, double or character mode. Axes are created from dimnames, using names when set (such as in `dimnames(arr) <- list(X = 40:43, Y = 50:54, Z = 60:65)`) and possibly with latitude, longitude and time axes generated.
+- Functions from the Ops and Math groups of S3 generic functions are now supported. This means that expressions can be written directly on `CFVariable` instances.
+- All `CFAxis` descendant classes now have a `copy()` method which creates a deep copy of the axis and a `copy_with_values()` method that makes a copy of the current axis but with new values.
+- All CF objects that derive from a CF object read from file have access to the file as long as the data is not modified. Thus in statement `axisB <- axisA$copy()`, the new `axisB` instance will have file access (assuming that `axisA` has it too). Same with `CFVariable$$subset()` and `$profile()`. `CFVariable$summarise()` does not retain access because the array values are modified. Math and Ops function results likewise do not retain file access.
 - New `CFAxis$coordinate_range` field to retrieve the range of the coordinates of the axis.
 - Names of CF objects (variables, axes, etc) can be modified. Strict checking of allowable names (i.e. only letters, numbers and underscores).
+
+#### Code
+- Dependency on R bumped from version 3.5 to 4.0.
 - Axis names in new groups are ensured to be unique after subsetting, profiling, etc.
 - Fully-qualified names of groups generated on-the-fly.
 - Correctly link multiple cell measure variables.
-- Disentangling CF objects from the NC hierarchy. The NC hierarchy represents what is on file, the CF objects are mutable. This is a works in progress and has currently been implemented on CFBounds, CFAuxiliaryLongLat, CFLabel, CFGridMapping and AOI classes, with plumbing done in CFObject, for testing. This will be rolled out to CFAxis and CFVariableBase hierarchies in the near future.
+- Disentangling CF objects from the NC hierarchy. The NC hierarchy represents what is on file, the CF objects are mutable. Attributes are now managed in `CFObject`, those in `NCObject` are read from file and immutable.
+- Class `CFVariable` has absorbed classes `CFArray` and `CFVariableBase`.
 - Several minor improvements and code fixes.
 - Documentation updated.
 

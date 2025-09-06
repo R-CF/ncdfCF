@@ -79,7 +79,7 @@ AOI <- R6::R6Class("AOI",
         .aoi_check_longitude(value, private$.maxLon)
         private$.minLon <- value
         if (inherits(self$aux, "CFAuxiliaryLongLat"))
-          self$aux$clear_cache(full = FALSE)
+          self$aux$clear_cache()
       }
     },
 
@@ -90,7 +90,7 @@ AOI <- R6::R6Class("AOI",
         .aoi_check_longitude(private$.minLon, value)
         private$.maxLon <- value
         if (inherits(self$aux, "CFAuxiliaryLongLat"))
-          self$aux$clear_cache(full = FALSE)
+          self$aux$clear_cache()
       }
     },
 
@@ -101,7 +101,7 @@ AOI <- R6::R6Class("AOI",
         .aoi_check_latitude(value, private$.maxLat)
         private$.minLat <- value
         if (inherits(self$aux, "CFAuxiliaryLongLat"))
-          self$aux$clear_cache(full = FALSE)
+          self$aux$clear_cache()
       }
     },
 
@@ -112,7 +112,7 @@ AOI <- R6::R6Class("AOI",
         .aoi_check_latitude(private$.minLat, value)
         private$.maxLat <- value
         if (inherits(self$aux, "CFAuxiliaryLongLat"))
-          self$aux$clear_cache(full = FALSE)
+          self$aux$clear_cache()
       }
     },
 
@@ -129,7 +129,7 @@ AOI <- R6::R6Class("AOI",
         private$.minLat <- value[3L]
         private$.maxLat <- value[4L]
         if (inherits(self$aux, "CFAuxiliaryLongLat"))
-          self$aux$clear_cache(full = FALSE)
+          self$aux$clear_cache()
       }
     },
 
@@ -140,7 +140,7 @@ AOI <- R6::R6Class("AOI",
         .aoi_check_resolution(value)
         private$.res <- value
         if (inherits(self$aux, "CFAuxiliaryLongLat"))
-          self$aux$clear_cache(full = FALSE)
+          self$aux$clear_cache()
       }
     },
 

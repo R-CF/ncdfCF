@@ -19,14 +19,6 @@ Auxiliary longitude-latitude grids are only supported for reading from a
 netCDF resource. Creating an instance of this class manually therefore has
 no practical purpose.
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{axis_order}}{Either \code{c("X", "Y")} (default) or \code{c("Y", "X")} to
-indicate the orientation of the latitude and longitude grids.}
-}
-\if{html}{\out{</div>}}
-}
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
@@ -46,9 +38,15 @@ longitude and latitude grids.}
 
 \item{\code{lat}}{(read-only) Retrieve the latitude grid.}
 
+\item{\code{lon_bounds}}{(read-only) Retrieve the boundary values of the
+longitude grid.}
+
+\item{\code{lat_bounds}}{(read-only) Retrieve the boundary values of the
+latitude grid.}
+
 \item{\code{extent}}{(read-only) Retrieve the extent of the longitude and
 latitude grids, including bounds if they have been set. The extent is
-reported as a numeric vector of the four elements minumum and maximum
+reported as a numeric vector of the four elements minimum and maximum
 longitude and minimum and maximum latitude.}
 
 \item{\code{dim}}{(read-only) The dimensions of the longitude and latitude
@@ -76,17 +74,18 @@ Creating a new instance. It should normally not be useful to
 create an instance of this class other than upon reading a netCDF
 resource.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$new(.varLong, .varLat, .boundsLong, .boundsLat)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$new(varLong, varLat, boundsLong = NULL, boundsLat = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{.varLong, .varLat}}{The \link{NCVariable} instances with the longitude and
+\item{\code{varLong, varLat}}{The \link{CFVariable} instances with the longitude and
 latitude grid values, respectively.}
 
-\item{\code{.boundsLong, .boundsLat}}{The bounds of the grid cells for the
-longitude and latitude, respectively, if set.}
+\item{\code{boundsLong, boundsLat}}{The \link{CFBounds} instances of the grid cells
+for the longitude and latitude, respectively, if set. Defaults to
+\code{NULL}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -168,18 +167,9 @@ grids.
 Clears the cache of pre-computed grid index values if an AOI
 has been set.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$clear_cache(full = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$clear_cache()}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{full}}{Logical (default = \code{FALSE}) that indicates if longitude and
-latitude grid arrays should be cleared as well to save space. These will
-then be re-read from file if a new AOI is set.}
-}
-\if{html}{\out{</div>}}
-}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAuxiliaryLongLat-clone"></a>}}

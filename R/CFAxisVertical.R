@@ -15,6 +15,9 @@ Z_parametric_standard_names <-
 #'   ancillary "formula terms" with which to calculate dimensional axis
 #'   coordinates. It is used in atmosphere and ocean data sets.
 #'
+#'   Parametric vertical axes can only be read from file, not created from
+#'   scratch.
+#'
 #' @references
 #' https://cfconventions.org/Data/cf-conventions/cf-conventions.html#parametric-vertical-coordinate
 #' https://www.myroms.org/wiki/Vertical_S-coordinate
@@ -25,53 +28,53 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
   inherit = CFAxisNumeric,
   cloneable = FALSE,
   private = list(
-    # The 'standard_name' attribute of the [NCVariable]
-    # that identifies the parametric form of this axis.
-    parameter_name = "",
+    # The 'standard_name' attribute of the axis that identifies the parametric
+    # form of this axis.
+    .parameter_name = "",
 
     # The standard name for the computed values of the axis.
-    name_computed = "",
+    .name_computed = "",
 
     # The unit of the computed values of the axis.
-    units_computed = "",
+    .units_computed = "",
 
     # A `data.frame` with columns `terms`, `variable` and `ParamTerm` containing
     # the terms of the formula to calculate the axis values. Column `ParamTerm`
     # has the references to the variables that hold the data for each term.
-    terms = NULL,
+    .terms = NULL,
 
-    # The computed values of the parametric axis. This is a CFArray instance
+    # The computed values of the parametric axis. This is a CFVariable instance
     # once it is computed.
-    computed_values = NULL,
+    .computed_values = NULL,
 
     # Print some details of the parametric definition.
     print_details = function(...) {
-      if (!is.null(private$terms)) {
-        cat("\nParametric definition:", private$parameter_name)
+      if (!is.null(private$.terms)) {
+        cat("\nParametric definition:", private$.parameter_name)
 
-        if (is.null(private$computed_values)) {
+        if (is.null(private$.computed_values)) {
           cat("\n (not calculated)\n")
         } else {
-          cat("\n ", self$computed_name, " (", self$computed_units, ")\n", sep = "")
-          cat(" Axes:", paste(sapply(private$computed_values$axes, function(ax) ax$shard())), "\n")
+          cat("\n ", private$.name_computed, " (", private$.units_computed, ")\n", sep = "")
+          cat(" Axes:", paste(sapply(private$.computed_values$axes, function(ax) ax$shard())), "\n")
         }
       }
     },
 
     # This function computes the actual dimensional axis values from the terms.
     compute = function() {
-      if (is.null(private$computed_values))
-        switch(private$parameter_name,
+      if (is.null(private$.computed_values))
+        switch(private$.parameter_name,
           "ocean_s_coordinate_g1" = private$ocean_s_coordinate_g1(),
           "ocean_s_coordinate_g2" = private$ocean_s_coordinate_g2()
         )
-      private$computed_values
+      private$.computed_values
     },
 
     # Helper function to get the data for a specific formula term. Can also
     # return 0 if the data is not found.
     get_data = function(term) {
-      v <- private$terms[private$terms$term == term, ]$ParamTerm[[1L]]
+      v <- private$.terms[private$.terms$term == term, ]$ParamTerm[[1L]]
       if (inherits(v, "CFVerticalParametricTerm"))
         v$values
       else 0
@@ -89,7 +92,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     ocean_s_coordinate_g1 = function() {
       # z(n,k,j,i) = S(k,j,i) + eta(n,j,i) * (1 + S(k,j,i) / depth(j,i))
       # where S(k,j,i) = depth_c * s(k) + (depth(j,i) - depth_c) * C(k)
-      s <- self$values
+      s <- private$.values
       C <- private$get_data("C")
       eta <- private$get_data("eta")
       depth <- private$get_data("depth")
@@ -99,7 +102,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
 
       # Construct the axes for the result. Use "depth" axes [i,j], combine with
       # self axis [k].
-      ax <- private$terms[private$terms$term == "depth", ]$ParamTerm[[1L]]
+      ax <- private$.terms[private$.terms$term == "depth", ]$ParamTerm[[1L]]
       axes <- append(ax$axes, self)
       names(axes) <- c(names(ax$axes), self$name)
 
@@ -112,7 +115,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
           S + eta * tmp
         else if (length(d) == 3L) {
           # eta is time-variant so add the [n] axis
-          ax <- private$terms[private$terms$term == "eta", ]$ParamTerm[[1L]]
+          ax <- private$.terms[private$.terms$term == "eta", ]$ParamTerm[[1L]]
           axes <- append(axes, ax$axes[[3L]])
           names(axes) <- c(names(axes)[1L:3L], ax$axes[[3L]]$name)
 
@@ -121,14 +124,14 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
         } else
           S + sweep(tmp, MARGIN = 1:2, eta, "*")
       }
-      private$name_computed <- private$ocean_computed_name()
-      private$computed_values <- CFArray$new(private$name_computed, makeGroup(), crds, "NC_DOUBLE", axes, NULL, data.frame())
+      private$.name_computed <- private$ocean_computed_name()
+      private$.computed_values <- CFArray$new(private$.name_computed, crds, "NC_DOUBLE", axes, NULL, data.frame())
     },
 
     ocean_s_coordinate_g2 = function() {
       # z(n,k,j,i) = eta(n,j,i) + (eta(n,j,i) + depth(j,i)) * S(k,j,i)
       # where S(k,j,i) = (depth_c * s(k) + depth(j,i) * C(k)) / (depth_c + depth(j,i))
-      s <- self$values
+      s <- private$.values
       C <- private$get_data("C")
       eta <- private$get_data("eta")
       depth <- private$get_data("depth")
@@ -136,7 +139,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
 
       # Construct the axes for the result. Use "depth" axes [i,j], combine with
       # self axis [k].
-      ax <- private$terms[private$terms$term == "depth", ]$ParamTerm[[1L]]
+      ax <- private$.terms[private$.terms$term == "depth", ]$ParamTerm[[1L]]
       axes <- append(ax$axes, self)
       names(axes) <- c(names(ax$axes), self$name)
 
@@ -151,7 +154,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
           sweep(S, MARGIN = 1:2, depth + eta, "*") + eta
         else if (length(d) == 3L) {
           # eta is time-variant so add the [n] axis
-          ax <- private$terms[private$terms$term == "eta", ]$ParamTerm[[1L]]
+          ax <- private$.terms[private$.terms$term == "eta", ]$ParamTerm[[1L]]
           axes <- append(axes, ax$axes[[3L]])
           names(axes) <- c(names(axes)[1L:3L], ax$axes[[3L]]$name)
 
@@ -162,13 +165,13 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
           sweep(z, MARGIN = 1:2, eta, "+")
         }
       }
-      private$name_computed <- private$ocean_computed_name()
-      private$computed_values <- CFArray$new(private$name_computed, makeGroup(), crds, "NC_DOUBLE", axes, NULL, data.frame())
+      private$.name_computed <- private$ocean_computed_name()
+      private$.computed_values <- CFArray$new(private$.name_computed, crds, "NC_DOUBLE", axes, NULL, data.frame())
     },
 
     # Helper function to determine the computed name of ocean formulations
     ocean_computed_name = function() {
-      switch(private$terms[private$terms$term == "depth", ]$ParamTerm[[1L]]$attribute("standard_name"),
+      switch(private$.terms[private$.terms$term == "depth", ]$ParamTerm[[1L]]$attribute("standard_name"),
         "sea_floor_depth_below_geoid" = "altitude",
         "sea_floor_depth_below_geopotential_datum" = "height_above_geopotential_datum",
         "sea_floor_depth_below_reference_ellipsoid" = "height_above_reference_ellipsoid",
@@ -179,56 +182,72 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
   ),
   public = list(
     #' @description Create a new instance of this class.
-    #' @param nc_var The netCDF variable that describes this instance.
-    #' @param nc_dim The netCDF dimension that describes the dimensionality.
-    #' @param values The coordinates of this axis.
-    #' @param standard_name Character string with the "standard_name" that
-    #' defines the meaning, and processing of coordinates, of this axis. In
-    #' particular, the "standard_name may indicate that this is a parametric
-    #' vertical axis.
-    initialize = function(nc_var, nc_dim, values, standard_name) {
-      super$initialize(nc_var, nc_dim, "Z", values)
-      private$parameter_name <- standard_name
-      self$set_attribute("actual_range", nc_var$vtype, range(values))
+    #' @param var The name of the axis when creating a new axis. When reading an
+    #'   axis from file, the [NCVariable] object that describes this instance.
+    #' @param values Optional. The values of the axis in a vector. The values
+    #'   have to be numeric and monotonic. Ignored when argument `var` is a
+    #'   `NCVariable` object.
+    #' @param start Optional. Integer index where to start reading axis data
+    #'   from file. The index may be `NA` to start reading data from the start.
+    #' @param count Optional. Number of elements to read from file. This may be
+    #'   `NA` to read to the end of the data.
+    #' @param attributes Optional. A `data.frame` with the attributes of the
+    #'   axis. When an empty `data.frame` (default) and argument `var` is an
+    #'   `NCVariable` instance, attributes of the axis will be taken from the
+    #'   netCDF resource.
+    initialize = function(var, values, start = 1L, count = NA, attributes = data.frame()) {
+      super$initialize(var, values = values, start = start, count = count, orientation =  "Z", attributes = attributes)
+
+      if (!is.na(self$attribute("formula_terms")))
+        private$.parameter_name <- self$attribute("standard_name")
     },
 
     #' @description Create a copy of this axis. The copy is completely separate
     #' from `self`, meaning that both `self` and all of its components are made
     #' from new instances. Note that the parametric terms, if any, are not
     #' copied here. If needed, copy the terms by calling the `copy_terms()`
-    #' method **after** all axes that the terms refer to have been copied to
-    #' the `group` used for this axis (or another group that is reachable from
-    #' the `group`).
-    #' @param group The group in which to place the new axis. If the argument is
-    #' missing, a new group will be created for the axis with a link to the
-    #' netCDF resource of `self`, if set.
-    #' @param name The name for the new axis. If argument `group` is given, the
-    #'   name must be unique among the objects in the group.
+    #' method **after** all axes that the terms refer to have been copied to, as
+    #' appropriate.
+    #' @param name The name for the new axis. If an empty string is passed, will
+    #'   use the name of this axis.
     #' @return The newly created axis.
-    copy = function(group, name) {
-      if (missing(group))
-        group <- makeGroup(resource = self$group$resource)
-
-      var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", NA)
-      dim <- NCDimension$new(CF$newDimId(), name, length(private$values), FALSE, group)
-      axis <- CFAxisVertical$new(var, dim, private$values, private$parameter_name)
-      axis$attributes <- self$attributes
-
-      bnds <- self$bounds
-      if (inherits(bnds, "CFBounds")) {
-        nm <- self$attribute("bounds")
-        ncvar <- bnds$NCvar
-        if (is.null(ncvar))
-          axis$bounds <- CFBounds$new(nm, values = bnds$values)
-        else
-          axis$bounds <- CFBounds$new(ncvar)
+    copy = function(name = "") {
+      if (self$has_resource) {
+        ax <- CFAxisVertical$new(self$NCvar, start = private$.start_count$start,
+                                 count = private$.start_count$count, attributes = self$attributes)
+        if (nzchar(name))
+          ax$name <- name
+      } else {
+        if (!nzchar(name))
+          name <- self$name
+        ax <- CFAxisVertical$new(name, values = private$.values, attributes = self$attributes)
       }
 
-      private$subset_coordinates(axis, c(1L, self$length))
-      axis
+      if (inherits(private$.bounds, "CFBounds"))
+        ax$bounds <- private$.bounds$copy()
+
+      private$subset_coordinates(ax, c(1L, self$length))
+      ax
     },
 
-    #' @description Copy the parametric terms from `from` to the group of
+    #' @description Create a copy of this axis but using the supplied values.
+    #'   The attributes are copied to the new axis. Boundary values, parametric
+    #'   coordinates and auxiliary coordinates are not copied.
+    #'
+    #'   After this operation the attributes of the newly created axes may not
+    #'   be accurate, except for the "actual_range" attribute. The calling code
+    #'   should set, modify or delete attributes as appropriate.
+    #' @param name The name for the new axis. If an empty string is passed, will
+    #'   use the name of this axis.
+    #' @param values The values to the used with the copy of this axis.
+    #' @return The newly created axis.
+    copy_with_values = function(name = "", values) {
+      if (!nzchar(name))
+        name <- self$name
+      CFAxisVertical$new(name, values = values, attributes = self$attributes)
+    },
+
+    #' @description Copy the parametric terms from `from` to
     #'   `self`. The parametric terms will be configured in `self`.
     #' @param from The `NCGroup` from which references to the parametric terms
     #'   are accessible.
@@ -270,7 +289,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
               CFVerticalParametricTerm$new(0, NULL)
           }
         })
-        private$terms <- ft
+        private$.terms <- ft
       }
 
       return(self)
@@ -307,7 +326,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
               CFVerticalParametricTerm$new(0, NULL)
           }
         })
-        private$terms <- ft
+        private$.terms <- ft
       }
 
       return(self)
@@ -331,11 +350,11 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     #'   for the warped data.
     #' @return Self, invisibly.
     parametric_subset = function(axes, start, count, index, dim_in, dim_out) {
-      if (is.null(private$terms)) return(invisible(self))
+      if (is.null(private$.terms)) return(invisible(self))
 
       # If computed before, throw out parametric coordinates
-      was_computed <- !is.null(private$computed_values)
-      private$computed_values <- NULL
+      was_computed <- !is.null(private$.computed_values)
+      private$.computed_values <- NULL
 
       # Pass all arguments to the parametric term instances
       #continue here
@@ -349,7 +368,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     #' @field friendlyClassName (read-only) A nice description of the class.
     friendlyClassName = function(value) {
       if (missing(value))
-        if (is.null(private$terms)) "Vertical axis"
+        if (is.null(private$.terms)) "Vertical axis"
         else "Vertical axis (parametric)"
     },
 
@@ -357,17 +376,18 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     #' to calculate the parametric axis values.
     formula_terms = function(value) {
       if (missing(value))
-        private$terms
+        private$.terms
     },
 
     #' @field is_parametric (read-only) Logical flag that indicates if the
     #'   coordinates of the axis are parametric.
     is_parametric = function(value) {
-      !is.na(self$attribute("formula_terms"))
+      if (missing(value))
+        !is.na(self$attribute("formula_terms"))
     },
 
     #' @field parametric_coordinates (read-only) Retrieve the parametric
-    #' coordinates of this vertical axis as a [CFArray].
+    #' coordinates of this vertical axis as a [CFVariable].
     parametric_coordinates = function(value) {
       if (missing(value))
         private$compute()
@@ -378,7 +398,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     #' the computed name is an empty string.
     computed_name = function(value) {
       if (missing(value)) {
-        private$name_computed
+        private$.name_computed
       }
     },
 
@@ -387,12 +407,12 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     #' will access the standard names table.
     computed_units = function(value) {
       if (missing(value)) {
-        if (is.null(private$computed_values))
+        if (is.null(private$.computed_values))
           NULL
-        else if (private$name_computed == "non_standard_name")
+        else if (private$.name_computed == "non_standard_name")
           "unknown units"
         else
-          CF$standard_names$find(private$name_computed)$units
+          CF$standard_names$find(private$.name_computed)$units
       }
     }
   )

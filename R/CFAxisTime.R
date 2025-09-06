@@ -1,5 +1,5 @@
-#' @importFrom CFtime unit as_timestamp
-NULL
+# #' @importFrom CFtime unit as_timestamp
+# NULL
 
 #' Time axis object
 #'
@@ -12,18 +12,17 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
   inherit = CFAxis,
   cloneable = FALSE,
   private = list(
-    # The `CFTime` instance to manage CF time.
-    tm = NULL,
-
-    get_values = function() {
-      private$tm$offsets
-    },
+    # The `CFTime` or `CFClimatology` instance to manage CF time.
+    .tm = NULL,
 
     get_coordinates = function() {
-      if (private$active_coords == 1L)
-        private$tm$as_timestamp()
-      else
-        private$aux[[private$active_coords - 1L]]$coordinates
+      if (private$.active_coords == 1L)
+        private$.tm$as_timestamp()
+      else {
+        crds <- private$.aux[[private$.active_coords - 1L]]$coordinates
+        dim(crds) <- NULL
+        crds
+      }
     },
 
     dimvalues_short = function() {
@@ -40,37 +39,54 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
   public = list(
     #' @description Create a new instance of this class.
     #'
+    #'   Immediately following the call to create the axis, the calling code
+    #'   should call method `make_time()` prior to calling any other methods in
+    #'   this class.
+    #'
     #'   Creating a new time axis is more easily done with the [makeTimeAxis()]
     #'   function.
-    #' @param nc_var The netCDF variable that describes this instance.
-    #' @param nc_dim The netCDF dimension that describes the dimensionality.
-    #' @param values The `CFTime` instance that manages this axis.
-    initialize = function(nc_var, nc_dim, values) {
-      super$initialize(nc_var, nc_dim, "T")
-      private$tm <- values
-      self$set_attribute("units", "NC_CHAR", values$cal$definition)
-      self$set_attribute("calendar", "NC_CHAR", values$cal$name)
+    #' @param var The name of the axis when creating a new axis. When reading an
+    #'   axis from file, the [NCVariable] object that describes this instance.
+    #' @param values Either the numeric values of this axis, or an instance of
+    #'   `CFTime` or `CFClimatology` with bounds set. If these are numeric
+    #'   values, argument `var` must be a `NCVariable`.
+    #' @param start Optional. Integer index where to start reading axis data
+    #'   from file. The index may be `NA` to start reading data from the start.
+    #' @param count Optional. Number of elements to read from file. This may be
+    #'   `NA` to read to the end of the data.
+    #' @param attributes Optional. A `data.frame` with the attributes of the
+    #'   axis. When an empty `data.frame` (default) and argument `var` is an
+    #'   NCVariable instance, attributes of the axis will be taken from the
+    #'   netCDF resource.
+    initialize = function(var, values, start = 1L, count = NA, attributes = data.frame()) {
+      if (inherits(values, "CFTime")) {
+        private$.tm <- values
+        values <- private$.tm$offsets
+      } else {
+        if (inherits(var, "NCVariable")) {
+          # Make a CFTime of CFClimatology
+          private$.tm <- .makeTimeObject(var, var$attribute("units"), values, NULL)
+        } else
+          stop("When initializing by time axis name, must provide a `CFTime` instance as argument 'values'.", call. = FALSE) # nocov
+      }
+
+      super$initialize(var, values = values, start = start, count = count, orientation = "T", attributes = attributes)
       self$set_attribute("standard_name", "NC_CHAR", "time")
-      self$set_attribute("axis", "NC_CHAR", "T")
-      off <- values$offsets
-      if (length(off))
-        self$set_attribute("actual_range", nc_var$vtype, range(off))
     },
 
     #' @description Summary of the time axis printed to the console.
     #' @param ... Arguments passed on to other functions. Of particular interest
     #' is `width = ` to indicate a maximum width of attribute columns.
-    #' @return `self`, invisibly.
     print = function(...) {
       super$print()
 
-      time <- private$tm
-      if (private$active_coords == 1L) {
-        crds <- private$tm$as_timestamp()
+      time <- private$.tm
+      if (private$.active_coords == 1L) {
+        crds <- time$as_timestamp()
         units <- time$unit
       } else {
-        crds <- private$aux[[private$active_coords - 1L]]$coordinates
-        units <- private$aux[[private$active_coords - 1L]]$attribute("units")
+        crds <- private$.aux[[private$.active_coords - 1L]]$coordinates
+        units <- private$.aux[[private$.active_coords - 1L]]$attribute("units")
       }
       len <- length(crds)
       rng <- if (len == 1L) crds[1L]
@@ -84,7 +100,6 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       cat("Bounds     :", bndrng, "\n")
 
       self$print_attributes(...)
-      invisible(self)
     },
 
     #' @description Some details of the axis.
@@ -96,42 +111,69 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       out
     },
 
-    #' @description Retrieve the `CFTime` instance that manages the values of
-    #' this axis.
-    #' @return An instance of `CFTime`.
-    time = function() {
-      private$tm
-    },
-
     #' @description Tests if the axis passed to this method is identical to
     #'   `self`.
     #' @param axis The `CFAxisTime` instance to test.
     #' @return `TRUE` if the two axes are identical, `FALSE` if not.
     identical = function(axis) {
       super$identical(axis) &&
-      private$tm$cal$is_equivalent(axis$time()$cal) &&
-      all(.near(private$tm$offsets, axis$time()$offsets))
+      private$.tm$cal$is_equivalent(axis$time$cal) &&
+      all(.near(private$.tm$offsets, axis$time$offsets))
     },
 
     #' @description Create a copy of this axis. The copy is completely separate
     #' from `self`, meaning that both `self` and all of its components are made
     #' from new instances.
-    #' @param group The group in which to place the new axis. If the argument is
-    #' missing, a new group will be created for the axis with a link to the
-    #' netCDF resource of `self`, if set.
-    #' @param name The name for the new axis. If argument `group` is given, the
-    #'   name must be unique among the objects in the group.
+    #' @param name The name for the new axis. If an empty string is passed, will
+    #'   use the name of this axis.
     #' @return The newly created axis.
-    copy = function(group, name) {
-      if (missing(group))
-        group <- makeGroup(resource = self$group$resource)
+    copy = function(name = "") {
+      time <- private$.tm$copy()
+      if (self$has_resource) {
+        ax <- CFAxisTime$new(self$NCvar, values = time, start = private$.start_count$start,
+                             count = private$.start_count$count, attributes = self$attributes)
+        if (nzchar(name))
+          ax$name <- name
+      } else {
+        if (!nzchar(name))
+          name <- self$name
+        ax <- CFAxisTime$new(name, values = time, attributes = self$attributes)
+      }
 
-      time <- private$tm
-      idx <- time$indexOf(1L:self$length)
-      tm <- attr(idx, "CFTime")
-      t <- makeTimeAxis(name, group, tm, self$attributes)
-      private$subset_coordinates(t, c(1L, self$length))
-      t
+      if (inherits(private$.bounds, "CFBounds"))
+        ax$bounds <- private$.bounds$copy()
+
+      private$subset_coordinates(ax, c(1L, self$length))
+      ax
+    },
+
+    #' @description Create a copy of this axis but using the supplied values.
+    #'   The attributes are copied to the new axis. Boundary values and
+    #'   auxiliary coordinates are not copied.
+    #'
+    #'   After this operation the attributes of the newly created axes may not
+    #'   be accurate, except for the "actual_range" attribute. The calling code
+    #'   should set, modify or delete attributes as appropriate.
+    #' @param name The name for the new axis. If an empty string is passed, will
+    #'   use the name of this axis.
+    #' @param values The values to the used with the copy of this axis. This can
+    #'   be a `CFTime` of `CFClimatology` instance, a vector of numeric values,
+    #'   a vector of character timestamps in ISO8601 or UDUNITS format, or a
+    #'   vector of `POSIXct` or `Date` values. If not a `CFTime` or
+    #'   `CFClimatology` instance, the `values` will be converted into a
+    #'   `CFTime` instance using the definition and calendar of this axis.
+    #' @return The newly created axis.
+    copy_with_values = function(name = "", values) {
+      if (!nzchar(name))
+        name <- self$name
+
+      if (!inherits(values, "CFTime")) {
+        values <- try(CFtime::CFTime$new(self$attribute("units"), self$attribute("calendar"), values), silent = TRUE)
+        if (inherits(values, "try-error"))
+          stop("Invalid values for a 'time' axis.", call. = FALSE) # nocov
+      }
+
+      CFAxisTime$new(name, values = values, attributes = self$attributes)
     },
 
     #' @description Append a vector of time values at the end of the current
@@ -141,16 +183,17 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @return A new `CFAxisTime` instance with values from self and the `from`
     #'   axis appended.
     append = function(from) {
-      if (super$can_append(from) && .c_is_monotonic(private$tm$offsets, from$time()$offsets)) {
-        bnds <- if (is.null(private$tm$bounds) || is.null(from$time()$bounds)) NULL
-                else cbind(private$tm$bounds, from$time()$bounds)
-        if (class(private$tm)[1L] == "CFClimatology")
-          time <- CFtime::CFClimatology$new(private$tm$cal$definition, private$tm$cal$name, c(private$tm$offsets, from$time()$offsets), bnds)
+      ft <- from$time
+      if (super$can_append(from) && .c_is_monotonic(private$.tm$offsets, ft$offsets)) {
+        bnds <- if (is.null(private$.tm$bounds) || is.null(ft$bounds)) NULL
+                else cbind(private$.tm$bounds, ft$bounds)
+        if (class(private$.tm)[1L] == "CFClimatology")
+          time <- CFtime::CFClimatology$new(private$.tm$cal$definition, private$.tm$cal$name, c(private$.tm$offsets, ft$offsets), bnds)
         else {
-          time <- CFtime::CFTime$new(private$tm$cal$definition, private$tm$cal$name, c(private$tm$offsets, from$time()$offsets))
+          time <- CFtime::CFTime$new(private$.tm$cal$definition, private$.tm$cal$name, c(private$.tm$offsets, ft$offsets))
           time$bounds <- bnds
         }
-        makeTimeAxis(self$name, makeGroup(), time, self$attributes)
+        makeTimeAxis(self$name, time, self$attributes)
       } else
         stop("Axis values cannot be appended.", call. = FALSE)
     },
@@ -162,13 +205,15 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' with ("linear") fractional parts.
     #' @param rightmost.closed Whether or not to include the upper limit.
     #' Default is `FALSE`.
-    #' @return An integer vector giving the indices in the time axis of valid
+    #' @return A vector giving the indices in the time axis of valid
     #' values in `x`, or `NA` if the value is not valid.
     indexOf = function(x, method = "constant", rightmost.closed = FALSE) {
-      time <- private$tm
-      idx <- time$indexOf(x, method, rightmost.closed)
-      len <- length(idx)
-      as.integer(idx)
+      idx <- private$.tm$indexOf(x, method, rightmost.closed)
+
+      if (method == "constant")
+        as.integer(idx)
+      else
+        idx
     },
 
     #' @description Retrieve the indices of the time axis falling between two
@@ -180,7 +225,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @return An integer vector giving the indices in the time axis between
     #'   values in `x`, or `integer(0)` if none of the values are valid.
     slice = function(x, rightmost.closed = FALSE) {
-      time <- private$tm
+      time <- private$.tm
       idx <- time$slice(x, rightmost.closed)
       (1L:length(time))[idx]
     },
@@ -189,29 +234,38 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #'   method returns an axis which spans the range of indices given by the
     #'   `rng` argument.
     #'
-    #' @param group The group to create the new axis in.
-    #' @param name The name for the new axis if the `rng` argument is provided.
-    #'   The name cannot already exist in the group.
+    #' @param name The name for the new axis. If an empty string is passed
+    #'   (default), will use the name of this axis.
     #' @param rng The range of indices whose values from this axis to include in
     #'   the returned axis. If the value of the argument is `NULL`, return a
     #'   copy of the axis.
-    #' @return A new `CFAxisTime` instance covering the indicated range of
-    #'   indices. If the value of the argument is `NULL`, return a copy of
+    #' @return A new `CFAxisNumeric` instance covering the indicated range of
+    #'   indices. If the value of the argument `rng` is `NULL`, return a copy of
     #'   `self` as the new axis.
-    subset = function(group, name, rng = NULL) {
+    subset = function(name = "", rng = NULL) {
       if (is.null(rng))
-        self$copy(group, name)
+        self$copy(name)
       else {
-        var <- NCVariable$new(CF$newVarId(), name, group, "NC_DOUBLE", NA)
-        time <- private$tm
-        rng <- range(rng)
-        idx <- time$indexOf(seq(from = rng[1L], to = rng[2L], by = 1L))
-        tm <- attr(idx, "CFTime")
-        dim <- NCDimension$new(CF$newDimId(), name, length(idx), FALSE, group)
-        t <- CFAxisTime$new(var, dim, tm)
-        private$subset_coordinates(t, idx)
-        t$set_attribute("actual_range", self$data_type, range(tm$offsets))
-        t
+        rng <- as.integer(range(rng))
+        idx <- private$.tm$indexOf(seq(from = rng[1L], to = rng[2L], by = 1L))
+        newtm <- attr(idx, "CFTime")
+
+        if (self$has_resource) {
+          ax <- CFAxisTime$new(self$NCvar, values = newtm, start = private$.start_count$start + rng[1L] - 1L,
+                               count = rng[2L] - rng[1L] + 1L, attributes = self$attributes)
+          if (nzchar(name))
+            ax$name <- name
+        } else {
+          if (!nzchar(name))
+            name <- self$name
+          ax <- CFAxisTime$new(name, values = newtm, attributes = self$attributes)
+        }
+
+        if (inherits(private$.bounds, "CFBounds"))
+          ax$bounds <- private$.bounds$subset(rng)
+
+        private$subset_coordinates(ax, rng)
+        ax
       }
     },
 
@@ -224,7 +278,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #'   `NULL`, the handle to a netCDF file or a group therein.
     #' @return Self, invisibly.
     write = function(nc = NULL) {
-      time <- private$tm
+      time <- private$.tm
       if (time$cal$name == "gregorian")
         self$set_attribute("calendar", "NC_CHAR", "standard")
       super$write(nc)
@@ -255,11 +309,18 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         "Time axis"
     },
 
+    #' @field time (read-only) Retrieve the `CFTime` instance that manages the
+    #'   values of this axis.
+    time = function(value) {
+      if (missing(value))
+        private$.tm
+    },
+
     #' @field dimnames (read-only) The coordinates of the axis as a character
-    #' vector.
+    #'   vector.
     dimnames = function(value) {
       if (missing(value))
-        format(private$tm)
+        format(private$.tm)
     }
   )
 )

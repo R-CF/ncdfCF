@@ -93,7 +93,7 @@ Retrieve the values of the cell measure variable.
 }
 
 \subsection{Returns}{
-The values of the cell measure as a \link{CFArray} instance.
+The values of the cell measure as a \link{CFVariable} instance.
 }
 }
 \if{html}{\out{<hr>}}

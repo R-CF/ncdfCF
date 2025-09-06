@@ -5,7 +5,7 @@
 #'
 #' @docType class
 CFVerticalParametricTerm <- R6::R6Class("CFVerticalParametricTerm",
-  inherit = CFVariableBase,
+  inherit = CFVariable,
   private = list(
     # Flag to indicate that the instance has no data
     .nodata = TRUE,
@@ -83,7 +83,8 @@ CFVerticalParametricTerm <- R6::R6Class("CFVerticalParametricTerm",
     values = function(value) {
       if (missing(value)) {
         if (private$.nodata) 0
-        else self$NCvar$get_data(private$.start, private$.count)
+        else self$NCvar$get_data(start = private$.start_count$start,
+                                 count = private$.start_count$count)
       }
     }
   )

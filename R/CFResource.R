@@ -43,8 +43,8 @@ CFResource <- R6::R6Class("CFResource",
     error = "",
 
     #' @description Create a connection to a netCDF resource. This is called by
-    #'   [open_ncdf()] when opening a netCDF resource; you should never have to
-    #'   call this directly.
+    #'   [open_ncdf()] when opening a netCDF resource or when saving a dataset
+    #'   to file. You should never have to call this directly.
     #'
     #' @param uri The URI to the netCDF resource.
     #' @return An instance of this class.
@@ -52,6 +52,14 @@ CFResource <- R6::R6Class("CFResource",
       private$.uri <- uri
       private$.handle <- NULL
       self$error <- ""
+    },
+
+    #' @description Create a new file on disk for the netCDF resource.
+    #' @return Self, invisibly.
+    create = function() {
+      private$.handle <- try(RNetCDF::create.nc(private$.uri, prefill = FALSE, format = "netcdf4"), silent = TRUE)
+      if (!inherits(private$.handle, "NetCDF"))
+        stop("Could not create the netCDF file. Please check that the location of the supplied file name is writable.", call. = FALSE)
     },
 
     #' @description Closing an open netCDF resource. It should rarely be

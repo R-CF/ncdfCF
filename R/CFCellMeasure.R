@@ -110,10 +110,10 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
     },
 
     #' @description Retrieve the values of the cell measure variable.
-    #' @return The values of the cell measure as a [CFArray] instance.
+    #' @return The values of the cell measure as a [CFVariable] instance.
     data = function() {
       if (is.null(private$.var)) NULL
-      else private$.var$data()
+      else private$.var
     },
 
     #' @description Register a [CFVariable] which is using this cell measure

@@ -11,21 +11,70 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
   inherit = CFVariable,
   private = list(
     # Minimum and maximum row in the L3b variable.
-    file_rows = c(0L, 0L),
+    .file_rows = c(0L, 0L),
 
     # Minimum and maximum bin in the L3b variable.
-    file_bins = c(0L, 0L),
+    .file_bins = c(0L, 0L),
 
-    # The netCDF type of the unpacked data of the variable after reading.
-    values_type = "NC_FLOAT"
+    # The index data of the L3b structure.
+    .index = NULL,
+
+    # The values from the file after reading.
+    .values = NULL,
+
+    # Read all the data from the file and turn the data into a
+    #   matrix. If an `aoi` is specified, the data will be subset to that area.
+    #
+    #   This method returns a bare-bones matrix without any metadata or other
+    #   identifying information. Use method `data()`, `subset()` or the `[`
+    #   operator rather than this method to obtain a more informative result.
+    # Params start and count are the vectors to read data from the netCDF file.
+    # Returns a matrix with the data of the variable in raw format.
+    as_matrix = function(start, count) {
+      binList <- RNetCDF::var.get.nc(private$.NCvar$group$handle, "BinList")
+      binData <- RNetCDF::var.get.nc(private$.NCvar$group$handle, self$name)
+
+      # Get the binned data in rows
+      data_row <- findInterval(binList$bin_num, private$.index$start_num)
+      data_row_bin <- as.integer(binList$bin_num - private$.index$start_num[data_row]) + 1L
+
+      numRows <- length(private$.index$start_num)
+      maxBins <- private$.index$max[numRows * 0.5]
+
+      if (missing(start)) {
+        startRow <- private$.file_rows[1L]
+        startBin <- private$.file_bins[1L]
+        endRow <- private$.file_rows[2L]
+        endBin <- private$.file_bins[2L]
+      } else {
+        startRow <- private$.file_rows[1L] + start[1L] - 1L
+        startBin <- private$.file_bins[1L] + start[2L] - 1L
+        endRow <- startRow + count[1L] - 1L
+        endBin <- startBin + count[2L] - 1L
+      }
+
+      l <- lapply(startRow:endRow, function(r) {
+        out <- rep(NA_real_, maxBins)
+
+        idx <- which(data_row == r)
+        if (!length(idx)) return(out[startBin:endBin])
+
+        d <- binData$sum[idx] / binList$weights[idx]   # The data of the physical property
+        b <- data_row_bin[idx]                         # The bins to put the data in
+
+        # Expand to maxBins grid cells
+        allocate <- ceiling(1:maxBins * private$.index$max[r] / maxBins)
+
+        # Allocate the data to the expanded grid cells
+        for (bin in seq_along(b))
+          out[which(allocate == b[bin])] <- d[bin]
+
+        out[startBin:endBin]
+      })
+      do.call(rbind, l)
+    }
   ),
   public = list(
-    #' @field variable The name of the variable contained in this L3b data.
-    variable = NULL,
-
-    #' @field index The index data of the L3b structure.
-    index = NULL,
-
     #' @description Create an instance of this class.
     #'
     #' @param grp The group that this CF variable lives in. Must be called
@@ -34,37 +83,34 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
     #'   the physical units of the data variable in the netCDF resource.
     #' @return An instance of this class.
     initialize = function(grp, units) {
-      self$variable <- units[1L]
-
       ncv <- grp$NCvars
-      var <- ncv[[self$variable]]
+      var <- ncv[[units[1L]]]
       if (is.null(ncv[["BinIndex"]]) || is.null(ncv[["BinList"]]) || (is.null(var)))
-        stop("L3b: required netCDF variables not found.")
+        stop("L3b: required netCDF variables not found.", call. = FALSE) # nocov
 
       # Read the index
-      self$index <- RNetCDF::var.get.nc(grp$handle, "BinIndex", unpack = TRUE, fitnum = TRUE)
-      lat_len <- length(self$index$start)
+      private$.index <- RNetCDF::var.get.nc(grp$handle, "BinIndex", unpack = TRUE, fitnum = TRUE)
+      lat_len <- length(private$.index$start)
 
       # Latitude axis
-      lat_rows <- which(self$index$begin > 0)
-      private$file_rows <- as.integer(range(lat_rows))
-      len <- as.integer(private$file_rows[2L] - private$file_rows[1L]) + 1L
-      bnds <- (private$file_rows[1L] - 1):private$file_rows[2L] * 180 / lat_len - 90
-      lat <- makeLatitudeAxis("latitude", grp,
-                              (private$file_rows[1L]:private$file_rows[2L] - 0.5) * 180 / lat_len - 90,
-                              rbind(bnds[-len], bnds[-1L]))
+      lat_rows <- which(private$.index$begin > 0)
+      private$.file_rows <- as.integer(range(lat_rows))
+      lat <- CFAxisLatitude$new("latitude", values = (private$.file_rows[1L]:private$.file_rows[2L] - 0.5) * 180 / lat_len - 90)
+      len <- as.integer(private$.file_rows[2L] - private$.file_rows[1L]) + 1L
+      bnds <- (private$.file_rows[1L] - 1):private$.file_rows[2L] * 180 / lat_len - 90
+      lat$bounds <- CFBounds$new("lat_bnds", values = rbind(bnds[-len], bnds[-1L]))
 
       # Longitude axis
-      lon_bins <- self$index$max[lat_len * 0.5]
-      west <- self$index$begin[lat_rows] - self$index$start_num[lat_rows] + 1
-      east <- west + self$index$extent[lat_rows] - 1
-      expand <- lon_bins / self$index$max[lat_rows]
-      private$file_bins[1L] <- min(floor(west * expand))
-      private$file_bins[2L] <- max(ceiling(east * expand))
-      lon <- (private$file_bins[1L]:private$file_bins[2L] - 0.5) * 360 / lon_bins - 180
-      bnds <- (private$file_bins[1L]-1):private$file_bins[2L] * 360 / lon_bins - 180
-      len <- private$file_bins[2L] - private$file_bins[1L] + 1
-      lon <- makeLongitudeAxis("longitude", grp, lon, rbind(bnds[-len], bnds[-1L]))
+      lon_bins <- private$.index$max[lat_len * 0.5]
+      west <- private$.index$begin[lat_rows] - private$.index$start_num[lat_rows] + 1
+      east <- west + private$.index$extent[lat_rows] - 1
+      expand <- lon_bins / private$.index$max[lat_rows]
+      private$.file_bins[1L] <- min(floor(west * expand))
+      private$.file_bins[2L] <- max(ceiling(east * expand))
+      lon <- CFAxisLongitude$new("longitude", values = (private$.file_bins[1L]:private$.file_bins[2L] - 0.5) * 360 / lon_bins - 180)
+      bnds <- (private$.file_bins[1L]-1):private$.file_bins[2L] * 360 / lon_bins - 180
+      len <- private$.file_bins[2L] - private$.file_bins[1L] + 1
+      lon$bounds <- CFBounds$new("lon_bnds", values = rbind(bnds[-len], bnds[-1L]))
 
       axes <- list(
         latitude = lat,
@@ -80,7 +126,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
         cft <- CFtime::CFTime$new("seconds since 1970-01-01", "proleptic_gregorian")
         cft <- cft + CFtime::parse_timestamps(cft, sprintf("%04d-%02d-%02dT12:00:00", ymd$year, ymd$month, as.integer(ymd$day)))$offset
         cft$set_bounds(matrix(tc$offsets, nrow = 2))
-        axes[["time"]] <- makeTimeAxis("time", grp, cft)
+        axes[["time"]] <- CFAxisTime$new("time", cft)
       }
 
       grp$CFaxes <- axes
@@ -96,78 +142,35 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       # Construct the object
       super$initialize(var, axes)
       self$set_attribute("units", "NC_CHAR", units[2L])
-      self$NCvar$CF <- self # the variable
+      # FIXME
       ncv[["BinIndex"]]$CF <- ncv[["BinList"]]$CF <- self
     },
 
     #' @description Read all the data from the file and turn the data into a
-    #'   matrix. If an `aoi` is specified, the data will be subset to that area.
+    #'   matrix.
     #'
     #'   This method returns a bare-bones matrix without any metadata or other
-    #'   identifying information. Use method `data()`, `subset()` or the `[`
+    #'   identifying information. Use method `subset()` or the `[`
     #'   operator rather than this method to obtain a more informative result.
-    #' @param aoi An instance of class `AOI`, optional, to select an area in
-    #'   latitude - longitude coordinates.
+    #' @param refresh Flag to indicate if a fresh read from file should be made.
     #' @return A matrix with the data of the variable in raw format.
-    as_matrix = function(aoi = NULL) {
-      binList <- RNetCDF::var.get.nc(self$NCvar$group$handle, "BinList")
-      binData <- RNetCDF::var.get.nc(self$NCvar$group$handle, self$variable)
-
-      # Get the binned data in rows
-      data_row <- findInterval(binList$bin_num, self$index$start_num)
-      data_row_bin <- as.integer(binList$bin_num - self$index$start_num[data_row]) + 1L
-
-      numRows <- length(self$index$start_num)
-      maxBins <- self$index$max[numRows * 0.5]
-
-      if (is.null(aoi)) {
-        startRow <- private$file_rows[1L]
-        startBin <- private$file_bins[1L]
-        endRow <- private$file_rows[2L]
-        endBin <- private$file_bins[2L]
-      } else {
-        # Subset the latitude
-        startRow <- floor((aoi$latMin + 90) * numRows / 180) + 1L
-        endRow <- floor((aoi$latMax + 90) * numRows / 180)
-
-        # Subset the longitude
-        startBin <- floor((aoi$lonMin + 180) * maxBins / 360) + 1L
-        endBin <- floor((aoi$lonMax + 180) * maxBins / 360)
-      }
-
-      l <- lapply(startRow:endRow, function(r) {
-        out <- rep(NA_real_, maxBins)
-
-        idx <- which(data_row == r)
-        if (!length(idx)) return(out[startBin:endBin])
-
-        d <- binData$sum[idx] / binList$weights[idx]   # The data of the physical property
-        b <- data_row_bin[idx]                         # The bins to put the data in
-
-        # Expand to maxBins grid cells
-        allocate <- ceiling(1:maxBins * self$index$max[r] / maxBins)
-
-        # Allocate the data to the expanded grid cells
-        for (bin in seq_along(b))
-          out[which(allocate == b[bin])] <- d[bin]
-
-        out[startBin:endBin]
-      })
-      out <- do.call(rbind, l)
-      dimnames(out) <- list(self$axes[["latitude"]]$values[startRow:endRow - private$file_rows[1L] + 1L],
-                            self$axes[["longitude"]]$values[startBin:endBin - private$file_bins[1L] + 1L])
-      out
+    read_data = function(refresh = FALSE) {
+      if (is.null(private.values) || refresh)
+        private$.values <- private$as_matrix()
+      private$.values
     },
 
-    #' @description Retrieve all data of the L3b variable.
+    #' @description Read some data from the file and turn the data into a
+    #'   matrix.
     #'
-    #' @return A [CFArray] instance with all data from this L3b variable.
-    data = function() {
-      out_group <- makeGroup()
-      out_group$set_attribute("title", "NC_CHAR", paste("L3b variable", self$name, "regridded to latitude-longitude"))
-      out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariableL3b$data()"))
-
-      CFArray$new(self$name, out_group, self$as_matrix(), "NC_FLOAT", self$axes, self$crs, self$attributes)
+    #'   This method returns a bare-bones matrix without any metadata or other
+    #'   identifying information. Use method `subset()` or the `[` operator
+    #'   rather than this method to obtain a more informative result.
+    #' @param start,count Start and count vectors that delimit the geographic
+    #'   area to return data for.
+    #' @return A matrix with the data of the variable in raw format.
+    read_chunk = function(start, count) {
+      private$as_matrix(start, count)
     },
 
     #' @description This method extracts a subset of values from the data of the
@@ -194,7 +197,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
     #'   The extracted data has the same dimensional structure as the data in
     #'   the variable, with degenerate dimensions dropped. The order of the axes
     #'   in argument `subset` does not reorder the axes in the result; use the
-    #'   [CFArray]$array() method for this.
+    #'   [CFVariable]$array() method for this.
     #'
     #' @param ... One or more arguments of the form `axis = range`. The "axis"
     #'   part should be the name of axis `longitude` or `latitude` or its
@@ -203,35 +206,26 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
     #'   designators and names are case-sensitive and can be specified in any
     #'   order. If values for the range of an axis fall outside of the extent of
     #'   the axis, the range is clipped to the extent of the axis.
-    #' @param .aoi Optional, an area-of-interest instance of class `AOI` created
-    #'   with the [aoi()] function to indicate the horizontal area that should
-    #'   be extracted. The longitude and latitude coordinates must be included;
-    #'   the X and Y resolution will be calculated if not given. When provided,
-    #'   this argument will take precedence over the `...` argument.
     #' @param rightmost.closed Single logical value to indicate if the upper
     #'   boundary of range in each axis should be included.
     #'
-    #' @return A [CFArray] instance, having an array with axes and attributes of
+    #' @return A [CFVariable] instance, having an array with axes and attributes of
     #'   the variable, or `NULL` if one or more of the elements in the `...`
     #'   argument falls entirely outside of the range of the axis. Note that
     #'   degenerate dimensions (having `length(.) == 1`) are dropped from the
     #'   array but the corresponding axis is maintained in the result as a
     #'   scalar axis.
-    subset = function(..., .aoi = NULL, rightmost.closed = FALSE) {
-      if (!is.null(.aoi) && is.null(.aoi$lonMin))
-        stop("Argument `.aoi` must have coordinates set", call. = FALSE)
-
+    subset = function(..., rightmost.closed = FALSE) {
       # Organize the selectors
       selectors <- list(...)
+      if (is.list(selectors[[1L]]))
+        selectors <- selectors[[1L]]
       sel_names <- names(selectors)
-      axis_names <- self$axis_names
+      axis_names <- names(self$axes)
       axis_order <- private$check_names(sel_names)
 
-      out_group <- makeGroup()
-      out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
-      out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariableL3b$subset()"))
-
-      aoi <- AOI$new()
+      start <- c(1L, 1L)
+      count <- c(self$axes[[1L]]$length, self$axes[[2L]]$length)
 
       out_axes_dim <- list()
       out_axes_other <- list()
@@ -240,28 +234,16 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
         orient <- axis$orientation
 
         rng <- NULL
-        if (!is.null(.aoi))
-          rng <- if (orient == "X") c(.aoi$lonMin, .aoi$lonMax)
-                 else c(.aoi$latMin, .aoi$latMax)
         if (is.null(rng)) rng <- selectors[[ axis_names[ax] ]]
         if (is.null(rng)) rng <- selectors[[ orient ]]
         if (is.null(rng)) {
-          out_axis <- axis$subset(out_group)
+          out_axis <- axis$copy()
         } else {
-          idx <- private$range2index(axis, rng, rightmost.closed)
+          idx <- axis$slice(rng)
           if (is.null(idx)) return(NULL)
-          out_axis <- axis$subset(out_group, axis$name, idx)
-        }
-        rng <- range(rng)
-        len <- out_axis$length
-        if (rng[1L] < out_axis$bounds$coordinates[1L, 1L]) rng[1L] <- out_axis$bounds$coordinates[1L, 1L]
-        if (rng[2L] > out_axis$bounds$coordinates[2L, len]) rng[2L] <- out_axis$bounds$coordinates[2L, len]
-        if (orient == "X") {
-          aoi$lonMin <- rng[1L]
-          aoi$lonMax <- rng[2L]
-        } else {
-          aoi$latMin <- rng[1L]
-          aoi$latMax <- rng[2L]
+          start[ax] <- idx[1L]
+          count[ax] <- idx[2L] - idx[1L] + 1L
+          out_axis <- axis$subset(rng = idx)
         }
 
         # Collect axes for result
@@ -272,13 +254,15 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       }
 
       # Read the data
-      d <- self$as_matrix(aoi)
+      d <- self$read_chunk(start, count)
       d <- drop(d)
 
-      # Assemble the CFArray instance
+      # Assemble the CFVariable instance
       axes <- c(out_axes_dim, out_axes_other)
       names(axes) <- sapply(axes, function(a) a$name)
-      CFArray$new(self$name, out_group, d, "NC_FLOAT", axes, self$crs, self$attributes)
+      v <- CFVariable$new(self$name, values = d, axes = axes, attributes = self$attributes)
+      v$crs <- self$crs
+      v
     }
   )
 )
@@ -344,7 +328,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
 #' summer <- pr[, , 173:263]
 #' str(summer)
 "[.CFVariableL3b" <- function(x, i, j, ..., drop = FALSE) {
-  data <- x$as_matrix()
+  data <- x$read_data()
 
   if (missing(i) && missing(j)) {
     dnames <- list(longitude = x$axes[[1L]]$dimnames, latitude = x$axes[[2L]]$dimnames)

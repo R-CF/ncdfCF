@@ -20,14 +20,6 @@ netCDF resource, organized in groups.
 \item{\code{name}}{The name of the netCDF resource. This is extracted from the
 URI (file name or URL).}
 
-\item{\code{keep_open}}{Logical flag to indicate if the netCDF resource has to
-remain open after reading the metadata. This should be enabled
-typically only for programmatic access or when a remote resource has an
-expensive access protocol (i.e. 2FA). The resource has to be explicitly
-closed with \code{close()} after use. Note that when a data set is opened
-with \code{keep_open = TRUE} the resource may still be closed by the
-operating system or the remote server.}
-
 \item{\code{root}}{Root of the group hierarchy through which all elements of the
 netCDF resource are accessed. It is \strong{strongly discouraged} to
 manipulate the objects in the group hierarchy directly. Use the provided
@@ -83,19 +75,14 @@ resource conforms to.}
 \subsection{Method \code{new()}}{
 Create an instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$new(name, resource, keep_open, format)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$new(resource, format)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{name}}{The name that describes this instance.}
-
 \item{\code{resource}}{An instance of \code{CFResource} that links to the netCDF
 resource.}
-
-\item{\code{keep_open}}{Logical. Should the netCDF resource be kept open for
-further access?}
 
 \item{\code{format}}{Character string with the format of the netCDF resource as
 reported by the call opening the resource.}

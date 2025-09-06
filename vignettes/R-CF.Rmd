@@ -115,14 +115,14 @@ The bottom line is that there is no guarantee that the data are stored in a part
 
 Lucky for you package `ncdfCF` does all the dirty work behind the scene to give you easy access to either the raw array data, in the ordering found in the netCDF file, or an oriented array that follows the standard R array layout:
 
-```{r read-array}
+```{r read-data}
 # The raw data using the ordering in the netCDF file (or as modified by
 # a processing method such as `summarise()`)
-tmax_raw <- tmax$data()$raw()
+tmax_raw <- tmax$raw()
 str(tmax_raw)
 
 # The same data but now in standard R ordering
-tmax_R <- tmax$data()$array()
+tmax_R <- tmax$array()
 str(tmax_R)
 ```
 
@@ -134,7 +134,7 @@ The netCDF file format is very flexible, as well as CF, and the `ncdfCF` package
 
 ![Figure 2: The ncdfCF data model](ncdfCF-datamodel-0.7.png){width="680"}
 
-Each of the building blocks may have other objects associated with it, such as axes for `CFVariable` and `CFArray`. Package `ncdfCF` is built using the `R6` OOP framework and uses class hierarchies throughout. `CFVariable` and `CFArray`, for instance, derive from the common "virtual" ancestor `CFVariableBase` (as does class `CFVerticalParametricTerm` which you will encounter when using *formula terms* for a parametric vertical axis). The crucial but humble "virtual" class `CFAxis` is not used directly, instead you'll work with its seven descendant classes.
+Each of the building blocks may have other objects associated with it, such as axes for `CFVariable`. Package `ncdfCF` is built using the `R6` OOP framework and uses class hierarchies throughout. `CFVariable` and `CFArray`, for instance, derive from the common "virtual" ancestor `CFVariableBase` (as does class `CFVerticalParametricTerm` which you will encounter when using *formula terms* for a parametric vertical axis). The crucial but humble "virtual" class `CFAxis` is not used directly, instead you'll work with its seven descendant classes.
 
 ![Figure 3: Condensed ncdfCF class hierarchy](ncdfCF-hierarchy-0.7.png){width="680"}
 

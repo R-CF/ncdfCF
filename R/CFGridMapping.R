@@ -399,7 +399,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
 
     # This method creates an UOM WKT2 string from a specified UOM name. This is
     # typically called to describe the UOM of CFVariable axes for the CS section
-    # of a full WKT2 string for a CFVariable or CFArray instance.
+    # of a full WKT2 string for a CFVariable instance.
     # Known aliases (by the EPSG database) are interpreted correctly, with the
     # resulting WKT2 string using the default name of the UOM. If no alias is
     # found, the method returns an empty string, otherwise the WKT2 string.
@@ -627,9 +627,8 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
           stop("Unrecognized grid mapping name.", call. = FALSE) # nocov
         private$.grid_mapping_name <- grid_mapping_name
         self$set_attribute("grid_mapping_name", "NC_CHAR", grid_mapping_name)
-      }
-
-      self$NCvar$CF <- self
+      } else
+        private$.grid_mapping_name <- self$attribute("grid_mapping_name")
     },
 
     #' @description Prints a summary of the grid mapping to the console.
@@ -650,7 +649,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
 
     #' @description Retrieve the CRS string for a specific variable.
     #' @param axis_info A list with information that describes the axes of the
-    #' `CFVariable` or `CFArray` instance to describe.
+    #' `CFVariable` instance to describe.
     #' @return A character string with the CRS in WKT2 format.
     wkt2 = function(axis_info) {
       crs_attr <- self$attribute("crs_wkt")
@@ -748,7 +747,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
 # ==============================================================================
 # Helper function
 
-# Return the axis information from a CFVariable or CFArray object to construct a
+# Return the axis information from a `CFVariable` object to construct a
 # WKT2 string of the CRS of this variable. Returns a list with relevant
 # information. In the EPSG database, X and Y UOMs are always the same. Hence
 # only one UOM is reported back. Furthermore, axis order is considered important
@@ -756,7 +755,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
 # transformation engine, something this package is not concerned with.
 # Consequently, axis order is always reported as the standard X,Y. R packages
 # like terra and stars deal with the idiosyncracies of R arrays. This has been
-# tested with the results of [CFArray] functions. This function may be extended
+# tested with the results of [CFVariable] functions. This function may be extended
 # in the future to inject more intelligence into the WKT2 strings produced.
 # Currently it just returns the "units" string of the X axis (the Y axis has the
 # same unit), and the Z axis, if present, in a list.

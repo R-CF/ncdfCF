@@ -1,29 +1,30 @@
-#' Operations on CFArray objects
+#' Operations on CFVariable objects
 #'
 #' Basic arithmetic, mathematical and logical operations can be applied on the
-#' data of [CFArray] objects having a suitable data type, specifically the base
-#' R functions from the Ops and Math groups of the S3 [groupGeneric] functions.
+#' data of [CFVariable] objects having a suitable data type, specifically the
+#' base R functions from the Ops and Math groups of the S3 [groupGeneric]
+#' functions.
 #'
-#' The functions always return a new CFArray object created in a new group.
-#' Functions can thus be concatenated to create more complex expressions. The
-#' data type of the new object is determined by the base R function; its name is
-#' concatenated from the names in the argument object(s).
+#' The functions always return a new `CFVariable` object. Functions can thus be
+#' concatenated to create more complex expressions. The data type of the new
+#' object is determined by the base R function; its name is concatenated from
+#' the names in the argument object(s).
 #'
-#' For the Ops functions with two arguments, if both arguments are a CFArray
-#' object they have to be compatible: same shape, axis coordinate values and
-#' coordinate reference system. The resulting CFArray object will use the same
-#' axes as the CFArray object(s) used as argument.
+#' For the Ops functions with two arguments, if both arguments are a
+#' `CFVariable` object they have to be compatible: same shape, axis coordinate
+#' values and coordinate reference system. The resulting `CFVariable` object
+#' will use the same axes as the `CFVariable` object(s) used as argument.
 #'
-#' The attributes of the resulting CFArray object should be updated to reflect
-#' its contents, in particular the "name", "long_name", "standard_name" and
-#' "units" attributes. Attributes are not copied over from the CFArray objects
-#' in the arguments.
+#' The attributes of the resulting `CFVariable` object should be updated to
+#' reflect its contents, in particular the "name", "long_name", "standard_name"
+#' and "units" attributes. Attributes are not copied over from the `CFVariable`
+#' objects in the arguments.
 #'
-#' @param e1,e2 CFArray objects, or a single numeric value.
+#' @param e1,e2 `CFVariable` objects, or a single numeric value.
 #'
-#' @return A new CFArray object. The object will have the same coordinate space
-#'   as the CFArray object used as argument. Arguments are not copied and the
-#'   new object will only have the "actual_range" attribute set.
+#' @return A new `CFVariable` object. The object will have the same coordinate
+#'   space as the `CFVariable` object used as argument. Arguments are not copied
+#'   and the new object will only have the "actual_range" attribute set.
 #'
 #'   Results that are logical (see the examples) are stored using the `NC_SHORT`
 #'   data type because netCDF does not have a native logical data type.
@@ -34,7 +35,7 @@
 #' ds <- open_ncdf(fn)
 #'
 #' # Temperature data in K
-#' t2m <- ds[["t2m"]]$data()
+#' t2m <- ds[["t2m"]]
 #'
 #' # Convert to degrees_Celsius
 #' t2mC <- t2m - 273.15
@@ -48,13 +49,12 @@
 #' hot$set_attribute("units", "NC_CHAR", "1")
 #' hot
 #'
-Ops.CFArray <- function(e1, e2) {
+Ops.CFVariable <- function(e1, e2) {
   fun <- match.fun(.Generic)
 
-  if (inherits(e1, "CFArray")) {
-    d1 <- e1$raw()
+  if (inherits(e1, "CFVariable")) {
+    d1 <- e1$read_data()
     name <- e1$name
-    grp <- makeGroup()
     crs <- e1$crs
     axes <- e1$axes
   } else {
@@ -66,16 +66,15 @@ Ops.CFArray <- function(e1, e2) {
     res <- fun(d1)
     name <- paste("inv", name, sep = "_")
   } else {
-    if (inherits(e2, "CFArray")) {
-      if (inherits(e1, "CFArray")) {
+    if (inherits(e2, "CFVariable")) {
+      if (inherits(e1, "CFVariable")) {
         if (!e1$is_coincident(e2))
-          stop("CFArray objects are not coincident.", call. = FALSE)
+          stop("CFVariable arguments are not coincident.", call. = FALSE)
       } else {
-        grp <- makeGroup()
         crs <- e2$crs
         axes <- e2$axes
       }
-      d2 <- e2$raw()
+      d2 <- e2$read_data()
       name <- paste(name, e2$name, sep = "_")
     } else {
       d2 <- e2
@@ -86,31 +85,22 @@ Ops.CFArray <- function(e1, e2) {
 
   name <- gsub("\\.|,", "_", name)
 
-  datatype <- switch(storage.mode(res),
-                     "character" = "NC_STRING",
-                     "double" = "NC_DOUBLE",
-                     "integer" = "NC_INT",
-                     "logical" = "NC_SHORT",
-                     stop("Must add type", storage.mode(res)))
-  CFArray$new(name, grp, res, datatype, axes, crs)
+  v <- CFVariable$new(name, values = res, axes = axes)
+  v$crs <- crs
+  v
 }
 
-#' Mathematical operations on CFArray objects.
+#' Mathematical operations on CFVariable objects.
 #'
-#' @param x A CFArray object.
+#' @param x A CFVariable object.
 #' @param ... Additional arguments passed on to the math functions.
 #'
 #' @rdname arrayOps
 #' @export
-Math.CFArray <- function(x, ...) {
+Math.CFVariable <- function(x, ...) {
   fun <- match.fun(.Generic)
-
-  res <- fun(x$raw(), ...)
-  datatype <- switch(storage.mode(res),
-                     "character" = "NC_STRING",
-                     "double" = "NC_DOUBLE",
-                     "integer" = "NC_INT",
-                     "logical" = "NC_SHORT",
-                     stop("Must add type", storage.mode(res)))
-  CFArray$new(paste(.Generic, x$name, sep = "_"), makeGroup(), res, datatype, x$axes, x$crs)
+  res <- fun(x$read_data(), ...)
+  v <- CFVariable$new(paste(.Generic, x$name, sep = "_"), values = res, axes = x$axes)
+  v$crs <- x$crs
+  v
 }

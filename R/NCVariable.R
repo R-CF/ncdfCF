@@ -107,14 +107,14 @@ NCVariable <- R6::R6Class("NCVariable",
     #'   start index to the end of the dimension.
     #' @return An array with the requested data, or an error object.
     get_data = function(start = NA, count = NA) {
-      RNetCDF::var.get.nc(private$.group$handle, self$name, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+      RNetCDF::var.get.nc(private$.group$handle, private$.name, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
     },
 
     #' @description Get the [NCDimension] object(s) that this variable uses.
-    #' @param id The index of the dimension. If missing, all dimensions of
-    #' this variable are returned.
-    #' @return A NCDimension object or a list thereof. If no NCDimensions were
-    #' found, return `NULL`.
+    #' @param id The index of the dimension. If missing, all dimensions of this
+    #'   variable are returned.
+    #' @return A `NCDimension` object or a list thereof. If no `NCDimension`s
+    #'   were found, return `NULL`.
     dimension = function(id) {
       if (missing(id)) {
         lapply(private$.dimids, function(did) private$.group$find_dim_by_id(did))
@@ -152,7 +152,7 @@ NCVariable <- R6::R6Class("NCVariable",
       if (missing(value))
         private$.vtype
       else
-        stop("Cannot set the data type of a NC object.", call. = FALSE)
+        stop("Cannot set the data type of a NC object.", call. = FALSE) # nocov
     },
 
     #' @field ndims (read-only) Number of dimensions that this variable uses.
@@ -160,7 +160,7 @@ NCVariable <- R6::R6Class("NCVariable",
       if (missing(value))
         length(private$.dimids)
       else
-        stop("Cannot set the number of dimensions of a NC object.", call. = FALSE)
+        stop("Cannot set the number of dimensions of a NC object.", call. = FALSE) # nocov
     },
 
     #' @field dimids (read-only) Vector of dimension identifiers that this
@@ -169,7 +169,7 @@ NCVariable <- R6::R6Class("NCVariable",
       if (missing(value))
         private$.dimids
       else
-        stop("Cannot set the dimids of a NC object.", call. = FALSE)
+        stop("Cannot set the dimids of a NC object.", call. = FALSE) # nocov
     },
 
     #' @field netcdf4 (read-only) Additional properties for a `netcdf4` resource.
@@ -177,7 +177,7 @@ NCVariable <- R6::R6Class("NCVariable",
       if (missing(value))
         private$.ncdf4
       else
-        stop("Cannot set the netcdf4 properties of a NC object.", call. = FALSE)
+        stop("Cannot set the netcdf4 properties of a NC object.", call. = FALSE) # nocov
     },
 
     #' @field CF Register CF object that uses this netCDF variable, or retrieve
@@ -188,7 +188,7 @@ NCVariable <- R6::R6Class("NCVariable",
       else if (inherits(value, "CFObject"))
         private$.CFobjects[[value$fullname]] <- value
       else
-        warning("Can only reference an object descending from `CFObject` from an `NCVariable`", call. = FALSE)
+        warning("Can only reference an object descending from `CFObject` from an `NCVariable`", call. = FALSE) # nocov
     },
 
     #' @field fullname (read-only) Name of this netCDF variable including the

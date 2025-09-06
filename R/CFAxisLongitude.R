@@ -12,16 +12,109 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
   inherit = CFAxisNumeric,
   cloneable = FALSE,
   public = list(
-
     #' @description Create a new instance of this class.
     #'
     #'   Creating a new longitude axis is more easily done with the
     #'   [makeLongitudeAxis()] function.
-    #' @param nc_var The netCDF variable that describes this instance.
-    #' @param nc_dim The netCDF dimension that describes the dimensionality.
-    #' @param values The coordinates of this axis.
-    initialize = function(nc_var, nc_dim, values) {
-      super$initialize(nc_var, nc_dim, "X", values)
+    #' @param var The name of the axis when creating a new axis. When reading an
+    #'   axis from file, the [NCVariable] object that describes this instance.
+    #' @param values Optional. The values of the axis in a vector. The values
+    #'   have to be numeric with the maximum value no larger than the minimum
+    #'   value + 360, and monotonic. Ignored when argument `var` is a NCVariable
+    #'   object.
+    #' @param start Optional. Integer index where to start reading axis data
+    #'   from file. The index may be `NA` to start reading data from the start.
+    #' @param count Optional. Number of elements to read from file. This may be
+    #'   `NA` to read to the end of the data.
+    #' @param attributes Optional. A `data.frame` with the attributes of the
+    #'   axis. When an empty `data.frame` (default) and argument `var` is an
+    #'   NCVariable instance, attributes of the axis will be taken from the
+    #'   netCDF resource.
+    initialize = function(var, values, start = 1L, count = NA, attributes = data.frame()) {
+      super$initialize(var, values = values, start = start, count = count, orientation =  "X", attributes = attributes)
+      self$set_attribute("standard_name", "NC_CHAR", "longitude")
+      if (is.na(self$attribute("units")))
+        self$set_attribute("units", "NC_CHAR", "degrees_east")
+
+      if (!missing(values) && !.check_longitude_domain(values))
+        stop("Longitude coordinate values span a range of more than 360 degrees.", call. = FALSE) # nocov
+    },
+
+    #' @description Create a copy of this axis. The copy is completely separate
+    #' from `self`, meaning that both `self` and all of its components are made
+    #' from new instances.
+    #' @param name The name for the new axis. If an empty string is passed, will
+    #'   use the name of this axis.
+    #' @return The newly created axis.
+    copy = function(name = "") {
+      if (self$has_resource) {
+        ax <- CFAxisLongitude$new(self$NCvar, values = private$.values, start = private$.start_count$start,
+                                  count = private$.start_count$count, attributes = self$attributes)
+        if (nzchar(name))
+          ax$name <- name
+      } else {
+        if (!nzchar(name))
+          name <- self$name
+        ax <- CFAxisLongitude$new(name, values = private$.values, attributes = self$attributes)
+      }
+
+      if (inherits(private$.bounds, "CFBounds"))
+        ax$bounds <- private$.bounds
+
+      private$subset_coordinates(ax, c(1L, self$length))
+      ax
+    },
+
+    #' @description Create a copy of this axis but using the supplied values.
+    #'   The attributes are copied to the new axis. Boundary values and
+    #'   auxiliary coordinates are not copied.
+    #'
+    #'   After this operation the attributes of the newly created axes may not
+    #'   be accurate, except for the "actual_range" attribute. The calling code
+    #'   should set, modify or delete attributes as appropriate.
+    #' @param name The name for the new axis. If an empty string is passed, will
+    #'   use the name of this axis.
+    #' @param values The values to the used with the copy of this axis.
+    #' @return The newly created axis.
+    copy_with_values = function(name = "", values) {
+      if (!nzchar(name))
+        name <- self$name
+      CFAxisLongitude$new(name, values = values, attributes = self$attributes)
+    },
+
+    #' @description Return a longitude axis spanning a smaller coordinate range.
+    #'   This method returns an axis which spans the range of indices given by
+    #'   the `rng` argument.
+    #' @param name The name for the new axis. If an empty string is passed
+    #'   (default), will use the name of this axis.
+    #' @param rng The range of indices whose values from this axis to include in
+    #'   the returned axis. If the value of the argument is `NULL`, return a
+    #'   copy of the axis.
+    #' @return A new `CFAxisLongitude` instance covering the indicated range of
+    #'   indices. If the value of the argument `rng` is `NULL`, return a copy of
+    #'   `self` as the new axis.
+    subset = function(name = "", rng = NULL) {
+      if (is.null(rng))
+        self$copy(name)
+      else {
+        rng <- range(rng)
+        if (self$has_resource) {
+          ax <- CFAxisLongitude$new(self$NCvar, start = private$.start_count$start + rng[1L] - 1L,
+                                    count = rng[2L] - rng[1L] + 1L, attributes = self$attributes)
+          if (nzchar(name))
+            ax$name <- name
+        } else {
+          if (!nzchar(name))
+            name <- self$name
+          ax <- CFAxisLongitude$new(name, values = private$.values[rng[1L]:rng[2L]], attributes = self$attributes)
+        }
+
+        if (inherits(private$.bounds, "CFBounds"))
+          ax$bounds <- private$.bounds$subset(rng)
+
+        private$subset_coordinates(ax, rng)
+        ax
+      }
     }
   ),
   active = list(
@@ -36,15 +129,13 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
 # ============ Helper functions
 
 # This function checks if the supplied coordinates are within the domain of
-# longitude values. The values have to be numeric and monotonic and be either in
-# the range [-180, 180] or [0, 360]. Returns TRUE or FALSE.
+# longitude values. The maximum value cannot be larger than the minimum value +
+# 360. Returns TRUE or FALSE.
 .check_longitude_domain <- function(crds) {
   len <- length(crds)
   if (!len) TRUE
-  else if (is.numeric(crds))
-    switch(.monotonicity(crds) + 2L,
-           (crds[len] >= -180 && crds[1L] <= 180) || (crds[len] >= 0 && crds[1L] <= 360),
-           FALSE,
-           (crds[1L] >= -180 && crds[len] <= 180) || (crds[1L] >= 0 && crds[len] <= 360))
-  else FALSE
+  else {
+    rng <- range(crds)
+    rng[2L] - rng[1L] <= 360
+  }
 }

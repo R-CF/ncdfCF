@@ -78,13 +78,12 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 #> Format     : offset64 
 #> Collection : Generic netCDF data 
 #> Conventions: CF-1.6 
-#> Keep open  : FALSE 
 #> 
 #> Variables:
 #>  name long_name             units data_type axes                     
-#>  t2m  2 metre temperature   K     NC_SHORT  longitude, latitude, time
-#>  pev  Potential evaporation m     NC_SHORT  longitude, latitude, time
-#>  tp   Total precipitation   m     NC_SHORT  longitude, latitude, time
+#>  t2m  2 metre temperature   K     NC_DOUBLE longitude, latitude, time
+#>  pev  Potential evaporation m     NC_DOUBLE longitude, latitude, time
+#>  tp   Total precipitation   m     NC_DOUBLE longitude, latitude, time
 #> 
 #> Attributes:
 #>  name        type    length value                                             
@@ -104,11 +103,13 @@ ds$axis_names
 #> <Variable> t2m 
 #> Long name: 2 metre temperature 
 #> 
+#> Values: (not loaded)
+#> 
 #> Axes:
-#>  axis name      length unlim values                                       
-#>  X    longitude 31           [28 ... 31]                                  
-#>  Y    latitude  21           [-1 ... -3]                                  
-#>  T    time      24     U     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  axis name      length values                                       
+#>  X    longitude 31     [28 ... 31]                                  
+#>  Y    latitude  21     [-1 ... -3]                                  
+#>  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    
@@ -197,10 +198,8 @@ peek_ncdf(fn)
 
 ## Extracting data
 
-There are four ways to read data for a data variable from the resource:
+There are three ways to read data for a data variable from the resource:
 
-- **`data():`** The `data()` method returns all data of a variable,
-  including its metadata, in a `CFArray` instance.
 - **`[]`:** The usual R array operator gives you access to the raw,
   non-interpreted data in the netCDF resource. This uses index values
   into the dimensions and requires you to know the order in which the
@@ -247,33 +246,31 @@ str(ts)
 Note that the results contain degenerate dimensions (of length 1). This
 by design when using basic `[]` data access because it allows attributes
 to be attached in a consistent manner. When using the `subset()` method,
-the data is returned as an instance of `CFArray`, including axes and
+the data is returned as an instance of `CFVariable`, including axes and
 attributes:
 
 ``` r
 # Extract a specific region, full time dimension
 (ts <- t2m$subset(list(X = 29:30, Y = -1:-2)))
-#> <Data array> t2m 
+#> <Variable> t2m 
 #> Long name: 2 metre temperature 
 #> 
-#> Values: [283.0182 ... 299.917] K
-#>     NA: 0 (0.0%)
+#> Values: (not loaded)
 #> 
 #> Axes:
 #>  axis name      length values                                       
-#>  X    longitude 10     [29 ... 29.9]                                
-#>  Y    latitude  10     [-1.1 ... -2]                                
-#>  T    time      24     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  X    longitude 11     [29 ... 30]                                  
+#>  Y    latitude  11     [-1 ... -2]                                  
+#>  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    
 #>  hours since 1900-01-01 00:00:00.0
 #> 
 #> Attributes:
-#>  name         type      length value                
-#>  long_name    NC_CHAR   19     2 metre temperature  
-#>  units        NC_CHAR    1     K                    
-#>  actual_range NC_DOUBLE  2     283.018168, 299.91697
+#>  name      type    length value              
+#>  long_name NC_CHAR 19     2 metre temperature
+#>  units     NC_CHAR  1     K
 
 # Extract specific time slices for a specific region
 # Note that the dimensions are specified out of order and using alternative
@@ -281,27 +278,25 @@ attributes:
 (ts <- t2m$subset(list(T = c("2016-01-01 09:00", "2016-01-01 15:00"),
                        X = c(29.6, 28.8),
                        Y = seq(-2, -1, by = 0.05))))
-#> <Data array> t2m 
+#> <Variable> t2m 
 #> Long name: 2 metre temperature 
 #> 
-#> Values: [288.2335 ... 299.917] K
-#>     NA: 0 (0.0%)
+#> Values: (not loaded)
 #> 
 #> Axes:
 #>  axis name      length values                                       
-#>  X    longitude  7     [28.9 ... 29.5]                              
-#>  Y    latitude  10     [-1.1 ... -2]                                
-#>  T    time       6     [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]
+#>  X    longitude 7      [28.9 ... 29.5]                              
+#>  Y    latitude  11     [-1 ... -2]                                  
+#>  T    time      6-U    [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    
 #>  hours since 1900-01-01 00:00:00.0
 #> 
 #> Attributes:
-#>  name         type      length value                
-#>  long_name    NC_CHAR   19     2 metre temperature  
-#>  units        NC_CHAR    1     K                    
-#>  actual_range NC_DOUBLE  2     288.233524, 299.91697
+#>  name      type    length value              
+#>  long_name NC_CHAR 19     2 metre temperature
+#>  units     NC_CHAR  1     K
 ```
 
 The latter two methods will read only as much data from the netCDF
@@ -314,10 +309,10 @@ or zone, such as a timeseries of data. The `profile()` method has some
 flexible options to support this:
 
 - Profile specific locations, with multiple locations specified per
-  call, returning the data as a (set of) `CFArray` instance(s) or as a
-  single `data.table`.
+  call, returning the data as a (set of) `CFVariable` instance(s) or as
+  a single `data.table`.
 - Profile zones, such as a latitude band or an atmospheric level. Data
-  is returned as `CFArray` instance(s).
+  is returned as a new `CFVariable` instance(s).
 
 In all cases, you can profile over any of the axes and over any number
 of axes.
@@ -355,8 +350,8 @@ axis coordinates you get progressively higher-order results. To get a
 latitudinal transect, for instance, provide only a longitude coordinate:
 
 ``` r
-(trans30 <- t2m$profile(longitude = 29.74, .names = "lon_29_74"))
-#> <Data array> lon_29_74 
+(trans29_74 <- t2m$profile(longitude = 29.74, .names = "lon_29_74"))
+#> <Variable> lon_29_74 
 #> Long name: 2 metre temperature 
 #> 
 #> Values: [286.5394 ... 298.963] K
@@ -365,8 +360,8 @@ latitudinal transect, for instance, provide only a longitude coordinate:
 #> Axes:
 #>  axis name      length values                                       
 #>  Y    latitude  21     [-1 ... -3]                                  
-#>  T    time      24     [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
-#>  X    longitude  1     [29.74]                                      
+#>  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  X    longitude 1      [29.74]                                      
 #>  unit                             
 #>  degrees_north                    
 #>  hours since 1900-01-01 00:00:00.0
@@ -376,8 +371,8 @@ latitudinal transect, for instance, provide only a longitude coordinate:
 #>  name         type      length value                
 #>  long_name    NC_CHAR   19     2 metre temperature  
 #>  units        NC_CHAR    1     K                    
-#>  coordinates  NC_CHAR    9     longitude            
 #>  actual_range NC_DOUBLE  2     286.539447, 298.96298
+#>  coordinates  NC_CHAR    9     longitude
 ```
 
 Note that there is only a single longitude coordinate left, at exactly
@@ -385,16 +380,15 @@ the specified longitude.
 
 ## Summarising data over time
 
-With the `summarise()` method, available for both `CFVariable` and
-`CFArray`, you can apply a function over the data to generate summaries.
-You could, for instance, summarise daily data to monthly means. These
-methods use the specific calendar of the “time” axis. The return value
-is a new `CFArray` object.
+With the `summarise()` method you can apply a function over the data to
+generate summaries. You could, for instance, summarise daily data to
+monthly means. These methods use the specific calendar of the “time”
+axis. The return value is a new `CFVariable` object.
 
 ``` r
 # Summarising hourly temperature data to calculate the daily maximum temperature
 t2m$summarise("tmax", max, "day")
-#> <Data array> tmax 
+#> <Variable> tmax 
 #> Long name: 2 metre temperature 
 #> 
 #> Values: [290.0364 ... 302.0447] K
@@ -410,12 +404,11 @@ t2m$summarise("tmax", max, "day")
 #>  name         type      length value                
 #>  long_name    NC_CHAR   19     2 metre temperature  
 #>  units        NC_CHAR    1     K                    
-#>  coordinates  NC_CHAR    4     time                 
 #>  actual_range NC_DOUBLE  2     290.036358, 302.04472
 ```
 
 A function may also return a vector of multiple values, in which case a
-list is returned with a new `CFArray` object for each return value of
+list is returned with a new `CFVariable` object for each return value of
 the function. This allows you to calculate multiple results with a
 single call. You could write your own function to tailor the
 calculations to your needs. Rather than just calculating the daily
@@ -436,7 +429,7 @@ daily_stats <- function(x, na.rm = TRUE) {
 # The `name` argument should have as many names as the function returns results
 (stats <- t2m$summarise(c("tmin", "tmax", "diurnal_range"), daily_stats, "day"))
 #> $tmin
-#> <Data array> tmin 
+#> <Variable> tmin 
 #> Long name: 2 metre temperature 
 #> 
 #> Values: [283.0182 ... 293.8659] K
@@ -452,11 +445,10 @@ daily_stats <- function(x, na.rm = TRUE) {
 #>  name         type      length value                 
 #>  long_name    NC_CHAR   19     2 metre temperature   
 #>  units        NC_CHAR    1     K                     
-#>  coordinates  NC_CHAR    4     time                  
 #>  actual_range NC_DOUBLE  2     283.018168, 293.865857
 #> 
 #> $tmax
-#> <Data array> tmax 
+#> <Variable> tmax 
 #> Long name: 2 metre temperature 
 #> 
 #> Values: [290.0364 ... 302.0447] K
@@ -472,11 +464,10 @@ daily_stats <- function(x, na.rm = TRUE) {
 #>  name         type      length value                
 #>  long_name    NC_CHAR   19     2 metre temperature  
 #>  units        NC_CHAR    1     K                    
-#>  coordinates  NC_CHAR    4     time                 
 #>  actual_range NC_DOUBLE  2     290.036358, 302.04472
 #> 
 #> $diurnal_range
-#> <Data array> diurnal_range 
+#> <Variable> diurnal_range 
 #> Long name: 2 metre temperature 
 #> 
 #> Values: [1.819982 ... 11.27369] K
@@ -492,26 +483,25 @@ daily_stats <- function(x, na.rm = TRUE) {
 #>  name         type      length value              
 #>  long_name    NC_CHAR   19     2 metre temperature
 #>  units        NC_CHAR    1     K                  
-#>  coordinates  NC_CHAR    4     time               
 #>  actual_range NC_DOUBLE  2     1.819982, 11.27369
 ```
 
 Note that you may have to update some attributes after calling
-`summarise()`. You can use the `set_attribute()` method on the `CFArray`
-objects to do that.
+`summarise()`. You can use the `set_attribute()` method on the
+`CFVariable` objects to do that.
 
 ## Create new netCDF objects
 
-You can convert a suitable R object into a `CFArray` instance quite
+You can convert a suitable R object into a `CFVariable` instance quite
 easily. R objects that are supported include arrays, matrices and
 vectors of type logical, integer, numeric or logical.
 
 ``` r
 arr <- array(rnorm(120), dim = c(6, 5, 4))
-as_CFArray("my_first_CF_object", arr)
-#> <Data array> my_first_CF_object 
+as_CF("my_first_CF_object", arr)
+#> <Variable> my_first_CF_object 
 #> 
-#> Values: [-2.508989 ... 2.278751] 
+#> Values: [-2.405696 ... 2.782463] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -522,7 +512,7 @@ as_CFArray("my_first_CF_object", arr)
 #> 
 #> Attributes:
 #>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -2.508989, 2.278751
+#>  actual_range NC_DOUBLE 2      -2.405696, 2.782463
 ```
 
 Usable but not very impressive. The axes have dull names without any
@@ -541,25 +531,25 @@ automatically detected irrespective of the name.
 dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4), 
                       time = c("2025-07-01", "2025-07-02", "2025-07-03", "2025-07-04"))
 
-(obj <- as_CFArray("a_better_CF_object", arr))
-#> <Data array> a_better_CF_object 
+(obj <- as_CF("a_better_CF_object", arr))
+#> <Variable> a_better_CF_object 
 #> 
-#> Values: [-2.508989 ... 2.278751] 
+#> Values: [-2.405696 ... 2.782463] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  axis name length values                      unit                          
-#>  Y    lat  6      [45 ... 40]                 degrees_north                 
-#>  X    lon  5      [0 ... 4]                   degrees_east                  
-#>  T    time 4      [2025-07-01 ... 2025-07-04] days since 1970-01-01T00:00:00
+#>  axis name length values                      unit         
+#>  Y    lat  6      [45 ... 40]                 degrees_north
+#>  X    lon  5      [0 ... 4]                   degrees_east 
+#>  T    time 4      [2025-07-01 ... 2025-07-04]              
 #> 
 #> Attributes:
 #>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -2.508989, 2.278751
+#>  actual_range NC_DOUBLE 2      -2.405696, 2.782463
 
 # Axes are of a specific type and have basic attributes set
 obj$axes[["lat"]]
-#> <Latitude axis> [-24] lat
+#> <Latitude axis> [-22] lat
 #> Length     : 6
 #> Axis       : Y 
 #> Coordinates: 45, 44, 43, 42, 41, 40 (degrees_north)
@@ -567,13 +557,13 @@ obj$axes[["lat"]]
 #> 
 #> Attributes:
 #>  name          type      length value        
+#>  actual_range  NC_DOUBLE  2     40, 45       
+#>  axis          NC_CHAR    1     Y            
 #>  standard_name NC_CHAR    8     latitude     
 #>  units         NC_CHAR   13     degrees_north
-#>  axis          NC_CHAR    1     Y            
-#>  actual_range  NC_DOUBLE  2     40, 45
 
 obj$axes[["time"]]
-#> <Time axis> [-26] time
+#> <Time axis> [-24] time
 #> Length     : 4
 #> Axis       : T 
 #> Calendar   : standard 
@@ -581,21 +571,19 @@ obj$axes[["time"]]
 #> Bounds     : (not set) 
 #> 
 #> Attributes:
-#>  name          type      length value                         
-#>  standard_name NC_CHAR    4     time                          
-#>  units         NC_CHAR   30     days since 1970-01-01T00:00:00
-#>  calendar      NC_CHAR    8     standard                      
-#>  axis          NC_CHAR    1     T                             
-#>  actual_range  NC_DOUBLE  2     20270, 20273
+#>  name          type      length value       
+#>  actual_range  NC_DOUBLE 2      20270, 20273
+#>  axis          NC_CHAR   1      T           
+#>  standard_name NC_CHAR   4      time
 ```
 
-You can further modify the resulting `CFArray` by setting other
+You can further modify the resulting `CFVariable` by setting other
 properties, such as attributes or a coordinate reference system. Once
 the object is complete, you can export or save it.
 
 ## Exporting and saving data
 
-A `CFData` object can be exported to a `data.table` or to a
+A `CFVariable` object can be exported to a `data.table` or to a
 `terra::SpatRaster` (3D) or `terra::SpatRasterDataset` (4D) for further
 processing. Obviously, these packages need to be installed to utilise
 these methods.
@@ -604,23 +592,23 @@ these methods.
 # install.packages("data.table")
 library(data.table)
 head(dt <- ts$data.table())
-#>    longitude latitude                time      t2m
-#>        <num>    <num>              <char>    <num>
-#> 1:      28.9     -1.1 2016-01-01T09:00:00 294.9227
-#> 2:      29.0     -1.1 2016-01-01T09:00:00 295.8135
-#> 3:      29.1     -1.1 2016-01-01T09:00:00 297.0929
-#> 4:      29.2     -1.1 2016-01-01T09:00:00 297.4697
-#> 5:      29.3     -1.1 2016-01-01T09:00:00 298.5419
-#> 6:      29.4     -1.1 2016-01-01T09:00:00 299.8894
+#>    longitude latitude                time
+#>        <num>    <num>              <char>
+#> 1:      28.9       -1 2016-01-01T09:00:00
+#> 2:      29.0       -1 2016-01-01T09:00:00
+#> 3:      29.1       -1 2016-01-01T09:00:00
+#> 4:      29.2       -1 2016-01-01T09:00:00
+#> 5:      29.3       -1 2016-01-01T09:00:00
+#> 6:      29.4       -1 2016-01-01T09:00:00
 
 #install.packages("terra")
 suppressMessages(library(terra))
 (r <- stats[["diurnal_range"]]$terra())
 #> class       : SpatRaster 
-#> dimensions  : 21, 31, 1  (nrow, ncol, nlyr)
+#> size        : 21, 31, 1  (nrow, ncol, nlyr)
 #> resolution  : 0.1, 0.1  (x, y)
 #> extent      : 27.95, 31.05, -3.05, -0.95  (xmin, xmax, ymin, ymax)
-#> coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+#> coord. ref. :  
 #> source(s)   : memory
 #> name        : 2016-01-01T12:00:00 
 #> min value   :            1.819982 
@@ -630,15 +618,15 @@ terra::plot(r)
 
 <img src="man/figures/README-export-1.png" width="100%" />
 
-A `CFData` object can also be written back to a netCDF file. The object
-will have all its relevant attributes and properties written together
-with the actual data: axes, bounds, attributes, CRS. The netCDF file is
-of version “netcdf4” and will have the axes oriented in such a way that
-the file has maximum portability (specifically, data will be stored in
-row-major order with increasing Y values).
+A `CFVariable` object can also be written back to a netCDF file. The
+object will have all its relevant attributes and properties written
+together with the actual data: axes, bounds, attributes, CRS. The netCDF
+file is of version “netcdf4” and will have the axes oriented in such a
+way that the file has maximum portability (specifically, data will be
+stored in row-major order with increasing Y values).
 
 ``` r
-# Save a CFData instance to a netCDF file on disk
+# Save a CFVariable instance to a netCDF file on disk
 stats[["diurnal_range"]]$save("~/path/file.nc")
 ```
 
@@ -649,14 +637,11 @@ Discrete Sampling Geometries (DSG) map almost directly to the venerable
 rather distinct from array-based data sets. At the moment there is no
 specific code for DSG, but the simplest layouts can currently already be
 read (without any warranty). Various methods, such as
-`CFVariable::subset()` or `CFArray::array()` will fail miserably, and
+`CFVariable::subset()` or `CFVariable::array()` will fail miserably, and
 you are well-advised to try no more than the empty array indexing
 operator `CFVariable::[]` which will yield the full data variable with
-column and row names set as an array, of `CFVariable::data()` to get the
-whole data variable as a `CFArray` object for further processing,
-possibly converting it of a `data.table` for a format that matches the
-structure of a typical table closest. You can identify a DSG data set by
-the `featureType` attribute of the `CFDataset`.
+column and row names set as an array, of
+`CFVariable::`data.table`for a format that matches the structure of a typical table closest. You can identify a DSG data set by the`featureType`attribute of the`CFDataset\`.
 
 More comprehensive support for DSG is in the development plan.
 
@@ -675,8 +660,8 @@ features:
 
 ##### netCDF
 
-- Support for writing of complex data sets (single `CFArray` instances
-  can already be written to file).
+- Support for writing of complex data sets (single `CFVariable`
+  instances can already be written to file).
 
 ##### CF Metadata Conventions
 

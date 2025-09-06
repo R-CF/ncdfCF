@@ -4,19 +4,11 @@
 \alias{open_ncdf}
 \title{Open a netCDF resource}
 \usage{
-open_ncdf(resource, keep_open = FALSE)
+open_ncdf(resource)
 }
 \arguments{
 \item{resource}{The name of the netCDF resource to open, either a local file
 name or a remote URI.}
-
-\item{keep_open}{Logical flag to indicate if the netCDF resource has to
-remain open after reading the metadata. This should be enabled typically
-only for programmatic access or when a remote resource has an expensive
-access protocol (i.e. 2FA). The resource has to be explicitly closed with
-\code{close()} after use. Note that when a data set is opened with
-\code{keep_open = TRUE} the resource may still be closed by the operating system
-or the remote server.}
 }
 \value{
 An \code{CFDataset} instance, or an error if the resource was not found

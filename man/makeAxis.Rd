@@ -4,18 +4,16 @@
 \alias{makeAxis}
 \title{Create an axis}
 \usage{
-makeAxis(name, group, orientation, values, bounds = NULL, attributes = NULL)
+makeAxis(name, orientation, values, bounds = NULL, attributes = NULL)
 }
 \arguments{
 \item{name}{Name of the axis.}
-
-\item{group}{Group to place the axis in.}
 
 \item{orientation}{The orientation of the axis. Must be one of "X", "Y", "Z",
 or "T" for longitude, latitude, height or depth, and time axes,
 respectively. For any other axis, indicate an empty string ""}
 
-\item{values}{The coordinate values. In the case of an axis with \code{orientation = "T"} this must be a \code{CFTime} instance.}
+\item{values}{The coordinate values. In the case of an axis with \code{orientation = "T"} this must be a \code{CFTime} or \code{CFClimatology} instance.}
 
 \item{bounds}{The boundary values of the coordinates, or \code{NULL} if not
 available.}
@@ -28,9 +26,10 @@ amended.}
 An instance of a class descending from \link{CFAxis}.
 }
 \description{
-With this method you can create an axis to use with new \link{CFArray} instances.
-Depending on the \code{orientation} argument and the type of the \code{values} argument
-an instance of a class descending from \link{CFAxis} will be returned.
+With this method you can create an axis to use with new \link{CFVariable}
+instances. Depending on the \code{orientation} argument and the type of the
+\code{values} argument an instance of a class descending from \link{CFAxis} will be
+returned.
 }
 \details{
 There are several restrictions on the combination of \code{orientation} and

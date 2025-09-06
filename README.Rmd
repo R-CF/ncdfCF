@@ -71,9 +71,8 @@ peek_ncdf(fn)
 
 ## Extracting data
 
-There are four ways to read data for a data variable from the resource: 
+There are three ways to read data for a data variable from the resource: 
 
- * **`data():`** The `data()` method returns all data of a variable, including its metadata, in a `CFArray` instance.
  * **`[]`:** The usual R array operator gives you access to the raw, non-interpreted data in the netCDF resource. This uses index values into the dimensions and requires you to know the order in which the dimensions are specified for the variable. With a bit of tinkering and some helper functions in `ncdfCF` this is still very easy to do.
  * **`subset()`:** The `subset()` method lets you specify what you want to extract from each dimension in real-world coordinates and timestamps, in whichever order. This can also rectify non-Cartesian grids to regular longitude-latitude grids.
  * **`profile()`:** Extract "profiles" from the data variable. This can take different forms, such as a temporal or depth profile for a single location, but it could also be a zonal field (such as a transect in latitude - atmospheric depth for a given longitude) or some other profile in the physical space of the data variable.
@@ -88,7 +87,7 @@ ts <- t2m[, , 12]
 str(ts)
 ```
 
-Note that the results contain degenerate dimensions (of length 1). This by design when using basic `[]` data access because it allows attributes to be attached in a consistent manner. When using the `subset()` method, the data is returned as an instance of `CFArray`, including axes and attributes:
+Note that the results contain degenerate dimensions (of length 1). This by design when using basic `[]` data access because it allows attributes to be attached in a consistent manner. When using the `subset()` method, the data is returned as an instance of `CFVariable`, including axes and attributes:
 
 ```{r subset}
 # Extract a specific region, full time dimension
@@ -108,8 +107,8 @@ The latter two methods will read only as much data from the netCDF resource as i
 
 It is often useful to extract a "profile" of data for a given location or zone, such as a timeseries of data. The `profile()` method has some flexible options to support this:
 
- - Profile specific locations, with multiple locations specified per call, returning the data as a (set of) `CFArray` instance(s) or as a single `data.table`.
- - Profile zones, such as a latitude band or an atmospheric level. Data is returned as `CFArray` instance(s).
+ - Profile specific locations, with multiple locations specified per call, returning the data as a (set of) `CFVariable` instance(s) or as a single `data.table`.
+ - Profile zones, such as a latitude band or an atmospheric level. Data is returned as a new `CFVariable` instance(s).
  
 In all cases, you can profile over any of the axes and over any number of axes.
 
@@ -127,21 +126,21 @@ Some critical metadata is recorded in the "value" attribute: original long name 
 When you provide coordinates for all axes but one, you get a profile of values along the remaining axis, as shown above. If you provide fewer axis coordinates you get progressively higher-order results. To get a latitudinal transect, for instance, provide only a longitude coordinate:
 
 ```{r transect}
-(trans30 <- t2m$profile(longitude = 29.74, .names = "lon_29_74"))
+(trans29_74 <- t2m$profile(longitude = 29.74, .names = "lon_29_74"))
 ```
 
 Note that there is only a single longitude coordinate left, at exactly the specified longitude.
 
 ## Summarising data over time
 
-With the `summarise()` method, available for both `CFVariable` and `CFArray`, you can apply a function over the data to generate summaries. You could, for instance, summarise daily data to monthly means. These methods use the specific calendar of the "time" axis. The return value is a new `CFArray` object.
+With the `summarise()` method you can apply a function over the data to generate summaries. You could, for instance, summarise daily data to monthly means. These methods use the specific calendar of the "time" axis. The return value is a new `CFVariable` object.
 
 ```{r summarise}
 # Summarising hourly temperature data to calculate the daily maximum temperature
 t2m$summarise("tmax", max, "day")
 ```
 
-A function may also return a vector of multiple values, in which case a list is returned with a new `CFArray` object for each return value of the function. This allows you to calculate multiple results with a single call. You could write your own function to tailor the calculations to your needs. Rather than just calculating the daily maximum, you could get the daily maximum, minimum and diurnal range in one go:
+A function may also return a vector of multiple values, in which case a list is returned with a new `CFVariable` object for each return value of the function. This allows you to calculate multiple results with a single call. You could write your own function to tailor the calculations to your needs. Rather than just calculating the daily maximum, you could get the daily maximum, minimum and diurnal range in one go:
 
 ```{r summarise_multi}
 # Function to calculate multiple daily stats
@@ -158,15 +157,15 @@ daily_stats <- function(x, na.rm = TRUE) {
 (stats <- t2m$summarise(c("tmin", "tmax", "diurnal_range"), daily_stats, "day"))
 ```
 
-Note that you may have to update some attributes after calling `summarise()`. You can use the `set_attribute()` method on the `CFArray` objects to do that.
+Note that you may have to update some attributes after calling `summarise()`. You can use the `set_attribute()` method on the `CFVariable` objects to do that.
 
 ## Create new netCDF objects
 
-You can convert a suitable R object into a `CFArray` instance quite easily. R objects that are supported include arrays, matrices and vectors of type logical, integer, numeric or logical.
+You can convert a suitable R object into a `CFVariable` instance quite easily. R objects that are supported include arrays, matrices and vectors of type logical, integer, numeric or logical.
 
 ```{r create_basic}
 arr <- array(rnorm(120), dim = c(6, 5, 4))
-as_CFArray("my_first_CF_object", arr)
+as_CF("my_first_CF_object", arr)
 ```
 
 Usable but not very impressive. The axes have dull names without any meaning and the coordinates are just a sequence along the axis.
@@ -178,7 +177,7 @@ If the R object has `dimnames` set, these will be used to create more informed a
 dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4), 
                       time = c("2025-07-01", "2025-07-02", "2025-07-03", "2025-07-04"))
 
-(obj <- as_CFArray("a_better_CF_object", arr))
+(obj <- as_CF("a_better_CF_object", arr))
 
 # Axes are of a specific type and have basic attributes set
 obj$axes[["lat"]]
@@ -186,11 +185,11 @@ obj$axes[["lat"]]
 obj$axes[["time"]]
 ```
 
-You can further modify the resulting `CFArray` by setting other properties, such as attributes or a coordinate reference system. Once the object is complete, you can export or save it.
+You can further modify the resulting `CFVariable` by setting other properties, such as attributes or a coordinate reference system. Once the object is complete, you can export or save it.
 
 ## Exporting and saving data
 
-A `CFData` object can be exported to a `data.table` or to a `terra::SpatRaster` (3D) or `terra::SpatRasterDataset` (4D) for further processing. Obviously, these packages need to be installed to utilise these methods.
+A `CFVariable` object can be exported to a `data.table` or to a `terra::SpatRaster` (3D) or `terra::SpatRasterDataset` (4D) for further processing. Obviously, these packages need to be installed to utilise these methods.
 
 ```{r export}
 # install.packages("data.table")
@@ -203,16 +202,16 @@ suppressMessages(library(terra))
 terra::plot(r)
 ```
 
-A `CFData` object can also be written back to a netCDF file. The object will have all its relevant attributes and properties written together with the actual data: axes, bounds, attributes, CRS. The netCDF file is of version "netcdf4" and will have the axes oriented in such a way that the file has maximum portability (specifically, data will be stored in row-major order with increasing Y values).
+A `CFVariable` object can also be written back to a netCDF file. The object will have all its relevant attributes and properties written together with the actual data: axes, bounds, attributes, CRS. The netCDF file is of version "netcdf4" and will have the axes oriented in such a way that the file has maximum portability (specifically, data will be stored in row-major order with increasing Y values).
 
 ```{r save, eval=FALSE}
-# Save a CFData instance to a netCDF file on disk
+# Save a CFVariable instance to a netCDF file on disk
 stats[["diurnal_range"]]$save("~/path/file.nc")
 ```
 
 ##### A note on Discrete Sampling Geometries
 
-Discrete Sampling Geometries (DSG) map almost directly to the venerable `data.frame` in R (with several exceptions). In that sense, they are rather distinct from array-based data sets. At the moment there is no specific code for DSG, but the simplest layouts can currently already be read (without any warranty). Various methods, such as `CFVariable::subset()` or `CFArray::array()` will fail miserably, and you are well-advised to try no more than the empty array indexing operator `CFVariable::[]` which will yield the full data variable with column and row names set as an array, of `CFVariable::data()` to get the whole data variable as a `CFArray` object for further processing, possibly converting it of a `data.table` for a format that matches the structure of a typical table closest. You can identify a DSG data set by the `featureType` attribute of the `CFDataset`.
+Discrete Sampling Geometries (DSG) map almost directly to the venerable `data.frame` in R (with several exceptions). In that sense, they are rather distinct from array-based data sets. At the moment there is no specific code for DSG, but the simplest layouts can currently already be read (without any warranty). Various methods, such as `CFVariable::subset()` or `CFVariable::array()` will fail miserably, and you are well-advised to try no more than the empty array indexing operator `CFVariable::[]` which will yield the full data variable with column and row names set as an array, of `CFVariable::`data.table` for a format that matches the structure of a typical table closest. You can identify a DSG data set by the `featureType` attribute of the `CFDataset`.
 
 More comprehensive support for DSG is in the development plan.
 
@@ -224,7 +223,7 @@ Development plans for the near future focus on supporting the below features:
 
 ##### netCDF
 
- * Support for writing of complex data sets (single `CFArray` instances can already be written to file).
+ * Support for writing of complex data sets (single `CFVariable` instances can already be written to file).
 
 ##### CF Metadata Conventions
 

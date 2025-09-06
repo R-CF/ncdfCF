@@ -13,23 +13,14 @@ imagery.
 https://oceancolor.gsfc.nasa.gov/resources/docs/technical/ocean_level-3_binned_data_products.pdf
 }
 \section{Super classes}{
-\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFVariableBase]{ncdfCF::CFVariableBase}} -> \code{\link[ncdfCF:CFVariable]{ncdfCF::CFVariable}} -> \code{CFVariableL3b}
-}
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{variable}}{The name of the variable contained in this L3b data.}
-
-\item{\code{index}}{The index data of the L3b structure.}
-}
-\if{html}{\out{</div>}}
+\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFVariable]{ncdfCF::CFVariable}} -> \code{CFVariableL3b}
 }
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFVariableL3b-new}{\code{CFVariableL3b$new()}}
-\item \href{#method-CFVariableL3b-as_matrix}{\code{CFVariableL3b$as_matrix()}}
-\item \href{#method-CFVariableL3b-data}{\code{CFVariableL3b$data()}}
+\item \href{#method-CFVariableL3b-read_data}{\code{CFVariableL3b$read_data()}}
+\item \href{#method-CFVariableL3b-read_chunk}{\code{CFVariableL3b$read_chunk()}}
 \item \href{#method-CFVariableL3b-subset}{\code{CFVariableL3b$subset()}}
 \item \href{#method-CFVariableL3b-clone}{\code{CFVariableL3b$clone()}}
 }
@@ -37,24 +28,28 @@ https://oceancolor.gsfc.nasa.gov/resources/docs/technical/ocean_level-3_binned_d
 \if{html}{\out{
 <details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="add_coordinates"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-add_coordinates'><code>ncdfCF::CFObject$add_coordinates()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-detach'><code>ncdfCF::CFObject$detach()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="dim"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-dim'><code>ncdfCF::CFObject$dim()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="read_data"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-read_data'><code>ncdfCF::CFObject$read_data()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="update_coordinates_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-update_coordinates_attribute'><code>ncdfCF::CFObject$update_coordinates_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="is_coincident"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-is_coincident'><code>ncdfCF::CFVariableBase$is_coincident()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="profile"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-profile'><code>ncdfCF::CFVariableBase$profile()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="summarise"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-summarise'><code>ncdfCF::CFVariableBase$summarise()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="time"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-time'><code>ncdfCF::CFVariableBase$time()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="append"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-append'><code>ncdfCF::CFVariable$append()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="array"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-array'><code>ncdfCF::CFVariable$array()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="brief"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-brief'><code>ncdfCF::CFVariable$brief()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="data.table"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-data.table'><code>ncdfCF::CFVariable$data.table()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="is_coincident"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-is_coincident'><code>ncdfCF::CFVariable$is_coincident()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="peek"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-peek'><code>ncdfCF::CFVariable$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="print"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-print'><code>ncdfCF::CFVariable$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="profile"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-profile'><code>ncdfCF::CFVariable$profile()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="raw"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-raw'><code>ncdfCF::CFVariable$raw()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="shard"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-shard'><code>ncdfCF::CFVariable$shard()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="summarise"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-summarise'><code>ncdfCF::CFVariable$summarise()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="terra"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-terra'><code>ncdfCF::CFVariable$terra()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="time"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-time'><code>ncdfCF::CFVariable$time()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -83,24 +78,23 @@ An instance of this class.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFVariableL3b-as_matrix"></a>}}
-\if{latex}{\out{\hypertarget{method-CFVariableL3b-as_matrix}{}}}
-\subsection{Method \code{as_matrix()}}{
+\if{html}{\out{<a id="method-CFVariableL3b-read_data"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariableL3b-read_data}{}}}
+\subsection{Method \code{read_data()}}{
 Read all the data from the file and turn the data into a
-matrix. If an \code{aoi} is specified, the data will be subset to that area.
+matrix.
 
 This method returns a bare-bones matrix without any metadata or other
-identifying information. Use method \code{data()}, \code{subset()} or the \code{[}
+identifying information. Use method \code{subset()} or the \code{[}
 operator rather than this method to obtain a more informative result.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariableL3b$as_matrix(aoi = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariableL3b$read_data(refresh = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{aoi}}{An instance of class \code{AOI}, optional, to select an area in
-latitude - longitude coordinates.}
+\item{\code{refresh}}{Flag to indicate if a fresh read from file should be made.}
 }
 \if{html}{\out{</div>}}
 }
@@ -109,16 +103,29 @@ A matrix with the data of the variable in raw format.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFVariableL3b-data"></a>}}
-\if{latex}{\out{\hypertarget{method-CFVariableL3b-data}{}}}
-\subsection{Method \code{data()}}{
-Retrieve all data of the L3b variable.
+\if{html}{\out{<a id="method-CFVariableL3b-read_chunk"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariableL3b-read_chunk}{}}}
+\subsection{Method \code{read_chunk()}}{
+Read some data from the file and turn the data into a
+matrix.
+
+This method returns a bare-bones matrix without any metadata or other
+identifying information. Use method \code{subset()} or the \code{[} operator
+rather than this method to obtain a more informative result.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariableL3b$data()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariableL3b$read_chunk(start, count)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{start, count}}{Start and count vectors that delimit the geographic
+area to return data for.}
+}
+\if{html}{\out{</div>}}
+}
 \subsection{Returns}{
-A \link{CFArray} instance with all data from this L3b variable.
+A matrix with the data of the variable in raw format.
 }
 }
 \if{html}{\out{<hr>}}
@@ -128,7 +135,7 @@ A \link{CFArray} instance with all data from this L3b variable.
 This method extracts a subset of values from the data of the
 variable, with the range along both axes expressed in decimal degrees.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariableL3b$subset(..., .aoi = NULL, rightmost.closed = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariableL3b$subset(..., rightmost.closed = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -141,12 +148,6 @@ representing coordinates along the axis where to extract data. Axis
 designators and names are case-sensitive and can be specified in any
 order. If values for the range of an axis fall outside of the extent of
 the axis, the range is clipped to the extent of the axis.}
-
-\item{\code{.aoi}}{Optional, an area-of-interest instance of class \code{AOI} created
-with the \code{\link[=aoi]{aoi()}} function to indicate the horizontal area that should
-be extracted. The longitude and latitude coordinates must be included;
-the X and Y resolution will be calculated if not given. When provided,
-this argument will take precedence over the \code{...} argument.}
 
 \item{\code{rightmost.closed}}{Single logical value to indicate if the upper
 boundary of range in each axis should be included.}
@@ -174,11 +175,11 @@ are all either smaller or larger than the valid range of the axis in
 The extracted data has the same dimensional structure as the data in
 the variable, with degenerate dimensions dropped. The order of the axes
 in argument \code{subset} does not reorder the axes in the result; use the
-\link{CFArray}$array() method for this.
+\link{CFVariable}$array() method for this.
 }
 
 \subsection{Returns}{
-A \link{CFArray} instance, having an array with axes and attributes of
+A \link{CFVariable} instance, having an array with axes and attributes of
 the variable, or \code{NULL} if one or more of the elements in the \code{...}
 argument falls entirely outside of the range of the axis. Note that
 degenerate dimensions (having \code{length(.) == 1}) are dropped from the

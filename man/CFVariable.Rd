@@ -5,24 +5,39 @@
 \alias{CFVariable}
 \title{CF data variable}
 \description{
-This class represents the basic structure of a CF data variable,
+This class represents a CF data variable,
 the object that provides access to an array of data.
 
 The CF data variable instance provides access to all the details that have
 been associated with the data variable, such as axis information, grid
-mapping parameters, etc. The actual data array can be accessed through the
-\code{data()} and \code{subset()} methods of this class.
+mapping parameters, etc.
 }
-\section{Super classes}{
-\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFVariableBase]{ncdfCF::CFVariableBase}} -> \code{CFVariable}
+\section{Super class}{
+\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFVariable}
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
+\item{\code{axes}}{(read-only) List of instances of classes descending from
+\link{CFAxis} that are the axes of the data object. If there are any scalar
+axes, they are listed after the axes that associate with the dimensions
+of the data. (In other words, axes \verb{1..n} describe the \verb{1..n} data
+dimensions, while any axes \verb{n+1..m} are scalar axes.)}
+
+\item{\code{crs}}{The coordinate reference system of this variable,
+as an instance of \link{CFGridMapping}. If this field is \code{NULL}, the
+horizontal component of the axes are in decimal degrees of longitude
+and latitude.}
+
+\item{\code{cell_measures}}{(read-only) List of the \link{CFCellMeasure} objects of
+this variable, if defined.}
+
 \item{\code{dimids}}{(read-only) Retrieve the dimension ids used by the
 NC variable used by this variable.}
+
+\item{\code{dimnames}}{(read-only) Retrieve dimnames of the data variable.}
 
 \item{\code{auxiliary_names}}{(read-only) Retrieve the names of the auxiliary
 longitude and latitude grids as a vector of two character strings, in
@@ -45,28 +60,33 @@ description of the variable as a WKT2 string.}
 \item \href{#method-CFVariable-brief}{\code{CFVariable$brief()}}
 \item \href{#method-CFVariable-shard}{\code{CFVariable$shard()}}
 \item \href{#method-CFVariable-peek}{\code{CFVariable$peek()}}
-\item \href{#method-CFVariable-data}{\code{CFVariable$data()}}
+\item \href{#method-CFVariable-time}{\code{CFVariable$time()}}
+\item \href{#method-CFVariable-raw}{\code{CFVariable$raw()}}
+\item \href{#method-CFVariable-array}{\code{CFVariable$array()}}
 \item \href{#method-CFVariable-subset}{\code{CFVariable$subset()}}
+\item \href{#method-CFVariable-summarise}{\code{CFVariable$summarise()}}
+\item \href{#method-CFVariable-profile}{\code{CFVariable$profile()}}
+\item \href{#method-CFVariable-append}{\code{CFVariable$append()}}
+\item \href{#method-CFVariable-terra}{\code{CFVariable$terra()}}
+\item \href{#method-CFVariable-data.table}{\code{CFVariable$data.table()}}
+\item \href{#method-CFVariable-is_coincident}{\code{CFVariable$is_coincident()}}
 \item \href{#method-CFVariable-clone}{\code{CFVariable$clone()}}
 }
 }
 \if{html}{\out{
 <details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="add_coordinates"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-add_coordinates'><code>ncdfCF::CFObject$add_coordinates()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-detach'><code>ncdfCF::CFObject$detach()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="dim"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-dim'><code>ncdfCF::CFObject$dim()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="read_chunk"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-read_chunk'><code>ncdfCF::CFObject$read_chunk()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="read_data"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-read_data'><code>ncdfCF::CFObject$read_data()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="update_coordinates_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-update_coordinates_attribute'><code>ncdfCF::CFObject$update_coordinates_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="is_coincident"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-is_coincident'><code>ncdfCF::CFVariableBase$is_coincident()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="profile"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-profile'><code>ncdfCF::CFVariableBase$profile()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="summarise"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-summarise'><code>ncdfCF::CFVariableBase$summarise()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariableBase" data-id="time"><a href='../../ncdfCF/html/CFVariableBase.html#method-CFVariableBase-time'><code>ncdfCF::CFVariableBase$time()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -76,20 +96,48 @@ description of the variable as a WKT2 string.}
 \subsection{Method \code{new()}}{
 Create an instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$new(nc_var, axes)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$new(
+  var,
+  axes,
+  values = values,
+  start = NA,
+  count = NA,
+  attributes = data.frame()
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{nc_var}}{The netCDF variable that defines this CF variable.}
+\item{\code{var}}{The \link{NCVariable} instance upon which this CF variable is based
+when read from a netCDF resource, or the name for the new CF variable
+to be created.}
 
-\item{\code{axes}}{List of \link{CFAxis} instances that describe the dimensions.}
+\item{\code{axes}}{List of instances of \link{CFAxis} to use with this variable.}
+
+\item{\code{values}}{Optional. The values of the variable in an array.}
+
+\item{\code{start}}{Optional. Vector of indices where to start reading data
+along the dimensions of the array on file. The vector must be \code{NA} to
+read all data, otherwise it must have agree with the dimensions of the
+array on file. Ignored when argument \code{var} is not an \code{NCVariable}
+instance.}
+
+\item{\code{count}}{Optional. Vector of number of elements to read along each
+dimension of the array on file. The vector must be \code{NA} to read to the
+end of each dimension, otherwise its value must agree with the
+corresponding \code{start} value and the dimension of the array on file.
+Ignored when argument \code{var} is not an \code{NCVariable} instance.}
+
+\item{\code{attributes}}{Optional. A \code{data.frame} with the attributes of the
+object. When argument \code{var} is an \code{NCVariable} instance and this
+argument is an empty \code{data.frame} (default), arguments will be read
+from the resource.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-An instance of this class.
+A \code{CFVariable} instance.
 }
 }
 \if{html}{\out{<hr>}}
@@ -144,33 +192,63 @@ Character string with very basic variable information.
 \subsection{Method \code{peek()}}{
 Retrieve interesting details of the data variable.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$peek(with_groups = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$peek()}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{with_groups}}{Should group information be included? The save option
-is \code{TRUE} (default) when the netCDF resource has groups because names may
-be duplicated among objects in different groups.}
-}
-\if{html}{\out{</div>}}
-}
 \subsection{Returns}{
 A 1-row \code{data.frame} with details of the data variable.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFVariable-data"></a>}}
-\if{latex}{\out{\hypertarget{method-CFVariable-data}{}}}
-\subsection{Method \code{data()}}{
-Retrieve all data of the variable.
+\if{html}{\out{<a id="method-CFVariable-time"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-time}{}}}
+\subsection{Method \code{time()}}{
+Return the time object from the axis representing time.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$data()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$time(want = "time")}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{want}}{Character string with value "axis" or "time", indicating
+what is to be returned.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+If \code{want = "axis"} the \link{CFAxisTime} axis; if \code{want = "time"} the
+\code{CFTime} instance of the axis, or \code{NULL} if the variable does not have a
+"time" axis.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-raw"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-raw}{}}}
+\subsection{Method \code{raw()}}{
+Retrieve the data in the object exactly as it was read from
+a netCDF resource or produced by an operation.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$raw()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
-A \link{CFArray} instance with all data from this variable.
+An \code{array}, \code{matrix} or \code{vector} with (dim)names set.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-array"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-array}{}}}
+\subsection{Method \code{array()}}{
+Retrieve the data in the object in the form of an R array,
+with axis ordering Y-X-others and Y values going from the top down.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$array()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+An \code{array} or \code{matrix} of data in R ordering, or a \code{vector} if
+the data has only a single dimension.
 }
 }
 \if{html}{\out{<hr>}}
@@ -216,10 +294,10 @@ time axes a vector of character timestamps, \code{POSIXct} or \code{Date} values
 must be specified. As with numeric values, only the two extreme values
 in the vector will be used.
 
-If the range of coordinate values for an axis in argument \code{...} extend
-the valid range of the axis in \code{self}, the extracted data will start at
-the beginning for smaller values and extend to the end for larger
-values. If the values envelope the valid range the entire axis will be
+If the range of coordinate values for an axis in argument \code{...} extends
+the valid range of the axis, the extracted data will start at the
+beginning for smaller values and extend to the end for larger values.
+If the values envelope the valid range the entire axis will be
 extracted in the result. If the range of coordinate values for any axis
 are all either smaller or larger than the valid range of the axis then
 nothing is extracted and \code{NULL} is returned.
@@ -227,7 +305,7 @@ nothing is extracted and \code{NULL} is returned.
 The extracted data has the same dimensional structure as the data in
 the variable, with degenerate dimensions dropped. The order of the axes
 in argument \code{...} does not reorder the axes in the result; use the
-\link{CFArray}$array() method for this.
+\code{array()} method for this.
 
 As an example, to extract values of a variable for Australia for the
 year 2020, where the first axis in \code{x} is the longitude, the second
@@ -254,12 +332,251 @@ to extract the full extent, specify \code{NA} for both axes.
 }
 
 \subsection{Returns}{
-A \link{CFArray} instance, having an array with its axes and
-attributes of the variable, or \code{NULL} if one or more of the selectors
-in the \code{...} argument fall entirely outside of the range of the axis.
-Note that degenerate dimensions (having \code{length(.) == 1}) are dropped
-from the array but the corresponding axis is maintained in the result
-as a scalar axis.
+A \code{CFVariable} instance, having the axes and attributes of the
+variable, or \code{NULL} if one or more of the selectors in the \code{...}
+argument fall entirely outside of the range of the axis. Note that
+degenerate dimensions (having \code{length(.) == 1}) are dropped from the
+data array but the corresponding axis is maintained in the result as a
+scalar axis.
+
+If \code{self} is linked to a netCDF resource then the result will be linked
+to the same netCDF resource as well, except when \emph{auxiliary coordinate
+variables} have been selected for the planar axes.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-summarise"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-summarise}{}}}
+\subsection{Method \code{summarise()}}{
+Summarise the temporal domain of the data, if present, to a
+lower resolution, using a user-supplied aggregation function.
+
+Attributes are copied from the input data variable or data array. Note
+that after a summarisation the attributes may no longer be accurate.
+This method tries to sanitise attributes but the onus is on the calling
+code (or yourself as interactive coder). Attributes like
+\code{standard_name} and \code{cell_methods} likely require an update in the
+output of this method, but the appropriate new values are not known to
+this method. Use \code{CFVariable$set_attribute()} on the result of this
+method to set or update attributes as appropriate.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$summarise(name, fun, period, era = NULL, ...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{Character vector with a name for each of the results that
+\code{fun} returns. So if \code{fun} has 2 return values, this should be a vector
+of length 2. Any missing values are assigned a default name of
+"result_#" (with '#' being replaced with an ordinal number).}
+
+\item{\code{fun}}{A function or a symbol or character string naming a function
+that will be applied to each grouping of data. The function must return
+an atomic value (such as \code{sum()} or \code{mean()}), or a vector of atomic
+values (such as \code{range()}). Lists and other objects are not allowed and
+will throw an error that may be cryptic as there is no way that this
+method can assert that \code{fun} behaves properly so an error will pop up
+somewhere, most probably in unexpected ways. The function may also be
+user-defined so you could write a wrapper around a function like \code{lm()}
+to return values like the intercept or any coefficients from the object
+returned by calling that function.}
+
+\item{\code{period}}{The period to summarise to. Must be one of either "day",
+"dekad", "month", "quarter", "season", "year". A "quarter" is the
+standard calendar quarter such as January-March, April-June, etc. A
+"season" is a meteorological season, such as December-February,
+March-May, etc. (any December data is from the year preceding the
+January data). The period must be of lower resolution than the
+resolution of the time axis.}
+
+\item{\code{era}}{Optional, integer vector of years to summarise over by the
+specified \code{period}. The extreme values of the years will be used. This
+can also be a list of multiple such  vectors. The elements in the list,
+if used, should have names as these will be used to label the results.}
+
+\item{\code{...}}{Additional parameters passed on to \code{fun}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A \code{CFVariable} object, or a list thereof with as many
+\code{CFVariable} objects as \code{fun} returns values.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-profile"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-profile}{}}}
+\subsection{Method \code{profile()}}{
+This method extracts profiles of values from the array of
+the variable, with the location along each axis to extract expressed in
+coordinate values of each axis.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$profile(..., .names = NULL, .as_table = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{One or more arguments of the form \code{axis = location}. The
+"axis" part should be the name of an axis or its orientation \code{X}, \code{Y},
+\code{Z} or \code{T}. The "location" part is a vector of values representing
+coordinates along the axis where to profile. A profile will be
+generated for each of the elements of the "location" vectors in all
+arguments.}
+
+\item{\code{.names}}{A character vector with names for the results. The names
+will be used for the resulting \code{CFVariable} instances, or as values for
+the "location" column of the \code{data.table} if argument \code{.as_table} is
+\code{TRUE}. If the vector is shorter than the longest vector of locations
+in the \code{...} argument, a name "location_#" will be used, with the #
+replaced by the ordinal number of the vector element.}
+
+\item{\code{.as_table}}{Logical to flag if the results should be \code{CFVariable}
+instances (\code{FALSE}, default) or a single \code{data.table} (\code{TRUE}). If
+\code{TRUE}, all \code{...} arguments must have the same number of elements, use
+the same axes and the \code{data.table} package must be installed.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+The coordinates along each axis to be sampled are expressed in
+values of the domain of the axis. Any axes which are not passed as
+arguments are extracted in whole to the result. If bounds are set on
+the axis, the coordinate whose bounds envelop the requested coordinate
+is selected. Otherwise, the coordinate along the axis closest to the
+supplied value will be used. If the value for a specified axis falls
+outside the valid range of that axis, \code{NULL} is returned.
+
+A typical case is to extract the temporal profile as a 1D array for a
+given location. In this case, use arguments for the latitude and
+longitude on an X-Y-T data variable: \code{profile(lat = -24, lon = 3)}.
+Other profiling options are also possible, such as a 2D zonal
+atmospheric profile at a given longitude for an X-Y-Z data variable:
+\code{profile(lon = 34)}.
+
+Multiple profiles can be extracted in one call by supplying vectors for
+the indicated axes: \code{profile(lat = c(-24, -23, -2), lon = c(5, 5, 6))}.
+The vectors need not have the same length, unless \code{.as_table = TRUE}.
+With unequal length vectors the result will be a \code{list} of \code{CFVariable}
+instances with different dimensionality and/or different axes.
+\subsection{Auxiliary coordinate variables}{
+
+A special case exists for variables where the horizontal dimensions (X
+and Y) are not in longitude and latitude coordinates but in some other
+coordinate system. In this case the netCDF resource may have so-called
+\emph{auxiliary coordinate variables}. If the variable has such \emph{auxiliary coordinate
+variables} then you can specify their names (instead of specifying the
+names of the primary planar axes).
+}
+}
+
+\subsection{Returns}{
+If \code{.as_table = FALSE}, a \code{CFVariable} instance, or a list
+thereof with each having one profile for each of the elements in the
+"location" vectors of argument \code{...} and named with the respective
+\code{.names} value. If \code{.as_table = TRUE}, a \code{data.table} with a row for
+each element along all profiles, with a ".variable" column using the
+values from the \code{.names} argument.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-append"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-append}{}}}
+\subsection{Method \code{append()}}{
+Append the data from another \code{CFVariable} instance to the
+current instance, along one of the axes. The operation will only
+succeed if the axes other than the one to append along have the same
+coordinates and the coordinates of the axis to append along have to be
+monotonically increasing or decreasing after appending.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$append(from, along)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{from}}{The \code{CFVariable} instance to append to this data variable.}
+
+\item{\code{along}}{The name of the axis to append along. This must be a single
+character string and the named axis has to be present both in this data
+variable and in the \code{CFVariable} instance in argument \code{from}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{self}, invisibly, with the arrays from this data variable and
+\code{from} appended.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-terra"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-terra}{}}}
+\subsection{Method \code{terra()}}{
+Convert the data to a \code{terra::SpatRaster} (3D) or a
+\code{terra::SpatRasterDataset} (4D) object. The data will be oriented to
+North-up. The 3rd dimension in the data will become layers in the
+resulting \code{SpatRaster}, any 4th dimension the data sets. The \code{terra}
+package needs to be installed for this method to work.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$terra()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A \code{terra::SpatRaster} or \code{terra::SpatRasterDataset} instance.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-data.table"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-data.table}{}}}
+\subsection{Method \code{data.table()}}{
+Retrieve the data variable in the object in the form of a
+\code{data.table}. The \code{data.table} package needs to be installed for this
+method to work.
+
+The attributes associated with this data variable will be mostly lost.
+If present, attributes 'long_name' and 'units' are attached to the
+\code{data.table} as attributes, but all others are lost.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$data.table(var_as_column = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{var_as_column}}{Logical to flag if the name of the variable should
+become a column (\code{TRUE}) or be used as the name of the column with the
+data values (\code{FALSE}, default). Including the name of the variable as a
+column is useful when multiple \code{data.table}s are merged into one.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A \code{data.table} with all data points in individual rows. All axes
+will become columns. Two attributes are added: \code{name} indicates the
+long name of this data variable, \code{units} indicates the physical unit of
+the data values.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-is_coincident"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-is_coincident}{}}}
+\subsection{Method \code{is_coincident()}}{
+Tests if the \code{other} object is coincident with this data
+variable: identical axes.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$is_coincident(other)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{other}}{A \code{CFVariable} instance to compare to this data variable.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{TRUE} if the data variables are coincident, \code{FALSE} otherwise.
 }
 }
 \if{html}{\out{<hr>}}

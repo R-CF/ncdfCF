@@ -38,7 +38,8 @@ is a linked netCDF resource, this object will be detached from it.}
 \item \href{#method-CFBounds-new}{\code{CFBounds$new()}}
 \item \href{#method-CFBounds-print}{\code{CFBounds$print()}}
 \item \href{#method-CFBounds-range}{\code{CFBounds$range()}}
-\item \href{#method-CFBounds-sub_bounds}{\code{CFBounds$sub_bounds()}}
+\item \href{#method-CFBounds-copy}{\code{CFBounds$copy()}}
+\item \href{#method-CFBounds-subset}{\code{CFBounds$subset()}}
 \item \href{#method-CFBounds-write}{\code{CFBounds$write()}}
 \item \href{#method-CFBounds-clone}{\code{CFBounds$clone()}}
 }
@@ -46,15 +47,16 @@ is a linked netCDF resource, this object will be detached from it.}
 \if{html}{\out{
 <details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="add_coordinates"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-add_coordinates'><code>ncdfCF::CFObject$add_coordinates()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-detach'><code>ncdfCF::CFObject$detach()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="dim"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-dim'><code>ncdfCF::CFObject$dim()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="read_chunk"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-read_chunk'><code>ncdfCF::CFObject$read_chunk()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="read_data"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-read_data'><code>ncdfCF::CFObject$read_data()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="update_coordinates_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-update_coordinates_attribute'><code>ncdfCF::CFObject$update_coordinates_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
 </ul>
 </details>
@@ -65,7 +67,14 @@ is a linked netCDF resource, this object will be detached from it.}
 \subsection{Method \code{new()}}{
 Create an instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$new(var, values = NA, start = NA, count = NA)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFBounds$new(
+  var,
+  values,
+  start = NA,
+  count = NA,
+  attributes = data.frame(),
+  owner_dims = 1L
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -83,13 +92,26 @@ argument \code{var} is a NCVariable object.}
 
 \item{\code{start}}{Optional. Vector of indices where to start reading boundary
 data along the dimensions of the data. The vector must be \code{NA} to read
-all data, otherwise it must have \code{length = 2}.}
+all data, otherwise it must have a length equal to the dimensionality
+of the owning object + 1.}
 
 \item{\code{count}}{Optional. Vector of number of elements to read along each
 dimension of the boundary data. The vector must be \code{NA} to read to the
-end of each dimension, otherwise it must have \code{length = 2}.}
+end of each dimension, otherwise it must have a length equal to the
+dimensionality of the owning object + 1.}
+
+\item{\code{attributes}}{Optional. A \code{data.frame} with the attributes of the
+bounds object. When an empty \code{data.frame} (default) and argument \code{var}
+is an NCVariable instance, attributes of the bounds object will be
+taken from the netCDF resource.}
+
+\item{\code{owner_dims}}{Optional, the number of dimensions of the object that
+these boundary values pertain to. Default is 1.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A new instance of this class.
 }
 }
 \if{html}{\out{<hr>}}
@@ -98,12 +120,15 @@ end of each dimension, otherwise it must have \code{length = 2}.}
 \subsection{Method \code{print()}}{
 Print a summary of the object to the console.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$print(...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFBounds$print(attributes = TRUE, ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{attributes}}{Default \code{TRUE}, flag to indicate if the attributes of
+the boundary values should be printed.}
+
 \item{\code{...}}{Arguments passed on to other functions. Of particular interest
 is \verb{width = } to indicate a maximum width of attribute columns.}
 }
@@ -121,18 +146,39 @@ Retrieve the lowest and highest value in the bounds.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFBounds-sub_bounds"></a>}}
-\if{latex}{\out{\hypertarget{method-CFBounds-sub_bounds}{}}}
-\subsection{Method \code{sub_bounds()}}{
+\if{html}{\out{<a id="method-CFBounds-copy"></a>}}
+\if{latex}{\out{\hypertarget{method-CFBounds-copy}{}}}
+\subsection{Method \code{copy()}}{
+Create a copy of this bounds object The copy is completely
+separate from \code{self}, meaning that both \code{self} and all of its
+components are made from new instances.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFBounds$copy(name = "")}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{The name for the new bounds object. If an empty string is
+passed, will use the name of this bounds object.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The newly created bounds object.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFBounds-subset"></a>}}
+\if{latex}{\out{\hypertarget{method-CFBounds-subset}{}}}
+\subsection{Method \code{subset()}}{
 Return a boundary variable spanning a smaller coordinate
-range.
+range. This currently only applies to 1-D axes.
 
 This method returns boundary values which span the range of indices
-given by the \code{rng} argument. This method currently only works for
-boundary values along axes, i.e. 1D coordinate values with boundary
-values over two vertices.
+given by the \code{rng} argument.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$sub_bounds(rng)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFBounds$subset(rng)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -152,7 +198,7 @@ A \code{CFBounds} instance covering the indicated range of indices.
 \if{latex}{\out{\hypertarget{method-CFBounds-write}{}}}
 \subsection{Method \code{write()}}{
 Write the bounds variable to a netCDF file. This method
-should not be called directly; instead, \code{CFArray::save()} will call this
+should not be called directly; instead, \code{CFVariable::save()} will call this
 method automatically.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFBounds$write(h, object_name)}\if{html}{\out{</div>}}

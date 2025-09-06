@@ -38,6 +38,7 @@ filename or the location of an online resource.}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFResource-new}{\code{CFResource$new()}}
+\item \href{#method-CFResource-create}{\code{CFResource$create()}}
 \item \href{#method-CFResource-close}{\code{CFResource$close()}}
 \item \href{#method-CFResource-group_handle}{\code{CFResource$group_handle()}}
 \item \href{#method-CFResource-clone}{\code{CFResource$clone()}}
@@ -48,8 +49,8 @@ filename or the location of an online resource.}
 \if{latex}{\out{\hypertarget{method-CFResource-new}{}}}
 \subsection{Method \code{new()}}{
 Create a connection to a netCDF resource. This is called by
-\code{\link[=open_ncdf]{open_ncdf()}} when opening a netCDF resource; you should never have to
-call this directly.
+\code{\link[=open_ncdf]{open_ncdf()}} when opening a netCDF resource or when saving a dataset
+to file. You should never have to call this directly.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFResource$new(uri)}\if{html}{\out{</div>}}
 }
@@ -63,6 +64,19 @@ call this directly.
 }
 \subsection{Returns}{
 An instance of this class.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFResource-create"></a>}}
+\if{latex}{\out{\hypertarget{method-CFResource-create}{}}}
+\subsection{Method \code{create()}}{
+Create a new file on disk for the netCDF resource.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFResource$create()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

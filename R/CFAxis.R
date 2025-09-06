@@ -16,67 +16,93 @@ CFAxis <- R6::R6Class("CFAxis",
   private = list(
     # A character "X", "Y", "Z" or "T" to indicate the
     # orientation of the axis, or an empty string if not known or different.
-    orient = "",
+    .orient = "",
+
+    # A flag to indicate if the axis is unlimited. Always FALSE for in-memory
+    # objects upon creation but can be changed. For netCDF files, follow the
+    # setting.
+    .unlimited = FALSE,
+
+    # The dimension id of the axis. This is set upon initialization.
+    .dimid = -1L,
+
+    # The CFBounds instance of this axis, if set, NULL otherwise.
+    .bounds = NULL,
 
     # A list of auxiliary coordinate instances, if any are defined for the axis.
-    aux = list(),
+    .aux = list(),
 
     # The active coordinates set. Either an integer or a name. If there are no
     # auxiliary coordinates or when underlying axis coordinates should be used,
     # it should be 1L.
-    active_coords = 1L,
+    .active_coords = 1L,
 
-    # get the names of the auxiliary coordinate instances
+    # Get the names of the auxiliary coordinate instances.
     aux_names = function() {
-      sapply(private$aux, function(aux) aux$name)
+      sapply(private$.aux, function(aux) aux$name)
     },
 
     # Get the values of the active coordinate set. In most cases that is just
     # the values but it could be a label set. Most sub-classes override or
     # extend this method.
     get_coordinates = function() {
-      if (private$active_coords == 1L)
-        private$get_values()
-      else
-        private$aux[[private$active_coords - 1L]]$coordinates
+      crds <- if (private$.active_coords == 1L) {
+        private$.values
+      } else
+        private$.aux[[private$.active_coords - 1L]]$coordinates
+      dim(crds) <- NULL
+      crds
     },
 
     # Copy a subset of all the auxiliary coordinates to another axis. Argument
     # ax will receive the auxiliary coordinates subsetted by argument rng.
     subset_coordinates = function(ax, rng) {
-      if (length(private$aux)) {
-        grp <- ax$group
-        lapply(private$aux, function(x) ax$auxiliary <- x$subset(x$name, rng))
+      if (length(private$.aux)) {
+        lapply(private$.aux, function(x) ax$auxiliary <- x$subset(x$name, rng))
       }
     }
   ),
   public = list(
-    #' @field NCdim The [NCDimension] that stores the netCDF dimension details.
-    NCdim = NULL,
-
-    #' @field bounds The boundary values of this axis, if set.
-    bounds = NULL,
-
     #' @description Create a new CF axis instance from a dimension and a
     #'   variable in a netCDF resource. This method is called upon opening a
     #'   netCDF resource by the `initialize()` method of a descendant class
     #'   suitable for the type of axis.
     #'
     #'   Creating a new axis is more easily done with the [makeAxis()] function.
-    #' @param nc_var The [NCVariable] instance upon which this CF axis is based.
-    #' @param nc_dim The [NCDimension] instance upon which this CF axis is
-    #'   based.
-    #' @param orientation The orientation of the axis: "X", "Y", "Z" "T", or ""
-    #'   when not known or relevant.
+    #' @param var The name of the axis when creating a new axis. When reading an
+    #'   axis from file, the [NCVariable] object that describes this instance.
+    #' @param values Optional. The values of the axis in a vector. Ignored when
+    #'   argument `var` is a `NCVariable` object.
+    #' @param start Optional. Integer index where to start reading axis data
+    #'   from file. The index may be `NA` to start reading data from the start.
+    #' @param count Optional. Number of elements to read from file. This may be
+    #'   `NA` to read to the end of the data.
+    #' @param orientation Optional. The orientation of the axis: "X", "Y", "Z"
+    #'   "T", or "" (default) when not known or relevant.
+    #' @param attributes Optional. A `data.frame` with the attributes of the
+    #'   axis. When an empty `data.frame` (default) and argument `var` is an
+    #'   `NCVariable` instance, attributes of the axis will be taken from the
+    #'   netCDF resource.
     #' @return A basic `CFAxis` object.
-    initialize = function(nc_var, nc_dim, orientation) {
-      super$initialize(nc_var)
-      self$NCdim <- nc_dim
-      private$orient <- orientation
-      self$set_attribute("axis", "NC_CHAR", orientation)
-      self$delete_attribute("_FillValue")
+    initialize = function(var, values, start = 1L, count = NA, orientation = "", attributes = data.frame()) {
+      orientation <- orientation[1L]
+      if (!(orientation %in% c("X", "Y", "Z", "T", "")))
+        stop("Invalid orientation for the axis.", call. = FALSE) # nocov
 
-      nc_var$CF <- self
+      super$initialize(var, values = values, start = start, count = count, attributes = attributes)
+      if (inherits(var, "NCVariable")) {
+        private$.unlimited <- if (private$.NCvar$ndims) private$.NCvar$dimension(1L)$unlim else FALSE
+        private$.dimid <- private$.NCvar$dimids[1L]
+      }
+
+      private$.orient <- orientation
+      if (orientation != "")
+        self$set_attribute("axis", "NC_CHAR", orientation)
+
+      if (missing(values) || is.null(values))
+        self$read_data()
+
+      self$delete_attribute("_FillValue")
     },
 
     #' @description  Prints a summary of the axis to the console. This method is
@@ -85,18 +111,16 @@ CFAxis <- R6::R6Class("CFAxis",
     #' is `width = ` to indicate a maximum width of attribute columns.
     #' @return `self`, invisibly.
     print = function(...) {
-      cat("<", self$friendlyClassName, "> [", self$dimid, "] ", self$name, "\n", sep = "")
-      if (self$group$name != "/")
-        cat("Group      :", self$group$fullname, "\n")
+      cat("<", self$friendlyClassName, "> [", private$.id, "] ", private$.name, "\n", sep = "")
 
       longname <- self$attribute("long_name")
       if (!is.na(longname) && longname != self$name)
         cat("Long name  :", longname, "\n")
 
-      cat("Length     :", self$NCdim$length)
-      if (self$NCdim$unlim) cat(" (unlimited)\n") else cat("\n")
-      cat("Axis       :", private$orient, "\n")
-      if (length(private$aux))
+      cat("Length     :", self$length)
+      if (self$unlimited) cat(" (unlimited)\n") else cat("\n")
+      cat("Axis       :", private$.orient, "\n")
+      if (length(private$.aux))
         cat("Label sets :", paste(self$coordinate_names, collapse = ", "), "\n")
     },
 
@@ -105,14 +129,13 @@ CFAxis <- R6::R6Class("CFAxis",
     brief = function() {
       longname <- self$attribute("long_name")
       if (is.na(longname) || longname == self$name) longname <- ""
-      unlim <- if (self$NCdim$unlim) "U" else ""
+      len <- if (self$unlimited) paste0(self$length, "-U") else self$length
       units <- self$attribute("units")
       if (is.na(units)) units <- ""
-      if (units == "1") units <- ""
+      else if (units == "1") units <- ""
 
-      data.frame(axis = private$orient, group = self$group$fullname,
-                 name = self$name, long_name = longname, length = self$NCdim$length,
-                 unlim = unlim, values = "", unit = units)
+      data.frame(axis = private$.orient,  name = self$name, long_name = longname,
+                 length = len, values = "", unit = units)
     },
 
     #' @description Very concise information on the axis. The information
@@ -126,32 +149,28 @@ CFAxis <- R6::R6Class("CFAxis",
     },
 
     #' @description Retrieve interesting details of the axis.
-    #' @param with_groups Should group information be included? The safe option
-    #' is `TRUE` (default) when the netCDF resource has groups because names may
-    #' be duplicated among objects in different groups.
     #' @return A 1-row `data.frame` with details of the axis.
-    peek = function(with_groups = TRUE) {
-      out <- data.frame(class = class(self)[1L], id = self$id, axis = private$orient)
-      if (with_groups) out$group <- self$group$fullname
+    peek = function() {
+      out <- data.frame(class = class(self)[1L], id = self$id, axis = private$.orient)
       out$name <- self$name
       out$long_name <- self$attribute("long_name")
       out$standard_name <- self$attribute("standard_name")
       out$units <- self$attribute("units")
-      out$length <- self$NCdim$length
-      out$unlimited <- self$NCdim$unlim
+      out$length <- self$length
+      out$unlimited <- self$unlimited
       out$values <- private$dimvalues_short()
-      out$has_bounds <- inherits(self$bounds, "CFBounds")
-      out$coordinate_sets <- length(private$aux) + 1L
+      out$has_bounds <- inherits(private$.bounds, "CFBounds")
+      out$coordinate_sets <- length(private$.aux) + 1L
       out
     },
 
-    #' @description Return the `CFTime` instance that represents time. This
-    #'   method is only useful for `CFAxisTime` instances having time
-    #'   information. This stub is here to make the call to this method succeed
-    #'   with no result for the other descendant classes.
-    #' @return `NULL`
-    time = function() {
-      NULL
+    #' @description Detach the axis from its underlying netCDF resource,
+    #'   including any dependent CF objects.
+    detach = function() {
+      if (!is.null(private$.bounds))
+        private$.bounds$detach()
+      lapply(private$.aux, function(x) x$detach())
+      super$detach()
     },
 
     #' @description Copy the parametric terms of a vertical axis. This method is
@@ -198,23 +217,45 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   not.
     can_append = function(axis) {
       all(class(self) == class(axis)) &&
-      mode(self$values) == mode(axis$values) &&
+      mode(private$.values) == mode(axis$values) &&
       self$name == axis$name
+    },
+
+    #' @description Create a copy of this axis. This method is "virtual" in the
+    #'   sense that it does not do anything other than return `NULL`. This stub
+    #'   is here to make the call to this method succeed with no result for the
+    #'   `CFAxis` descendants that do not implement this method.
+    #' @param name The name for the new axis. If an empty string is passed, will
+    #'   use the name of this axis.
+    #' @return `NULL`
+    copy = function(name = "") {
+      NULL
+    },
+
+    #' @description Create a copy of this axis but using the supplied values.
+    #'   This method is "virtual" in the sense that it does not do anything
+    #'   other than return `NULL`. This stub is here to make the call to this
+    #'   method succeed with no result for the `CFAxis` descendants that do not
+    #'   implement this method.
+    #' @param name The name for the new axis. If an empty string is passed, will
+    #'   use the name of this axis.
+    #' @param values The values to the used with the copy of this axis.
+    #' @return `NULL`
+    copy_with_values = function(name = "", values) {
+      NULL
     },
 
     #' @description Return an axis spanning a smaller coordinate range. This
     #'   method is "virtual" in the sense that it does not do anything other
-    #'   than return `NULL`. This stub is here to make the call to this method
+    #'   than return `self`. This stub is here to make the call to this method
     #'   succeed with no result for the  `CFAxis` descendants that do not
     #'   implement this method.
-    #' @param group The group to create the new axis in.
     #' @param name The name for the new axis if the `rng` argument is provided.
-    #'   The name cannot already exist in the group.
     #' @param rng The range of indices whose values from this axis to include in
     #'   the returned axis. If the value of the argument is `NULL`, return a
     #'   copy of the axis.
     #' @return `NULL`
-    subset = function(group, name, rng = NULL) {
+    subset = function(name = "", rng = NULL) {
       NULL
     },
 
@@ -242,30 +283,29 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   was read from (the file must have been opened for writing).
     #' @return Self, invisibly.
     write = function(nc = NULL) {
-      h <- if (inherits(nc, "NetCDF")) nc else self$NCvar$handle
+      h <- if (inherits(nc, "NetCDF")) nc else private$.NCvar$handle
 
-      self$id <- if (self$length == 1L) {
-        RNetCDF::var.def.nc(h, self$name, self$data_type, NA)
-      } else {
-        self$NCdim$write(h)
-        RNetCDF::var.def.nc(h, self$name, self$data_type, self$name)
-      }
+      # Write the dimension
 
-      if (private$orient %in% c("X", "Y", "Z", "T"))
-        self$set_attribute("axis", "NC_CHAR", private$orient)
+      self$id <- if (self$length == 1L)
+        RNetCDF::var.def.nc(h, self$name, private$.data_type, NA)
+      else
+        RNetCDF::var.def.nc(h, self$name, private$.data_type, self$name)
+
+      if (private$.orient %in% c("X", "Y", "Z", "T"))
+        self$set_attribute("axis", "NC_CHAR", private$.orient)
       self$write_attributes(h, self$name)
 
-      RNetCDF::var.put.nc(h, self$name, private$get_values())
+      RNetCDF::var.put.nc(h, self$name, private$.values)
 
-      if (!is.null(self$bounds))
-        self$bounds$write(h, self$name)
+      if (!is.null(private$.bounds))
+        private$.bounds$write(h, self$name)
 
-      lapply(private$aux, function(l) l$write(nc))
+      lapply(private$.aux, function(l) l$write(nc))
 
       invisible(self)
     }
   ),
-
   active = list(
     #' @field friendlyClassName (read-only) A nice description of the class.
     friendlyClassName = function(value) {
@@ -273,18 +313,19 @@ CFAxis <- R6::R6Class("CFAxis",
         "Generic CF axis"
     },
 
-    #' @field dimid (read-only) The netCDF dimension id of this axis.
+    #' @field dimid The netCDF dimension id of this axis. Setting this value to
+    #' anything other than the correct value will lead to disaster.
     dimid = function(value) {
-      if (missing(value)) {
-        if (inherits(self$NCdim, "NCDimension")) self$NCdim$id
-        else -1L
-      }
+      if (missing(value))
+        private$.dimid
+      else
+        private$.dimid <- value
     },
 
     #' @field length (read-only) The declared length of this axis.
     length = function(value) {
       if (missing(value))
-        self$NCdim$length
+        length(private$.values)
     },
 
     #' @field orientation Set or retrieve the orientation of the axis, a single
@@ -294,11 +335,11 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   of data variables.
     orientation = function(value) {
       if (missing(value))
-        private$orient
+        private$.orient
       else {
         if (!is.character(value) || length(value) != 1L || !(value %in% c("X", "Y", "Z", "T")))
-          stop("Axis orientation must be a single character 'X', 'Y', 'Z' or 'T'.", call. = FALSE)
-        private$orient <- value
+          stop("Axis orientation must be a single character 'X', 'Y', 'Z' or 'T'.", call. = FALSE) # nocov
+        private$.orient <- value
       }
     },
 
@@ -306,7 +347,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   you should use the `coordinates` field rather than this one.
     values = function(value) {
       if (missing(value))
-        private$get_values()
+        self$read_data()
     },
 
     #' @field coordinates (read-only) Retrieve the coordinate values of the
@@ -314,6 +355,20 @@ CFAxis <- R6::R6Class("CFAxis",
     coordinates = function(value) {
       if (missing(value))
         private$get_coordinates()
+      # FIXME: Must be able to add coordinates too, f.i. in an unlimited axis.
+    },
+
+    #' @field bounds Set or retrieve the bounds of this axis as a [CFBounds]
+    #'   object. When setting the bounds, the bounds values must agree with the
+    #'   coordinates of this axis.
+    bounds = function(value) {
+      if (missing(value))
+        private$.bounds
+      else if (inherits(value, "CFBounds")) {
+        # FIXME: Check the bounds values
+        private$.bounds <- value
+      } else if (!is.null(value))
+        stop("Must assign a `CFBounds` object to the axis.", call. = FALSE) # nocov
     },
 
     #' @field auxiliary Set or retrieve auxiliary coordinates for the axis. On
@@ -323,13 +378,13 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   the active coordinate set is the primary axis coordinates.
     auxiliary = function(value) {
       if (missing(value)) {
-        if (private$active_coords == 1L) NULL
-        else private$aux[[private$active_coords - 1L]]
+        if (private$.active_coords == 1L) NULL
+        else private$.aux[[private$.active_coords - 1L]]
       } else {
         if ((inherits(value, "CFLabel") || inherits(value, "CFAxis")) &&
             value$length == self$length && !(value$name %in% private$aux_names())) {
-          private$aux <- append(private$aux, value)
-          names(private$aux) <- private$aux_names()
+          private$.aux <- append(private$.aux, value)
+          names(private$.aux) <- private$aux_names()
         }
       }
     },
@@ -341,7 +396,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   auxiliary coordinates.
     coordinate_names = function(value) {
       if (missing(value))
-        c(self$name, names(private$aux))
+        c(self$name, names(private$.aux))
     },
 
     #' @field coordinate_range (read-only) Retrieve the range of the coordinates
@@ -360,26 +415,37 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   processing methods such as `subset()`.
     active_coordinates = function(value) {
       if (missing(value))
-        self$coordinate_names[private$active_coords]
+        self$coordinate_names[private$.active_coords]
       else {
         ndx <- match(value, self$coordinate_names, nomatch = 0L)
         if (ndx > 0L)
-          private$active_coords <- ndx
+          private$.active_coords <- ndx
       }
     },
 
-    #' @field unlimited (read-only) Logical to indicate if the axis has an
-    #'   unlimited dimension.
+    #' @field unlimited Logical to indicate if the axis is unlimited.
     unlimited = function(value) {
       if (missing(value))
-        self$NCdim$unlim
+        private$.unlimited
+      else if (is.logical(value[1L])) {
+        private$.unlimited <- value[1L]
+      } else
+        stop("Must use single logical value to set or unset unlimited axis.", call. = FALSE) # nocov
     },
 
-    #' @field is_parametric Logical flag that indicates if the axis has
-    #'   dimensional coordinates. Always `FALSE` for all axes except for
+    #' @field time (read-only) Retrieve the `CFTime` object associated with the
+    #' axis. Always returns `NULL` but `CFAxisTime` overrides this field.
+    time = function(value) {
+      if (missing(value))
+        NULL
+    },
+
+    #' @field is_parametric (read-only) Logical flag that indicates if the axis
+    #'   has dimensional coordinates. Always `FALSE` for all axes except for
     #'   [CFAxisVertical] which overrides this method.
     is_parametric = function(value) {
-      FALSE
+      if (missing(value))
+        FALSE
     }
   )
 )

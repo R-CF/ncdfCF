@@ -4,12 +4,10 @@
 \alias{makeVerticalAxis}
 \title{Create a vertical axis}
 \usage{
-makeVerticalAxis(name, group, values, bounds, attributes = NULL)
+makeVerticalAxis(name, values, bounds, attributes = NULL)
 }
 \arguments{
 \item{name}{Name of the axis.}
-
-\item{group}{Group to place the axis in.}
 
 \item{values}{The coordinate values.}
 
@@ -23,7 +21,7 @@ Attributes "actual_range" and "axis" will be set or updated.}
 A \link{CFAxisVertical} instance.
 }
 \description{
-With this method you can create a vertical axis to use with new \link{CFArray}
+With this method you can create a vertical axis to use with new \link{CFVariable}
 instances. Note that you should set the "positive" attribute after creating
 the axis to indicate if values are increasing going upwards (positive = "up")
 or downwards (positive = "down").

@@ -55,7 +55,7 @@
 #' **Data set**
 #'
 #' A [CFDataset] is the object that contains a netCDF resource. This is the main
-#' class that you need to access netCDF data.
+#' class that you need to access netCDF data from a file or an online resource.
 #'
 #' * `show()`: Print information about the data set to the console. This will
 #' print some information on the resource, as well as all identified data
@@ -96,7 +96,7 @@
 #' * `axes()`: List of `CFAxis` objects representing the axes that the data
 #' variable uses.
 #' * `attributes`: `data.frame` with the attributes of the data variable.
-#' * `attribute()`: Retrieve the values of an attribute of the data variable.
+#' * `attribute()`: Retrieve the value of an attribute of the data variable.
 #' * `crs`: The so-called grid-mapping object that contains information
 #' on the coordinate reference system (CRS) of the data variable.
 #' * `crs_wkt2`: The CRS of the data variable, in WKT2 format. This is derived
@@ -104,20 +104,35 @@
 #'
 #' ***Data extraction***
 #'
-#' * `data()`: Extract all data from a data variable into a `CFArray` object.
 #' * `subset()`: Select a subset of data from a variable by specifying extents
-#' in real-world coordinates for the axes into a `CFArray` object. This can also
-#' process "auxiliary coordinate variables", if present, to warp data from its
-#' native CRS to latitude-longitude.
+#' in real-world coordinates for the axes into a `CFVariable` object. This can
+#' also process "auxiliary coordinate variables", if present, to warp data from
+#' its native CRS to latitude-longitude.
 #' * `summarise()`: Summarise the data in the data variable over the "time"
-#' axis, using a user-defined function, returning a `CFArray` object. The
+#' axis, using a user-defined function, returning a `CFVariable` object. The
 #' function can be built-in (such as `min()` and `max()`) or a user-developed
 #' function. The function may also return a vector with multiple values (such as
-#' `range()`) and then a list of `CFArray` objects is returned, one for each
+#' `range()`) and then a list of `CFVariable` objects is returned, one for each
 #' result of the function.
-#' * `profile()`: Extract a profile of data from the variable into a `CFArray`
+#' * `profile()`: Extract a profile of data from the variable into a `CFVariable`
 #' or a `data.table`. Profiles can be for a single location, or zonal (e.g.
 #' across a longitude); multiple profiles can be extracted in a single call.
+#' * `raw()`: The array of data values from the data object as read from the
+#' netCDF resource.
+#' * `array()`: The array of data values from the data object, oriented in the
+#' standard R arrangement.
+#' * `terra()`: (requires the `terra` package) The data values from the data
+#' object as a `terra::SpatRaster` (2 or 3 dimensions) or
+#' `terra::SpatRasterDataset` (4 dimensions), with all relevant properties set.
+#' * `data.table()`: (requires the `data.table` package) The data values from
+#' the data object as a `data.table` where every row consists of the permutation
+#' of the axis values and a final data value.
+#'
+#' ***New data variables***
+#'
+#' New `CFVariable` objects can be constructed from R vectors, matrices or
+#' arrays, optionally creating axes from dimnames on the R object, using the
+#' [as_CF()] function.
 #'
 #' ***S3 methods for CFVariable***
 #'
@@ -166,9 +181,9 @@
 #'
 #' * `indexOf()`: Retrieve the sub-range of the axis that encompasses the
 #' physical values passed.
-#' * `subset`: Create a new `CFAxis` instance that spans a sub-range of the
+#' * `subset()`: Create a new `CFAxis` instance that spans a sub-range of the
 #' axis.
-#' * `time()`: Retrieve the `CFTime` instance of the axis.
+#' * `time`: Retrieve the `CFTime` instance of the axis.
 #'
 #' ***Coordinates***
 #'
@@ -186,47 +201,6 @@
 #' ***S3 methods for CFAxis***
 #'
 #' * [dim()], [dimnames()]: The length and coordinate values of the axis.
-#'
-#' **Data**
-#'
-#' The `CFVariable::data()`, `subset()` and `profile()` methods return a
-#' [CFArray] object to the caller. The `CFArray` object contains the data from
-#' the netCDF resource, as well as important metadata from the data variable:
-#' axes, CRS and attributes. The data is easily accessed as a raw array, or
-#' processed to some other format.
-#'
-#' ***Properties***
-#'
-#' * `show()`: Print information about the data object to the console, including
-#' axes, the CRS and its attributes.
-#' * `axes()`: List of `CFAxis` objects representing the axes that the data
-#' object uses.
-#' * `crs`: A WKT2-formatted string of the CRS of the data object.
-#'
-#' ***Data extraction***
-#'
-#' * `raw()`: The array of data values from the data object as read from the
-#' netCDF resource.
-#' * `array()`: The array of data values from the data object, oriented in the
-#' standard R arrangement.
-#' * `summarise()`: Summarise the data in the data array over the "time"
-#' axis, using a user-defined function, returning a new `CFArray` object. The
-#' function can be built-in (such as `min()` and `max()`) or a user-developed
-#' function. The function may also return a vector with multiple values (such as
-#' `range()`) and then a list of `CFArray` objects is returned, one for each
-#' result of the function.
-#' * `terra()`: (requires the `terra` package) The data values from the data
-#' object as a `terra::SpatRaster` (2 or 3 dimensions) or
-#' `terra::SpatRasterDataset` (4 dimensions), with all relevant properties set.
-#' * `data.table()`: (requires the `data.table` package) The data values from
-#' the data object as a `data.table` where every row consists of the permutation
-#' of the axis values and a final data value.
-#'
-#' ***New data arrays***
-#'
-#' New `CFArray` objects can be constructed from R vectors, matrices or arrays,
-#' optionally creating axes from dimnames on the R object, using the
-#' `as_CFArray()` function.
 #'
 #' @keywords internal
 #' @aliases ncdfCF-package

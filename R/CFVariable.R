@@ -1,52 +1,172 @@
 #' CF data variable
 #'
-#' @description This class represents the basic structure of a CF data variable,
+#' @description This class represents a CF data variable,
 #'   the object that provides access to an array of data.
 #'
 #'   The CF data variable instance provides access to all the details that have
 #'   been associated with the data variable, such as axis information, grid
-#'   mapping parameters, etc. The actual data array can be accessed through the
-#'   `data()` and `subset()` methods of this class.
+#'   mapping parameters, etc.
 #'
 #' @docType class
 CFVariable <- R6::R6Class("CFVariable",
-  inherit = CFVariableBase,
+  inherit = CFObject,
   private = list(
-    .varProperties = function() {
-      unit <- self$attribute("units")
-      if (is.na(unit)) unit <- ""
-      longname <- self$attribute("long_name")
-      if (is.na(longname)) longname <- ""
-      if (longname == self$name) longname <- ""
-      list(longname = longname, unit = unit)
+    # A list with the axes of the variable.
+    .axes = NULL,
+
+    # Auxiliary coordinates reference, if the data variable uses them. Only
+    # applicable to CFVariable but it is here to allow referencing it in
+    # check_names()
+    .llgrid = NULL,
+
+    # The CFGridMapping object for the variable, if set.
+    .crs = NULL,
+
+    # The cell measures object, if the variable has cell measures.
+    .cell_measures = NULL,
+
+    # Return the R order of dimensional axes that "receive special treatment".
+    # Scalar axes are not considered here.
+    YXZT = function() {
+      orient <- sapply(private$.axes, function(x) if (x$length > 1L) x$orientation)
+      match(c("Y", "X", "Z", "T"), orient, nomatch = 0L)
     },
 
-    # Turn the rng argument into index values into the axis.
-    range2index = function(axis, rng, closed) {
-      axl <- axis$length
-      if (inherits(axis, "CFAxisTime")) {
-        idx <- axis$slice(rng, closed)
-        if (!length(idx)) return(NULL)
-        idx <- range(idx)
-      } else if (inherits(axis, "CFAxisCharacter")) {
-        idx <- .range_match(rng, axis$values)
-      } else {
-        if (length(rng) == 1L) closed <- TRUE
-        rng <- range(rng)
-        vals <- axis$coordinates
-        idx <- if (is.character(rng)) {
-          closed <- TRUE
-          .range_match(rng, vals)
-        } else if (closed)
-          which(vals >= rng[1L] & vals <= rng[2L], arr.ind = TRUE)
-        else
-          which(vals >= rng[1L] & vals < rng[2L], arr.ind = TRUE)
-        if (!length(idx)) return(NULL)
-        else idx <- range(idx)
-        if (!closed && isTRUE(all.equal(vals[idx[2L]], rng[2L])))
-          idx[2L] <- idx[2L] - 1L
+    # Return the CF canonical order of dimensional axes that "receive special
+    # treatment". Scalar axes are not considered here.
+    XYZT = function() {
+      orient <- sapply(private$.axes, function(x) if (x$length > 1L) x$orientation)
+      match(c("X", "Y", "Z", "T"), orient, nomatch = 0L)
+    },
+
+    # Return the number of "dimensional" axes, i.e. axes that are associated
+    # with a dimension of the data of the variable. This may include axes with
+    # length 1 if the netCDF resource lists them as a dimension.
+    num_dim_axes = function() {
+      if (!is.null(private$.values))
+        length(dim(private$.values))
+      else if (self$has_resource)
+        self$ndims
+      else 0L
+    },
+
+    # Return the names of the dimensional axes.
+    dim_names = function() {
+      num <- private$num_dim_axes()
+      if (num > 0L)
+        sapply(1L:num, function(i) private$.axes[[i]]$name)
+      else character(0)
+    },
+
+    # Return the lengths of the dimensional axes.
+    dim = function() {
+      sapply(1L:private$num_dim_axes(), function(i) private$.axes[[i]]$length)
+    },
+
+    # Check that names passed as arguments to $subset() and $profile() are valid.
+    # This means that they must refer to an axis by name or orientation and
+    # there can be no duplication. It returns an integer vector with the order
+    # in which the axes are specified.
+    check_names = function(nm) {
+      axis_names <- names(private$.axes)
+      is_axis <- match(nm, axis_names)
+      if (anyDuplicated(is_axis, incomparables = NA))
+        stop("Duplicated axis names not allowed", call. = FALSE)
+      if (!any(is.na(is_axis)))
+        return(is_axis)
+
+      orientations <- sapply(private$.axes, function(a) a$orientation)
+      is_orient <- match(nm, orientations)
+      if (anyDuplicated(is_orient, incomparables = NA))
+        stop("Duplicated axis orientations not allowed", call. = FALSE)
+      if (!any(is.na(is_orient)))
+        return(is_orient)
+
+      ax_na <- which(is.na(is_axis))
+      is_axis[ax_na] <- is_orient[ax_na]
+      if (!any(is.na(is_axis)))
+        return(is_axis)
+
+      if (!is.null(private$.llgrid)) {
+        is_aux <- match(nm, private$.llgrid$grid_names)
+        if (anyDuplicated(is_aux, incomparables = NA))
+          stop("Duplicated auxiliary axis names not allowed", call. = FALSE)
+        if (!any(is.na(is_aux)))
+          return(is_aux)
+
+        ax_na <- which(is.na(is_axis))
+        is_axis[ax_na] <- is_aux[ax_na]
       }
-      if (is.null(idx)) NULL else as.integer(idx)
+
+      if (anyDuplicated(is_axis, incomparables = NA))
+        stop("Duplicated axis names and orientations not allowed", call. = FALSE)
+      if (any(is.na(is_axis)))
+        stop("Arguments contain names not corresponding to an axis", call. = FALSE)
+
+      is_axis
+    },
+
+    # Drop unwanted values in the "coordinates" attribute
+    drop_coordinates_attribute = function(atts, names) {
+      crd <- atts[atts$name == "coordinates", ]$value
+      if (!length(crd)) return(atts)
+
+      crds <- strsplit(crd[[1L]], " ")[[1L]]
+      keep <- !(crds %in% names)
+      if (!any(keep))
+        return(atts[!(atts$name == "coordinates"), ])
+
+      crds <- paste(crds[keep], collapse = " ")
+      atts[atts$name == "coordinates", ]$length <- nchar(crds)
+      atts[atts$name == "coordinates", ]$value <- crds
+      atts
+    },
+
+    # Orient private$.values in such a way that it conforms to regular R arrays:
+    # axis order will be Y-X-Z-T-others and Y values will go from the top to the
+    # bottom. Alternatively, order private$.values in the CF canonical order.
+    # Argument data is the array to order, argument ordering must be "R" or
+    # "CF". Returns a new array with an attribute "axes" that lists axis names
+    # in the order of the new array.
+    orient = function(data, ordering = "R") {
+      dim_names <- names(private$.axes)
+
+      if (ordering == "R")
+        order <- private$YXZT()
+      else if (ordering == "CF")
+        order <- private$XYZT()
+      else
+        stop("Invalid argument for ordering.", call. = FALSE)
+
+      if (sum(order) == 0L) {
+        warning("Cannot orient data array because axis orientation has not been set")
+        attr(data, "axes") <- dim_names
+        return(data)
+      }
+      if (all(diff(order[which(order > 0L)]) > 0L)) {
+        attr(data, "axes") <- dim_names
+      } else {
+        all_dims <- seq(length(dim(data)))
+        perm <- c(order[which(order > 0L)], all_dims[!(all_dims %in% order)])
+        data <- aperm(data, perm)
+        attr(data, "axes") <- dim_names[perm]
+      }
+
+      if (ordering == "R") {
+        # Flip Y-axis, if necessary
+        ynames <- dimnames(data)[[1L]]
+        if (length(ynames) > 1L && as.numeric(ynames[2L]) > as.numeric(ynames[1L])) {
+          dn <- dimnames(data)
+          dims <- dim(data)
+          dim(data) <- c(dims[1L], prod(dims[-1L]))
+          data <- apply(data, 2L, rev)
+          dim(data) <- dims
+          dn[[1L]] <- rev(dn[[1L]])
+          dimnames(data) <- dn
+        }
+      }
+
+      data
     },
 
     # Do the auxiliary grid interpolation. Argument "subset" is passed from the
@@ -55,7 +175,7 @@ CFVariable <- R6::R6Class("CFVariable",
     auxiliary_interpolation = function(subset, ll_names) {
       # This code assumes that the grid orientation of the data variable is the
       # same as that of the longitude-latitude grid
-      ext <- private$llgrid$extent
+      ext <- private$.llgrid$extent
       sel_names <- names(subset)
       Xrng <- if (ll_names[1L] %in% sel_names && !is.na(subset[[ ll_names[1L] ]][1L]))
                 range(subset[[ ll_names[1L] ]])
@@ -63,15 +183,15 @@ CFVariable <- R6::R6Class("CFVariable",
       Yrng <- if (ll_names[2L] %in% sel_names && !is.na(subset[[ ll_names[2L] ]][1L]))
                 range(subset[[ ll_names[2L] ]])
               else ext[3L:4L]
-      private$llgrid$aoi <-  aoi(Xrng[1L], Xrng[2L], Yrng[1L], Yrng[2L])
+      private$.llgrid$aoi <-  aoi(Xrng[1L], Xrng[2L], Yrng[1L], Yrng[2L])
 
-      index <- private$llgrid$grid_index()
+      index <- private$.llgrid$grid_index()
       dim_index <- dim(index)
 
       # The below appears counter-intuitive (XY relationship to indices) but it
       # works for long-lat grids that use the recommended X-Y-Z-T axis ordering.
       # Report any problems to https://github.com/R-CF/ncdfCF/issues
-      dim_ll <- private$llgrid$dim
+      dim_ll <- private$.llgrid$dim
       xyidx <- arrayInd(index, dim_ll)          # convert indices to row,column
       rx <- range(xyidx[, 2L], na.rm = TRUE)    # full range of columns
       xyidx[, 2L] <- xyidx[, 2L] - rx[1L] + 1L  # reduce columns to 1-based
@@ -85,27 +205,7 @@ CFVariable <- R6::R6Class("CFVariable",
       # X,Y = start and count values for data to read
       # aoi = the AOI that was used to index
       # box = the dim of the original index
-      list(index = index, X = c(ry[1L], rows), Y = c(rx[1L], cols), aoi = private$llgrid$aoi, box = dim_index)
-    },
-
-    # Return a vector with the two names of the auxiliary coordinate variables,
-    # if they have been set.
-    aux_var_names = function() {
-      if (is.null(private$llgrid))
-        NULL
-      else
-        c(private$llgrid$varLong$name, private$llgrid$varLat$name)
-    },
-
-    # Read a chunk of data from file
-    read_chunk = function(start, count) {
-      self$NCvar$get_data(start, count)
-    },
-
-    # Read all the data values from file. Note that this may overwhelm computer
-    # memory if the data is large.
-    get_values = function() {
-      self$NCvar$get_data()
+      list(index = index, X = c(ry[1L], rows), Y = c(rx[1L], cols), aoi = private$.llgrid$aoi, box = dim_index)
     },
 
     # Internal apply/tapply method for this class. If the size of the data
@@ -115,11 +215,13 @@ CFVariable <- R6::R6Class("CFVariable",
     # This is usually applied over the temporal domain but could be others
     # as well (untested).
     process_data = function(tdim, fac, fun, ...) {
-      # Read the whole data array if size is manageable
-      if (prod(sapply(self$axes, function(x) x$length)) < CF.options$memory_cell_limit)
-        return(.process.data(private$get_values(), tdim, fac, fun, ...))
+      if (!is.null(private$.values))
+        return(.process.data(private$.values, tdim, fac, fun, ...))
+      else if (prod(sapply(private$.axes, function(x) x$length)) < CF.options$memory_cell_limit)
+        # Read the whole data array because size is manageable
+        return(.process.data(self$read_data(), tdim, fac, fun, ...))
 
-      # If data variable is large, go by individual factor levels
+      # If data variable is too large, go by individual factor levels
       num_dims <- private$num_dim_axes()
       start <- rep(1L, num_dims)
       count <- rep(NA_integer_, num_dims)
@@ -135,13 +237,13 @@ CFVariable <- R6::R6Class("CFVariable",
           rng <- range(indices)
           start[tdim] <- rng[1L]
           count[tdim] <- rng[2L] - rng[1L] + 1L
-          values <- self$NCvar$get_data(start, count)
+          values <- self$read_chunk(start, count)
         } else {                    # Era factors have disparate indices
           cutoffs <- c(0L, which(c(dff, 2L) > 1L))
           values <- lapply(2L:length(cutoffs), function(i) {
             start[tdim] <- indices[cutoffs[i - 1L] + 1L]
             count[tdim] <- cutoffs[i] - cutoffs[i - 1L]
-            self$NCvar$get_data(start, count)
+            self$read_chunk(start, count)
           })
           values <- abind::abind(values, along = num_dims)
         }
@@ -179,25 +281,29 @@ CFVariable <- R6::R6Class("CFVariable",
   ),
   public = list(
     #' @description Create an instance of this class.
-    #' @param nc_var The netCDF variable that defines this CF variable.
-    #' @param axes List of [CFAxis] instances that describe the dimensions.
-    #' @return An instance of this class.
-    initialize = function(nc_var, axes) {
-      super$initialize(nc_var, axes, NULL)
-      nc_var$CF <- self
-
-      # Sanitize attributes for valid range, missing values and packing
-      private$values_type <- self$attribute("scale_factor", "type")
-      if (is.na(private$values_type))
-        private$values_type <- self$attribute("add_offset", "type")
-      if (!is.na(private$values_type))
-        # Data is packed in the netCDF file, throw away the attributes and let
-        # RNetCDF deal with unpacking when reading the data.
-        self$delete_attribute(c("_FillValue", "scale_factor", "add_offset",
-                                "valid_range", "valid_min", "valid_max",
-                                "missing_value"))
-      else
-        private$values_type <- nc_var$vtype
+    #' @param var The [NCVariable] instance upon which this CF variable is based
+    #'   when read from a netCDF resource, or the name for the new CF variable
+    #'   to be created.
+    #' @param axes List of instances of [CFAxis] to use with this variable.
+    #' @param values Optional. The values of the variable in an array.
+    #' @param start Optional. Vector of indices where to start reading data
+    #'   along the dimensions of the array on file. The vector must be `NA` to
+    #'   read all data, otherwise it must have agree with the dimensions of the
+    #'   array on file. Ignored when argument `var` is not an `NCVariable`
+    #'   instance.
+    #' @param count Optional. Vector of number of elements to read along each
+    #'   dimension of the array on file. The vector must be `NA` to read to the
+    #'   end of each dimension, otherwise its value must agree with the
+    #'   corresponding `start` value and the dimension of the array on file.
+    #'   Ignored when argument `var` is not an `NCVariable` instance.
+    #' @param attributes Optional. A `data.frame` with the attributes of the
+    #'   object. When argument `var` is an `NCVariable` instance and this
+    #'   argument is an empty `data.frame` (default), arguments will be read
+    #'   from the resource.
+    #' @return A `CFVariable` instance.
+    initialize = function(var, axes, values = values, start = NA, count = NA, attributes = data.frame()) {
+      super$initialize(var, values = values, start = start, count = count, attributes = attributes)
+      private$.axes <- axes
     },
 
     #' @description Print a summary of the data variable to the console.
@@ -205,37 +311,48 @@ CFVariable <- R6::R6Class("CFVariable",
     #' is `width = ` to indicate a maximum width of attribute columns.
     print = function(...) {
       cat("<Variable>", self$name, "\n")
-      if (self$group$name != "/")
-        cat("Group    :", self$group$name, "\n")
-
       longname <- self$attribute("long_name")
       if (!is.na(longname) && longname != self$name)
         cat("Long name:", longname, "\n")
 
-      if (!is.null(self$crs)) {
+      if (!is.null(private$.values)) {
+        rng <- self$attribute("actual_range")
+        if (is.na(rng[1L])) {
+          cat("\nValues: -\n")
+          cat(sprintf("    NA: %d (100%%)\n", length(private$.values)))
+        } else {
+          units <- self$attribute("units")
+          if (is.na(units)) units <- ""
+          cat("\nValues: [", rng[1L], " ... ", rng[2L], "] ", units, "\n", sep = "")
+          NAs <- sum(is.na(private$.values))
+          cat(sprintf("    NA: %d (%.1f%%)\n", NAs, NAs * 100 / length(private$.values)))
+        }
+      } else
+        cat("\nValues: (not loaded)\n")
+
+      if (!is.null(private$.crs)) {
         cat("\nCoordinate reference system:\n")
-        print(.slim.data.frame(self$crs$brief(), ...), right = FALSE, row.names = FALSE)
+        print(.slim.data.frame(private$.crs$brief(), ...), right = FALSE, row.names = FALSE)
       }
 
       cat("\nAxes:\n")
-      axes <- do.call(rbind, lapply(self$axes, function(a) a$brief()))
+      axes <- do.call(rbind, lapply(private$.axes, function(a) a$brief()))
       axes <- lapply(axes, function(c) if (all(c == "")) NULL else c)
       if (length(axes)) {
-        if (all(axes$group == "/")) axes$group <- NULL
         axes <- as.data.frame(axes[lengths(axes) > 0L])
         print(.slim.data.frame(axes, ...), right = FALSE, row.names = FALSE)
       } else cat(" (none)\n")
 
-      len <- length(self$cell_measures)
+      len <- length(private$.cell_measures)
       if (len) {
         cat("\nCell measure", if (len > 1L) "s", ": ",
-            paste(sapply(self$cell_measures, function(cm) paste0(cm$name, " (", cm$measure, ")")), collapse = "; "),
+            paste(sapply(private$.cell_measures, function(cm) paste0(cm$name, " (", cm$measure, ")")), collapse = "; "),
             "\n", sep = "")
       }
 
-      if (!is.null(private$llgrid)) {
+      if (!is.null(private$.llgrid)) {
         cat("\nAuxiliary longitude-latitude grid:\n")
-        ll <- private$llgrid$brief()
+        ll <- private$.llgrid$brief()
         print(.slim.data.frame(ll, ...), right = FALSE, row.names = FALSE)
       }
 
@@ -246,11 +363,13 @@ CFVariable <- R6::R6Class("CFVariable",
     #'
     #' @return A 1-row `data.frame` with some details of the data variable.
     brief = function() {
-      props <- private$.varProperties()
-      ax <- sapply(self$axes, function(x) x$name)
-      data.frame(group = self$group$fullname, name = self$name,
-                 long_name = props$longname, units = props$unit,
-                 data_type = self$data_type, axes = paste(ax, collapse = ", "))
+      unit <- self$attribute("units")
+      if (is.na(unit)) unit <- ""
+      longname <- self$attribute("long_name")
+      if (is.na(longname) || longname == self$name) longname <- ""
+
+      data.frame(name = self$name, long_name = longname, units = unit,
+                 data_type = private$.data_type, axes = paste(names(private$.axes), collapse = ", "))
     },
 
     #' @description The information returned by this method is very concise
@@ -263,38 +382,53 @@ CFVariable <- R6::R6Class("CFVariable",
     },
 
     #' @description Retrieve interesting details of the data variable.
-    #' @param with_groups Should group information be included? The save option
-    #' is `TRUE` (default) when the netCDF resource has groups because names may
-    #' be duplicated among objects in different groups.
     #' @return A 1-row `data.frame` with details of the data variable.
-    peek = function(with_groups = TRUE) {
+    peek = function() {
       out <- data.frame(id = self$id)
-      if (with_groups) out$group <- self$group$fullname
       out$name <- self$name
       out$long_name <- self$attribute("long_name")
       out$standard_name <- self$attribute("standard_name")
       out$units <- self$attribute("units")
-      if (with_groups)
-        out$axes <- paste(sapply(self$axes, function(a) a$fullname), collapse = ", ")
-      else
-        out$axes <- paste(sapply(self$axes, function(a) a$name), collapse = ", ")
+      out$axes <- paste(sapply(private$.axes, function(a) a$name), collapse = ", ")
       out
     },
 
-    #' @description Retrieve all data of the variable.
-    #' @return A [CFArray] instance with all data from this variable.
-    data = function() {
-      out_group <- makeGroup(resource = self$group$resource)
-      # out_group$set_attribute("title", "NC_CHAR", paste("Data copy of variable", self$name))
-      # out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), "): CFVariable::data()"))
+    #' @description Return the time object from the axis representing time.
+    #' @param want Character string with value "axis" or "time", indicating
+    #' what is to be returned.
+    #' @return If `want = "axis"` the [CFAxisTime] axis; if `want = "time"` the
+    #' `CFTime` instance of the axis, or `NULL` if the variable does not have a
+    #' "time" axis.
+    time = function(want = "time") {
+      ndx <- sapply(private$.axes, inherits, "CFAxisTime")
+      if (any(ndx)) {
+        if (want == "axis") private$.axes[[which(ndx)]]
+        else private$.axes[[which(ndx)]]$time
+      } else NULL
+    },
 
-      axes <- lapply(self$axes, function(ax) ax$copy(out_group, ax$name))
-      lapply(axes, function(ax) ax$copy_terms(self$group, self$axes, axes))
+    #' @description Retrieve the data in the object exactly as it was read from
+    #'   a netCDF resource or produced by an operation.
+    #' @return An `array`, `matrix` or `vector` with (dim)names set.
+    raw = function() {
+      data <- self$read_data()
+      if (is.null(dim(data)))
+        names(data) <- self$dimnames
+      else
+        dimnames(data) <- self$dimnames
+      data
+    },
 
-      atts <- self$attributes
-      atts <- atts[!(atts$name == "coordinates"), ]
-
-      CFArray$new(self$name, out_group, self$NCvar$get_data(), private$values_type, axes, self$crs, atts)
+    #' @description Retrieve the data in the object in the form of an R array,
+    #' with axis ordering Y-X-others and Y values going from the top down.
+    #' @return An `array` or `matrix` of data in R ordering, or a `vector` if
+    #' the data has only a single dimension.
+    array = function() {
+      data <- self$raw()
+      if (is.null(dim(data)))
+        data
+      else
+        private$orient(data, "R")
     },
 
     #' @description This method extracts a subset of values from the array of
@@ -314,10 +448,10 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   must be specified. As with numeric values, only the two extreme values
     #'   in the vector will be used.
     #'
-    #'   If the range of coordinate values for an axis in argument `...` extend
-    #'   the valid range of the axis in `self`, the extracted data will start at
-    #'   the beginning for smaller values and extend to the end for larger
-    #'   values. If the values envelope the valid range the entire axis will be
+    #'   If the range of coordinate values for an axis in argument `...` extends
+    #'   the valid range of the axis, the extracted data will start at the
+    #'   beginning for smaller values and extend to the end for larger values.
+    #'   If the values envelope the valid range the entire axis will be
     #'   extracted in the result. If the range of coordinate values for any axis
     #'   are all either smaller or larger than the valid range of the axis then
     #'   nothing is extracted and `NULL` is returned.
@@ -325,7 +459,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   The extracted data has the same dimensional structure as the data in
     #'   the variable, with degenerate dimensions dropped. The order of the axes
     #'   in argument `...` does not reorder the axes in the result; use the
-    #'   [CFArray]$array() method for this.
+    #'   `array()` method for this.
     #'
     #'   As an example, to extract values of a variable for Australia for the
     #'   year 2020, where the first axis in `x` is the longitude, the second
@@ -361,76 +495,84 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   boundary of range in each axis should be included. You must use the
     #'   argument name when specifying this, like `rightmost.closed = TRUE`, to
     #'   avoid the argument being treated as an axis name.
-    #' @return A [CFArray] instance, having an array with its axes and
-    #'   attributes of the variable, or `NULL` if one or more of the selectors
-    #'   in the `...` argument fall entirely outside of the range of the axis.
-    #'   Note that degenerate dimensions (having `length(.) == 1`) are dropped
-    #'   from the array but the corresponding axis is maintained in the result
-    #'   as a scalar axis.
+    #' @return A `CFVariable` instance, having the axes and attributes of the
+    #'   variable, or `NULL` if one or more of the selectors in the `...`
+    #'   argument fall entirely outside of the range of the axis. Note that
+    #'   degenerate dimensions (having `length(.) == 1`) are dropped from the
+    #'   data array but the corresponding axis is maintained in the result as a
+    #'   scalar axis.
+    #'
+    #'   If `self` is linked to a netCDF resource then the result will be linked
+    #'   to the same netCDF resource as well, except when *auxiliary coordinate
+    #'   variables* have been selected for the planar axes.
     subset = function(..., rightmost.closed = FALSE) {
       num_axes <- private$num_dim_axes()
       if (!num_axes)
         stop("Cannot subset a scalar variable", call. = FALSE)
+      axis_names <- names(private$.axes)
 
       # Organize the selectors
       selectors <- list(...)
       if (is.list(selectors[[1L]]))
         selectors <- selectors[[1L]]
       sel_names <- names(selectors)
-      axis_names <- self$axis_names
       axis_order <- private$check_names(sel_names)
 
-      out_group <- makeGroup(resource = self$group$resource)
-      # out_group$set_attribute("title", "NC_CHAR", paste("Processing result of variable", self$name))
-      # out_group$set_attribute("history", "NC_CHAR", paste0(format(Sys.time(), "%FT%T%z"), " R package ncdfCF(", packageVersion("ncdfCF"), ")::CFVariable$subset()"))
-
+      # Auxiliary coordinates
       aux <- NULL
-      if (inherits(private$llgrid, "CFAuxiliaryLongLat")) {
-        aux_names <- private$llgrid$grid_names
+      if (inherits(private$.llgrid, "CFAuxiliaryLongLat")) {
+        aux_names <- private$.llgrid$grid_names
         if (any(aux_names %in% sel_names)) {
           aux <- private$auxiliary_interpolation(selectors, aux_names)
           sel_names <- sel_names[-which(sel_names %in% aux_names)]
-          ll_dimids <- private$llgrid$dimids # lat and long have identical dimids
+          ll_dimids <- private$.llgrid$dimids
+          aoi_bounds <- aux$aoi$bounds()
         }
-        aoi_bounds <- aux$aoi$bounds()
       }
 
+      # Start and count are "local", indices relative to the dimensions of self,
+      # which may be a subset of the data variable on file.
       start <- rep(1L, num_axes)
-      count <- rep(NA_integer_, num_axes)
+      count <- self$dim()
+
       ZT_dim <- vector("integer")
       out_axes_dim <- list(); ax_nm_dim <- list()
       out_axes_other <- list(); ax_nm_other <- list()
       for (ax in 1:num_axes) {
-        axis <- self$axes[[ax]]
+        axis <- private$.axes[[ax]]
         orient <- axis$orientation
         ax_dimid <- axis$dimid
 
         # In every section, set start and count values and create a corresponding axis
         if (!is.null(aux) && ax_dimid == ll_dimids[1L]) {
+          # start and count relative to the data variable on file
           start[ax] <- aux$X[1L]
           count[ax] <- aux$X[2L]
-          atts <- axis$attributes
-          atts <- atts[!atts$name %in% c("standard_name", "units"), ]
-          out_axis <- makeLongitudeAxis(aux_names[1L], out_group, aux$aoi$dimnames[[2L]], aoi_bounds$lon$values, atts)
+          out_axis <- CFAxisLongitude$new(aux_names[1L], values = aux$aoi$dimnames[[2L]], attributes = axis$attributes)
+          out_axis$set_attribute("standard_name", "NC_CHAR", "longitude")
+          out_axis$set_attribute("units", "NC_CHAR", "degrees_east")
+          out_axis$bounds <- aoi_bounds$lon
         } else if (!is.null(aux) && ax_dimid == ll_dimids[2L]) {
+          # start and count relative to the data variable on file
           start[ax] <- aux$Y[1L]
           count[ax] <- aux$Y[2L]
-          atts <- axis$attributes
-          atts <- atts[!atts$name %in% c("standard_name", "units"), ]
-          out_axis <- makeLatitudeAxis(aux_names[2L], out_group, aux$aoi$dimnames[[1L]], aoi_bounds$lat$values, atts)
+          out_axis <- CFAxisLatitude$new(aux_names[2L], values = aux$aoi$dimnames[[1L]], attributes = axis$attributes)
+          out_axis$set_attribute("standard_name", "NC_CHAR", "latitude")
+          out_axis$set_attribute("units", "NC_CHAR", "degrees_north")
+          out_axis$bounds <- aoi_bounds$lat
         } else { # No auxiliary long-lat coordinates
           rng <- selectors[[ axis_names[ax] ]]
           if (is.null(rng)) rng <- selectors[[ orient ]]
           if (is.null(rng)) { # Axis not specified so take the whole axis
             ZT_dim <- c(ZT_dim, axis$length)
-            out_axis <- axis$subset(out_group, axis$name)
+            out_axis <- axis$copy()
           } else { # Subset the axis
-            idx <- private$range2index(axis, rng, rightmost.closed)
+            idx <- axis$slice(rng)
             if (is.null(idx)) return(NULL)
             start[ax] <- idx[1L]
             count[ax] <- idx[2L] - idx[1L] + 1L
             ZT_dim <- c(ZT_dim, count[ax])
-            out_axis <- axis$subset(out_group, axis$name, idx)
+            out_axis <- axis$subset(rng = idx)
           }
         }
 
@@ -447,9 +589,15 @@ CFVariable <- R6::R6Class("CFVariable",
         }
       }
 
-      # Read the data, index as required
-      d <- private$read_chunk(start, count)
-      if (!is.null(aux)) {
+      # Get the data for the result CFVariable
+      d <- NULL
+      if (is.null(aux)) {
+        # Regular axes selected
+        if (!is.null(private$.values))
+          d <- self$read_chunk(start, count)
+      } else {
+        # Auxiliary grids selected, index the data
+        d <- self$read_chunk(start, count)
         dim(d) <- dim_in <- c(aux$X[2L] * aux$Y[2L], prod(ZT_dim))
         d <- d[aux$index, ]
         dim(d) <- dim_out <- c(aux$box, ZT_dim)
@@ -466,24 +614,490 @@ CFVariable <- R6::R6Class("CFVariable",
       # Sanitize the attributes for the result, as required, and get a CRS
       if (is.null(aux)) {
         atts <- self$attributes
-        crs <- self$crs
       } else {
-        atts <- private$dropCoordinates(self$attributes, private$llgrid$grid_names)
-        atts <- atts[!(atts$name == "grid_mapping"), ]  # drop: warped to lat-long
-        crs <- NULL
+        atts <- private$drop_coordinates_attribute(self$attributes, private$.llgrid$grid_names)
+        atts <- atts[!(atts$name == "grid_mapping"), ]  # drop attribute: warped to lat-long
       }
 
-      # Assemble the CFArray instance
-      axes <- c(axes, self$axes[-(1L:num_axes)])      # Add the scalar axes to the list
+      # Assemble the new instance
+      axes <- c(axes, private$.axes[-(1L:num_axes)])  # Add the scalar axes to the list
       names(axes) <- sapply(axes, function(a) a$name) # New axis names
-      CFArray$new(self$name, out_group, d, private$values_type, axes, crs, atts)
+      if (is.null(aux)) {
+        v <- CFVariable$new(private$.NCvar, values = d, axes = axes,
+                            start = start + private$.start_count$start - 1L, count = count,
+                            attributes = atts)
+        v$crs <- private$.crs
+      } else {
+        v <- CFVariable$new(self$name, values = d, axes = axes, attributes = atts)
+        v$crs <- NULL
+        v$detach()
+      }
+      v
+    },
+
+    #' @description Summarise the temporal domain of the data, if present, to a
+    #'   lower resolution, using a user-supplied aggregation function.
+    #'
+    #'   Attributes are copied from the input data variable or data array. Note
+    #'   that after a summarisation the attributes may no longer be accurate.
+    #'   This method tries to sanitise attributes but the onus is on the calling
+    #'   code (or yourself as interactive coder). Attributes like
+    #'   `standard_name` and `cell_methods` likely require an update in the
+    #'   output of this method, but the appropriate new values are not known to
+    #'   this method. Use `CFVariable$set_attribute()` on the result of this
+    #'   method to set or update attributes as appropriate.
+    #' @param name Character vector with a name for each of the results that
+    #'   `fun` returns. So if `fun` has 2 return values, this should be a vector
+    #'   of length 2. Any missing values are assigned a default name of
+    #'   "result_#" (with '#' being replaced with an ordinal number).
+    #' @param fun A function or a symbol or character string naming a function
+    #'   that will be applied to each grouping of data. The function must return
+    #'   an atomic value (such as `sum()` or `mean()`), or a vector of atomic
+    #'   values (such as `range()`). Lists and other objects are not allowed and
+    #'   will throw an error that may be cryptic as there is no way that this
+    #'   method can assert that `fun` behaves properly so an error will pop up
+    #'   somewhere, most probably in unexpected ways. The function may also be
+    #'   user-defined so you could write a wrapper around a function like `lm()`
+    #'   to return values like the intercept or any coefficients from the object
+    #'   returned by calling that function.
+    #' @param period The period to summarise to. Must be one of either "day",
+    #'   "dekad", "month", "quarter", "season", "year". A "quarter" is the
+    #'   standard calendar quarter such as January-March, April-June, etc. A
+    #'   "season" is a meteorological season, such as December-February,
+    #'   March-May, etc. (any December data is from the year preceding the
+    #'   January data). The period must be of lower resolution than the
+    #'   resolution of the time axis.
+    #' @param era Optional, integer vector of years to summarise over by the
+    #'   specified `period`. The extreme values of the years will be used. This
+    #'   can also be a list of multiple such  vectors. The elements in the list,
+    #'   if used, should have names as these will be used to label the results.
+    #' @param ... Additional parameters passed on to `fun`.
+    #' @return A `CFVariable` object, or a list thereof with as many
+    #'   `CFVariable` objects as `fun` returns values.
+    summarise = function(name, fun, period, era = NULL, ...) {
+      if (missing(name) || missing(period) || missing(fun))
+        stop("Arguments 'name', 'period' and 'fun' are required.", call. = FALSE) # nocov
+      if (!(period %in% c("day", "dekad", "month", "quarter", "season", "year")))
+        stop("Argument 'period' has invalid value.", call. = FALSE) # nocov
+      if (!all(.is_valid_name(name)))
+        stop("Not all names are valid.", call. = FALSE) # nocov
+
+      # Find the time object, create the factor
+      tax <- self$time("axis")
+      if (is.null(tax))
+        stop("No 'time' axis found to summarise on.", call. = FALSE) # nocov
+      f <- try(tax$time$factor(period, era), silent = TRUE)
+      if (inherits(f, "try-error"))
+        stop("The 'time' axis is too short to summarise on.", call. = FALSE) # nocov
+      if (is.factor(f)) f <- list(f)
+
+      tm <- sum(private$YXZT() > 0L) # Test which oriented axes are present, T is the last one
+
+      # Helper function for the below lapply
+      .make_var <- function(nm, vals, axes, atts) {
+        v <- CFVariable$new(nm, values = vals, axes = axes, attributes = atts)
+        v$crs <- self$crs
+        v$detach()
+        v
+      }
+
+      res <- lapply(f, function(fac) {
+        # Make a new time axis for the result
+        new_tm <- attr(fac, "CFTime")
+        len <- length(new_tm)
+        new_ax <- CFAxisTime$new(tax$name, values = new_tm, attributes = tax$attributes)
+        other_axes <- private$.axes[-tm]
+        if (len == 1L) {
+          axes <- c(other_axes, new_ax)
+          names(axes) <- c(names(other_axes), tax$name)
+        } else {
+          axes <- c(new_ax, other_axes)
+          names(axes) <- c(tax$name, names(other_axes))
+        }
+        if (inherits(new_tm, "CFClimatology")) {
+          new_ax$delete_attribute("bounds")
+          new_ax$set_attribute("climatology", "NC_CHAR", "climatology_bnds")
+        }
+
+        # Summarise
+        dt <- private$process_data(tm, fac, fun, ...)
+
+        # Create the output
+        atts <- self$attributes
+        aux_nm <- self$auxiliary_names
+        if (!is.null(aux_nm))
+          atts <- private$drop_coordinates_attribute(atts, aux_nm)
+
+        len <- length(dt) # Number of fun outputs
+        if (len == 1L)
+          out <- .make_var(name[1L], dt[[1L]], axes, atts)
+        else {
+          if (length(name) < len)
+            name <- c(name, paste0("result_", (length(name)+1L):len))
+          out <- lapply(1:len, function(i) .make_var(name[i], dt[[i]], axes, atts))
+          names(out) <- name
+        }
+        out
+      })
+      if (length(f) == 1L)
+        res[[1L]]
+      else {
+        names(res) <- names(f)
+        res
+      }
+    },
+
+    #' @description This method extracts profiles of values from the array of
+    #'   the variable, with the location along each axis to extract expressed in
+    #'   coordinate values of each axis.
+    #'
+    #' @details The coordinates along each axis to be sampled are expressed in
+    #'   values of the domain of the axis. Any axes which are not passed as
+    #'   arguments are extracted in whole to the result. If bounds are set on
+    #'   the axis, the coordinate whose bounds envelop the requested coordinate
+    #'   is selected. Otherwise, the coordinate along the axis closest to the
+    #'   supplied value will be used. If the value for a specified axis falls
+    #'   outside the valid range of that axis, `NULL` is returned.
+    #'
+    #'   A typical case is to extract the temporal profile as a 1D array for a
+    #'   given location. In this case, use arguments for the latitude and
+    #'   longitude on an X-Y-T data variable: `profile(lat = -24, lon = 3)`.
+    #'   Other profiling options are also possible, such as a 2D zonal
+    #'   atmospheric profile at a given longitude for an X-Y-Z data variable:
+    #'   `profile(lon = 34)`.
+    #'
+    #'   Multiple profiles can be extracted in one call by supplying vectors for
+    #'   the indicated axes: `profile(lat = c(-24, -23, -2), lon = c(5, 5, 6))`.
+    #'   The vectors need not have the same length, unless `.as_table = TRUE`.
+    #'   With unequal length vectors the result will be a `list` of `CFVariable`
+    #'   instances with different dimensionality and/or different axes.
+    #'
+    #'   ## Auxiliary coordinate variables
+    #'
+    #'   A special case exists for variables where the horizontal dimensions (X
+    #'   and Y) are not in longitude and latitude coordinates but in some other
+    #'   coordinate system. In this case the netCDF resource may have so-called
+    #'   *auxiliary coordinate variables*. If the variable has such *auxiliary coordinate
+    #'   variables* then you can specify their names (instead of specifying the
+    #'   names of the primary planar axes).
+    #' @param ... One or more arguments of the form `axis = location`. The
+    #'   "axis" part should be the name of an axis or its orientation `X`, `Y`,
+    #'   `Z` or `T`. The "location" part is a vector of values representing
+    #'   coordinates along the axis where to profile. A profile will be
+    #'   generated for each of the elements of the "location" vectors in all
+    #'   arguments.
+    #' @param .names A character vector with names for the results. The names
+    #'   will be used for the resulting `CFVariable` instances, or as values for
+    #'   the "location" column of the `data.table` if argument `.as_table` is
+    #'   `TRUE`. If the vector is shorter than the longest vector of locations
+    #'   in the `...` argument, a name "location_#" will be used, with the #
+    #'   replaced by the ordinal number of the vector element.
+    #' @param .as_table Logical to flag if the results should be `CFVariable`
+    #'   instances (`FALSE`, default) or a single `data.table` (`TRUE`). If
+    #'   `TRUE`, all `...` arguments must have the same number of elements, use
+    #'   the same axes and the `data.table` package must be installed.
+    #' @return If `.as_table = FALSE`, a `CFVariable` instance, or a list
+    #'   thereof with each having one profile for each of the elements in the
+    #'   "location" vectors of argument `...` and named with the respective
+    #'   `.names` value. If `.as_table = TRUE`, a `data.table` with a row for
+    #'   each element along all profiles, with a ".variable" column using the
+    #'   values from the `.names` argument.
+    profile = function(..., .names = NULL, .as_table = FALSE) {
+      num_axes <- private$num_dim_axes()
+      if (!num_axes)
+        stop("Cannot profile a scalar variable", call. = FALSE)
+
+      # Organize the selectors
+      selectors <- list(...)
+      sel_names <- names(selectors)
+      sel_axes <- private$check_names(sel_names)
+      sel_lengths <- sapply(selectors, length)
+      total <- max(sel_lengths)
+
+      # Convert domain values to indices
+      if (inherits(private$.llgrid, "CFAuxiliaryLongLat")) {
+        aux_names <- private$.llgrid$grid_names
+        if (all(aux_names %in% sel_names)) {
+          xy <- private$.llgrid$sample_index(selectors[[aux_names[1L]]], selectors[[aux_names[2L]]])
+          sel_indices <- lapply(1:length(selectors), function(x) {
+            if (sel_names[x] == aux_names[1L])
+              idx <- xy[, 1L]
+            else if (sel_names[x] == aux_names[2L])
+              idx <- xy[, 2L]
+            else
+              idx <- private$.axes[[sel_axes[x]]]$indexOf(selectors[[x]])
+            idx[is.na(idx)] <- 0L
+            idx
+          })
+        } else
+          xy <- NULL
+      } else {
+        xy <- NULL
+        sel_indices <- lapply(1:length(selectors), function(x) {
+          idx <- private$.axes[[sel_axes[x]]]$indexOf(selectors[[x]])
+          idx[is.na(idx)] <- 0L
+          idx
+        })
+      }
+
+      # Check .as_table
+      if (.as_table) {
+        if (!requireNamespace("data.table", quietly = TRUE))
+          stop("Please install package 'data.table' before calling this method", call. = FALSE)
+        hasNA <- any(sapply(sel_indices, function(x) any(x == 0L)))
+        if (!all(sel_lengths == sel_lengths[1L]) || hasNA)
+          stop("All ... arguments must have the same length and use same axes when `.as_table = TRUE`.", call. = FALSE)
+      }
+
+      # Check .names
+      len <- length(.names)
+      if (len < total) {
+        .names <- c(.names, sapply((len + 1L):total, function(i) paste0("location_", i)))
+      } else if (len > total)
+        .names <- .names[1L:total]
+
+      out <- vector("list", total)
+      for (e in 1L:total) {
+        indices <- sapply(sel_indices, function(x) x[e])
+        if (!any(indices == 0L, na.rm = TRUE)) { # All selector coordinates are in range
+          start <- rep(1L, num_axes)
+          count <- self$dim()
+          out_axes_dim <- list()
+          out_axes_other <- list()
+
+          for (ax in 1L:num_axes) {
+            axis <- private$.axes[[ax]]
+            ax_ndx <- match(ax, sel_axes)
+            if (!is.na(ax_ndx) && !is.na(indices[ax_ndx])) {
+              start[ax] <- indices[ax_ndx]
+              count[ax] <- 1L
+              orient <- axis$orientation
+              nm <- if (is.null(xy)) axis$name
+                    else if (orient == "X") private$.llgrid$varLong$name
+                    else private$.llgrid$varLat$name
+              x <- axis$copy_with_values(nm, selectors[[ax_ndx]][e])
+              out_axes_other <- append(out_axes_other, x)
+            } else
+              out_axes_dim <- append(out_axes_dim, axis$copy())
+          }
+
+          # Read the data
+          d <- self$read_chunk(start, count)
+          d <- drop(d)
+
+          # Sanitize the attributes for the result, as required, and make CRS
+          if (is.null(xy)) {
+            atts <- self$attributes
+            crs <- self$crs
+          } else {
+            atts <- private$drop_coordinates_attribute(self$attributes, private$.llgrid$grid_names)
+            atts <- atts[!(atts$name == "grid_mapping"), ]  # drop: warped to lat-long
+            crs <- NULL
+          }
+
+          # Assemble the CFVariable instance
+          scalars <- self$axes[-(1L:num_axes)]
+          axes <- c(out_axes_dim, out_axes_other, scalars)
+          names(axes) <- sapply(axes, function(a) a$name)
+          v <- CFVariable$new(.names[e], values = d, axes = axes, attributes = atts)
+          v$crs <- crs
+          v$update_coordinates_attribute(sapply(out_axes_other, function(ax) ax$name))
+          out[[e]] <- if (.as_table) v$data.table(var_as_column = TRUE)
+          else v
+        }
+      }
+
+      if (.as_table) {
+        atts <- attributes(out[[1L]])$value
+        out <- data.table::rbindlist(out, use.names = FALSE)
+        data.table::setattr(out, "value", atts)
+      } else if (total == 1L)
+        out <- out[[1L]]
+      else
+        names(out) <- .names
+      out
+    },
+
+    #' @description Append the data from another `CFVariable` instance to the
+    #'   current instance, along one of the axes. The operation will only
+    #'   succeed if the axes other than the one to append along have the same
+    #'   coordinates and the coordinates of the axis to append along have to be
+    #'   monotonically increasing or decreasing after appending.
+    #' @param from The `CFVariable` instance to append to this data variable.
+    #' @param along The name of the axis to append along. This must be a single
+    #'   character string and the named axis has to be present both in this data
+    #'   variable and in the `CFVariable` instance in argument `from`.
+    #' @return `self`, invisibly, with the arrays from this data variable and
+    #'   `from` appended.
+    append = function(from, along) {
+      # Check if the array can be appended to self
+      if (length(along) != 1L || !(along %in% names(private$.axes)))
+        stop("Argument `along` must be a single name of an existing axis.", call. = FALSE)
+      if (length(from$axes) != length(private$.axes))
+        stop("Array `from` must have the same number of axes as this data variable", call. = FALSE)
+      for (ax in seq_along(self$axes)) {
+        if (self$axes[[ax]]$name == along)
+          axno <- ax
+        else
+          if (!self$axes[[ax]]$identical(from$axes[[ax]]))
+            stop(paste("Axis", ax, "is not identical between the two data variables."), call. = FALSE)
+      }
+
+      # Extend the axis `along` with values from `from`
+      private$.axes[[axno]] <- private$.axes[[axno]]$append(from$axes[[axno]])
+
+      # Merge the data values
+      app <- from$raw()
+      private$set_values(abind::abind(private$.values, app, along = axno))
+
+      # Unlink from any netCDF resource
+      self$detach()
+
+      invisible(self)
+    },
+
+    #' @description Convert the data to a `terra::SpatRaster` (3D) or a
+    #'   `terra::SpatRasterDataset` (4D) object. The data will be oriented to
+    #'   North-up. The 3rd dimension in the data will become layers in the
+    #'   resulting `SpatRaster`, any 4th dimension the data sets. The `terra`
+    #'   package needs to be installed for this method to work.
+    #' @return A `terra::SpatRaster` or `terra::SpatRasterDataset` instance.
+    terra = function() {
+      if (!requireNamespace("terra", quietly = TRUE))
+        stop("Please install package 'terra' before using this funcionality")
+
+      # Extent
+      YX <- private$YXZT()[1L:2L]
+      if (!all(YX))
+        stop("Cannot create `terra` object because data does not have X and Y axes.", call. = FALSE)
+
+      Xbnds <- private$.axes[[YX[2L]]]$bounds
+      if (inherits(Xbnds, "CFBounds")) Xbnds <- Xbnds$range()
+      else {
+        vals <- private$.axes[[YX[2L]]]$values
+        halfres <- (vals[2L] - vals[1L]) * 0.5 # this assumes regular spacing
+        Xbnds <- c(vals[1L] - halfres, vals[length(vals)] + halfres)
+      }
+      Ybnds <- private$.axes[[YX[1L]]]$bounds
+      if (inherits(Ybnds, "CFBounds")) Ybnds <- Ybnds$range()
+      else {
+        vals <- private$.axes[[YX[1L]]]$values
+        halfres <- (vals[2L] - vals[1L]) * 0.5 # this assumes regular spacing
+        Ybnds <- c(vals[1L] - halfres, vals[length(vals)] + halfres)
+      }
+      if (Ybnds[1L] > Ybnds[2L]) Ybnds <- rev(Ybnds)
+      ext <- round(c(Xbnds, Ybnds), CF.options$digits) # Round off spurious "accuracy"
+
+      # Create the object
+      arr <- self$array()
+      numdims <- length(dim(arr))
+      dn <- dimnames(arr)
+      if (numdims == 4L) {
+        r <- terra::sds(arr, extent = ext)
+        for (d4 in seq_along(dn[[4L]]))
+          names(r[d4]) <- dn[[3L]]
+        names(r) <- dn[[4L]]
+      } else {
+        r <- terra::rast(arr, extent = ext)
+        if (numdims == 3L)
+          names(r) <- dn[[3L]]
+        else if (length(private$.axes) > 2L) # Use coordinate of a scalar axis
+          names(r) <- private$.axes[[3L]]$coordinates
+      }
+
+      # CRS
+      if (!is.null(self$crs))
+        crs(r) <- self$crs$wkt2(.wkt2_axis_info(self))
+
+      r
+    },
+
+    #' @description Retrieve the data variable in the object in the form of a
+    #'   `data.table`. The `data.table` package needs to be installed for this
+    #'   method to work.
+    #'
+    #'   The attributes associated with this data variable will be mostly lost.
+    #'   If present, attributes 'long_name' and 'units' are attached to the
+    #'   `data.table` as attributes, but all others are lost.
+    #' @param var_as_column Logical to flag if the name of the variable should
+    #'   become a column (`TRUE`) or be used as the name of the column with the
+    #'   data values (`FALSE`, default). Including the name of the variable as a
+    #'   column is useful when multiple `data.table`s are merged into one.
+    #' @return A `data.table` with all data points in individual rows. All axes
+    #'   will become columns. Two attributes are added: `name` indicates the
+    #'   long name of this data variable, `units` indicates the physical unit of
+    #'   the data values.
+    data.table = function(var_as_column = FALSE) {
+      if (!requireNamespace("data.table", quietly = TRUE))
+        stop("Please install package 'data.table' before using this functionality", call. = FALSE)
+      .datatable.aware = TRUE
+
+      exp <- expand.grid(lapply(private$.axes, function(ax) ax$coordinates),
+                         KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE)
+      dt <- data.table::as.data.table(exp)
+      if (var_as_column) {
+        dt[ , .variable := private$.name]
+        suppressWarnings(dt[ , .value := private$.values])
+      } else
+        suppressWarnings(dt[ , eval(private$.name) := private$.values])
+
+      long_name <- self$attribute("long_name")
+      if (is.na(long_name)) long_name <- ""
+      units <- self$attribute("units")
+      if (is.na(units)) units <- ""
+      data.table::setattr(dt, "value", list(name = long_name, units = units))
+      dt
+    },
+
+    #' @description Tests if the `other` object is coincident with this data
+    #'   variable: identical axes.
+    #' @param other A `CFVariable` instance to compare to this data variable.
+    #' @return `TRUE` if the data variables are coincident, `FALSE` otherwise.
+    is_coincident = function(other) {
+      if (!inherits(other, "CFVariable")) return(FALSE)
+      other_axes <- other$axes
+      if (length(other_axes) != length(self$axes)) return(FALSE)
+      for (ax in seq_along(self$axes))
+        if (!self$axes[[ax]]$identical(other_axes[[ax]]))
+          return(FALSE)
+      TRUE
     }
   ),
   active = list(
     #' @field friendlyClassName (read-only) A nice description of the class.
     friendlyClassName = function(value) {
       if (missing(value))
-        "Variable"
+        "Data variable"
+    },
+
+    #' @field axes (read-only) List of instances of classes descending from
+    #'   [CFAxis] that are the axes of the data object. If there are any scalar
+    #'   axes, they are listed after the axes that associate with the dimensions
+    #'   of the data. (In other words, axes `1..n` describe the `1..n` data
+    #'   dimensions, while any axes `n+1..m` are scalar axes.)
+    axes = function(value) {
+      if (missing(value))
+        private$.axes
+    },
+
+    #' @field crs The coordinate reference system of this variable,
+    #'   as an instance of [CFGridMapping]. If this field is `NULL`, the
+    #'   horizontal component of the axes are in decimal degrees of longitude
+    #'   and latitude.
+    crs = function(value) {
+      if (missing(value))
+        private$.crs
+      else if (is.null(value) || inherits(value, "CFGridMapping"))
+        private$.crs <- value
+      else
+        stop("Invalid CRS for a CF data variable.", call. = FALSE) # nocov
+    },
+
+    #' @field cell_measures (read-only) List of the [CFCellMeasure] objects of
+    #'   this variable, if defined.
+    cell_measures = function(value) {
+      if (missing(value))
+        private$.cell_measures
     },
 
     #' @field dimids (read-only) Retrieve the dimension ids used by the
@@ -493,13 +1107,23 @@ CFVariable <- R6::R6Class("CFVariable",
         self$NCvar$dimids
     },
 
+    #' @field dimnames (read-only) Retrieve dimnames of the data variable.
+    dimnames = function(value) {
+      if (missing(value)) {
+        len <- self$ndims
+        dn <- lapply(1:len, function(ax) dimnames(private$.axes[[ax]]))
+        names(dn) <- sapply(1:len, function(ax) private$.axes[[ax]]$name)
+        dn
+      }
+    },
+
     #' @field auxiliary_names (read-only) Retrieve the names of the auxiliary
     #'   longitude and latitude grids as a vector of two character strings, in
     #'   that order. If no auxiliary grids are defined, returns `NULL`.
     auxiliary_names = function(value) {
       if (missing(value)) {
-        if (is.null(private$llgrid)) NULL
-        else private$llgrid$grid_names
+        if (is.null(private$.llgrid)) NULL
+        else private$.llgrid$grid_names
       }
     },
 
@@ -508,10 +1132,10 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   coordinate system.
     gridLongLat = function(value) {
       if (missing(value))
-        private$llgrid
+        private$.llgrid
       else if (inherits(value, "CFAuxiliaryLongLat"))
-        if (all(value$dimids %in% sapply(self$axes, function(x) x$dimid)))
-          private$llgrid <- value
+        if (all(value$dimids %in% sapply(private$.axes, function(x) x$dimid)))
+          private$.llgrid <- value
         else
           warning("Dimension ids of auxiliary lat-lon grid do not match those of the axis.", call. = FALSE)
       else stop("Trying to set wrong object as auxiliary lat-lon grid.", call. = FALSE)
@@ -521,22 +1145,22 @@ CFVariable <- R6::R6Class("CFVariable",
     #' description of the variable as a WKT2 string.
     crs_wkt2 = function(value) {
       if (missing(value)) {
-        if (is.null(self$crs)) {
+        if (is.null(private$.crs)) {
           # If no CRS has been set, return the default GEOGCRS unless
           # the axis coordinates fall out of range in which case an empty string
           # is returned.
-          orient <- lapply(self$axes, function(x) x$orientation)
+          orient <- lapply(private$.axes, function(x) x$orientation)
           X <- match("X", orient, nomatch = 0L)
           Y <- match("Y", orient, nomatch = 0L)
           if (X && Y) {
-            X <- self$axes[[X]]$range()
-            Y <- self$axes[[Y]]$range()
+            X <- private$.axes[[X]]$range()
+            Y <- private$.axes[[Y]]$range()
             if (Y[1L] >= -90 && Y[2L] <= 90 && ((X[1L] >= 0 && X[2L] <= 360) || (X[1L] >= -180 && X[2L] <= 180)))
               .wkt2_crs_geo(4326)
             else ""
           } else ""
         } else
-          self$crs$wkt2(.wkt2_axis_info(self))
+          private$.crs$wkt2(.wkt2_axis_info(self))
       }
     }
   )
@@ -628,7 +1252,7 @@ dimnames.CFVariable <- function(x) {
       start <- rep(1L, numaxes)
       count <- rep(NA_integer_, numaxes)
       dnames <- lapply(x$axes, dimnames)
-      t <- lapply(x$axes, function(z) z$time())
+      t <- lapply(x$axes, function(z) z$time)
     } else if (length(sc) != numaxes) {
       stop("Indices specified are not equal to the number of axes of the variable")
     } else {
@@ -638,7 +1262,7 @@ dimnames.CFVariable <- function(x) {
       names(dnames) <- dimnames(x)[1:numaxes]
       for (d in seq_along(sc)) {
         ax <- x$axes[[d]]
-        tm <- ax$time()
+        tm <- ax$time
         if (identical(sc[[d]], quote(expr = ))) {
           # Axis not subsetted, read the whole thing
           start[d] <- 1L

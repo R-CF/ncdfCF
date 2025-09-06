@@ -4,23 +4,22 @@
 \alias{makeTimeAxis}
 \title{Create a time axis}
 \usage{
-makeTimeAxis(name, group, values, attributes = NULL)
+makeTimeAxis(name, values, attributes = NULL)
 }
 \arguments{
 \item{name}{Name of the axis.}
 
-\item{group}{Group to place the axis in.}
-
-\item{values}{A \code{CFTime} instance with time values and optionally bounds set.}
+\item{values}{A \code{CFTime} or \code{CFClimatology} instance with time values and
+optionally bounds set.}
 
 \item{attributes}{\code{data.frame} with the attributes of the axis to create.
-Attributes "standard_name", "units", "calendar", actual_range" and "axis"
+Attributes "standard_name", "units", "calendar", "actual_range" and "axis"
 will be set or updated.}
 }
 \value{
 A \link{CFAxisTime} instance.
 }
 \description{
-With this method you can create a time axis to use with new \link{CFArray}
+With this method you can create a time axis to use with new \link{CFVariable}
 instances.
 }
