@@ -40,6 +40,7 @@ is a linked netCDF resource, this object will be detached from it.}
 \item \href{#method-CFBounds-range}{\code{CFBounds$range()}}
 \item \href{#method-CFBounds-copy}{\code{CFBounds$copy()}}
 \item \href{#method-CFBounds-subset}{\code{CFBounds$subset()}}
+\item \href{#method-CFBounds-append}{\code{CFBounds$append()}}
 \item \href{#method-CFBounds-write}{\code{CFBounds$write()}}
 \item \href{#method-CFBounds-clone}{\code{CFBounds$clone()}}
 }
@@ -191,6 +192,30 @@ returned object.}
 }
 \subsection{Returns}{
 A \code{CFBounds} instance covering the indicated range of indices.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFBounds-append"></a>}}
+\if{latex}{\out{\hypertarget{method-CFBounds-append}{}}}
+\subsection{Method \code{append()}}{
+Append boundary values at the end of the current values of
+the boundary variable.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFBounds$append(from)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{from}}{An instance of \code{CFBounds} whose values to append to the
+values of this boundary variable.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A new \code{CFBounds} instance with values from this boundary variable
+and the \code{from} boundary variable appended. If argument \code{from} is
+\code{NULL}, return \code{NULL}.
 }
 }
 \if{html}{\out{<hr>}}

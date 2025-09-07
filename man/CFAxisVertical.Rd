@@ -55,6 +55,7 @@ will access the standard names table.}
 \item \href{#method-CFAxisVertical-copy_terms}{\code{CFAxisVertical$copy_terms()}}
 \item \href{#method-CFAxisVertical-configure_terms}{\code{CFAxisVertical$configure_terms()}}
 \item \href{#method-CFAxisVertical-parametric_subset}{\code{CFAxisVertical$parametric_subset()}}
+\item \href{#method-CFAxisVertical-append}{\code{CFAxisVertical$append()}}
 }
 }
 \if{html}{\out{
@@ -75,7 +76,6 @@ will access the standard names table.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-peek'><code>ncdfCF::CFAxis$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="write"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-write'><code>ncdfCF::CFAxis$write()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="append"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-append'><code>ncdfCF::CFAxisNumeric$append()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="brief"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-brief'><code>ncdfCF::CFAxisNumeric$brief()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="identical"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-identical'><code>ncdfCF::CFAxisNumeric$identical()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="indexOf"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-indexOf'><code>ncdfCF::CFAxisNumeric$indexOf()</code></a></span></li>
@@ -275,6 +275,31 @@ for the warped data.}
 }
 \subsection{Returns}{
 Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisVertical-append"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisVertical-append}{}}}
+\subsection{Method \code{append()}}{
+Append a vector of values at the end of the current values
+of the axis. Boundary values are appended as well but if either this
+axis or the \code{from} axis does not have boundary values, neither will the
+resulting axis.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$append(from)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{from}}{An instance of \code{CFAxisVertical} whose values to append to the
+values of this axis.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A new \code{CFAxisVertical} instance with values from this axis and
+the \code{from} axis appended.
 }
 }
 }

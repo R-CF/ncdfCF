@@ -113,6 +113,10 @@ CFAxis <- R6::R6Class("CFAxis",
     print = function(...) {
       cat("<", self$friendlyClassName, "> [", private$.id, "] ", private$.name, "\n", sep = "")
 
+      fullname <- self$fullname
+      if (fullname != self$name)
+        cat("Path name:", fullname, "\n")
+
       longname <- self$attribute("long_name")
       if (!is.na(longname) && longname != self$name)
         cat("Long name  :", longname, "\n")
@@ -134,7 +138,7 @@ CFAxis <- R6::R6Class("CFAxis",
       if (is.na(units)) units <- ""
       else if (units == "1") units <- ""
 
-      data.frame(axis = private$.orient,  name = self$name, long_name = longname,
+      data.frame(axis = private$.orient,  name = self$fullname, long_name = longname,
                  length = len, values = "", unit = units)
     },
 

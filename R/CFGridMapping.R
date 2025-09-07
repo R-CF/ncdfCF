@@ -644,7 +644,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
     #' @description Retrieve a 1-row `data.frame` with some information on this
     #'   grid mapping.
     brief = function() {
-      data.frame(name = self$name, grid_mapping = private$.grid_mapping_name)
+      data.frame(name = self$fullname, grid_mapping = private$.grid_mapping_name)
     },
 
     #' @description Retrieve the CRS string for a specific variable.

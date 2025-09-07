@@ -29,10 +29,10 @@ vector, or labels for every axis element if they have been set.}
 \item \href{#method-CFAxisDiscrete-print}{\code{CFAxisDiscrete$print()}}
 \item \href{#method-CFAxisDiscrete-brief}{\code{CFAxisDiscrete$brief()}}
 \item \href{#method-CFAxisDiscrete-copy}{\code{CFAxisDiscrete$copy()}}
-\item \href{#method-CFAxisDiscrete-append}{\code{CFAxisDiscrete$append()}}
 \item \href{#method-CFAxisDiscrete-indexOf}{\code{CFAxisDiscrete$indexOf()}}
 \item \href{#method-CFAxisDiscrete-slice}{\code{CFAxisDiscrete$slice()}}
 \item \href{#method-CFAxisDiscrete-subset}{\code{CFAxisDiscrete$subset()}}
+\item \href{#method-CFAxisDiscrete-append}{\code{CFAxisDiscrete$append()}}
 \item \href{#method-CFAxisDiscrete-write}{\code{CFAxisDiscrete$write()}}
 }
 }
@@ -161,31 +161,6 @@ The newly created axis.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisDiscrete-append"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisDiscrete-append}{}}}
-\subsection{Method \code{append()}}{
-Append a vector of values at the end of the current values
-of the axis. In a discrete axis the values are always a simple sequence
-so the appended values extend the sequence, rather than using the
-values from axis \code{from}.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$append(from)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{from}}{An instance of \code{CFAxisDiscrete} whose length to add to the
-length of \code{self}.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A new \code{CFAxisDiscrete} with the combined length of \code{self} and the
-\code{from} axis.
-}
-}
-\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisDiscrete-indexOf"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-indexOf}{}}}
 \subsection{Method \code{indexOf()}}{
@@ -268,6 +243,29 @@ copy of the axis.}
 A new \code{CFAxisDiscrete} instance covering the indicated range of
 indices. If the value of the argument is \code{NULL}, return a copy of
 \code{self} as the new axis.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisDiscrete-append"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisDiscrete-append}{}}}
+\subsection{Method \code{append()}}{
+Append a vector of values at the end of the current values
+of the axis.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$append(from)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{from}}{An instance of \code{CFAxisDiscrete} whose length to add to this
+axis.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A new \code{CFAxisDiscrete} instance with a length that is the sum of
+the lengths of this axis and the \code{from} axis.
 }
 }
 \if{html}{\out{<hr>}}

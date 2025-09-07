@@ -155,7 +155,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
     #' @param refresh Flag to indicate if a fresh read from file should be made.
     #' @return A matrix with the data of the variable in raw format.
     read_data = function(refresh = FALSE) {
-      if (is.null(private.values) || refresh)
+      if (is.null(private$.values) || refresh)
         private$.values <- private$as_matrix()
       private$.values
     },
@@ -229,7 +229,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
 
       out_axes_dim <- list()
       out_axes_other <- list()
-      for (ax in 1L:2L) {
+      for (ax in seq_along(self$axes)) {
         axis <- self$axes[[ax]]
         orient <- axis$orientation
 

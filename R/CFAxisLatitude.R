@@ -120,6 +120,30 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
         private$subset_coordinates(ax, rng)
         ax
       }
+    },
+
+    #' @description Append a vector of values at the end of the current values
+    #'   of the axis. Boundary values are appended as well but if either this
+    #'   axis or the `from` axis does not have boundary values, neither will the
+    #'   resulting axis.
+    #' @param from An instance of `CFAxisLatitude` whose values to append to the
+    #'   values of this axis.
+    #' @return A new `CFAxisLatitude` instance with values from this axis and
+    #'   the `from` axis appended.
+    append = function(from) {
+      if (super$can_append(from) && .c_is_monotonic(self$values, from$values)) {
+        ax <- CFAxisLatitude$new(self$name, values = c(private$values, from$values),
+                                 attributes = self$attributes)
+
+        if (!is.null(private$.bounds)) {
+          new_bnds <- private$.bounds$append(from$bounds)
+          if (!is.null(new_bnds))
+            ax$bounds <- new_bnds
+        }
+
+        ax
+      } else
+        stop("Axis values cannot be appended.", call. = FALSE)
     }
   ),
   active = list(

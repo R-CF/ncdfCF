@@ -70,6 +70,7 @@ description of the variable as a WKT2 string.}
 \item \href{#method-CFVariable-terra}{\code{CFVariable$terra()}}
 \item \href{#method-CFVariable-data.table}{\code{CFVariable$data.table()}}
 \item \href{#method-CFVariable-is_coincident}{\code{CFVariable$is_coincident()}}
+\item \href{#method-CFVariable-add_cell_measure}{\code{CFVariable$add_cell_measure()}}
 \item \href{#method-CFVariable-clone}{\code{CFVariable$clone()}}
 }
 }
@@ -577,6 +578,26 @@ variable: identical axes.
 }
 \subsection{Returns}{
 \code{TRUE} if the data variables are coincident, \code{FALSE} otherwise.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-add_cell_measure"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-add_cell_measure}{}}}
+\subsection{Method \code{add_cell_measure()}}{
+Add a cell measure variable to this variable.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$add_cell_measure(cm)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{cm}}{An instance of \link{CFCellMeasure}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

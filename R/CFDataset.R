@@ -214,7 +214,7 @@ CFDataset <- R6::R6Class("CFDataset",
     #' @field var_names (read-only) Vector of names of variables in this data set.
     var_names = function(value) {
       if (missing(value)) {
-        nm <- sapply(self$variables(), function(v) v$name)
+        nm <- sapply(self$variables(), function(v) v$fullname)
         names(nm) <- NULL
         nm
       }
@@ -223,7 +223,7 @@ CFDataset <- R6::R6Class("CFDataset",
     #' @field axis_names (read-only) Vector of names of axes in this data set.
     axis_names = function(value) {
       if (missing(value)) {
-        nms <- sapply(self$axes(), function(ax) ax$name)
+        nms <- sapply(self$axes(), function(ax) ax$fullname)
         names(nms) <- NULL
         nms
       }

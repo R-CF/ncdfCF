@@ -150,6 +150,20 @@ CFBounds <- R6::R6Class("CFBounds",
       }
     },
 
+    #' @description Append boundary values at the end of the current values of
+    #'   the boundary variable.
+    #' @param from An instance of `CFBounds` whose values to append to the
+    #'   values of this boundary variable.
+    #' @return A new `CFBounds` instance with values from this boundary variable
+    #'   and the `from` boundary variable appended. If argument `from` is
+    #'   `NULL`, return `NULL`.
+    append = function(from) {
+      if (is.null(from))
+        NULL
+      else
+        CFBounds$new(self$name, values = cbind(self$values, from$values), attributes = self$attributes)
+    },
+
     #' @description Write the bounds variable to a netCDF file. This method
     #'   should not be called directly; instead, `CFVariable::save()` will call this
     #'   method automatically.
@@ -197,12 +211,9 @@ CFBounds <- R6::R6Class("CFBounds",
     #'   is a linked netCDF resource, this object will be detached from it.
     values = function(value) {
       if (missing(value)) {
-        if (is.null(private$.values)) {
-          private$.values <- self$read_data()
-        }
-        private$.values
+        self$read_data()
       } else {
-        private$.values <- value
+        private$set_values(value)
         self$detach()
       }
     }

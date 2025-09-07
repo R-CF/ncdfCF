@@ -88,8 +88,8 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
       else {
         if (!is.null(private$.ext))
           cat("Location :", private$.ext$uri, "\n")
-        else if (private$.var$group$name != "/")
-          cat("Location :", private$.var$group$name, "\n")
+        # else if (private$.var$group$name != "/")
+        #   cat("Location :", private$.var$group$name, "\n")
 
         longname <- private$.var$attribute("long_name")
         if (!is.na(longname) && longname != private$.name)
@@ -101,7 +101,6 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
         cat("\nAxes:\n")
         axes <- do.call(rbind, lapply(private$.var$axes, function(a) a$brief()))
         axes <- lapply(axes, function(c) if (all(c == "")) NULL else c)
-        if (all(axes$group == "/")) axes$group <- NULL
         axes <- as.data.frame(axes[lengths(axes) > 0L])
         print(.slim.data.frame(axes, ...), right = FALSE, row.names = FALSE)
 
@@ -112,8 +111,7 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
     #' @description Retrieve the values of the cell measure variable.
     #' @return The values of the cell measure as a [CFVariable] instance.
     data = function() {
-      if (is.null(private$.var)) NULL
-      else private$.var
+      private$.var
     },
 
     #' @description Register a [CFVariable] which is using this cell measure

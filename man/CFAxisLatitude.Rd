@@ -26,6 +26,7 @@ range, orientation and meaning.
 \item \href{#method-CFAxisLatitude-copy}{\code{CFAxisLatitude$copy()}}
 \item \href{#method-CFAxisLatitude-copy_with_values}{\code{CFAxisLatitude$copy_with_values()}}
 \item \href{#method-CFAxisLatitude-subset}{\code{CFAxisLatitude$subset()}}
+\item \href{#method-CFAxisLatitude-append}{\code{CFAxisLatitude$append()}}
 }
 }
 \if{html}{\out{
@@ -48,7 +49,6 @@ range, orientation and meaning.
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-peek'><code>ncdfCF::CFAxis$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="write"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-write'><code>ncdfCF::CFAxis$write()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="append"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-append'><code>ncdfCF::CFAxisNumeric$append()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="brief"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-brief'><code>ncdfCF::CFAxisNumeric$brief()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="identical"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-identical'><code>ncdfCF::CFAxisNumeric$identical()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="indexOf"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-indexOf'><code>ncdfCF::CFAxisNumeric$indexOf()</code></a></span></li>
@@ -179,6 +179,31 @@ copy of the axis.}
 A new \code{CFAxisLatitude} instance covering the indicated range of
 indices. If the value of the argument \code{rng} is \code{NULL}, return a copy of
 \code{self} as the new axis.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisLatitude-append"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisLatitude-append}{}}}
+\subsection{Method \code{append()}}{
+Append a vector of values at the end of the current values
+of the axis. Boundary values are appended as well but if either this
+axis or the \code{from} axis does not have boundary values, neither will the
+resulting axis.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisLatitude$append(from)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{from}}{An instance of \code{CFAxisLatitude} whose values to append to the
+values of this axis.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A new \code{CFAxisLatitude} instance with values from this axis and
+the \code{from} axis appended.
 }
 }
 }

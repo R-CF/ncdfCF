@@ -467,11 +467,16 @@ CFObject <- R6::R6Class("CFObject",
     #' @field fullname (read-only) The fully-qualified name of the CF object.
     fullname = function(value) {
       if (missing(value)) {
-        private$.name
-        # grp <- self$group$fullname
-        # if (is.null(grp)) return(private$NC$name)
-        # grp <- if (grp == "/") "" else paste0(grp, "/")
-        # paste0(grp, private$NC$name)
+
+        grp <- self$group
+        if (is.null(grp))
+          private$.name
+        else {
+          if ((gnm <- grp$name) == "/")
+            private$.name
+          else
+            paste0("/", gnm, "/", private$.name)
+        }
       }
     },
 
@@ -504,8 +509,9 @@ CFObject <- R6::R6Class("CFObject",
         private$.NCvar
     },
 
-    #' @field data_type (read-only) Retrieve the data type of the data in the
-    #'   object.
+    #' @field data_type Set or retrieve the data type of the data in the
+    #'   object. Setting the data type to a wrong value can have unpredictable
+    #'   but catastrophic consequences.
     data_type = function(value) {
       if (missing(value))
         private$.data_type

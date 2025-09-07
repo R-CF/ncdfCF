@@ -199,11 +199,11 @@ should set, modify or delete attributes as appropriate.
 use the name of this axis.}
 
 \item{\code{values}}{The values to the used with the copy of this axis. This can
-be a \code{CFTime} of \code{CFClimatology} instance, a vector of numeric values,
-a vector of character timestamps in ISO8601 or UDUNITS format, or a
-vector of \code{POSIXct} or \code{Date} values. If not a \code{CFTime} or
-\code{CFClimatology} instance, the \code{values} will be converted into a
-\code{CFTime} instance using the definition and calendar of this axis.}
+be a \code{CFTime} instance, a vector of numeric values, a vector of
+character timestamps in ISO8601 or UDUNITS format, or a vector of
+\code{POSIXct} or \code{Date} values. If not a \code{CFTime} instance, the \code{values}
+will be converted into a \code{CFTime} instance using the definition and
+calendar of this axis.}
 }
 \if{html}{\out{</div>}}
 }

@@ -323,7 +323,7 @@ test_that("Merge CFVariable", {
 })
 
 test_that("L3b", {
-  l3b <- "../testdata//AQUA_MODIS.20030101.L3b.DAY.CHL.nc"
+  l3b <- "../testdata/AQUA_MODIS.20030101.L3b.DAY.CHL.nc"
   if (file.exists(l3b)) {
     ds <- open_ncdf(l3b)
     expect_equal(ds$file_type, "NASA level-3 binned data")
@@ -332,5 +332,40 @@ test_that("L3b", {
     expect_equal(chl$name, "chlor_a")
     expect_equal(chl$crs$attribute("grid_mapping_name"), "latitude_longitude")
     expect_equal(names(chl$axes), c("latitude", "longitude", "time"))
+    expect_equal(sapply(chl$axes, function(ax) ax$length), c(latitude = 3001, longitude = 8432, time = 1))
+
+    raw <- chl$raw()
+    expect_equal(dim(raw), c(3001, 8432))
+    expect_equal(names(dimnames(raw)), c("latitude", "longitude"))
+
+    sub <- chl$subset(latitude = 0:30, longitude = 30:50)
+    expect_true(inherits(sub, "CFVariable"))
+    expect_equal(sub$name, "chlor_a")
+    expect_equal(sub$crs$attribute("grid_mapping_name"), "latitude_longitude")
+    expect_equal(names(sub$axes), c("latitude", "longitude", "time"))
+    expect_equal(sapply(sub$axes, function(ax) ax$length), c(latitude = 722, longitude = 482, time = 1))
+
+    raw <- sub$raw()
+    expect_equal(dim(raw), c(722, 482))
+    expect_equal(names(dimnames(raw)), c("latitude", "longitude"))
+  }
+})
+
+test_that("external_variables", {
+  esm1 <- "../testdata/chl_Omon_MPI-ESM1-2-HR_ssp245_r1i1p1f1_gn_201501-201912.nc"
+  if (file.exists(esm1)) {
+    ds <- open_ncdf(esm1)
+    expect_equal(ds$attribute("external_variables"), "areacello volcello")
+    chl <- ds[["chl"]]
+    expect_equal(chl$attribute("cell_measures"), "area: areacello volume: volcello")
+    cm <- chl$cell_measures
+    expect_length(cm, 2)
+    expect_equal(names(cm), c("areacello", "volcello"))
+    expect_equal(sapply(cm, function(m) m$measure), c(areacello = "area", volcello = "volume"))
+    expect_null(cm[[1L]]$data())
+    area_file <- "../testdata/areacello_Ofx_MPI-ESM1-2-HR_ssp245_r1i1p1f1_gn.nc"
+    cm[[1L]]$link(area_file)
+    area_var <- cm[[1L]]$data()
+    expect_true(inherits(area_var, "CFVariable"))
   }
 })

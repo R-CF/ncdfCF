@@ -22,7 +22,7 @@ CFVariable <- R6::R6Class("CFVariable",
     # The CFGridMapping object for the variable, if set.
     .crs = NULL,
 
-    # The cell measures object, if the variable has cell measures.
+    # A list of cell measure objects, if the variable has cell measures.
     .cell_measures = NULL,
 
     # Return the R order of dimensional axes that "receive special treatment".
@@ -311,6 +311,11 @@ CFVariable <- R6::R6Class("CFVariable",
     #' is `width = ` to indicate a maximum width of attribute columns.
     print = function(...) {
       cat("<Variable>", self$name, "\n")
+
+      fullname <- self$fullname
+      if (fullname != self$name)
+        cat("Path name:", fullname, "\n")
+
       longname <- self$attribute("long_name")
       if (!is.na(longname) && longname != self$name)
         cat("Long name:", longname, "\n")
@@ -368,7 +373,7 @@ CFVariable <- R6::R6Class("CFVariable",
       longname <- self$attribute("long_name")
       if (is.na(longname) || longname == self$name) longname <- ""
 
-      data.frame(name = self$name, long_name = longname, units = unit,
+      data.frame(name = self$fullname, long_name = longname, units = unit,
                  data_type = private$.data_type, axes = paste(names(private$.axes), collapse = ", "))
     },
 
@@ -930,7 +935,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @return `self`, invisibly, with the arrays from this data variable and
     #'   `from` appended.
     append = function(from, along) {
-      # Check if the array can be appended to self
+      # Check if the `from` variable can be appended to self
       if (length(along) != 1L || !(along %in% names(private$.axes)))
         stop("Argument `along` must be a single name of an existing axis.", call. = FALSE)
       if (length(from$axes) != length(private$.axes))
@@ -1061,6 +1066,14 @@ CFVariable <- R6::R6Class("CFVariable",
         if (!self$axes[[ax]]$identical(other_axes[[ax]]))
           return(FALSE)
       TRUE
+    },
+
+    #' @description Add a cell measure variable to this variable.
+    #' @param cm An instance of [CFCellMeasure].
+    #' @return Self, invisibly.
+    add_cell_measure = function(cm) {
+      if (inherits(cm, "CFCellMeasure"))
+        private$.cell_measures <- append(private$.cell_measures, setNames(list(cm), cm$name))
     }
   ),
   active = list(

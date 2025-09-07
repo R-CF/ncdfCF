@@ -88,21 +88,6 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
       ax
     },
 
-    #' @description Append a vector of values at the end of the current values
-    #'   of the axis. In a discrete axis the values are always a simple sequence
-    #'   so the appended values extend the sequence, rather than using the
-    #'   values from axis `from`.
-    #' @param from An instance of `CFAxisDiscrete` whose length to add to the
-    #'   length of `self`.
-    #' @return A new `CFAxisDiscrete` with the combined length of `self` and the
-    #'   `from` axis.
-    append = function(from) {
-      if (super$can_append(from)) {
-        makeDiscreteAxis(self$name, length = private$length + from$length, attributes = self$attributes)
-      } else
-        stop("Axis values cannot be appended.", call. = FALSE)
-    },
-
     #' @description Find indices in the axis domain. Given a vector of numerical
     #'   values `x`, find their indices in the values of the axis. In effect,
     #'   this returns index values into the axis, but outside values will be
@@ -175,6 +160,19 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
         private$subset_coordinates(ax, rng)
         ax
       }
+    },
+
+    #' @description Append a vector of values at the end of the current values
+    #'   of the axis.
+    #' @param from An instance of `CFAxisDiscrete` whose length to add to this
+    #'   axis.
+    #' @return A new `CFAxisDiscrete` instance with a length that is the sum of
+    #'   the lengths of this axis and the `from` axis.
+    append = function(from) {
+      if (super$can_append(from)) {
+        CFAxisDiscrete$new(self$name, length = self$length + from$length, attributes = self$attributes)
+      } else
+        stop("Axis values cannot be appended.", call. = FALSE)
     },
 
     #' @description Write the axis to a netCDF file, including its attributes,

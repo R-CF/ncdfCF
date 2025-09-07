@@ -294,7 +294,9 @@ Tests if the axis passed to this method is identical to
 \if{latex}{\out{\hypertarget{method-CFAxisNumeric-append}{}}}
 \subsection{Method \code{append()}}{
 Append a vector of values at the end of the current values
-of the axis.
+of the axis. Boundary values are appended as well but if either this
+axis or the \code{from} axis does not have boundary values, neither will the
+resulting axis.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$append(from)}\if{html}{\out{</div>}}
 }
@@ -302,14 +304,14 @@ of the axis.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{from}}{An instance of \code{CFAxisNumeric} or any of its descendants
-whose values to append to the values of \code{self}.}
+\item{\code{from}}{An instance of \code{CFAxisNumeric} whose values to append to the
+values of this axis.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A new \code{CFAxisNumeric} or descendant instance with values from
-self and the \code{from} axis appended.
+A new \code{CFAxisNumeric} instance with values from this axis and the
+\code{from} axis appended.
 }
 }
 \if{html}{\out{<hr>}}

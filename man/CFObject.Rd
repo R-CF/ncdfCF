@@ -35,8 +35,9 @@ underlying netCDF resource.}
 \item{\code{NCvar}}{(read-only) The \code{NCVariable} object that links to an
 underlying netCDF resource, or \code{NULL} if not linked.}
 
-\item{\code{data_type}}{(read-only) Retrieve the data type of the data in the
-object.}
+\item{\code{data_type}}{Set or retrieve the data type of the data in the
+object. Setting the data type to a wrong value can have unpredictable
+but catastrophic consequences.}
 
 \item{\code{ndims}}{(read-only) Retrieve the dimensionality of the data in the
 array, or the netCDF resource.}

@@ -72,6 +72,10 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
 
       super$initialize(var, values = values, start = start, count = count, orientation = "T", attributes = attributes)
       self$set_attribute("standard_name", "NC_CHAR", "time")
+      if (!inherits(var, "NCVariable")) {
+        self$set_attribute("units", "NC_CHAR", private$.tm$calendar$definition)
+        self$set_attribute("calendar", "NC_CHAR", private$.tm$calendar$name)
+      }
     },
 
     #' @description Summary of the time axis printed to the console.
@@ -157,11 +161,11 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @param name The name for the new axis. If an empty string is passed, will
     #'   use the name of this axis.
     #' @param values The values to the used with the copy of this axis. This can
-    #'   be a `CFTime` of `CFClimatology` instance, a vector of numeric values,
-    #'   a vector of character timestamps in ISO8601 or UDUNITS format, or a
-    #'   vector of `POSIXct` or `Date` values. If not a `CFTime` or
-    #'   `CFClimatology` instance, the `values` will be converted into a
-    #'   `CFTime` instance using the definition and calendar of this axis.
+    #'   be a `CFTime` instance, a vector of numeric values, a vector of
+    #'   character timestamps in ISO8601 or UDUNITS format, or a vector of
+    #'   `POSIXct` or `Date` values. If not a `CFTime` instance, the `values`
+    #'   will be converted into a `CFTime` instance using the definition and
+    #'   calendar of this axis.
     #' @return The newly created axis.
     copy_with_values = function(name = "", values) {
       if (!nzchar(name))
@@ -193,7 +197,15 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
           time <- CFtime::CFTime$new(private$.tm$cal$definition, private$.tm$cal$name, c(private$.tm$offsets, ft$offsets))
           time$bounds <- bnds
         }
-        makeTimeAxis(self$name, time, self$attributes)
+        ax <- CFAxisTime$new(self$name, values = time, attributes = self$attributes)
+
+        if (!is.null(private$.bounds)) {
+          new_bnds <- private$.bounds$append(from$bounds)
+          if (!is.null(new_bnds))
+            ax$bounds <- new_bnds
+        }
+
+        ax
       } else
         stop("Axis values cannot be appended.", call. = FALSE)
     },

@@ -597,11 +597,10 @@ peek_ncdf <- function(resource) {
         if (!is.na(cm <- v$attribute("cell_measures"))) {
           cms <- strsplit(cm, " ", fixed = TRUE)[[1L]]
           len <- as.integer(length(cms) * 0.5)
-          var$cell_measures <- vector ("list", len)
           for (i in 1L:len) {
             cmv <- v$group$find_by_name(cms[i * 2L], "CF")
             if (inherits(cmv, "CFCellMeasure")) {
-              var$cell_measures[[i]] <- cmv
+              var$add_cell_measure(cmv)
               cmv$register(var)
             }
           }
