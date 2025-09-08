@@ -63,6 +63,7 @@ grids.}
 \item \href{#method-CFAuxiliaryLongLat-sample_index}{\code{CFAuxiliaryLongLat$sample_index()}}
 \item \href{#method-CFAuxiliaryLongLat-grid_index}{\code{CFAuxiliaryLongLat$grid_index()}}
 \item \href{#method-CFAuxiliaryLongLat-clear_cache}{\code{CFAuxiliaryLongLat$clear_cache()}}
+\item \href{#method-CFAuxiliaryLongLat-detach}{\code{CFAuxiliaryLongLat$detach()}}
 \item \href{#method-CFAuxiliaryLongLat-clone}{\code{CFAuxiliaryLongLat$clone()}}
 }
 }
@@ -170,6 +171,20 @@ has been set.
 \if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$clear_cache()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAuxiliaryLongLat-detach"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAuxiliaryLongLat-detach}{}}}
+\subsection{Method \code{detach()}}{
+Detach the latitude and longitude from an underlying netCDF
+resource.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAuxiliaryLongLat$detach()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Self, invisibly.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAuxiliaryLongLat-clone"></a>}}

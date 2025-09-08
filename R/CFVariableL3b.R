@@ -72,6 +72,31 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
         out[startBin:endBin]
       })
       do.call(rbind, l)
+    },
+
+    # Read all the data from the file and turn the data into a matrix.
+    #
+    #   This method returns a bare-bones matrix without any metadata or other
+    #   identifying information. Use method `subset()` or the `[`
+    #   operator rather than this method to obtain a more informative result.
+    # @param refresh Flag to indicate if a fresh read from file should be made.
+    # @return A matrix with the data of the variable in raw format.
+    read_data = function(refresh = FALSE) {
+      if (is.null(private$.values) || refresh)
+        private$.values <- private$as_matrix()
+      private$.values
+    },
+
+    # Read some data from the file and turn the data into a matrix.
+    #
+    #   This method returns a bare-bones matrix without any metadata or other
+    #   identifying information. Use method `subset()` or the `[` operator
+    #   rather than this method to obtain a more informative result.
+    # @param start,count Start and count vectors that delimit the geographic
+    #   area to return data for.
+    # @return A matrix with the data of the variable in raw format.
+    read_chunk = function(start, count) {
+      private$as_matrix(start, count)
     }
   ),
   public = list(
@@ -144,33 +169,6 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       self$set_attribute("units", "NC_CHAR", units[2L])
       # FIXME
       ncv[["BinIndex"]]$CF <- ncv[["BinList"]]$CF <- self
-    },
-
-    #' @description Read all the data from the file and turn the data into a
-    #'   matrix.
-    #'
-    #'   This method returns a bare-bones matrix without any metadata or other
-    #'   identifying information. Use method `subset()` or the `[`
-    #'   operator rather than this method to obtain a more informative result.
-    #' @param refresh Flag to indicate if a fresh read from file should be made.
-    #' @return A matrix with the data of the variable in raw format.
-    read_data = function(refresh = FALSE) {
-      if (is.null(private$.values) || refresh)
-        private$.values <- private$as_matrix()
-      private$.values
-    },
-
-    #' @description Read some data from the file and turn the data into a
-    #'   matrix.
-    #'
-    #'   This method returns a bare-bones matrix without any metadata or other
-    #'   identifying information. Use method `subset()` or the `[` operator
-    #'   rather than this method to obtain a more informative result.
-    #' @param start,count Start and count vectors that delimit the geographic
-    #'   area to return data for.
-    #' @return A matrix with the data of the variable in raw format.
-    read_chunk = function(start, count) {
-      private$as_matrix(start, count)
     },
 
     #' @description This method extracts a subset of values from the data of the
@@ -254,7 +252,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       }
 
       # Read the data
-      d <- self$read_chunk(start, count)
+      d <- private$read_chunk(start, count)
       d <- drop(d)
 
       # Assemble the CFVariable instance
@@ -328,7 +326,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
 #' summer <- pr[, , 173:263]
 #' str(summer)
 "[.CFVariableL3b" <- function(x, i, j, ..., drop = FALSE) {
-  data <- x$read_data()
+  data <- x$raw()
 
   if (missing(i) && missing(j)) {
     dnames <- list(longitude = x$axes[[1L]]$dimnames, latitude = x$axes[[2L]]$dimnames)

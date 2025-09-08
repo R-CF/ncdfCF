@@ -19,8 +19,6 @@ https://oceancolor.gsfc.nasa.gov/resources/docs/technical/ocean_level-3_binned_d
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFVariableL3b-new}{\code{CFVariableL3b$new()}}
-\item \href{#method-CFVariableL3b-read_data}{\code{CFVariableL3b$read_data()}}
-\item \href{#method-CFVariableL3b-read_chunk}{\code{CFVariableL3b$read_chunk()}}
 \item \href{#method-CFVariableL3b-subset}{\code{CFVariableL3b$subset()}}
 \item \href{#method-CFVariableL3b-clone}{\code{CFVariableL3b$clone()}}
 }
@@ -31,7 +29,6 @@ https://oceancolor.gsfc.nasa.gov/resources/docs/technical/ocean_level-3_binned_d
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-detach'><code>ncdfCF::CFObject$detach()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="dim"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-dim'><code>ncdfCF::CFObject$dim()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
@@ -42,6 +39,7 @@ https://oceancolor.gsfc.nasa.gov/resources/docs/technical/ocean_level-3_binned_d
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="array"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-array'><code>ncdfCF::CFVariable$array()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="brief"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-brief'><code>ncdfCF::CFVariable$brief()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="data.table"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-data.table'><code>ncdfCF::CFVariable$data.table()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="detach"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-detach'><code>ncdfCF::CFVariable$detach()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="is_coincident"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-is_coincident'><code>ncdfCF::CFVariable$is_coincident()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="peek"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-peek'><code>ncdfCF::CFVariable$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="print"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-print'><code>ncdfCF::CFVariable$print()</code></a></span></li>
@@ -76,57 +74,6 @@ the physical units of the data variable in the netCDF resource.}
 }
 \subsection{Returns}{
 An instance of this class.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFVariableL3b-read_data"></a>}}
-\if{latex}{\out{\hypertarget{method-CFVariableL3b-read_data}{}}}
-\subsection{Method \code{read_data()}}{
-Read all the data from the file and turn the data into a
-matrix.
-
-This method returns a bare-bones matrix without any metadata or other
-identifying information. Use method \code{subset()} or the \code{[}
-operator rather than this method to obtain a more informative result.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariableL3b$read_data(refresh = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{refresh}}{Flag to indicate if a fresh read from file should be made.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A matrix with the data of the variable in raw format.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFVariableL3b-read_chunk"></a>}}
-\if{latex}{\out{\hypertarget{method-CFVariableL3b-read_chunk}{}}}
-\subsection{Method \code{read_chunk()}}{
-Read some data from the file and turn the data into a
-matrix.
-
-This method returns a bare-bones matrix without any metadata or other
-identifying information. Use method \code{subset()} or the \code{[} operator
-rather than this method to obtain a more informative result.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariableL3b$read_chunk(start, count)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{start, count}}{Start and count vectors that delimit the geographic
-area to return data for.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A matrix with the data of the variable in raw format.
 }
 }
 \if{html}{\out{<hr>}}

@@ -100,7 +100,7 @@ CFAxis <- R6::R6Class("CFAxis",
         self$set_attribute("axis", "NC_CHAR", orientation)
 
       if (missing(values) || is.null(values))
-        self$read_data()
+        private$read_data()
 
       self$delete_attribute("_FillValue")
     },
@@ -170,11 +170,13 @@ CFAxis <- R6::R6Class("CFAxis",
 
     #' @description Detach the axis from its underlying netCDF resource,
     #'   including any dependent CF objects.
+    #' @return Self, invisibly.
     detach = function() {
       if (!is.null(private$.bounds))
         private$.bounds$detach()
       lapply(private$.aux, function(x) x$detach())
       super$detach()
+      invisible(self)
     },
 
     #' @description Copy the parametric terms of a vertical axis. This method is
@@ -289,12 +291,21 @@ CFAxis <- R6::R6Class("CFAxis",
     write = function(nc = NULL) {
       h <- if (inherits(nc, "NetCDF")) nc else private$.NCvar$handle
 
-      # Write the dimension
-
-      self$id <- if (self$length == 1L)
+      private$.id <- if (self$length == 1L && !private$.unlimited)
         RNetCDF::var.def.nc(h, self$name, private$.data_type, NA)
-      else
-        RNetCDF::var.def.nc(h, self$name, private$.data_type, self$name)
+      else {
+        # Write the dimension for the axis. Error will be thrown when trying to
+        # write a dimension that's already defined, such as when a dimension is
+        # shared between multiple objects. In that case, get the id.
+        did <- try(if (private$.unlimited)
+          RNetCDF::dim.def.nc(h, self$name, unlim = TRUE)
+          else
+            RNetCDF::dim.def.nc(h, self$name, self$length), silent = TRUE)
+        if (inherits(did, "try-error"))
+          did <- RNetCDF::dim.inq.nc(h, self$name)$id
+
+        RNetCDF::var.def.nc(h, self$name, private$.data_type, did)
+      }
 
       if (private$.orient %in% c("X", "Y", "Z", "T"))
         self$set_attribute("axis", "NC_CHAR", private$.orient)
@@ -351,7 +362,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   you should use the `coordinates` field rather than this one.
     values = function(value) {
       if (missing(value))
-        self$read_data()
+        private$read_data()
     },
 
     #' @field coordinates (read-only) Retrieve the coordinate values of the

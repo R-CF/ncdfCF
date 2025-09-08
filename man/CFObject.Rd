@@ -53,8 +53,6 @@ resource.}
 \itemize{
 \item \href{#method-CFObject-new}{\code{CFObject$new()}}
 \item \href{#method-CFObject-detach}{\code{CFObject$detach()}}
-\item \href{#method-CFObject-read_data}{\code{CFObject$read_data()}}
-\item \href{#method-CFObject-read_chunk}{\code{CFObject$read_chunk()}}
 \item \href{#method-CFObject-dim}{\code{CFObject$dim()}}
 \item \href{#method-CFObject-attribute}{\code{CFObject$attribute()}}
 \item \href{#method-CFObject-print_attributes}{\code{CFObject$print_attributes()}}
@@ -121,69 +119,6 @@ detaching.
 \if{html}{\out{<div class="r">}}\preformatted{CFObject$detach()}\if{html}{\out{</div>}}
 }
 
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFObject-read_data"></a>}}
-\if{latex}{\out{\hypertarget{method-CFObject-read_data}{}}}
-\subsection{Method \code{read_data()}}{
-Read the data of the CF object from file. The data is cached
-by \code{self} so repeated calls do not access the netCDF resource, unless
-argument \code{refresh} is \code{TRUE}.
-
-This method will not assess how big the data is before reading it so
-there is a chance that memory will be exhausted. The calling code
-should check for this possibility and break up the reading of data into
-chunks.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$read_data(refresh = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{refresh}}{Should the data be read from file if the object is linked?
-This will replace current values, if previously loaded. Default
-\code{FALSE}.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-An array of data, invisibly, as prescribed by the \code{start} and
-\code{count} values used to create this object. If the object is not backed
-by a netCDF resource, returns \code{NULL}.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFObject-read_chunk"></a>}}
-\if{latex}{\out{\hypertarget{method-CFObject-read_chunk}{}}}
-\subsection{Method \code{read_chunk()}}{
-Read a chunk of data of the CF object, as defined by the
-\code{start} and \code{count} vectors. Note that these vectors are relative to
-any subset of the netCDF data variable that this CF object refers to.
-The data read by this method will not be stored in \code{self} so the
-calling code must take a reference to it.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$read_chunk(start, count)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{start}}{Vector of indices where to start reading data along the
-dimensions of the array. The vector must be \code{NA} to read all data,
-otherwise it must have agree with the dimensions of the array.}
-
-\item{\code{count}}{Vector of number of elements to read along each dimension of
-the array on file. The vector must be \code{NA} to read to the end of each
-dimension, otherwise its value must agree with the corresponding
-\code{start} value and the dimension of the array.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-An array of data, as prescribed by the \code{start} and \code{count}
-arguments, or \code{NULL} if there is no data.
-}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFObject-dim"></a>}}

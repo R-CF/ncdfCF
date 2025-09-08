@@ -126,10 +126,10 @@ CFVariable <- R6::R6Class("CFVariable",
     # axis order will be Y-X-Z-T-others and Y values will go from the top to the
     # bottom. Alternatively, order private$.values in the CF canonical order.
     # Argument data is the array to order, argument ordering must be "R" or
-    # "CF". Returns a new array with an attribute "axes" that lists axis names
-    # in the order of the new array.
+    # "CF". Returns a new array with an attribute "axes" that lists dimensional
+    # axis names in the order of the new array.
     orient = function(data, ordering = "R") {
-      dim_names <- names(private$.axes)
+      dim_names <- names(private$.axes)[seq_along(dim(data))]
 
       if (ordering == "R")
         order <- private$YXZT()
@@ -219,7 +219,7 @@ CFVariable <- R6::R6Class("CFVariable",
         return(.process.data(private$.values, tdim, fac, fun, ...))
       else if (prod(sapply(private$.axes, function(x) x$length)) < CF.options$memory_cell_limit)
         # Read the whole data array because size is manageable
-        return(.process.data(self$read_data(), tdim, fac, fun, ...))
+        return(.process.data(private$read_data(), tdim, fac, fun, ...))
 
       # If data variable is too large, go by individual factor levels
       num_dims <- private$num_dim_axes()
@@ -237,13 +237,13 @@ CFVariable <- R6::R6Class("CFVariable",
           rng <- range(indices)
           start[tdim] <- rng[1L]
           count[tdim] <- rng[2L] - rng[1L] + 1L
-          values <- self$read_chunk(start, count)
+          values <- private$read_chunk(start, count)
         } else {                    # Era factors have disparate indices
           cutoffs <- c(0L, which(c(dff, 2L) > 1L))
           values <- lapply(2L:length(cutoffs), function(i) {
             start[tdim] <- indices[cutoffs[i - 1L] + 1L]
             count[tdim] <- cutoffs[i] - cutoffs[i - 1L]
-            self$read_chunk(start, count)
+            private$read_chunk(start, count)
           })
           values <- abind::abind(values, along = num_dims)
         }
@@ -398,6 +398,17 @@ CFVariable <- R6::R6Class("CFVariable",
       out
     },
 
+    #' @description Detach the various properties of this variable from an
+    #'   underlying netCDF resource.
+    #' @return Self, invisibly.
+    detach = function() {
+      lapply(private$.cell_measures, function(cm) cm$detach())
+      if (!is.null(private$.crs)) crs$detach()
+      if (!is.null(private$.llgrid)) private$.llgrid$detach()
+      lapply(private$.axes, function(ax) ax$detach())
+      super$detach()
+      invisible(self)
+    },
     #' @description Return the time object from the axis representing time.
     #' @param want Character string with value "axis" or "time", indicating
     #' what is to be returned.
@@ -416,7 +427,8 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   a netCDF resource or produced by an operation.
     #' @return An `array`, `matrix` or `vector` with (dim)names set.
     raw = function() {
-      data <- self$read_data()
+      data <- private$read_data()
+      if (is.null(data)) return(NULL)
       if (is.null(dim(data)))
         names(data) <- self$dimnames
       else
@@ -430,6 +442,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #' the data has only a single dimension.
     array = function() {
       data <- self$raw()
+      if (is.null(data)) return(NULL)
       if (is.null(dim(data)))
         data
       else
@@ -599,10 +612,10 @@ CFVariable <- R6::R6Class("CFVariable",
       if (is.null(aux)) {
         # Regular axes selected
         if (!is.null(private$.values))
-          d <- self$read_chunk(start, count)
+          d <- private$read_chunk(start, count)
       } else {
         # Auxiliary grids selected, index the data
-        d <- self$read_chunk(start, count)
+        d <- private$read_chunk(start, count)
         dim(d) <- dim_in <- c(aux$X[2L] * aux$Y[2L], prod(ZT_dim))
         d <- d[aux$index, ]
         dim(d) <- dim_out <- c(aux$box, ZT_dim)
@@ -887,7 +900,7 @@ CFVariable <- R6::R6Class("CFVariable",
           }
 
           # Read the data
-          d <- self$read_chunk(start, count)
+          d <- private$read_chunk(start, count)
           d <- drop(d)
 
           # Sanitize the attributes for the result, as required, and make CRS
@@ -1074,6 +1087,63 @@ CFVariable <- R6::R6Class("CFVariable",
     add_cell_measure = function(cm) {
       if (inherits(cm, "CFCellMeasure"))
         private$.cell_measures <- append(private$.cell_measures, setNames(list(cm), cm$name))
+    },
+
+    #' @description Save the data object to a netCDF file.
+    #' @param fn The name of the netCDF file to create.
+    #' @param pack Logical to indicate if the data should be packed. Packing is
+    #' only useful for numeric data; packing is not performed on integer values.
+    #' Packing is always to the "NC_SHORT" data type, i.e. 16-bits per value.
+    #' @return Self, invisibly.
+    save = function(fn, pack = FALSE) {
+      nc <- RNetCDF::create.nc(fn, prefill = FALSE, format = "netcdf4")
+      if (!inherits(nc, "NetCDF"))
+        stop("Could not create the netCDF file. Please check that the location of the supplied file name is writable.", call. = FALSE)
+
+      # Global attributes
+      self$write_attributes(nc, "NC_GLOBAL")
+
+      # Axes
+      lbls <- unlist(sapply(private$.axes, function(ax) {ax$write(nc); ax$coordinate_names}), use.names = FALSE)
+
+      # CRS
+      if (!is.null(self$crs)) {
+        self$crs$write(nc)
+        self$set_attribute("grid_mapping", "NC_CHAR", self$crs$name)
+      }
+
+      if (!is.null(dt <- private$read_data())) {
+        # Packing
+        pack <- pack && private$.data_type %in% c("NC_FLOAT", "NC_DOUBLE")
+        if (pack) {
+          actual_range <- self$attribute("actual_range")
+          self$set_attribute("add_offset", private$.data_type, (actual_range[1L] + actual_range[2L]) * 0.5)
+          self$set_attribute("scale_factor", private$.data_type, (actual_range[2L] - actual_range[1L]) / 65534)
+          self$set_attribute("missing_value", "NC_SHORT", -32767)
+        }
+
+        # Data variable
+        dt <- private$orient(dt, "CF")
+        axes <- attr(dt, "axes")
+        dim_axes <- length(axes)
+        private$.id <- if (dim_axes > 0L)
+          RNetCDF::var.def.nc(nc, self$name, if (pack) "NC_SHORT" else private$.data_type, axes)
+        else
+          RNetCDF::var.def.nc(nc, self$name, if (pack) "NC_SHORT" else private$.data_type, NA)
+        if (length(private$.axes) > dim_axes || length(lbls)) {
+          non_dim_axis_names <- sapply(private$.axes, function(ax) ax$name)[-(1L:dim_axes)]
+          if (length(non_dim_axis_names) > 0L)
+            self$set_attribute("coordinates", "NC_CHAR", paste(c(non_dim_axis_names, lbls), collapse = " "))
+        }
+        self$write_attributes(nc, self$name)
+        RNetCDF::var.put.nc(nc, self$name, dt, pack = pack, na.mode = 2)
+
+        if (pack)
+          self$delete_attribute(c("scale_factor", "add_offset", "missing_value"))
+      }
+      RNetCDF::close.nc(nc)
+
+      invisible(self)
     }
   ),
   active = list(

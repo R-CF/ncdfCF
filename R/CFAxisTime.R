@@ -239,7 +239,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     slice = function(x, rightmost.closed = FALSE) {
       time <- private$.tm
       idx <- time$slice(x, rightmost.closed)
-      (1L:length(time))[idx]
+      range((1L:length(time))[idx])
     },
 
     #' @description Return an axis spanning a smaller coordinate range. This
@@ -295,23 +295,23 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         self$set_attribute("calendar", "NC_CHAR", "standard")
       super$write(nc)
 
-      bnds <- time$get_bounds()
-      if (!is.null(bnds)) {
-        # Do we have to record did somewhere??
-        dnm <- "nv"
-        did <- try(RNetCDF::dim.def.nc(nc, dnm, 2L), silent = TRUE)
-        if (inherits(did, "try-error")) {
-          did <- RNetCDF::dim.inq.nc(nc, dnm)
-          did <- if (did$length == 2L) did$id
-                 else {
-                   dnm <- paste(sample(letters, 8, TRUE), collapse = "") # Random name
-                   RNetCDF::dim.def.nc(nc, dnm, 2L)
-                 }
-        }
-        nm <- if (inherits(time, "CFClimatology")) self$attribute("climatology") else self$attribute("bounds")
-        RNetCDF::var.def.nc(nc, nm, "NC_DOUBLE", c(dnm, self$name))
-        RNetCDF::var.put.nc(nc, nm, bnds)
-      }
+      # bnds <- time$get_bounds()
+      # if (!is.null(bnds)) {
+      #   # Do we have to record did somewhere??
+      #   dnm <- "nv"
+      #   did <- try(RNetCDF::dim.def.nc(nc, dnm, 2L), silent = TRUE)
+      #   if (inherits(did, "try-error")) {
+      #     did <- RNetCDF::dim.inq.nc(nc, dnm)
+      #     did <- if (did$length == 2L) did$id
+      #            else {
+      #              dnm <- paste(sample(letters, 8, TRUE), collapse = "") # Random name
+      #              RNetCDF::dim.def.nc(nc, dnm, 2L)
+      #            }
+      #   }
+      #   nm <- if (inherits(time, "CFClimatology")) self$attribute("climatology") else self$attribute("bounds")
+      #   RNetCDF::var.def.nc(nc, nm, "NC_DOUBLE", c(dnm, self$name))
+      #   RNetCDF::var.put.nc(nc, nm, bnds)
+      # }
     }
   ),
   active = list(

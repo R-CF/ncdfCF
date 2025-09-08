@@ -46,8 +46,8 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
       if (is.null(location))
         location <- as.integer(dim * 0.5)
 
-      lon <- private$.varLong$read_data()
-      lat <- private$.varLat$read_data()
+      lon <- private$.varLong$raw()
+      lat <- private$.varLat$raw()
       private$.res[1L] <- abs(if (location[1L] == 1L)
         lon[location[1L] + 1L, location[2L]] - lon[location[1L], location[2L]]
       else if (location[1L] == dim[1L])
@@ -183,8 +183,8 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
       if (is.null(maxDist))
         maxDist <- max(private$.res)
 
-      varlon <- private$.varLong$read_data()
-      varlat <- private$.varLat$read_data()
+      varlon <- private$.varLong$raw()
+      varlat <- private$.varLat$raw()
       out <- mapply(function(lon, lat, max2) {
         dlon <- varlon - lon
         dlat <- varlat - lat
@@ -214,8 +214,8 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
       # up but the grid may be oriented differently, hence why indices into AOI
       # properties aoires and aoidim are determined based on the orientation.
       # Create vectors of AOI longitude and latitude coordinates.
-      lat <- private$.varLat$read_data()
-      lon <- private$.varLong$read_data()
+      lat <- private$.varLat$raw()
+      lon <- private$.varLong$raw()
       aoiext <- private$.aoi$extent
       aoidim <- private$.aoi$dim
       aoires <- private$.aoi$resolution
@@ -271,6 +271,17 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     #' has been set.
     clear_cache = function() {
       private$.index <- NULL
+      invisible(self)
+    },
+
+    #' @description Detach the latitude and longitude from an underlying netCDF
+    #' resource.
+    #' @return Self, invisibly.
+    detach = function() {
+      private$.varLong$detach()
+      private$.varLat$detach()
+      if (!is.null(private$.boundsLong)) private$.boundsLong$detach()
+      if (!is.null(private$.boundsLat)) private$.boundsLat$detach()
       invisible(self)
     }
   ),
@@ -345,7 +356,7 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
           if (inherits(private$.boundsLong, "CFBounds")) {
             private$.ext <- c(private$.boundsLong$range(), private$.boundsLat$range())
           } else {
-            private$.ext <- c(range(private$.varLong$read_data()), range(private$.varLat$read_data()))
+            private$.ext <- c(range(private$.varLong$raw()), range(private$.varLat$raw()))
           }
         }
         private$.ext

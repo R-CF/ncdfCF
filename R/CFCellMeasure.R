@@ -147,6 +147,15 @@ CFCellMeasure <- R6::R6Class("CFCellMeasure",
         }
       } else
         stop("Invalid resource for cell measure variable.", call. = FALSE)
+    },
+
+    #' @description Detach the internal data variable from an underlying netCDF
+    #' resource.
+    #' @return Self, invisibly.
+    detach = function() {
+      if (is.null(private$.ext) && !is.null(private$.var))
+        private$.var$detach()
+      invisible(self)
     }
   ),
   active = list(

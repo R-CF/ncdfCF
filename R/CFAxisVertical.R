@@ -125,7 +125,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
           S + sweep(tmp, MARGIN = 1:2, eta, "*")
       }
       private$.name_computed <- private$ocean_computed_name()
-      private$.computed_values <- CFArray$new(private$.name_computed, crds, "NC_DOUBLE", axes, NULL, data.frame())
+      private$.computed_values <- CFVariable$new(private$.name_computed, values = crds, axes = axes)
     },
 
     ocean_s_coordinate_g2 = function() {
@@ -166,7 +166,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
         }
       }
       private$.name_computed <- private$ocean_computed_name()
-      private$.computed_values <- CFArray$new(private$.name_computed, crds, "NC_DOUBLE", axes, NULL, data.frame())
+      private$.computed_values <- CFVariable$new(private$.name_computed, values = crds, axes = axes)
     },
 
     # Helper function to determine the computed name of ocean formulations
@@ -200,6 +200,15 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
 
       if (!is.na(self$attribute("formula_terms")))
         private$.parameter_name <- self$attribute("standard_name")
+    },
+
+    #' @description Detach the parametric terms from an underlying netCDF
+    #' resource.
+    #' @return Self, invisibly.
+    detach = function() {
+      lapply(private$.terms$ParamTerm[-1L], function(t) t$detach()) # do not detach the first parametric term which is self
+      super$detach()
+      invisible(self)
     },
 
     #' @description Create a copy of this axis. The copy is completely separate
@@ -247,8 +256,8 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
       CFAxisVertical$new(name, values = values, attributes = self$attributes)
     },
 
-    #' @description Copy the parametric terms from `from` to
-    #'   `self`. The parametric terms will be configured in `self`.
+    #' @description Copy the parametric terms from `from` to this axis. The
+    #'   parametric terms will be configured in this axis.
     #' @param from The `NCGroup` from which references to the parametric terms
     #'   are accessible.
     #' @param original_axes List of `CFAxis` instances from the CF object that

@@ -32,6 +32,7 @@ or an external variable.}
 \item \href{#method-CFCellMeasure-data}{\code{CFCellMeasure$data()}}
 \item \href{#method-CFCellMeasure-register}{\code{CFCellMeasure$register()}}
 \item \href{#method-CFCellMeasure-link}{\code{CFCellMeasure$link()}}
+\item \href{#method-CFCellMeasure-detach}{\code{CFCellMeasure$detach()}}
 \item \href{#method-CFCellMeasure-clone}{\code{CFCellMeasure$clone()}}
 }
 }
@@ -139,6 +140,20 @@ file name or a remote URI.}
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFCellMeasure-detach"></a>}}
+\if{latex}{\out{\hypertarget{method-CFCellMeasure-detach}{}}}
+\subsection{Method \code{detach()}}{
+Detach the internal data variable from an underlying netCDF
+resource.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFCellMeasure$detach()}\if{html}{\out{</div>}}
+}
+
 \subsection{Returns}{
 Self, invisibly.
 }

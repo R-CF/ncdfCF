@@ -46,7 +46,7 @@ CFBounds <- R6::R6Class("CFBounds",
 
       if (length(private$.start_count$count) > owner_dims + 1L) {
         private$.start_count$count[owner_dims + 2L] <- 1L
-        self$read_data()
+        private$read_data()
         private$.values <- drop(private$.values)
       }
     },
@@ -164,18 +164,29 @@ CFBounds <- R6::R6Class("CFBounds",
         CFBounds$new(self$name, values = cbind(self$values, from$values), attributes = self$attributes)
     },
 
-    #' @description Write the bounds variable to a netCDF file. This method
-    #'   should not be called directly; instead, `CFVariable::save()` will call this
-    #'   method automatically.
+    #' @description Write the boundary variable to a netCDF file. This method
+    #'   should not be called directly; instead, `CFVariable::save()` will call
+    #'   this method automatically.
     #' @param h The handle to a netCDF file open for writing.
-    #' @param object_name The name of the object that uses these bounds, usually
-    #' an axis but could also be an auxiliary CV or a parametric Z axis.
+    #' @param object_name The name of the object that uses these boundary
+    #'   values, usually an axis but could also be an auxiliary CV or a
+    #'   parametric Z axis.
     write = function(h, object_name) {
-      dim <- self$NCvar$dimension(id)
-      dim$write(h)
-      self$id <- RNetCDF::var.def.nc(h, self$name, self$data_type, c(dim$name, object_name))
+      v <- self$values
+      nv <- dim(v)[1L]
+
+      # Write the vertex dimension for the axis. Error will be thrown when
+      # trying to write a dimension that's already defined, such as when a
+      # vertex dimension is shared between multiple objects. In that case, get
+      # the id.
+      nm <- paste0("nv", nv)
+      did <- try(RNetCDF::dim.def.nc(h, nm, nv), silent = TRUE)
+      if (inherits(did, "try-error"))
+        did <- RNetCDF::dim.inq.nc(h, nv)$id
+
+      private$.id <- RNetCDF::var.def.nc(h, self$name, private$.data_type, c(nm, object_name))
       self$write_attributes(h, self$name)
-      RNetCDF::var.put.nc(h, self$name, self$values)
+      RNetCDF::var.put.nc(h, self$name, v)
     }
   ),
   active = list(
@@ -211,7 +222,7 @@ CFBounds <- R6::R6Class("CFBounds",
     #'   is a linked netCDF resource, this object will be detached from it.
     values = function(value) {
       if (missing(value)) {
-        self$read_data()
+        private$read_data()
       } else {
         private$set_values(value)
         self$detach()

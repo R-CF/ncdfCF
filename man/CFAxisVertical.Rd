@@ -50,6 +50,7 @@ will access the standard names table.}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFAxisVertical-new}{\code{CFAxisVertical$new()}}
+\item \href{#method-CFAxisVertical-detach}{\code{CFAxisVertical$detach()}}
 \item \href{#method-CFAxisVertical-copy}{\code{CFAxisVertical$copy()}}
 \item \href{#method-CFAxisVertical-copy_with_values}{\code{CFAxisVertical$copy_with_values()}}
 \item \href{#method-CFAxisVertical-copy_terms}{\code{CFAxisVertical$copy_terms()}}
@@ -66,13 +67,10 @@ will access the standard names table.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="dim"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-dim'><code>ncdfCF::CFObject$dim()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="read_chunk"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-read_chunk'><code>ncdfCF::CFObject$read_chunk()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="read_data"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-read_data'><code>ncdfCF::CFObject$read_data()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="update_coordinates_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-update_coordinates_attribute'><code>ncdfCF::CFObject$update_coordinates_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="can_append"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-can_append'><code>ncdfCF::CFAxis$can_append()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="detach"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-detach'><code>ncdfCF::CFAxis$detach()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-peek'><code>ncdfCF::CFAxis$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="write"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-write'><code>ncdfCF::CFAxis$write()</code></a></span></li>
@@ -123,6 +121,20 @@ axis. When an empty \code{data.frame} (default) and argument \code{var} is an
 netCDF resource.}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisVertical-detach"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisVertical-detach}{}}}
+\subsection{Method \code{detach()}}{
+Detach the parametric terms from an underlying netCDF
+resource.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$detach()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}
@@ -184,8 +196,8 @@ The newly created axis.
 \if{html}{\out{<a id="method-CFAxisVertical-copy_terms"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisVertical-copy_terms}{}}}
 \subsection{Method \code{copy_terms()}}{
-Copy the parametric terms from \code{from} to
-\code{self}. The parametric terms will be configured in \code{self}.
+Copy the parametric terms from \code{from} to this axis. The
+parametric terms will be configured in this axis.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$copy_terms(from, original_axes, new_axes)}\if{html}{\out{</div>}}
 }

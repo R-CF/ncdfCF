@@ -53,7 +53,7 @@ Ops.CFVariable <- function(e1, e2) {
   fun <- match.fun(.Generic)
 
   if (inherits(e1, "CFVariable")) {
-    d1 <- e1$read_data()
+    d1 <- e1$raw()
     name <- e1$name
     crs <- e1$crs
     axes <- e1$axes
@@ -74,7 +74,7 @@ Ops.CFVariable <- function(e1, e2) {
         crs <- e2$crs
         axes <- e2$axes
       }
-      d2 <- e2$read_data()
+      d2 <- e2$raw()
       name <- paste(name, e2$name, sep = "_")
     } else {
       d2 <- e2
@@ -99,7 +99,7 @@ Ops.CFVariable <- function(e1, e2) {
 #' @export
 Math.CFVariable <- function(x, ...) {
   fun <- match.fun(.Generic)
-  res <- fun(x$read_data(), ...)
+  res <- fun(x$raw(), ...)
   v <- CFVariable$new(paste(.Generic, x$name, sep = "_"), values = res, axes = x$axes)
   v$crs <- x$crs
   v

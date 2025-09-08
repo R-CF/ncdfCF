@@ -28,7 +28,7 @@ CFLabel <- R6::R6Class("CFLabel",
     initialize = function(var, values = NA, start = NA, count = NA) {
       super$initialize(var, values = values, start = start, count = count)
       if (is.null(values) || (length(values) == 1L && is.na(values)))
-        self$read_data()
+        private$read_data()
     },
 
     #' @description  Prints a summary of the labels to the console.
@@ -111,16 +111,16 @@ CFLabel <- R6::R6Class("CFLabel",
     coordinates = function(value) {
       if (missing(value)) {
         if (is.null(private$.values)) {
-          private$.values <- self$read_data()
-          if (!is.null(private$.values)) {
-            dim(private$.values) <- NULL
+          vals <- private$read_data()
+          if (!is.null(vals)) {
+            dim(vals) <- NULL
             if(self$data_type %in% c("NC_CHAR", "NC_STRING"))
-              private$.values <- trimws(private$.values)
+              private$set_values(trimws(vals))
           }
         }
         private$.values
       } else {
-        private$.values <- value
+        private$set_values(value)
         self$detach()
       }
     },

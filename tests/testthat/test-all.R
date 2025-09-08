@@ -112,7 +112,7 @@ test_that("CRU data", {
     expect_equal(range(axes$lat$coordinates), c(-39.75, -30.25))
     expect_equal(range(axes$time$coordinates), c("2011-01-16", "2020-12-16"))
     expect_true(sub$has_resource)
-    sub$read_data()
+    sub$raw()
     actual_range <- sub$attribute("actual_range")
     expect_length(actual_range, 2)
 
@@ -185,18 +185,18 @@ test_that("CRU data", {
     expect_true(inherits(Tearly$time, "CFClimatology"))
 
     # Save to file, read back in
-    # fn <- tempfile(fileext = ".nc")
-    # Tmin <- summ$early$Tmin
-    # Tmin$save(fn)
-    # ds2 <- open_ncdf(fn)
-    # expect_equal(names(ds2), "Tmin")
-    # T2 <- ds2[["Tmin"]]
-    # expect_equal(T2$raw(), aperm(Tmin$raw(), c(2, 3, 1)))
-    # expect_equal(T2$axes[["lon"]]$coordinates, Tmin$axes[["lon"]]$coordinates)
-    # expect_equal(T2$axes[["lat"]]$coordinates, Tmin$axes[["lat"]]$coordinates)
-    # expect_equal(T2$axes[["time"]]$coordinates, Tmin$axes[["time"]]$coordinates)
-    # ds2 <- NULL
-    # unlink(fn)
+    fn <- tempfile(fileext = ".nc")
+    Tmin <- summ$early$Tmin
+    Tmin$save(fn)
+    ds2 <- open_ncdf(fn)
+    expect_equal(names(ds2), "Tmin")
+    T2 <- ds2[["Tmin"]]
+    expect_equal(T2$raw(), aperm(Tmin$raw(), c(2, 3, 1)))
+    expect_equal(T2$axes[["lon"]]$coordinates, Tmin$axes[["lon"]]$coordinates)
+    expect_equal(T2$axes[["lat"]]$coordinates, Tmin$axes[["lat"]]$coordinates)
+    expect_equal(T2$axes[["time"]]$coordinates, Tmin$axes[["time"]]$coordinates)
+    ds2 <- NULL
+    unlink(fn)
   }
 })
 

@@ -97,36 +97,36 @@ test_that("Create from scratch", {
   t <- taxis$time
   expect_true(inherits(t, "CFTime"))
 
-#   # Write to file and read back in
-#   fn <- tempfile(fileext = ".nc")
-#   da$save(fn)
-#   ds <- open_ncdf(fn)
-#   expect_equal(names(ds), "better_CF_object")
-#   expect_equal(ds$axis_names, c("y", "x", "time"))
-#   dv <- ds[["better_CF_object"]]
-#   expect_true(dv$id >= 0L)
-#   taxis2 <- dv$axes[["time"]]
-#   expect_true(taxis2$id >= 0L)
-#   arr2 <- dv$raw()
-#   expect_true(all(dim(arr2) == dim(arr)))
-#   expect_true(identical(arr2, arr))
-#   unlink(fn)
-#
-#   # Write to file in canonical axis order and read back in
-#   dimnames(arr) <- list(latitude = c(40, 41, 42, 43, 44, 45), longitude = c(0, 1, 2, 3, 4),
-#                         time = c("2025-07-01", "2025-07-02", "2025-07-03", "2025-07-04"))
-#   da <- as_CF("compliant_CF_object", arr)
-#   fn <- tempfile(fileext = ".nc")
-#   da$save(fn)
-#   ds <- open_ncdf(fn)
-#   dv <- ds[["compliant_CF_object"]]
-#   expect_equal(names(dv$axes), c("longitude", "latitude", "time"))
-#   expect_true(inherits(dv$axes[["longitude"]], "CFAxisLongitude"))
-#   expect_true(inherits(dv$axes[["latitude"]], "CFAxisLatitude"))
-#   expect_true(inherits(dv$axes[["time"]], "CFAxisTime"))
-#   arr3 <- dv$raw()
-#   expect_true(all(dim(arr3)[1] == dim(arr)[2], dim(arr3)[2] == dim(arr)[1], dim(arr3)[3] == dim(arr)[3]))
-#   expect_true(identical(aperm(arr3, c(2, 1, 3)), arr))
-#   unlink(fn)
+  # Write to file and read back in
+  fn <- tempfile(fileext = ".nc")
+  da$save(fn)
+  ds <- open_ncdf(fn)
+  expect_equal(names(ds), "better_CF_object")
+  expect_equal(ds$axis_names, c("y", "x", "time"))
+  dv <- ds[["better_CF_object"]]
+  expect_true(dv$id >= 0L)
+  taxis2 <- dv$axes[["time"]]
+  expect_true(taxis2$id >= 0L)
+  arr2 <- dv$raw()
+  expect_true(all(dim(arr2) == dim(arr)))
+  expect_true(identical(arr2, arr))
+  unlink(fn)
+
+  # Write to file in canonical axis order and read back in
+  dimnames(arr) <- list(latitude = c(40, 41, 42, 43, 44, 45), longitude = c(0, 1, 2, 3, 4),
+                        time = c("2025-07-01", "2025-07-02", "2025-07-03", "2025-07-04"))
+  da <- as_CF("compliant_CF_object", arr)
+  fn <- tempfile(fileext = ".nc")
+  da$save(fn)
+  ds <- open_ncdf(fn)
+  dv <- ds[["compliant_CF_object"]]
+  expect_equal(names(dv$axes), c("longitude", "latitude", "time"))
+  expect_true(inherits(dv$axes[["longitude"]], "CFAxisLongitude"))
+  expect_true(inherits(dv$axes[["latitude"]], "CFAxisLatitude"))
+  expect_true(inherits(dv$axes[["time"]], "CFAxisTime"))
+  arr3 <- dv$raw()
+  expect_true(all(dim(arr3)[1] == dim(arr)[2], dim(arr3)[2] == dim(arr)[1], dim(arr3)[3] == dim(arr)[3]))
+  expect_true(identical(aperm(arr3, c(2, 1, 3)), arr))
+  unlink(fn)
 })
 

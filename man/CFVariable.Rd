@@ -60,6 +60,7 @@ description of the variable as a WKT2 string.}
 \item \href{#method-CFVariable-brief}{\code{CFVariable$brief()}}
 \item \href{#method-CFVariable-shard}{\code{CFVariable$shard()}}
 \item \href{#method-CFVariable-peek}{\code{CFVariable$peek()}}
+\item \href{#method-CFVariable-detach}{\code{CFVariable$detach()}}
 \item \href{#method-CFVariable-time}{\code{CFVariable$time()}}
 \item \href{#method-CFVariable-raw}{\code{CFVariable$raw()}}
 \item \href{#method-CFVariable-array}{\code{CFVariable$array()}}
@@ -80,11 +81,8 @@ description of the variable as a WKT2 string.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-detach'><code>ncdfCF::CFObject$detach()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="dim"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-dim'><code>ncdfCF::CFObject$dim()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="read_chunk"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-read_chunk'><code>ncdfCF::CFObject$read_chunk()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="read_data"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-read_data'><code>ncdfCF::CFObject$read_data()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="update_coordinates_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-update_coordinates_attribute'><code>ncdfCF::CFObject$update_coordinates_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
@@ -198,6 +196,20 @@ Retrieve interesting details of the data variable.
 
 \subsection{Returns}{
 A 1-row \code{data.frame} with details of the data variable.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-detach"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-detach}{}}}
+\subsection{Method \code{detach()}}{
+Detach the various properties of this variable from an
+underlying netCDF resource.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$detach()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}
