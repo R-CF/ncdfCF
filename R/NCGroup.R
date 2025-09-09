@@ -296,6 +296,19 @@ NCGroup <- R6::R6Class("NCGroup",
       vars
     },
 
+    #' @description Add an auxiliary coordinate variable to the group. This
+    #'   method adds the passed auxiliary coordinate to the group `CFaux` list.
+    #' @param aux Instance of [CFLabel] or [CFAxis].
+    #' @return `self` invisibly.
+    add_auxiliary_coordinate = function(aux) {
+      if (!length(self$CFaux)) {
+        self$CFaux <- setNames(list(aux), aux$name)
+      } else {
+        self$CFaux[[aux$name]] <- aux
+      }
+      invisible(self)
+    },
+
     #' @description Add an auxiliary long-lat variable to the group. This method
     #'   creates a [CFAuxiliaryLongLat] from the arguments and adds it to the
     #'   group `CFlonglat` list, but only if the combination of `lon`, `lat`
@@ -306,11 +319,10 @@ NCGroup <- R6::R6Class("NCGroup",
     #'   longitude and latitude grid values, respectively, or `NULL` when not
     #'   set.
     #' @return `self` invisibly.
-    addAuxiliaryLongLat = function(lon, lat, bndsLong, bndsLat) {
+    add_auxiliary_longlat = function(lon, lat, bndsLong, bndsLat) {
       nm <- paste(lon$name, lat$name, sep = "_")
       if (!length(self$CFlonglat)) {
-        self$CFlonglat <- list(CFAuxiliaryLongLat$new(lon, lat, bndsLong, bndsLat))
-        names(self$CFlonglat) <- nm
+        self$CFlonglat <- setNames(list(CFAuxiliaryLongLat$new(lon, lat, bndsLong, bndsLat)), nm)
       } else {
         known <- lapply(self$CFlonglat, function(a) c(a$lon$id, a$lat$id))
         if (!any(sapply(known, function(k) k[1L] == lon$id && k[2L] == lat$id)))

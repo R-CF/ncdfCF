@@ -183,13 +183,20 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #'   `NULL`, the handle to a netCDF file or a group therein.
     #' @return Self, invisibly.
     write = function(nc = NULL) {
-      if (private$dim_only) {
-        # Write the dimension and any labels. No values or attributes to write.
-        h <- if (inherits(nc, "NetCDF")) nc else self$NCvar$handle
-        #self$NCdim$write(h)
-        lapply(private$aux, function(x) x$write(nc))
-      } else
-        super$write(nc)
+      h <- if (inherits(nc, "NetCDF")) nc else self$NCvar$handle
+
+      # Write the dimension for the axis. Error will be thrown when trying to
+      # write a dimension that's already defined, such as when a dimension is
+      # shared between multiple objects. In that case, get the id.
+      did <- try(RNetCDF::dim.def.nc(h, self$name, self$length), silent = TRUE)
+      if (inherits(did, "try-error"))
+        did <- RNetCDF::dim.inq.nc(h, self$name)$id
+
+      # No values or attributes to write.
+
+      # Write labels.
+      lapply(private$.aux, function(x) x$write(nc, did))
+
       invisible(self)
     }
   ),

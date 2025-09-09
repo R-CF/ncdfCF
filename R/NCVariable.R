@@ -59,9 +59,7 @@ NCVariable <- R6::R6Class("NCVariable",
 
       # FIXME: Must be NCGroup method: group$append(self)
       # Add self to the group
-      l <- list(self)
-      names(l) <- name
-      group$NCvars <- append(group$NCvars, l)
+      group$NCvars <- append(group$NCvars, setNames(list(self), name))
     },
 
     #' @description Summary of the NC variable printed to the console.
@@ -140,8 +138,7 @@ NCVariable <- R6::R6Class("NCVariable",
       if (missing(value))
         private$.group
       else {
-        # FIXME: Some code deep down calls this. Should be resolved when CFobjects no longer have group references
-        #stop("Cannot set the group of a NC object.", call. = FALSE)
+        stop("Cannot set the group of a NC object.", call. = FALSE) # nocov
       }
     },
 

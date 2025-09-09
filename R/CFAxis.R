@@ -316,7 +316,7 @@ CFAxis <- R6::R6Class("CFAxis",
       if (!is.null(private$.bounds))
         private$.bounds$write(h, self$name)
 
-      lapply(private$.aux, function(l) l$write(nc))
+      lapply(private$.aux, function(l) l$write(nc, did))
 
       invisible(self)
     }
@@ -382,6 +382,7 @@ CFAxis <- R6::R6Class("CFAxis",
       else if (inherits(value, "CFBounds")) {
         # FIXME: Check the bounds values
         private$.bounds <- value
+        self$set_attribute("bounds", "NC_CHAR", value$name)
       } else if (!is.null(value))
         stop("Must assign a `CFBounds` object to the axis.", call. = FALSE) # nocov
     },
@@ -398,8 +399,7 @@ CFAxis <- R6::R6Class("CFAxis",
       } else {
         if ((inherits(value, "CFLabel") || inherits(value, "CFAxis")) &&
             value$length == self$length && !(value$name %in% private$aux_names())) {
-          private$.aux <- append(private$.aux, value)
-          names(private$.aux) <- private$aux_names()
+          private$.aux <- append(private$.aux, setNames(list(value), value$name))
         }
       }
     },

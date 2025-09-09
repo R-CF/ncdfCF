@@ -350,9 +350,9 @@ peek_ncdf <- function(resource) {
 #' auxiliary coordinate variable when both a longitude and latitude NC variable
 #' are found, in the group of the longitude NC variable.
 #' @param grp The group to scan.
-#' @return Nothing. CFAxis and CFAuxiliaryLongLat instances are created in the
-#'   groups where the NC variables are found. These will later be picked up when
-#'   CFvariables are created.
+#' @return Nothing. CFAxis, CFLabel and CFAuxiliaryLongLat instances are created
+#'   in the groups where the NC variables are found. These will later be picked
+#'   up when CFVariables are created.
 #' @noRd
 .makeCoordinates <- function(grp) {
   if (length(grp$NCvars) > 0L) {
@@ -360,7 +360,7 @@ peek_ncdf <- function(resource) {
     # The NCVariable must have dimensional axes.
     for (refid in seq_along(grp$NCvars)) {
       v <- grp$NCvars[[refid]]
-      if (!length(v$CF) && length(vdimids <- v$dimids) &&
+      if (length(vdimids <- v$dimids) &&
           !is.na(coords <- v$attribute("coordinates"))) {
         coords <- strsplit(coords, " ", fixed = TRUE)[[1L]]
         varLon <- varLat <- bndsLon <- bndsLat <- NA
@@ -389,21 +389,19 @@ peek_ncdf <- function(resource) {
             if (!found_one) {
               if (nd > 0L && aux$vtype %in% c("NC_CHAR", "NC_STRING")) {
                 # Label
-                aux$group$CFaux[[aux$name]] <- CFLabel$new(aux)
+                aux$group$add_auxiliary_coordinate(CFLabel$new(aux))
                 found_one <- TRUE
               } else if (nd < 2L) {
                 # Scalar or auxiliary coordinate with a single dimension: make an axis out of it if it doesn't already exist.
                 if (is.null(grp$find_by_name(aux$name))) {
-                  new_ax <- list(.makeAxis(grp, aux))
-                  names(new_ax) <- aux$name
-                  aux$group$CFaux <- append(aux$group$CFaux, new_ax)
+                  aux$group$add_auxiliary_coordinate(.makeAxis(grp, aux))
+                  found_one <- TRUE
                 }
-                found_one <- TRUE
               }
             }
           }
 
-          if (!found_one)
+          if (!found_one && !length(aux$CF))
             warning("Unmatched `coordinates` value '", coords[cid], "' found in variable '", v$name, "'.", call. = FALSE)
         }
 
@@ -417,7 +415,7 @@ peek_ncdf <- function(resource) {
           })
           lonCF <- CFVariable$new(varLon, ax)
           latCF <- CFVariable$new(varLat, ax)
-          varLon$group$addAuxiliaryLongLat(lonCF, latCF, bndsLon, bndsLat)
+          varLon$group$add_auxiliary_longlat(lonCF, latCF, bndsLon, bndsLat)
         }
       }
     }

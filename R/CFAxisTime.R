@@ -39,10 +39,6 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
   public = list(
     #' @description Create a new instance of this class.
     #'
-    #'   Immediately following the call to create the axis, the calling code
-    #'   should call method `make_time()` prior to calling any other methods in
-    #'   this class.
-    #'
     #'   Creating a new time axis is more easily done with the [makeTimeAxis()]
     #'   function.
     #' @param var The name of the axis when creating a new axis. When reading an
@@ -183,9 +179,9 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @description Append a vector of time values at the end of the current
     #'   values of the axis.
     #' @param from An instance of `CFAxisTime` whose values to append to the
-    #'   values of `self`.
-    #' @return A new `CFAxisTime` instance with values from self and the `from`
-    #'   axis appended.
+    #'   values of this axis.
+    #' @return A new `CFAxisTime` instance with values from this axis and the
+    #'   `from` axis appended.
     append = function(from) {
       ft <- from$time
       if (super$can_append(from) && .c_is_monotonic(private$.tm$offsets, ft$offsets)) {

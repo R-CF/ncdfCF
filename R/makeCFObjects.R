@@ -28,7 +28,6 @@
 #' @return An instance of a class descending from [CFAxis].
 #' @export
 makeAxis <- function(name, orientation, values, bounds = NULL, attributes = NULL) {
-  # FIXME: range check in addition to orientation
   if (orientation == "X") makeLongitudeAxis(name, values, bounds, attributes)
   else if (orientation == "Y") makeLatitudeAxis(name, values, bounds, attributes)
   else if (orientation == "Z") makeVerticalAxis(name, values, bounds, attributes)
@@ -75,8 +74,6 @@ makeAxis <- function(name, orientation, values, bounds = NULL, attributes = NULL
 makeLongitudeAxis <- function(name, values, bounds = NULL, attributes = NULL) {
   if (!.is_valid_name(name))
     stop("Name for axis is not valid", call. = FALSE)
-  # FIXME: Check domain
-  # FIXME: Arguments should not be NULL
 
   axis <- CFAxisLongitude$new(name, values = values, attributes = attributes)
 
@@ -86,7 +83,7 @@ makeLongitudeAxis <- function(name, values, bounds = NULL, attributes = NULL) {
   }
   if (!is.null(bounds)) {
     nm <- paste0(name, "_bnds")
-    axis$bounds <- CFBounds$new(nm, bounds)
+    axis$bounds <- CFBounds$new(nm, values = bounds)
     axis$set_attribute("bounds", "NC_CHAR", nm)
   }
   axis
@@ -109,7 +106,6 @@ makeLongitudeAxis <- function(name, values, bounds = NULL, attributes = NULL) {
 makeLatitudeAxis <- function(name, values, bounds, attributes = NULL) {
   if (!.is_valid_name(name))
     stop("Name for axis is not valid", call. = FALSE)
-  # FIXME: Check domain
 
   axis <- CFAxisLatitude$new(name, values = values, attributes = attributes)
 
@@ -120,7 +116,7 @@ makeLatitudeAxis <- function(name, values, bounds, attributes = NULL) {
 
   if (!is.null(bounds)) {
     nm <- paste0(name, "_bnds")
-    axis$bounds <- CFBounds$new(nm, bounds)
+    axis$bounds <- CFBounds$new(nm, values = bounds)
     axis$set_attribute("bounds", "NC_CHAR", nm)
   }
   axis
@@ -151,7 +147,7 @@ makeVerticalAxis <- function(name, values, bounds, attributes = NULL) {
 
   if (!is.null(bounds)) {
     nm <- paste0(name, "_bnds")
-    axis$bounds <- CFBounds$new(nm, bounds)
+    axis$bounds <- CFBounds$new(nm, values = bounds)
     axis$set_attribute("bounds", "NC_CHAR", nm)
   }
   axis
@@ -184,7 +180,7 @@ makeTimeAxis <- function(name, values, attributes = NULL) {
 
   if (!is.null(values$bounds)) {
     nm <- paste0(name, "_bnds")
-    axis$bounds <- CFBounds$new(nm, values$get_bounds())
+    axis$bounds <- CFBounds$new(nm, values = values$get_bounds())
     axis$set_attribute("bounds", "NC_CHAR", nm)
   }
   axis

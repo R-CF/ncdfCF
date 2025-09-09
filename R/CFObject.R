@@ -422,9 +422,11 @@ CFObject <- R6::R6Class("CFObject",
       invisible(self)
     },
 
-    #' @description Add names of axes to the "coordinates" attribute, avoiding
-    #' duplicates and retaining previous values.
-    #' @param crds Vector of axis names to add to the attribute.
+    #' @description Add names of axes or auxiliary coordinates to the
+    #'   "coordinates" attribute, avoiding duplicates and retaining previous
+    #'   values.
+    #' @param crds Vector of axis or auxiliary coordinate names to add to the
+    #'   attribute.
     #' @return Self, invisibly.
     update_coordinates_attribute = function(crds) {
       current <- private$.attributes[private$.attributes$name == "coordinates", ]

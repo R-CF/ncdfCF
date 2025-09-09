@@ -96,6 +96,9 @@ test_that("Create from scratch", {
   expect_true(inherits(taxis, "CFAxisTime"))
   t <- taxis$time
   expect_true(inherits(t, "CFTime"))
+  t$bounds <- TRUE
+  taxis$bounds <- CFBounds$new("time_bnds", values = t$bounds)
+  expect_equal(t$range(bounds = TRUE), c("2025-06-30T12:00:00", "2025-07-04T12:00:00"))
 
   # Write to file and read back in
   fn <- tempfile(fileext = ".nc")
@@ -107,6 +110,10 @@ test_that("Create from scratch", {
   expect_true(dv$id >= 0L)
   taxis2 <- dv$axes[["time"]]
   expect_true(taxis2$id >= 0L)
+  expect_equal(taxis2$bounds$values, taxis$bounds$values)
+  t2 <- taxis2$time
+  expect_equal(t2$range(), t$range())
+  expect_equal(t2$range(bounds = TRUE), t$range(bounds = TRUE))
   arr2 <- dv$raw()
   expect_true(all(dim(arr2) == dim(arr)))
   expect_true(identical(arr2, arr))
@@ -116,6 +123,8 @@ test_that("Create from scratch", {
   dimnames(arr) <- list(latitude = c(40, 41, 42, 43, 44, 45), longitude = c(0, 1, 2, 3, 4),
                         time = c("2025-07-01", "2025-07-02", "2025-07-03", "2025-07-04"))
   da <- as_CF("compliant_CF_object", arr)
+  ap7_a9 <- CFLabel$new("ap7_a9", c("Castellon-de-la-Plana", "L-Hospitalet-de-l-Infant", "Girona", "Sigean", "Avignon", "Pont-de-l-Isere"))
+  da$add_auxiliary_coordinate(ap7_a9, da$axes[["latitude"]])
   fn <- tempfile(fileext = ".nc")
   da$save(fn)
   ds <- open_ncdf(fn)
@@ -124,6 +133,8 @@ test_that("Create from scratch", {
   expect_true(inherits(dv$axes[["longitude"]], "CFAxisLongitude"))
   expect_true(inherits(dv$axes[["latitude"]], "CFAxisLatitude"))
   expect_true(inherits(dv$axes[["time"]], "CFAxisTime"))
+  expect_equal(dv$attribute("coordinates"), "ap7_a9")
+  expect_equal(dv$axes[["latitude"]]$coordinate_names, c("latitude", "ap7_a9"))
   arr3 <- dv$raw()
   expect_true(all(dim(arr3)[1] == dim(arr)[2], dim(arr3)[2] == dim(arr)[1], dim(arr3)[3] == dim(arr)[3]))
   expect_true(identical(aperm(arr3, c(2, 1, 3)), arr))

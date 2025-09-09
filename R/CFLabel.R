@@ -87,11 +87,14 @@ CFLabel <- R6::R6Class("CFLabel",
     #'   the netCDF file. If `NULL`, write to the file or group where the labels
     #'   were read from (the file must have been opened for writing). If not
     #'   `NULL`, the handle to a netCDF file or a group therein.
+    #' @param dim The dimension to write the labels for. This is the name or
+    #'   dimension id of the object that owns these labels. The dimension must
+    #'   have been written to file before this method is called.
     #' @return Self, invisibly.
-    write = function(nc) {
-      # FIXME: Does this work with non-character labels? Conventions require NC_STRING or NC_CHAR
+    write = function(nc, dim) {
       h <- if (inherits(nc, "NetCDF")) nc else self$NCvar$handle
-      self$id <- RNetCDF::var.def.nc(h, self$name, self$data_type, self$name)
+
+      self$id <- RNetCDF::var.def.nc(h, self$name, private$.data_type, dim)
       self$write_attributes(h, self$name)
       RNetCDF::var.put.nc(h, self$name, self$coordinates)
     }
@@ -114,8 +117,7 @@ CFLabel <- R6::R6Class("CFLabel",
           vals <- private$read_data()
           if (!is.null(vals)) {
             dim(vals) <- NULL
-            if(self$data_type %in% c("NC_CHAR", "NC_STRING"))
-              private$set_values(trimws(vals))
+            private$set_values(trimws(vals))
           }
         }
         private$.values

@@ -21,6 +21,7 @@ This is a major restructuring of the code logic to better separate between file-
 - Axis names in new groups are ensured to be unique after subsetting, profiling, etc.
 - Fully-qualified names of groups generated on-the-fly.
 - Correctly link multiple cell measure variables.
+- Write labels for data variables to file.
 - Disentangling CF objects from the NC hierarchy. The NC hierarchy represents what is on file, the CF objects are mutable. Attributes are now managed in `CFObject`, those in `NCObject` are read from file and immutable.
 - Class `CFVariable` has absorbed classes `CFArray` and `CFVariableBase`.
 - Several minor improvements and code fixes.

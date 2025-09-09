@@ -1089,6 +1089,21 @@ CFVariable <- R6::R6Class("CFVariable",
         private$.cell_measures <- append(private$.cell_measures, setNames(list(cm), cm$name))
     },
 
+    #' @description Add an auxiliary coordinate to the appropriate axis of this
+    #'   variable. The length of the axis must be the same as the length of the
+    #'   auxiliary labels.
+    #' @param aux An instance of [CFLabel] or [CFAxis].
+    #' @param axis An instance of `CFAxis` that these auxiliary coordinates are
+    #'   for.
+    #' @return Self, invisibly.
+    add_auxiliary_coordinate = function(aux, axis) {
+      if (inherits(aux, "CFLabel") || inherits(aux, "CFAxis")) {
+        axis$auxiliary <- aux
+        if (aux$name %in% axis$coordinate_names)
+          self$update_coordinates_attribute(aux$name)
+      }
+    },
+
     #' @description Save the data object to a netCDF file.
     #' @param fn The name of the netCDF file to create.
     #' @param pack Logical to indicate if the data should be packed. Packing is
@@ -1100,11 +1115,10 @@ CFVariable <- R6::R6Class("CFVariable",
       if (!inherits(nc, "NetCDF"))
         stop("Could not create the netCDF file. Please check that the location of the supplied file name is writable.", call. = FALSE)
 
-      # Global attributes
-      self$write_attributes(nc, "NC_GLOBAL")
+      # FIXME: Use `attributes` argument to set global attributes? Then must have mechanism to create attributes before saving.
 
-      # Axes
-      lbls <- unlist(sapply(private$.axes, function(ax) {ax$write(nc); ax$coordinate_names}), use.names = FALSE)
+      # Axes and auxiliary coordinates
+      lbls <- unlist(sapply(private$.axes, function(ax) {ax$write(nc); ax$coordinate_names[-1L]}), use.names = FALSE)
 
       # CRS
       if (!is.null(self$crs)) {

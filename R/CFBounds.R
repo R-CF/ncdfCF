@@ -1,9 +1,9 @@
-#' CF bounds variable
+#' CF boundary variable
 #'
 #' @description This class represents the boundaries of an axis or an auxiliary
 #'   longitude-latitude grid.
 #'
-#'   The class manages the bounds information for an axis (2 vertices per
+#'   The class manages the boundary information for an axis (2 vertices per
 #'   element) or an auxiliary longitude-latitude grid (4 vertices per element).
 #'
 #' @docType class
@@ -23,8 +23,8 @@ CFBounds <- R6::R6Class("CFBounds",
     #' @param values Optional. The values of the boundary variable. This must be
     #'   a numeric matrix whose first dimension has a length equal to the number
     #'   of vertices for each boundary, and the second dimension is as long as
-    #'   the CFObject instances that use these boundary values. Ignored when
-    #'   argument `var` is a NCVariable object.
+    #'   the `CFObject` instances that use these boundary values. Ignored when
+    #'   argument `var` is a `NCVariable` object.
     #' @param start Optional. Vector of indices where to start reading boundary
     #'   data along the dimensions of the data. The vector must be `NA` to read
     #'   all data, otherwise it must have a length equal to the dimensionality
@@ -34,9 +34,9 @@ CFBounds <- R6::R6Class("CFBounds",
     #'   end of each dimension, otherwise it must have a length equal to the
     #'   dimensionality of the owning object + 1.
     #' @param attributes Optional. A `data.frame` with the attributes of the
-    #'   bounds object. When an empty `data.frame` (default) and argument `var`
-    #'   is an NCVariable instance, attributes of the bounds object will be
-    #'   taken from the netCDF resource.
+    #'   boundary object. When an empty `data.frame` (default) and argument
+    #'   `var` is an `NCVariable` instance, attributes of the bounds object will
+    #'   be taken from the netCDF resource.
     #' @param owner_dims Optional, the number of dimensions of the object that
     #'   these boundary values pertain to. Default is 1.
     #' @return A new instance of this class.
