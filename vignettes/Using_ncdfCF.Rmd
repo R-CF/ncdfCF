@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 *"NetCDF (Network Common Data Form) is a set of software libraries and machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. It is also a community standard for sharing scientific data."*
 
-NetCDF is [developed by UCAR/Unidata](https://www.unidata.ucar.edu/software/netcdf/) and is widely used for climate and weather data as well as for other environmental data sets. The `netcdf` library is ported to a wide variety of operating systems and platforms, from laptop computers to large mainframes. Data sets are typically large arrays with axes for longitude, latitude and time, with other axes, such as depth, added according to the nature of the data. Other types of data are also commonly found.
+NetCDF is [developed by UCAR/Unidata](https://www.unidata.ucar.edu/software/netcdf) and is widely used for climate and weather data as well as for other environmental data sets. The `netcdf` library is ported to a wide variety of operating systems and platforms, from laptop computers to large mainframes. Data sets are typically large arrays with axes for longitude, latitude and time, with other axes, such as depth, added according to the nature of the data. Other types of data are also commonly found.
 
 Importantly, *"a netCDF file includes information about the data it contains"*. This comes in two flavours:
 
@@ -29,7 +29,7 @@ Both types of metadata are necessary to "understand" the netCDF resource.
 
 ### Conventions
 
-The descriptive metadata are not defined by the `netcdf` library. To ensure interoperability, [several "conventions"](https://www.unidata.ucar.edu/software/netcdf/conventions.html) have been developed over the years such that users of netCDF data can correctly interpret what data developers have put in the resource. The most important of these conventions is the [CF Metadata Conventions](https://cfconventions.org). These conventions define a large number of standards that help interpret netCDF resources.
+The descriptive metadata are not defined by the `netcdf` library. To ensure interoperability, [several "conventions"](https://archive.unidata.ucar.edu/software/netcdf/conventions.html) have been developed over the years such that users of netCDF data can correctly interpret what data developers have put in the resource. The most important of these conventions is the [CF Metadata Conventions](https://cfconventions.org). These conventions define a large number of standards that help interpret netCDF resources.
 
 Other common conventions are related to climate prediction data, such as CMIP-5 and CMIP-6, but these typically extend the CF Metadata Conventions.
 

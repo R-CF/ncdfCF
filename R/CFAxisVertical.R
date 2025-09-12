@@ -38,8 +38,8 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     # The unit of the computed values of the axis.
     .units_computed = "",
 
-    # A `data.frame` with columns `terms`, `variable` and `ParamTerm` containing
-    # the terms of the formula to calculate the axis values. Column `ParamTerm`
+    # A `data.frame` with columns `term`, `variable` and `param` containing
+    # the terms of the formula to calculate the axis values. Column `param`
     # has the references to the variables that hold the data for each term.
     .terms = NULL,
 
@@ -74,9 +74,9 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     # Helper function to get the data for a specific formula term. Can also
     # return 0 if the data is not found.
     get_data = function(term) {
-      v <- private$.terms[private$.terms$term == term, ]$ParamTerm[[1L]]
+      v <- private$.terms[private$.terms$term == term, ]$param[[1L]]
       if (inherits(v, "CFVerticalParametricTerm"))
-        v$values
+        v$raw()
       else 0
     },
 
@@ -92,7 +92,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     ocean_s_coordinate_g1 = function() {
       # z(n,k,j,i) = S(k,j,i) + eta(n,j,i) * (1 + S(k,j,i) / depth(j,i))
       # where S(k,j,i) = depth_c * s(k) + (depth(j,i) - depth_c) * C(k)
-      s <- private$.values
+      s <- self$values
       C <- private$get_data("C")
       eta <- private$get_data("eta")
       depth <- private$get_data("depth")
@@ -102,7 +102,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
 
       # Construct the axes for the result. Use "depth" axes [i,j], combine with
       # self axis [k].
-      ax <- private$.terms[private$.terms$term == "depth", ]$ParamTerm[[1L]]
+      ax <- private$.terms[private$.terms$term == "depth", ]$param[[1L]]
       axes <- append(ax$axes, self)
       names(axes) <- c(names(ax$axes), self$name)
 
@@ -115,7 +115,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
           S + eta * tmp
         else if (length(d) == 3L) {
           # eta is time-variant so add the [n] axis
-          ax <- private$.terms[private$.terms$term == "eta", ]$ParamTerm[[1L]]
+          ax <- private$.terms[private$.terms$term == "eta", ]$param[[1L]]
           axes <- append(axes, ax$axes[[3L]])
           names(axes) <- c(names(axes)[1L:3L], ax$axes[[3L]]$name)
 
@@ -125,13 +125,16 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
           S + sweep(tmp, MARGIN = 1:2, eta, "*")
       }
       private$.name_computed <- private$ocean_computed_name()
-      private$.computed_values <- CFVariable$new(private$.name_computed, values = crds, axes = axes)
+      v <- CFVariable$new(private$.name_computed, values = crds, axes = axes)
+      un <- private$.terms[private$.terms$term == "depth", "param"][[1L]]$attribute("units")
+      v$set_attribute("units", "NC_CHAR", un)
+      private$.computed_values <- v
     },
 
     ocean_s_coordinate_g2 = function() {
       # z(n,k,j,i) = eta(n,j,i) + (eta(n,j,i) + depth(j,i)) * S(k,j,i)
       # where S(k,j,i) = (depth_c * s(k) + depth(j,i) * C(k)) / (depth_c + depth(j,i))
-      s <- private$.values
+      s <- self$values
       C <- private$get_data("C")
       eta <- private$get_data("eta")
       depth <- private$get_data("depth")
@@ -139,7 +142,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
 
       # Construct the axes for the result. Use "depth" axes [i,j], combine with
       # self axis [k].
-      ax <- private$.terms[private$.terms$term == "depth", ]$ParamTerm[[1L]]
+      ax <- private$.terms[private$.terms$term == "depth", ]$param[[1L]]
       axes <- append(ax$axes, self)
       names(axes) <- c(names(ax$axes), self$name)
 
@@ -154,7 +157,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
           sweep(S, MARGIN = 1:2, depth + eta, "*") + eta
         else if (length(d) == 3L) {
           # eta is time-variant so add the [n] axis
-          ax <- private$.terms[private$.terms$term == "eta", ]$ParamTerm[[1L]]
+          ax <- private$.terms[private$.terms$term == "eta", ]$param[[1L]]
           axes <- append(axes, ax$axes[[3L]])
           names(axes) <- c(names(axes)[1L:3L], ax$axes[[3L]]$name)
 
@@ -166,12 +169,15 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
         }
       }
       private$.name_computed <- private$ocean_computed_name()
-      private$.computed_values <- CFVariable$new(private$.name_computed, values = crds, axes = axes)
+      v <- CFVariable$new(private$.name_computed, values = crds, axes = axes)
+      un <- private$.terms[private$.terms$term == "depth", "param"][[1L]]$attribute("units")
+      v$set_attribute("units", "NC_CHAR", un)
+      private$.computed_values <- v
     },
 
     # Helper function to determine the computed name of ocean formulations
     ocean_computed_name = function() {
-      switch(private$.terms[private$.terms$term == "depth", ]$ParamTerm[[1L]]$attribute("standard_name"),
+      switch(private$.terms[private$.terms$term == "depth", ]$param[[1L]]$attribute("standard_name"),
         "sea_floor_depth_below_geoid" = "altitude",
         "sea_floor_depth_below_geopotential_datum" = "height_above_geopotential_datum",
         "sea_floor_depth_below_reference_ellipsoid" = "height_above_reference_ellipsoid",
@@ -206,17 +212,15 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     #' resource.
     #' @return Self, invisibly.
     detach = function() {
-      lapply(private$.terms$ParamTerm[-1L], function(t) t$detach()) # do not detach the first parametric term which is self
+      # Detaching parametric terms leads to a loop because they are variables, having axes, having parametric terms...
+      #lapply(private$.terms$param[-1L], function(t) t$detach()) # do not detach the first parametric term which is self
       super$detach()
       invisible(self)
     },
 
     #' @description Create a copy of this axis. The copy is completely separate
-    #' from `self`, meaning that both `self` and all of its components are made
-    #' from new instances. Note that the parametric terms, if any, are not
-    #' copied here. If needed, copy the terms by calling the `copy_terms()`
-    #' method **after** all axes that the terms refer to have been copied to, as
-    #' appropriate.
+    #'   from this instance, meaning that the copies of both this instance and
+    #'   all of its components are made as new instances.
     #' @param name The name for the new axis. If an empty string is passed, will
     #'   use the name of this axis.
     #' @return The newly created axis.
@@ -231,11 +235,11 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
           name <- self$name
         ax <- CFAxisVertical$new(name, values = private$.values, attributes = self$attributes)
       }
+      private$copy_properties_into(ax)
 
-      if (inherits(private$.bounds, "CFBounds"))
-        ax$bounds <- private$.bounds$copy()
+      if (self$is_parametric)
+        ax$set_parametric_terms(private$.parameter_name, private$.terms)
 
-      private$subset_coordinates(ax, c(1L, self$length))
       ax
     },
 
@@ -256,127 +260,38 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
       CFAxisVertical$new(name, values = values, attributes = self$attributes)
     },
 
-    #' @description Copy the parametric terms from `from` to this axis. The
-    #'   parametric terms will be configured in this axis.
-    #' @param from The `NCGroup` from which references to the parametric terms
-    #'   are accessible.
-    #' @param original_axes List of `CFAxis` instances from the CF object that
-    #'   these parametric terms are copied from.
-    #' @param new_axes List of `CFAxis` instances to use with the formula term
-    #'   objects.
-    #' @return Self, invisibly.
-    copy_terms = function(from, original_axes, new_axes) {
-      ft <- self$attribute("formula_terms")
-      if (!is.na(ft)) {
-        ft <- trimws(strsplit(ft, " ")[[1L]], whitespace = ":")
-        dim(ft) <- c(2, length(ft) * 0.5)
-        rownames(ft) <- c("term", "variable")
-        ft <- as.data.frame(t(ft))
-        ft$ParamTerm <- lapply(ft$variable, function(v) {
-          if (v == self$name) NULL
-          else {
-            ncvar <- from$find_by_name(v, "NC")
-            if (!is.null(ncvar)) {
-              xids <- lapply(original_axes, function(x) x$dimid)
-              nd <- ncvar$ndims
-              if (nd > 0L) {
-                ax <- vector("list", nd)
-                for (x in 1:nd) {
-                  ndx <- which(sapply(xids, function(e) ncvar$dimids[x] %in% e))
-                  if (!length(ndx)) {
-                    warning(paste0("Possible variable '", ncvar$name, "' cannot be constructed because of unknown axis identifier ", ncvar$dimids[x]))
-                    return(NULL)
-                  }
-                  ax[[x]] <- new_axes[[ndx]]
-                }
-                names(ax) <- sapply(ax, function(x) x$name)
-              } else ax <- list()
-              #ncvar$group <- self$group
-
-              CFVerticalParametricTerm$new(ncvar, ax)
-            } else
-              CFVerticalParametricTerm$new(0, NULL)
-          }
-        })
-        private$.terms <- ft
-      }
-
-      return(self)
-    },
-
-    #' @description Configure the formula terms of a parametric vertical axis.
-    #'   If the vertical axis has a `formula_terms` attribute it has a
-    #'   parametric coordinate space that is calculated from the formula terms.
-    #'   This method sets up the axis instance to calculate the dimensional
-    #'   coordinate space (but it does not do the actual calculation; access the
-    #'   `parametric_coordinates` field to get the dimensional coordinates).
+    #' @description Set the parametric terms for this axis. The name and the
+    #'   terms have to fully describe a CF parametric vertical axis.
     #'
-    #'   This method is called automatically when opening a netCDF file. It
-    #'   should also be called after copying the axes that it refers to. It is
-    #'   not intended to be called otherwise.
-    #' @param axes List of `CFAxis` instances to use with the formula term
-    #'   objects.
-    #' @return Self, invisibly.
-    configure_terms = function(axes) {
-      ft <- self$attribute("formula_terms")
-      if (!is.na(ft)) {
-        ft <- trimws(strsplit(ft, " ")[[1L]], whitespace = ":")
-        dim(ft) <- c(2, length(ft) * 0.5)
-        rownames(ft) <- c("term", "variable")
-        ft <- as.data.frame(t(ft))
-        ft$ParamTerm <- lapply(ft$variable, function(v) {
-          if (v == self$name) NULL
-          else {
-            ncvar <- self$group$find_by_name(v, "NC")
-            if (!is.null(ncvar)) {
-              ax <- .buildVariableAxisList(ncvar, axes)
-              CFVerticalParametricTerm$new(ncvar, ax)
-            } else
-              CFVerticalParametricTerm$new(0, NULL)
-          }
-        })
-        private$.terms <- ft
-      }
+    #'   The terms must also agree with the other axes used by any data variable
+    #'   that refers to this axis. That is not checked here so the calling code
+    #'   must make that assertion.
+    #' @param sn The "standard_name" of the parametric formulation. See the CF
+    #'   documentation for details.
+    #' @param terms A `data.frame` with columns `term`, `variable` and
+    #'   `param` containing the terms of the formula to calculate the axis
+    #'   values. Column `param` has the references to the variables that
+    #'   hold the data for each term.
+    set_parametric_terms = function(sn, terms) {
+      # FIXME: Put in all the checks on terms and sn
 
-      return(self)
-    },
-
-    #' @description This method subsets the parametric terms after the axis has
-    #'   been subset. This method is called by `CFVariable$subset()` and
-    #'   `$profile()` methods and should not be called otherwise.
-    #' @param axes The list of dimensional axes that the data variable uses. The
-    #'   axes are named after the original axes (some may have been renamed in
-    #'   the preceding process).
-    #' @param start A vector of indices where to start reading in the terms, in
-    #'   the original axis order.
-    #' @param count A vector of lengths to read along each axis, in the original
-    #'   axis order.
-    #' @param index Optional index vector when auxiliary coordinates are to be
-    #'   used to warp rotated planar coordinates to lat-long coordinates.
-    #' @param dim_in Optional list of dimensions to use with argument `index`
-    #'   for the original data.
-    #' @param dim_out Optional list of dimensions to use with argument `index`
-    #'   for the warped data.
-    #' @return Self, invisibly.
-    parametric_subset = function(axes, start, count, index, dim_in, dim_out) {
-      if (is.null(private$.terms)) return(invisible(self))
-
-      # If computed before, throw out parametric coordinates
-      was_computed <- !is.null(private$.computed_values)
+      private$.terms <- terms
+      private$.parameter_name <- sn
+      self$set_attribute("formula_terms", "NC_CHAR", paste(terms$term, ": ", terms$variable, sep = "", collapse = " "))
+      self$set_attribute("standard_name", "NC_CHAR", sn)
       private$.computed_values <- NULL
-
-      # Pass all arguments to the parametric term instances
-      #continue here
-
-      # If the parametric coordinates were computed before, recompute
-      if (was_computed) private$compute()
-      invisible(self)
     },
 
     #' @description Append a vector of values at the end of the current values
     #'   of the axis. Boundary values are appended as well but if either this
     #'   axis or the `from` axis does not have boundary values, neither will the
     #'   resulting axis.
+    #'
+    #'   This method is not recommended for parametric vertical axes. Any
+    #'   parametric terms will be deleted. If appending of parametric axes is
+    #'   required, the calling code should first read out the parametric terms
+    #'   and merge them with the parametric terms of the `from` axis before
+    #'   setting them back for this axis.
     #' @param from An instance of `CFAxisVertical` whose values to append to the
     #'   values of this axis.
     #' @return A new `CFAxisVertical` instance with values from this axis and
@@ -392,9 +307,83 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
             ax$bounds <- new_bnds
         }
 
+        if (self$is_parametric) {
+          # Delete all references to parametric terms
+          private$.parameter_name <- ""
+          private$.name_computed <- ""
+          private$.units_computed <- ""
+          private$.terms <- NULL
+          private$.computed_values <- NULL
+          self$delete_attribute("formula_terms")
+        }
+
         ax
       } else
         stop("Axis values cannot be appended.", call. = FALSE)
+    },
+
+    #' @description Return an axis spanning a smaller coordinate range. This
+    #'   method returns an axis which spans the range of indices given by the
+    #'   `rng` argument. If this axis has parametric terms, these are not subset
+    #'   here - they should be separately treated once all associated axes in
+    #'   the terms have been subset. That happens automatically in `CFVariable`
+    #'   methods which call the `subset_parametric_terms()` method.
+    #' @param name The name for the new axis. If an empty string is passed
+    #'   (default), will use the name of this axis.
+    #' @param rng The range of indices whose values from this axis to include in
+    #'   the returned axis. If the value of the argument is `NULL`, return a
+    #'   copy of the axis.
+    #' @return A new `CFAxisVertical` instance covering the indicated range of
+    #'   indices. If the value of the argument `rng` is `NULL`, return a copy of
+    #'   this axis as the new axis.
+    subset = function(name = "", rng = NULL) {
+      if (is.null(rng))
+        self$copy(name)
+      else {
+        rng <- range(rng)
+        if (self$has_resource) {
+          ax <- CFAxisVertical$new(private$.NCvar, start = private$.start_count$start + rng[1L] -1L,
+                                   count = rng[2L] - rng[1L] + 1L, attributes = self$attributes)
+          if (nzchar(name))
+            ax$name <- name
+        } else {
+          if (!nzchar(name))
+            name <- self$name
+          ax <- CFAxisVertical$new(name, values = private$.values[rng[1L]:rng[2L]],
+                                   attributes = self$attributes)
+        }
+        private$copy_properties_into(ax, rng)
+      }
+    },
+
+    #' @description Subset the parametric terms of this axis.
+    #' @param original_axis_names Character vector of names of the axes prior to
+    #'   a modifying operation in the owning data variable
+    #' @param new_axes List of `CFAxis` instances to use for the subsetting.
+    #' @param start The indices to start reading data from the file, as an
+    #'   integer vector at least as long as the number of axis for the term.
+    #' @param count The number of values to read from the file, as an integer
+    #'   vector at least as long as the number of axis for the term.
+    #' @param aux Optional. List with the parameters for an auxiliary grid
+    #'   transformation. Default is `NULL`.
+    #' @param ZT_dim Optional. Dimensions of the non-grid axes when an auxiliary
+    #'   grid transformation is specified.
+    #' @return Self, invisibly. The parametric terms will have been subset in
+    #'   this axis.
+    subset_parametric_terms = function(original_axis_names, new_axes, start, count, aux = NULL, ZT_dim = NULL) {
+      terms <- private$.terms
+      if (is.null(terms)) return()
+
+      params <- terms$param
+      new_params <- vector("list", length(params))
+      for (p in seq_along(params)) {
+        if (is.null(params[[p]])) next
+        new_params[[p]] <- params[[p]]$subset(original_axis_names, new_axes, start, count, aux, ZT_dim)
+      }
+
+      terms$param <- new_params
+      self$set_parametric_terms(self$attribute("standard_name"), terms)
+      invisible(self)
     }
   ),
   active = list(

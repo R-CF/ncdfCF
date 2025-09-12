@@ -8,23 +8,35 @@ CFVerticalParametricTerm <- R6::R6Class("CFVerticalParametricTerm",
   inherit = CFVariable,
   private = list(
     # Flag to indicate that the instance has no data
-    .nodata = TRUE,
-
-    # Start and count indices for reading the data from file
-    .start = NA,
-    .count = NA
+    .nodata = TRUE
   ),
   public = list(
     #' @description Create an instance of this class.
-    #' @param var The NC variable that describes this data object.
+    #' @param var The [NCVariable] instance upon which this CF variable is based
+    #'   when read from a netCDF resource, or the name for the new CF variable
+    #'   to be created.
     #' @param axes A `list` of [CFAxis] descendant instances that describe the
     #'   axes of the data object.
+    #' @param values Optional. The values of the variable in an array.
+    #' @param start Optional. Vector of indices where to start reading data
+    #'   along the dimensions of the array on file. The vector must be `NA` to
+    #'   read all data, otherwise it must have agree with the dimensions of the
+    #'   array on file. Ignored when argument `var` is not an `NCVariable`
+    #'   instance.
+    #' @param count Optional. Vector of number of elements to read along each
+    #'   dimension of the array on file. The vector must be `NA` to read to the
+    #'   end of each dimension, otherwise its value must agree with the
+    #'   corresponding `start` value and the dimension of the array on file.
+    #'   Ignored when argument `var` is not an `NCVariable` instance.
+    #' @param attributes Optional. A `data.frame` with the attributes of the
+    #'   object. When argument `var` is an `NCVariable` instance and this
+    #'   argument is an empty `data.frame` (default), arguments will be read
+    #'   from the resource.
     #' @return An instance of this class.
-    initialize = function(var, axes) {
-      if (inherits(var, "NCVariable")) {
-        super$initialize(var, axes)
+    initialize = function(var, axes, values = values, start = NA, count = NA, attributes = data.frame()) {
+      super$initialize(var, axes = axes, values = values, start = start, count = count, attributes = attributes)
+      if (inherits(var, "NCVariable"))
         private$.nodata <- FALSE
-      }
     },
 
     #' @description  Prints a summary of the parametric formula term to the console.
@@ -33,8 +45,6 @@ CFVerticalParametricTerm <- R6::R6Class("CFVerticalParametricTerm",
     #' @return `self`, invisibly.
     print = function(...) {
       cat("<Parametric formula term>", self$name, "\n")
-      if (self$group$name != "/")
-        cat("Group    :", self$group$name, "\n")
 
       longname <- self$attribute("long_name")
       if (!is.na(longname) && longname != self$name)
@@ -44,7 +54,6 @@ CFVerticalParametricTerm <- R6::R6Class("CFVerticalParametricTerm",
       axes <- do.call(rbind, lapply(self$axes, function(a) a$brief()))
       axes <- lapply(axes, function(c) if (all(c == "")) NULL else c)
       if (length(axes)) {
-        if (all(axes$group == "/")) axes$group <- NULL
         axes <- as.data.frame(axes[lengths(axes) > 0L])
         print(.slim.data.frame(axes, ...), right = FALSE, row.names = FALSE)
       } else cat(" (none)\n")
@@ -56,14 +65,40 @@ CFVerticalParametricTerm <- R6::R6Class("CFVerticalParametricTerm",
     #'   from the netCDF file. The passed indices should be named after the axes
     #'   that they refer to. There may be more indices than axes and they may be
     #'   in a different order than the axes of the term.
+    #' @param original_axis_names Character vector of names of the axes prior to
+    #'   a modifying operation in the owning data variable.
+    #' @param new_axes List of `CFAxis` instances to use for the subsetting.
     #' @param start The indices to start reading data from the file, as an
     #'   integer vector at least as long as the number of axis for the term.
-    #' @param count The number of values to read from the file, as an integer vector at
-    #'   least as long as the number of axis for the term.
-    #' @return Self, invisibly.
-    subset = function(start, count) {
+    #' @param count The number of values to read from the file, as an integer
+    #'   vector at least as long as the number of axis for the term.
+    #' @param aux Optional. List with the parameters for an auxiliary grid
+    #'   transformation. Default is `NULL`.
+    #' @param ZT_dim Optional. Dimensions of the non-grid axes when an auxiliary
+    #'   grid transformation is specified.
+    #' @return The new parametric term object.
+    subset = function(original_axis_names, new_axes, start, count, aux = NULL, ZT_dim = NULL) {
+      if (!length(private$.axes))
+        return(CFVerticalParametricTerm$new(private$.NCvar, axes = list(), attributes = self$attributes))
 
-      invisible(self)
+      ord <- match(names(private$.axes), original_axis_names)
+      new_axis_names <- sapply(new_axes, function(ax) ax$name)
+      aux_axes <- which(match(new_axis_names, original_axis_names, nomatch = 0L) == 0L)
+      if (is.null(aux) || all(!(ord %in% aux_axes))) {
+        # Regular axis subsetting
+        # Assuming we have an NCvar here
+        CFVerticalParametricTerm$new(private$.NCvar, axes = new_axes[ord], start = start[ord],
+                                     count = count[ord], attributes = self$attributes)
+      } else {
+        # Auxiliary grid warping, but only if this term includes the affected axes
+        ZT_dim <- ZT_dim[ord[-(1L:2L)] - 2L] # Dimensions of all axes other than X and Y
+        d <- private$read_chunk(start[ord], count[ord])
+        dim(d) <- c(aux$X[2L] * aux$Y[2L], prod(ZT_dim))
+        d <- d[aux$index, ]
+        dim(d) <- c(aux$box, ZT_dim)
+        CFVerticalParametricTerm$new(self$name, axes = new_axes[ord], values = d,
+                                     attributes = self$attributes)
+      }
     }
   ),
   active = list(
@@ -83,8 +118,7 @@ CFVerticalParametricTerm <- R6::R6Class("CFVerticalParametricTerm",
     values = function(value) {
       if (missing(value)) {
         if (private$.nodata) 0
-        else self$NCvar$get_data(start = private$.start_count$start,
-                                 count = private$.start_count$count)
+        else private$read_data()
       }
     }
   )

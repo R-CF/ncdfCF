@@ -62,18 +62,15 @@ vector, or labels for every axis element if they have been set.}
 \if{html}{\out{<a id="method-CFAxisDiscrete-new"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-new}{}}}
 \subsection{Method \code{new()}}{
-Create a new instance of this class.
+Create a new instance of this class. The values of this axis
+are always a sequence, but the sequence may start with any positive
+value such that the length of this instance falls within the length of
+the axis on file, if there is one.
 
 Creating a new discrete axis is more easily done with the
 \code{\link[=makeDiscreteAxis]{makeDiscreteAxis()}} function.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$new(
-  var,
-  length,
-  start = 1L,
-  count = NA,
-  attributes = data.frame()
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$new(var, start = 1L, count)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -82,20 +79,10 @@ Creating a new discrete axis is more easily done with the
 \item{\code{var}}{The name of the axis when creating a new axis. When reading an
 axis from file, the \link{NCVariable} object that describes this instance.}
 
-\item{\code{length}}{Optional. The length of the axis in a vector, whose values
-will be a sequence of size \code{length}. Ignored when argument \code{var} is a
-NCVariable object.}
+\item{\code{start}}{Optional. Integer value that indicates the starting value of
+this axis. Defults to \code{1L}.}
 
-\item{\code{start}}{Optional. Integer index where to start reading axis data
-from file. The index may be \code{NA} to start reading data from the start.}
-
-\item{\code{count}}{Optional. Number of elements to read from file. This may be
-\code{NA} to read to the end of the data.}
-
-\item{\code{attributes}}{Optional. A \code{data.frame} with the attributes of the
-axis. When an empty \code{data.frame} (default) and argument \code{var} is an
-NCVariable instance, attributes of the axis will be taken from the
-netCDF resource.}
+\item{\code{count}}{Number of elements in the axis.}
 }
 \if{html}{\out{</div>}}
 }
@@ -139,9 +126,8 @@ A 1-row \code{data.frame} with some details of the axis.
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-copy}{}}}
 \subsection{Method \code{copy()}}{
 Create a copy of this axis. The copy is completely separate
-from \code{self}, meaning that both \code{self} and all of its components are
-made from new instances. If this axis is backed by a netCDF resource,
-the copy will retain the reference to the resource.
+from this axis, meaning that both this axis and all of its components
+are made from new instances.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$copy(name = "")}\if{html}{\out{</div>}}
 }
@@ -163,9 +149,8 @@ The newly created axis.
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-indexOf}{}}}
 \subsection{Method \code{indexOf()}}{
 Find indices in the axis domain. Given a vector of numerical
-values \code{x}, find their indices in the values of the axis. In effect,
-this returns index values into the axis, but outside values will be
-dropped.
+values \code{x}, find their indices in the values of the axis. Outside
+values will be dropped.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$indexOf(x, method = "constant", rightmost.closed = TRUE)}\if{html}{\out{</div>}}
 }

@@ -53,10 +53,10 @@ will access the standard names table.}
 \item \href{#method-CFAxisVertical-detach}{\code{CFAxisVertical$detach()}}
 \item \href{#method-CFAxisVertical-copy}{\code{CFAxisVertical$copy()}}
 \item \href{#method-CFAxisVertical-copy_with_values}{\code{CFAxisVertical$copy_with_values()}}
-\item \href{#method-CFAxisVertical-copy_terms}{\code{CFAxisVertical$copy_terms()}}
-\item \href{#method-CFAxisVertical-configure_terms}{\code{CFAxisVertical$configure_terms()}}
-\item \href{#method-CFAxisVertical-parametric_subset}{\code{CFAxisVertical$parametric_subset()}}
+\item \href{#method-CFAxisVertical-set_parametric_terms}{\code{CFAxisVertical$set_parametric_terms()}}
 \item \href{#method-CFAxisVertical-append}{\code{CFAxisVertical$append()}}
+\item \href{#method-CFAxisVertical-subset}{\code{CFAxisVertical$subset()}}
+\item \href{#method-CFAxisVertical-subset_parametric_terms}{\code{CFAxisVertical$subset_parametric_terms()}}
 }
 }
 \if{html}{\out{
@@ -71,6 +71,8 @@ will access the standard names table.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="update_coordinates_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-update_coordinates_attribute'><code>ncdfCF::CFObject$update_coordinates_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="can_append"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-can_append'><code>ncdfCF::CFAxis$can_append()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="configure_terms"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-configure_terms'><code>ncdfCF::CFAxis$configure_terms()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="copy_terms"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-copy_terms'><code>ncdfCF::CFAxis$copy_terms()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-peek'><code>ncdfCF::CFAxis$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="write"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-write'><code>ncdfCF::CFAxis$write()</code></a></span></li>
@@ -80,7 +82,6 @@ will access the standard names table.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="print"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-print'><code>ncdfCF::CFAxisNumeric$print()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="range"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-range'><code>ncdfCF::CFAxisNumeric$range()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="slice"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-slice'><code>ncdfCF::CFAxisNumeric$slice()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxisNumeric" data-id="subset"><a href='../../ncdfCF/html/CFAxisNumeric.html#method-CFAxisNumeric-subset'><code>ncdfCF::CFAxisNumeric$subset()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -142,11 +143,8 @@ Self, invisibly.
 \if{latex}{\out{\hypertarget{method-CFAxisVertical-copy}{}}}
 \subsection{Method \code{copy()}}{
 Create a copy of this axis. The copy is completely separate
-from \code{self}, meaning that both \code{self} and all of its components are made
-from new instances. Note that the parametric terms, if any, are not
-copied here. If needed, copy the terms by calling the \code{copy_terms()}
-method \strong{after} all axes that the terms refer to have been copied to, as
-appropriate.
+from this instance, meaning that the copies of both this instance and
+all of its components are made as new instances.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$copy(name = "")}\if{html}{\out{</div>}}
 }
@@ -193,100 +191,31 @@ The newly created axis.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisVertical-copy_terms"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisVertical-copy_terms}{}}}
-\subsection{Method \code{copy_terms()}}{
-Copy the parametric terms from \code{from} to this axis. The
-parametric terms will be configured in this axis.
+\if{html}{\out{<a id="method-CFAxisVertical-set_parametric_terms"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisVertical-set_parametric_terms}{}}}
+\subsection{Method \code{set_parametric_terms()}}{
+Set the parametric terms for this axis. The name and the
+terms have to fully describe a CF parametric vertical axis.
+
+The terms must also agree with the other axes used by any data variable
+that refers to this axis. That is not checked here so the calling code
+must make that assertion.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$copy_terms(from, original_axes, new_axes)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$set_parametric_terms(sn, terms)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{from}}{The \code{NCGroup} from which references to the parametric terms
-are accessible.}
+\item{\code{sn}}{The "standard_name" of the parametric formulation. See the CF
+documentation for details.}
 
-\item{\code{original_axes}}{List of \code{CFAxis} instances from the CF object that
-these parametric terms are copied from.}
-
-\item{\code{new_axes}}{List of \code{CFAxis} instances to use with the formula term
-objects.}
+\item{\code{terms}}{A \code{data.frame} with columns \code{term}, \code{variable} and
+\code{param} containing the terms of the formula to calculate the axis
+values. Column \code{param} has the references to the variables that
+hold the data for each term.}
 }
 \if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisVertical-configure_terms"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisVertical-configure_terms}{}}}
-\subsection{Method \code{configure_terms()}}{
-Configure the formula terms of a parametric vertical axis.
-If the vertical axis has a \code{formula_terms} attribute it has a
-parametric coordinate space that is calculated from the formula terms.
-This method sets up the axis instance to calculate the dimensional
-coordinate space (but it does not do the actual calculation; access the
-\code{parametric_coordinates} field to get the dimensional coordinates).
-
-This method is called automatically when opening a netCDF file. It
-should also be called after copying the axes that it refers to. It is
-not intended to be called otherwise.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$configure_terms(axes)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{axes}}{List of \code{CFAxis} instances to use with the formula term
-objects.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisVertical-parametric_subset"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisVertical-parametric_subset}{}}}
-\subsection{Method \code{parametric_subset()}}{
-This method subsets the parametric terms after the axis has
-been subset. This method is called by \code{CFVariable$subset()} and
-\verb{$profile()} methods and should not be called otherwise.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$parametric_subset(axes, start, count, index, dim_in, dim_out)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{axes}}{The list of dimensional axes that the data variable uses. The
-axes are named after the original axes (some may have been renamed in
-the preceding process).}
-
-\item{\code{start}}{A vector of indices where to start reading in the terms, in
-the original axis order.}
-
-\item{\code{count}}{A vector of lengths to read along each axis, in the original
-axis order.}
-
-\item{\code{index}}{Optional index vector when auxiliary coordinates are to be
-used to warp rotated planar coordinates to lat-long coordinates.}
-
-\item{\code{dim_in}}{Optional list of dimensions to use with argument \code{index}
-for the original data.}
-
-\item{\code{dim_out}}{Optional list of dimensions to use with argument \code{index}
-for the warped data.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}
@@ -297,6 +226,12 @@ Append a vector of values at the end of the current values
 of the axis. Boundary values are appended as well but if either this
 axis or the \code{from} axis does not have boundary values, neither will the
 resulting axis.
+
+This method is not recommended for parametric vertical axes. Any
+parametric terms will be deleted. If appending of parametric axes is
+required, the calling code should first read out the parametric terms
+and merge them with the parametric terms of the \code{from} axis before
+setting them back for this axis.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$append(from)}\if{html}{\out{</div>}}
 }
@@ -312,6 +247,81 @@ values of this axis.}
 \subsection{Returns}{
 A new \code{CFAxisVertical} instance with values from this axis and
 the \code{from} axis appended.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisVertical-subset"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisVertical-subset}{}}}
+\subsection{Method \code{subset()}}{
+Return an axis spanning a smaller coordinate range. This
+method returns an axis which spans the range of indices given by the
+\code{rng} argument. If this axis has parametric terms, these are not subset
+here - they should be separately treated once all associated axes in
+the terms have been subset. That happens automatically in \code{CFVariable}
+methods which call the \code{subset_parametric_terms()} method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$subset(name = "", rng = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{The name for the new axis. If an empty string is passed
+(default), will use the name of this axis.}
+
+\item{\code{rng}}{The range of indices whose values from this axis to include in
+the returned axis. If the value of the argument is \code{NULL}, return a
+copy of the axis.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A new \code{CFAxisVertical} instance covering the indicated range of
+indices. If the value of the argument \code{rng} is \code{NULL}, return a copy of
+this axis as the new axis.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisVertical-subset_parametric_terms"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisVertical-subset_parametric_terms}{}}}
+\subsection{Method \code{subset_parametric_terms()}}{
+Subset the parametric terms of this axis.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$subset_parametric_terms(
+  original_axis_names,
+  new_axes,
+  start,
+  count,
+  aux = NULL,
+  ZT_dim = NULL
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{original_axis_names}}{Character vector of names of the axes prior to
+a modifying operation in the owning data variable}
+
+\item{\code{new_axes}}{List of \code{CFAxis} instances to use for the subsetting.}
+
+\item{\code{start}}{The indices to start reading data from the file, as an
+integer vector at least as long as the number of axis for the term.}
+
+\item{\code{count}}{The number of values to read from the file, as an integer
+vector at least as long as the number of axis for the term.}
+
+\item{\code{aux}}{Optional. List with the parameters for an auxiliary grid
+transformation. Default is \code{NULL}.}
+
+\item{\code{ZT_dim}}{Optional. Dimensions of the non-grid axes when an auxiliary
+grid transformation is specified.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly. The parametric terms will have been subset in
+this axis.
 }
 }
 }

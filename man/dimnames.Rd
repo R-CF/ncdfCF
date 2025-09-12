@@ -37,8 +37,8 @@ character vector containing timestamps in ISO8601 format. This could be
 dates or date-times if time information is available in the axis.
 \item \code{CFAxisCharacter}: The coordinate values along the axis as
 a character vector.
-\item \code{CFAxisDiscrete}: The index values of the axis, from 1 to the
-length of the axis.
+\item \code{CFAxisDiscrete}: The index values of the axis, either along the entire
+axis, or a portion thereof.
 }
 }
 \examples{

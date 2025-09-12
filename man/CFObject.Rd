@@ -14,8 +14,7 @@ class as ancestor.
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{id}}{Set or retrieve the identifier of the CF object. In general,
-the \code{id} value is immutable so it should never be set to a new value.}
+\item{\code{id}}{(read-only) Retrieve the identifier of the CF object.}
 
 \item{\code{name}}{Set or retrieve the name of the CF object. The name must be a
 valid netCDF name: start with a character, use only characters, numbers
@@ -303,8 +302,9 @@ Self, invisibly.
 \if{html}{\out{<a id="method-CFObject-update_coordinates_attribute"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-update_coordinates_attribute}{}}}
 \subsection{Method \code{update_coordinates_attribute()}}{
-Add names of axes to the "coordinates" attribute, avoiding
-duplicates and retaining previous values.
+Add names of axes or auxiliary coordinates to the
+"coordinates" attribute, avoiding duplicates and retaining previous
+values.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFObject$update_coordinates_attribute(crds)}\if{html}{\out{</div>}}
 }
@@ -312,7 +312,8 @@ duplicates and retaining previous values.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{crds}}{Vector of axis names to add to the attribute.}
+\item{\code{crds}}{Vector of axis or auxiliary coordinate names to add to the
+attribute.}
 }
 \if{html}{\out{</div>}}
 }

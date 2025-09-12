@@ -87,7 +87,7 @@ NCVariable <- R6::R6Class("NCVariable",
     #' @param obj The CFObject instance to detach from this NC variable.
     #' @return `obj`, invisibly.
     detach = function(obj) {
-      cf <- lapply(private$.CFobjects, function(o) if (identical(o, obj)) NULL else o)
+      cf <- lapply(private$.CFobjects, function(o) if (o$id == obj$id) NULL else o)
       private$.CFobjects <- cf[lengths(cf) > 0L]
       invisible(obj)
     },

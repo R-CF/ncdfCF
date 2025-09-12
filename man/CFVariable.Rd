@@ -72,6 +72,8 @@ description of the variable as a WKT2 string.}
 \item \href{#method-CFVariable-data.table}{\code{CFVariable$data.table()}}
 \item \href{#method-CFVariable-is_coincident}{\code{CFVariable$is_coincident()}}
 \item \href{#method-CFVariable-add_cell_measure}{\code{CFVariable$add_cell_measure()}}
+\item \href{#method-CFVariable-add_auxiliary_coordinate}{\code{CFVariable$add_auxiliary_coordinate()}}
+\item \href{#method-CFVariable-save}{\code{CFVariable$save()}}
 \item \href{#method-CFVariable-clone}{\code{CFVariable$clone()}}
 }
 }
@@ -605,6 +607,55 @@ Add a cell measure variable to this variable.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{cm}}{An instance of \link{CFCellMeasure}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-add_auxiliary_coordinate"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-add_auxiliary_coordinate}{}}}
+\subsection{Method \code{add_auxiliary_coordinate()}}{
+Add an auxiliary coordinate to the appropriate axis of this
+variable. The length of the axis must be the same as the length of the
+auxiliary labels.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$add_auxiliary_coordinate(aux, axis)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{aux}}{An instance of \link{CFLabel} or \link{CFAxis}.}
+
+\item{\code{axis}}{An instance of \code{CFAxis} that these auxiliary coordinates are
+for.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-save"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-save}{}}}
+\subsection{Method \code{save()}}{
+Save the data object to a netCDF file.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$save(fn, pack = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fn}}{The name of the netCDF file to create.}
+
+\item{\code{pack}}{Logical to indicate if the data should be packed. Packing is
+only useful for numeric data; packing is not performed on integer values.
+Packing is always to the "NC_SHORT" data type, i.e. 16-bits per value.}
 }
 \if{html}{\out{</div>}}
 }

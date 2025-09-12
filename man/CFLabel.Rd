@@ -165,7 +165,7 @@ A \code{CFLabel} instance, or \code{NULL} if the \code{rng} values are invalid.
 \subsection{Method \code{write()}}{
 Write the labels to a netCDF file, including its attributes.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFLabel$write(nc)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFLabel$write(nc, dim)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -175,6 +175,10 @@ Write the labels to a netCDF file, including its attributes.
 the netCDF file. If \code{NULL}, write to the file or group where the labels
 were read from (the file must have been opened for writing). If not
 \code{NULL}, the handle to a netCDF file or a group therein.}
+
+\item{\code{dim}}{The dimension to write the labels for. This is the name or
+dimension id of the object that owns these labels. The dimension must
+have been written to file before this method is called.}
 }
 \if{html}{\out{</div>}}
 }

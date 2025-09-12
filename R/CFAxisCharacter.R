@@ -69,12 +69,7 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
           name <- self$name
         ax <- CFAxisCharacter$new(name, values = self$values, attributes = self$attributes)
       }
-
-      if (inherits(private$.bounds, "CFBounds"))
-        ax$bounds <- private$.bounds$copy()
-
-      private$subset_coordinates(ax, c(1L, self$length))
-      ax
+      private$copy_properties_into(ax)
     },
 
     #' @description Create a copy of this axis but using the supplied values.
@@ -137,12 +132,7 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
           ax <- CFAxisCharacter$new(name, values = private$.values[rng[1L]:rng[2L]],
                                     attributes = self$attributes)
         }
-
-        if (inherits(private$.bounds, "CFBounds"))
-          ax$bounds <- private$.bounds$subset(rng)
-
-        private$subset_coordinates(ax, rng)
-        ax
+        private$copy_properties_into(ax, rng)
       }
     },
 

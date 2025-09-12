@@ -66,10 +66,6 @@ vector.}
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
 
-Immediately following the call to create the axis, the calling code
-should call method \code{make_time()} prior to calling any other methods in
-this class.
-
 Creating a new time axis is more easily done with the \code{\link[=makeTimeAxis]{makeTimeAxis()}}
 function.
 \subsection{Usage}{
@@ -223,13 +219,13 @@ values of the axis.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{from}}{An instance of \code{CFAxisTime} whose values to append to the
-values of \code{self}.}
+values of this axis.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A new \code{CFAxisTime} instance with values from self and the \code{from}
-axis appended.
+A new \code{CFAxisTime} instance with values from this axis and the
+\code{from} axis appended.
 }
 }
 \if{html}{\out{<hr>}}

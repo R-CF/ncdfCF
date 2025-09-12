@@ -30,7 +30,7 @@ By definition, a CF-compliant data set is stored in a netCDF file. The CF elemen
 ![*Figure 1: Elements of a netCDF file and the CF constructs built on them. Source: CF Conventions, Appendix I.*](datamodel-0.4.svg){width="680"}
 
 If you've worked with netCDF data in R before, probably using package `ncdf4` (but what follows is equally true when you use package `RNetCDF`), you should be familiar with the yellow boxes in the above figure, especially "NC::Variable" (the specific notation used in the figure is not important here), corresponding to the `ncvar4` class in
-`ncdf4`. CF, however, recognizes 11 different objects that are each based on an "NC::Variable". This ranges from axes, or *generic coordinate variables* in the white box in the figure (to get the dimension values of your data array when not loaded upon opening the file you have to call `ncdf4::ncvar_get()`, i.e. you read a variable to get coordinate values), to *grid mapping variables* (that define the coordinate reference system of your data) to the actual data array in a *data variable*. This is the source of all those surprising "variables" that you see when you do `names(nc$var)`:
+`ncdf4`. CF, however, recognizes 11 different objects that are each based on an "NC::Variable". This ranges from axes, or *generic coordinate variables* in the white box in the figure, to *grid mapping variables* (that define the coordinate reference system of your data) to the actual data array in a *data variable*. This is the source of all those surprising "variables" that you see when you do `names(nc$var)`:
 
 ```         
 library(ncdf4)
@@ -132,11 +132,11 @@ Note how in the `array()` version the `x` and `y` axes are reversed and the `y` 
 
 The netCDF file format is very flexible, as well as CF, and the `ncdfCF` package uses a layered structure to capture it all. This structure enables a full support of the features provided by the `netcdf` library and the CF Conventions.
 
-![Figure 2: The ncdfCF data model](ncdfCF-datamodel-0.7.png){width="680"}
+![Figure 2: Core ncdfCF data model](ncdfCF-datamodel-0.7.png){width="680"}
 
-Each of the building blocks may have other objects associated with it, such as axes for `CFVariable`. Package `ncdfCF` is built using the `R6` OOP framework and uses class hierarchies throughout. `CFVariable` and `CFArray`, for instance, derive from the common "virtual" ancestor `CFVariableBase` (as does class `CFVerticalParametricTerm` which you will encounter when using *formula terms* for a parametric vertical axis). The crucial but humble "virtual" class `CFAxis` is not used directly, instead you'll work with its seven descendant classes.
+Each of the building blocks may have other objects associated with it, such as axes for `CFVariable`. Package `ncdfCF` is built using the `R6` OOP framework and uses class hierarchies throughout. The crucial but humble "virtual" class `CFAxis` is not used directly, instead you'll work with its seven descendant classes. `CFVariable` has several specialised sub-classes, such as `CFVariableL3b` for NASA level-3 binned data used for MODIS imagery, or `CFVerticalParametricTerm` which you will encounter when using *formula terms* for a parametric vertical axis.
 
-![Figure 3: Condensed ncdfCF class hierarchy](ncdfCF-hierarchy-0.7.png){width="680"}
+![Figure 3: Condensed ncdfCF axis class hierarchy](ncdfCF-hierarchy-0.7.png){width="680"}
 
 ## Feature matrix
 
@@ -164,9 +164,9 @@ Fully implemented. Scalar coordinate variables are supported in reading and writ
 
 ##### 2.5. Variables
 
-The `actual_range` attribute is determined when a `CFArray` is created or its values modified. The attribute is also attached to all axes and their boundaries.
+The `actual_range` attribute is determined when a `CFVariable` is created from a netCDF resource or its values modified in code. The attribute is also attached to all axes and their boundaries.
 
-Upon saving a `CFArray` to a netCDF file, data may be packed and the appropriate attributes will be written along with the data.
+Upon saving a `CFVariable` to a netCDF file, data may be packed and the appropriate attributes will be written along with the data.
 
 ##### 2.6. Attributes
 
@@ -315,13 +315,13 @@ External variables can be linked to the `CFCellMeasure` instances that are creat
 
 The `cell_methods` attribute is read, as all other attributes are, but it is not parsed or interpreted.
 
-Interactive users and packages built on top of `ncdfCF` should update the attribute after applying an operation to any data variable as the package does not have enough information to do so programmatically. A case in point is the `CFVariable` and `CFArray` `summarise()` method: the function to apply in summarising is user-supplied and this package has no knowledge of what that function does or results in: apart from built-in functions like `mean()` or `max()`, users can supply a custom-made function with multiple results and thus multiple resulting `CFArray` instances that each need a specific update to the `cell_methods` attribute copied from the object being summarised.
+Interactive users and packages built on top of `ncdfCF` should update the attribute after applying an operation to any data variable as the package does not have enough information to do so programmatically. A case in point is the `CFVariable::summarise()` method: the function to apply in summarising is user-supplied and this package has no knowledge of what that function does or results in: apart from built-in functions like `mean()` or `max()`, users can supply a custom-made function with multiple results and thus multiple resulting `CFVariable` instances that each need a specific update to the `cell_methods` attribute copied from the data variable being summarised.
 
 ##### 7.4. Climatological statistics
 
 Climatological time series and their `climatology` bounds can be read from file.
 
-Climatological statistics are generated when using the `CFVariable` or `CFArray` `summarise()` method and written to file, including their bounds.
+Climatological statistics are generated when using the `CFVariable::summarise()` method and written to file, including their bounds.
 
 The corresponding `cell_methods` are not yet supported.
 

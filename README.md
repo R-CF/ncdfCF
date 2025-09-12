@@ -74,7 +74,7 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 # Open the file, all metadata is read
 (ds <- open_ncdf(fn))
 #> <Dataset> ERA5land_Rwanda_20160101 
-#> Resource   : /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
+#> Resource   : /private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpWtgooh/temp_libpath49db3636d842/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
 #> Format     : offset64 
 #> Collection : Generic netCDF data 
 #> Conventions: CF-1.6 
@@ -154,7 +154,7 @@ resource, use the `peek_ncdf()` function:
 ``` r
 peek_ncdf(fn)
 #> $uri
-#> [1] "/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc"
+#> [1] "/private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpWtgooh/temp_libpath49db3636d842/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc"
 #> 
 #> $type
 #> [1] "Generic netCDF data"
@@ -501,7 +501,7 @@ arr <- array(rnorm(120), dim = c(6, 5, 4))
 as_CF("my_first_CF_object", arr)
 #> <Variable> my_first_CF_object 
 #> 
-#> Values: [-2.405696 ... 2.782463] 
+#> Values: [-3.054023 ... 2.954466] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -512,7 +512,7 @@ as_CF("my_first_CF_object", arr)
 #> 
 #> Attributes:
 #>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -2.405696, 2.782463
+#>  actual_range NC_DOUBLE 2      -3.054023, 2.954466
 ```
 
 Usable but not very impressive. The axes have dull names without any
@@ -534,18 +534,18 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 (obj <- as_CF("a_better_CF_object", arr))
 #> <Variable> a_better_CF_object 
 #> 
-#> Values: [-2.405696 ... 2.782463] 
+#> Values: [-3.054023 ... 2.954466] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  axis name length values                      unit         
-#>  Y    lat  6      [45 ... 40]                 degrees_north
-#>  X    lon  5      [0 ... 4]                   degrees_east 
-#>  T    time 4      [2025-07-01 ... 2025-07-04]              
+#>  axis name length values                      unit                          
+#>  Y    lat  6      [45 ... 40]                 degrees_north                 
+#>  X    lon  5      [0 ... 4]                   degrees_east                  
+#>  T    time 4      [2025-07-01 ... 2025-07-04] days since 1970-01-01T00:00:00
 #> 
 #> Attributes:
 #>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -2.405696, 2.782463
+#>  actual_range NC_DOUBLE 2      -3.054023, 2.954466
 
 # Axes are of a specific type and have basic attributes set
 obj$axes[["lat"]]
@@ -571,10 +571,12 @@ obj$axes[["time"]]
 #> Bounds     : (not set) 
 #> 
 #> Attributes:
-#>  name          type      length value       
-#>  actual_range  NC_DOUBLE 2      20270, 20273
-#>  axis          NC_CHAR   1      T           
-#>  standard_name NC_CHAR   4      time
+#>  name          type      length value                         
+#>  actual_range  NC_DOUBLE  2     20270, 20273                  
+#>  axis          NC_CHAR    1     T                             
+#>  standard_name NC_CHAR    4     time                          
+#>  units         NC_CHAR   30     days since 1970-01-01T00:00:00
+#>  calendar      NC_CHAR    8     standard
 ```
 
 You can further modify the resulting `CFVariable` by setting other
@@ -640,8 +642,10 @@ read (without any warranty). Various methods, such as
 `CFVariable::subset()` or `CFVariable::array()` will fail miserably, and
 you are well-advised to try no more than the empty array indexing
 operator `CFVariable::[]` which will yield the full data variable with
-column and row names set as an array, of
-`CFVariable::`data.table`for a format that matches the structure of a typical table closest. You can identify a DSG data set by the`featureType`attribute of the`CFDataset\`.
+column and row names set as an array, of `CFVariable::data.table` for a
+format that matches the structure of a typical table closest. You can
+identify a DSG data set by the `featureType` attribute of the
+`CFDataset`.
 
 More comprehensive support for DSG is in the development plan.
 
@@ -649,11 +653,11 @@ More comprehensive support for DSG is in the development plan.
 
 Package `ncdfCF` is still being developed. It supports reading of all
 data objects from netCDF resources in “classic” and “netcdf4” formats;
-and can write single data arrays back to a netCDF file. From the CF
+and can write single data variables back to a netCDF file. From the CF
 Metadata Conventions it supports identification of axes, interpretation
-of the “time” axis, name resolution when using groups, reading of grid
-cell boundary information, auxiliary coordinate variables, labels, cell
-measures, attributes and grid mapping information, among others.
+of the “time” axis, name resolution when using groups, cell boundary
+information, auxiliary coordinate variables, labels, cell measures,
+attributes and grid mapping information, among others.
 
 Development plans for the near future focus on supporting the below
 features:
@@ -662,6 +666,7 @@ features:
 
 - Support for writing of complex data sets (single `CFVariable`
   instances can already be written to file).
+- Writing data to an unlimited dimension of a data variable.
 
 ##### CF Metadata Conventions
 

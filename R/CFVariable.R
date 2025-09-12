@@ -567,16 +567,12 @@ CFVariable <- R6::R6Class("CFVariable",
           start[ax] <- aux$X[1L]
           count[ax] <- aux$X[2L]
           out_axis <- CFAxisLongitude$new(aux_names[1L], values = aux$aoi$dimnames[[2L]], attributes = axis$attributes)
-          out_axis$set_attribute("standard_name", "NC_CHAR", "longitude")
-          out_axis$set_attribute("units", "NC_CHAR", "degrees_east")
           out_axis$bounds <- aoi_bounds$lon
         } else if (!is.null(aux) && ax_dimid == ll_dimids[2L]) {
           # start and count relative to the data variable on file
           start[ax] <- aux$Y[1L]
           count[ax] <- aux$Y[2L]
           out_axis <- CFAxisLatitude$new(aux_names[2L], values = aux$aoi$dimnames[[1L]], attributes = axis$attributes)
-          out_axis$set_attribute("standard_name", "NC_CHAR", "latitude")
-          out_axis$set_attribute("units", "NC_CHAR", "degrees_north")
           out_axis$bounds <- aoi_bounds$lat
         } else { # No auxiliary long-lat coordinates
           rng <- selectors[[ axis_names[ax] ]]
@@ -593,9 +589,6 @@ CFVariable <- R6::R6Class("CFVariable",
             out_axis <- axis$subset(rng = idx)
           }
         }
-
-        # Set the label set of the axis on the new axis
-        out_axis$active_coordinates <- axis$active_coordinates
 
         # Collect axes for result
         if (out_axis$length == 1L) {
@@ -624,10 +617,14 @@ CFVariable <- R6::R6Class("CFVariable",
 
       # Put the dimensional axes in one list, with original names
       axes <- c(out_axes_dim, out_axes_other)
-      names(axes) <- unlist(c(ax_nm_dim, ax_nm_other))
+      original_axis_names <- unlist(c(ax_nm_dim, ax_nm_other))
+      names(axes) <- original_axis_names
 
-      # If there is a vertical axis, subset any parametric terms
-      lapply(axes, function(ax) if (ax$is_parametric) ax$parametric_subset(axes, start, count, aux$index, dim_in, dim_out))
+      # If there is a parametric vertical axis, subset its terms
+      lapply(axes, function(ax) {
+        if (ax$is_parametric)
+          ax$subset_parametric_terms(original_axis_names, axes, start, count, aux, ZT_dim)
+      })
 
       # Sanitize the attributes for the result, as required, and get a CRS
       if (is.null(aux)) {
@@ -899,6 +896,10 @@ CFVariable <- R6::R6Class("CFVariable",
               out_axes_dim <- append(out_axes_dim, axis$copy())
           }
 
+          scalars <- self$axes[-(1L:num_axes)]
+          axes <- c(out_axes_dim, out_axes_other, scalars)
+          names(axes) <- sapply(axes, function(a) a$name)
+
           # Read the data
           d <- private$read_chunk(start, count)
           d <- drop(d)
@@ -914,9 +915,6 @@ CFVariable <- R6::R6Class("CFVariable",
           }
 
           # Assemble the CFVariable instance
-          scalars <- self$axes[-(1L:num_axes)]
-          axes <- c(out_axes_dim, out_axes_other, scalars)
-          names(axes) <- sapply(axes, function(a) a$name)
           v <- CFVariable$new(.names[e], values = d, axes = axes, attributes = atts)
           v$crs <- crs
           v$update_coordinates_attribute(sapply(out_axes_other, function(ax) ax$name))
@@ -1207,6 +1205,9 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @field dimnames (read-only) Retrieve dimnames of the data variable.
     dimnames = function(value) {
       if (missing(value)) {
+        # A data variable with a single value has no axes, like in ROMS data.
+        if (!length(private$.axes)) return(NULL)
+
         len <- self$ndims
         dn <- lapply(1:len, function(ax) dimnames(private$.axes[[ax]]))
         names(dn) <- sapply(1:len, function(ax) private$.axes[[ax]]$name)

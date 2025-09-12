@@ -55,12 +55,7 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
           name <- self$name
         ax <- CFAxisLatitude$new(name, values = private$.values, attributes = self$attributes)
       }
-
-      if (inherits(private$.bounds, "CFBounds"))
-        ax$bounds <- private$.bounds$copy()
-
-      private$subset_coordinates(ax, c(1L, self$length))
-      ax
+      private$copy_properties_into(ax)
     },
 
     #' @description Create a copy of this axis but using the supplied values.
@@ -97,7 +92,7 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
       else {
         rng <- range(rng)
         if (self$has_resource) {
-          ax <- CFAxisLatitude$new(self$NCvar, start = private$.start_count$start + rng[1L] - 1L,
+          ax <- CFAxisLatitude$new(private$.NCvar, start = private$.start_count$start + rng[1L] - 1L,
                                    count = rng[2L] - rng[1L] + 1L, attributes = self$attributes)
           if (nzchar(name))
             ax$name <- name
@@ -106,19 +101,7 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
             name <- self$name
           ax <- CFAxisLatitude$new(name, values = private$.values[rng[1L]:rng[2L]], attributes = self$attributes)
         }
-
-        if (inherits(private$.bounds, "CFBounds"))
-          ax$bounds <- private$.bounds$subset(rng)
-        # bnds <- private$.bounds
-        # if (inherits(bnds, "CFBounds"))
-        #   ax$bounds <- if (bnds$has_resource)
-        #     CFBounds$new(bnds$NCvar, start = private$.start_count$start + rng[1L] - 1L,
-        #                  count = rng[2L] - rng[1L] + 1L, attributes = bnds$attributes)
-        # else
-        #   CFBounds$new(bnds$name, values = bnds$values[rng[1L]:rng[2L]], attributes = bnds$attributes)
-
-        private$subset_coordinates(ax, rng)
-        ax
+        private$copy_properties_into(ax, rng)
       }
     },
 

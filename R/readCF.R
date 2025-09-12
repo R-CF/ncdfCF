@@ -82,7 +82,7 @@ open_ncdf <- function(resource) {
     else "Generic netCDF data"
 
     # Configure any parametric vertical axes
-    lapply(root$CFaxes, function(ax) ax$configure_terms(root$CFaxes))
+    .configureParametricTerms(root$CFaxes)
 
     vars <- .buildVariables(root, root$CFaxes)
   } else {
@@ -299,7 +299,7 @@ peek_ncdf <- function(resource) {
     axes <- lapply(grp$NCdims, function(d) {
       if (d$id %in% add_dims) {
         nm <- d$name
-        axis <- CFAxisDiscrete$new(nm, d$length)
+        axis <- CFAxisDiscrete$new(nm, count = d$length)
         axis$dimid <- d$id
         lx <- list(axis); names(lx) <- nm
         grp$CFaxes <- append(grp$CFaxes, lx)
@@ -424,6 +424,41 @@ peek_ncdf <- function(resource) {
   # Descend into subgroups
   if (length(grp$subgroups))
     lapply(grp$subgroups, function(g) .makeCoordinates(g))
+}
+
+#' @description Configure the formula terms of a parametric vertical axis. If
+#'   the vertical axis has a `formula_terms` attribute it has a parametric
+#'   coordinate space that is calculated from the formula terms. This method
+#'   sets up the axis instance to calculate the dimensional coordinate space
+#'   (but it does not do the actual calculation; access the
+#'   `parametric_coordinates` field of the vertical axis to get the dimensional
+#'   coordinates).
+#' @param axes List of `CFAxis` instances to use with the formula term objects.
+#' @return Nothing. Any parametric vertical axes in the argument `axes` will be
+#'   modified in place.
+#' @noRd
+.configureParametricTerms <- function(axes) {
+  lapply(axes, function(ax) {
+    if (!is.na(ft <- ax$attribute("formula_terms"))) {
+      ft <- trimws(strsplit(ft, " ")[[1L]], whitespace = ":")
+      dim(ft) <- c(2, length(ft) * 0.5)
+      rownames(ft) <- c("term", "variable")
+      ft <- as.data.frame(t(ft))
+      ft$param <- lapply(ft$variable, function(v) {
+        if (v == ax$name) NULL
+        else {
+          ncvar <- ax$NCvar$group$find_by_name(v, "NC")
+          if (is.null(ncvar)) {
+            CFVerticalParametricTerm$new(0, NULL)
+          } else {
+            local_axes <- .buildVariableAxisList(ncvar, axes)
+            CFVerticalParametricTerm$new(ncvar, local_axes)
+          }
+        }
+      })
+      ax$set_parametric_terms(ax$attribute("standard_name"), ft)
+    }
+  })
 }
 
 #' Make CF constructs for "cell_measures" references

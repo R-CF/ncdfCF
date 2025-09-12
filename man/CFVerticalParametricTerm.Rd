@@ -46,6 +46,7 @@ Metadata Conventions.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="update_coordinates_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-update_coordinates_attribute'><code>ncdfCF::CFObject$update_coordinates_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="add_auxiliary_coordinate"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-add_auxiliary_coordinate'><code>ncdfCF::CFVariable$add_auxiliary_coordinate()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="add_cell_measure"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-add_cell_measure'><code>ncdfCF::CFVariable$add_cell_measure()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="append"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-append'><code>ncdfCF::CFVariable$append()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="array"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-array'><code>ncdfCF::CFVariable$array()</code></a></span></li>
@@ -56,6 +57,7 @@ Metadata Conventions.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="peek"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-peek'><code>ncdfCF::CFVariable$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="profile"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-profile'><code>ncdfCF::CFVariable$profile()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="raw"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-raw'><code>ncdfCF::CFVariable$raw()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="save"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-save'><code>ncdfCF::CFVariable$save()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="shard"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-shard'><code>ncdfCF::CFVariable$shard()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="summarise"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-summarise'><code>ncdfCF::CFVariable$summarise()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="terra"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-terra'><code>ncdfCF::CFVariable$terra()</code></a></span></li>
@@ -69,16 +71,44 @@ Metadata Conventions.}
 \subsection{Method \code{new()}}{
 Create an instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVerticalParametricTerm$new(var, axes)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVerticalParametricTerm$new(
+  var,
+  axes,
+  values = values,
+  start = NA,
+  count = NA,
+  attributes = data.frame()
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{var}}{The NC variable that describes this data object.}
+\item{\code{var}}{The \link{NCVariable} instance upon which this CF variable is based
+when read from a netCDF resource, or the name for the new CF variable
+to be created.}
 
 \item{\code{axes}}{A \code{list} of \link{CFAxis} descendant instances that describe the
 axes of the data object.}
+
+\item{\code{values}}{Optional. The values of the variable in an array.}
+
+\item{\code{start}}{Optional. Vector of indices where to start reading data
+along the dimensions of the array on file. The vector must be \code{NA} to
+read all data, otherwise it must have agree with the dimensions of the
+array on file. Ignored when argument \code{var} is not an \code{NCVariable}
+instance.}
+
+\item{\code{count}}{Optional. Vector of number of elements to read along each
+dimension of the array on file. The vector must be \code{NA} to read to the
+end of each dimension, otherwise its value must agree with the
+corresponding \code{start} value and the dimension of the array on file.
+Ignored when argument \code{var} is not an \code{NCVariable} instance.}
+
+\item{\code{attributes}}{Optional. A \code{data.frame} with the attributes of the
+object. When argument \code{var} is an \code{NCVariable} instance and this
+argument is an empty \code{data.frame} (default), arguments will be read
+from the resource.}
 }
 \if{html}{\out{</div>}}
 }
@@ -116,22 +146,40 @@ from the netCDF file. The passed indices should be named after the axes
 that they refer to. There may be more indices than axes and they may be
 in a different order than the axes of the term.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVerticalParametricTerm$subset(start, count)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVerticalParametricTerm$subset(
+  original_axis_names,
+  new_axes,
+  start,
+  count,
+  aux = NULL,
+  ZT_dim = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{original_axis_names}}{Character vector of names of the axes prior to
+a modifying operation in the owning data variable.}
+
+\item{\code{new_axes}}{List of \code{CFAxis} instances to use for the subsetting.}
+
 \item{\code{start}}{The indices to start reading data from the file, as an
 integer vector at least as long as the number of axis for the term.}
 
-\item{\code{count}}{The number of values to read from the file, as an integer vector at
-least as long as the number of axis for the term.}
+\item{\code{count}}{The number of values to read from the file, as an integer
+vector at least as long as the number of axis for the term.}
+
+\item{\code{aux}}{Optional. List with the parameters for an auxiliary grid
+transformation. Default is \code{NULL}.}
+
+\item{\code{ZT_dim}}{Optional. Dimensions of the non-grid axes when an auxiliary
+grid transformation is specified.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Self, invisibly.
+The new parametric term object.
 }
 }
 \if{html}{\out{<hr>}}

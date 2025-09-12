@@ -96,7 +96,8 @@ belongs to. If the group is not attached to a \code{CFDataset}, returns
 \item \href{#method-NCGroup-find_dim_by_id}{\code{NCGroup$find_dim_by_id()}}
 \item \href{#method-NCGroup-has_name}{\code{NCGroup$has_name()}}
 \item \href{#method-NCGroup-unused}{\code{NCGroup$unused()}}
-\item \href{#method-NCGroup-addAuxiliaryLongLat}{\code{NCGroup$addAuxiliaryLongLat()}}
+\item \href{#method-NCGroup-add_auxiliary_coordinate}{\code{NCGroup$add_auxiliary_coordinate()}}
+\item \href{#method-NCGroup-add_auxiliary_longlat}{\code{NCGroup$add_auxiliary_longlat()}}
 \item \href{#method-NCGroup-addCellMeasure}{\code{NCGroup$addCellMeasure()}}
 \item \href{#method-NCGroup-fullnames}{\code{NCGroup$fullnames()}}
 \item \href{#method-NCGroup-dimensions}{\code{NCGroup$dimensions()}}
@@ -277,15 +278,36 @@ List of \link{NCVariable}.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-NCGroup-addAuxiliaryLongLat"></a>}}
-\if{latex}{\out{\hypertarget{method-NCGroup-addAuxiliaryLongLat}{}}}
-\subsection{Method \code{addAuxiliaryLongLat()}}{
+\if{html}{\out{<a id="method-NCGroup-add_auxiliary_coordinate"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-add_auxiliary_coordinate}{}}}
+\subsection{Method \code{add_auxiliary_coordinate()}}{
+Add an auxiliary coordinate variable to the group. This
+method adds the passed auxiliary coordinate to the group \code{CFaux} list.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$add_auxiliary_coordinate(aux)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{aux}}{Instance of \link{CFLabel} or \link{CFAxis}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{self} invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-add_auxiliary_longlat"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-add_auxiliary_longlat}{}}}
+\subsection{Method \code{add_auxiliary_longlat()}}{
 Add an auxiliary long-lat variable to the group. This method
 creates a \link{CFAuxiliaryLongLat} from the arguments and adds it to the
 group \code{CFlonglat} list, but only if the combination of \code{lon}, \code{lat}
 isn't already present.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$addAuxiliaryLongLat(lon, lat, bndsLong, bndsLat)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$add_auxiliary_longlat(lon, lat, bndsLong, bndsLat)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

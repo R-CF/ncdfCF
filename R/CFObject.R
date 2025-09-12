@@ -68,7 +68,6 @@ CFObject <- R6::R6Class("CFObject",
         start <- rep(1L, length(d))
       else
         start[is.na(start)] <- 1L
-      browser(expr = length(start) != length(d))
 
       if (any(start > d))
         stop("Start values cannot be larger than the dimensions of the data.", call. = FALSE) # nocov
@@ -448,13 +447,10 @@ CFObject <- R6::R6Class("CFObject",
         "Generic CF object"
     },
 
-    #' @field id Set or retrieve the identifier of the CF object. In general,
-    #'   the `id` value is immutable so it should never be set to a new value.
+    #' @field id (read-only) Retrieve the identifier of the CF object.
     id = function(value) {
       if (missing(value))
         private$.id
-      else
-        private$.id <- value
     },
 
     #' @field name Set or retrieve the name of the CF object. The name must be a
@@ -563,8 +559,8 @@ CFObject <- R6::R6Class("CFObject",
 #'   dates or date-times if time information is available in the axis.
 #' * `CFAxisCharacter`: The coordinate values along the axis as
 #'   a character vector.
-#' * `CFAxisDiscrete`: The index values of the axis, from 1 to the
-#'   length of the axis.
+#' * `CFAxisDiscrete`: The index values of the axis, either along the entire
+#'   axis, or a portion thereof.
 #'
 #' @param x An `CFObject` whose axis names to retrieve. This could be
 #'   `CFDataset`, `CFVariable`, or a class descending from `CFAxis`.

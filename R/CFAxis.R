@@ -60,6 +60,23 @@ CFAxis <- R6::R6Class("CFAxis",
       if (length(private$.aux)) {
         lapply(private$.aux, function(x) ax$auxiliary <- x$subset(x$name, rng))
       }
+    },
+
+    # When copying, the descendant class makes the new instance, then calls this
+    # method to copy details common to all axes. Argument ax is the new copy of
+    # this axis, rng is the range of coordinates the new copy uses, use all
+    # coordinates when NULL. Returns the new axis.
+    copy_properties_into = function(ax, rng = NULL) {
+      ax$orientation <- private$.orient
+      ax$unlimited <- private$.unlimited
+
+      if (inherits(private$.bounds, "CFBounds"))
+        ax$bounds <- private$.bounds$copy()
+
+      private$subset_coordinates(ax, rng)
+      ax$active_coordinates <- self$active_coordinates
+
+      ax
     }
   ),
   public = list(
@@ -352,7 +369,7 @@ CFAxis <- R6::R6Class("CFAxis",
       if (missing(value))
         private$.orient
       else {
-        if (!is.character(value) || length(value) != 1L || !(value %in% c("X", "Y", "Z", "T")))
+        if (!is.character(value) || length(value) != 1L || !(value %in% c("X", "Y", "Z", "T", "")))
           stop("Axis orientation must be a single character 'X', 'Y', 'Z' or 'T'.", call. = FALSE) # nocov
         private$.orient <- value
       }

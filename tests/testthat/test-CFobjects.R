@@ -69,7 +69,7 @@ test_that("numeric axes", {
 })
 
 test_that("discrete axes", {
-  ax <- CFAxisDiscrete$new("disc", length = 13)
+  ax <- CFAxisDiscrete$new("disc", count = 13)
   expect_equal(ax$values, 1:13)
 
   # Slicing a discrete axis

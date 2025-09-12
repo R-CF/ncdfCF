@@ -3,12 +3,12 @@
 \docType{class}
 \name{CFBounds}
 \alias{CFBounds}
-\title{CF bounds variable}
+\title{CF boundary variable}
 \description{
 This class represents the boundaries of an axis or an auxiliary
 longitude-latitude grid.
 
-The class manages the bounds information for an axis (2 vertices per
+The class manages the boundary information for an axis (2 vertices per
 element) or an auxiliary longitude-latitude grid (4 vertices per element).
 }
 \section{Super class}{
@@ -86,8 +86,8 @@ object that describes this instance.}
 \item{\code{values}}{Optional. The values of the boundary variable. This must be
 a numeric matrix whose first dimension has a length equal to the number
 of vertices for each boundary, and the second dimension is as long as
-the CFObject instances that use these boundary values. Ignored when
-argument \code{var} is a NCVariable object.}
+the \code{CFObject} instances that use these boundary values. Ignored when
+argument \code{var} is a \code{NCVariable} object.}
 
 \item{\code{start}}{Optional. Vector of indices where to start reading boundary
 data along the dimensions of the data. The vector must be \code{NA} to read
@@ -100,9 +100,9 @@ end of each dimension, otherwise it must have a length equal to the
 dimensionality of the owning object + 1.}
 
 \item{\code{attributes}}{Optional. A \code{data.frame} with the attributes of the
-bounds object. When an empty \code{data.frame} (default) and argument \code{var}
-is an NCVariable instance, attributes of the bounds object will be
-taken from the netCDF resource.}
+boundary object. When an empty \code{data.frame} (default) and argument
+\code{var} is an \code{NCVariable} instance, attributes of the bounds object will
+be taken from the netCDF resource.}
 
 \item{\code{owner_dims}}{Optional, the number of dimensions of the object that
 these boundary values pertain to. Default is 1.}
@@ -220,9 +220,9 @@ and the \code{from} boundary variable appended. If argument \code{from} is
 \if{html}{\out{<a id="method-CFBounds-write"></a>}}
 \if{latex}{\out{\hypertarget{method-CFBounds-write}{}}}
 \subsection{Method \code{write()}}{
-Write the bounds variable to a netCDF file. This method
-should not be called directly; instead, \code{CFVariable::save()} will call this
-method automatically.
+Write the boundary variable to a netCDF file. This method
+should not be called directly; instead, \code{CFVariable::save()} will call
+this method automatically.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFBounds$write(h, object_name)}\if{html}{\out{</div>}}
 }
@@ -232,8 +232,9 @@ method automatically.
 \describe{
 \item{\code{h}}{The handle to a netCDF file open for writing.}
 
-\item{\code{object_name}}{The name of the object that uses these bounds, usually
-an axis but could also be an auxiliary CV or a parametric Z axis.}
+\item{\code{object_name}}{The name of the object that uses these boundary
+values, usually an axis but could also be an auxiliary CV or a
+parametric Z axis.}
 }
 \if{html}{\out{</div>}}
 }

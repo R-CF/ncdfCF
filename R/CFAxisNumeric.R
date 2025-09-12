@@ -227,12 +227,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
           name <- self$name
         ax <- CFAxisNumeric$new(name, values = private$.values, orientation = private$.orient, attributes = self$attributes)
       }
-
-      if (inherits(private$.bounds, "CFBounds"))
-        ax$bounds <- private$.bounds$copy()
-
-      private$subset_coordinates(ax, c(1L, self$length))
-      ax
+      private$copy_properties_into(ax)
     },
 
     #' @description Create a copy of this axis but using the supplied values.
@@ -313,12 +308,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
           ax <- CFAxisNumeric$new(name, values = private$.values[rng[1L]:rng[2L]],
                                   orientation = private$.orient, attributes = self$attributes)
         }
-
-        if (inherits(private$.bounds, "CFBounds"))
-          ax$bounds <- private$.bounds$subset(rng)
-
-        private$subset_coordinates(ax, rng)
-        ax
+        private$copy_properties_into(ax, rng)
       }
     }
   ),

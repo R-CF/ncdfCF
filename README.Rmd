@@ -211,19 +211,20 @@ stats[["diurnal_range"]]$save("~/path/file.nc")
 
 ##### A note on Discrete Sampling Geometries
 
-Discrete Sampling Geometries (DSG) map almost directly to the venerable `data.frame` in R (with several exceptions). In that sense, they are rather distinct from array-based data sets. At the moment there is no specific code for DSG, but the simplest layouts can currently already be read (without any warranty). Various methods, such as `CFVariable::subset()` or `CFVariable::array()` will fail miserably, and you are well-advised to try no more than the empty array indexing operator `CFVariable::[]` which will yield the full data variable with column and row names set as an array, of `CFVariable::`data.table` for a format that matches the structure of a typical table closest. You can identify a DSG data set by the `featureType` attribute of the `CFDataset`.
+Discrete Sampling Geometries (DSG) map almost directly to the venerable `data.frame` in R (with several exceptions). In that sense, they are rather distinct from array-based data sets. At the moment there is no specific code for DSG, but the simplest layouts can currently already be read (without any warranty). Various methods, such as `CFVariable::subset()` or `CFVariable::array()` will fail miserably, and you are well-advised to try no more than the empty array indexing operator `CFVariable::[]` which will yield the full data variable with column and row names set as an array, of `CFVariable::data.table` for a format that matches the structure of a typical table closest. You can identify a DSG data set by the `featureType` attribute of the `CFDataset`.
 
 More comprehensive support for DSG is in the development plan.
 
 ## Development plan
 
-Package `ncdfCF` is still being developed. It supports reading of all data objects from netCDF resources in "classic" and "netcdf4" formats; and can write single data arrays back to a netCDF file. From the CF Metadata Conventions it supports identification of axes, interpretation of the "time" axis, name resolution when using groups, reading of grid cell boundary information, auxiliary coordinate variables, labels, cell measures, attributes and grid mapping information, among others.
+Package `ncdfCF` is still being developed. It supports reading of all data objects from netCDF resources in "classic" and "netcdf4" formats; and can write single data variables back to a netCDF file. From the CF Metadata Conventions it supports identification of axes, interpretation of the "time" axis, name resolution when using groups, cell boundary information, auxiliary coordinate variables, labels, cell measures, attributes and grid mapping information, among others.
 
 Development plans for the near future focus on supporting the below features:
 
 ##### netCDF
 
  * Support for writing of complex data sets (single `CFVariable` instances can already be written to file).
+ * Writing data to an unlimited dimension of a data variable.
 
 ##### CF Metadata Conventions
 

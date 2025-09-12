@@ -10,6 +10,10 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
   inherit = CFAxis,
   cloneable = FALSE,
   private = list(
+    # Values for this axis. Since there is no underlying NCVariable for this
+    # axis, this is managed internally.
+    .values = NULL,
+
     dimvalues_short = function() {
       crds <- private$get_coordinates()
       len <- length(crds)
@@ -18,30 +22,21 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     }
   ),
   public = list(
-    #' @description Create a new instance of this class.
+    #' @description Create a new instance of this class. The values of this axis
+    #'   are always a sequence, but the sequence may start with any positive
+    #'   value such that the length of this instance falls within the length of
+    #'   the axis on file, if there is one.
     #'
     #'   Creating a new discrete axis is more easily done with the
     #'   [makeDiscreteAxis()] function.
     #' @param var The name of the axis when creating a new axis. When reading an
     #'   axis from file, the [NCVariable] object that describes this instance.
-    #' @param length Optional. The length of the axis in a vector, whose values
-    #'   will be a sequence of size `length`. Ignored when argument `var` is a
-    #'   NCVariable object.
-    #' @param start Optional. Integer index where to start reading axis data
-    #'   from file. The index may be `NA` to start reading data from the start.
-    #' @param count Optional. Number of elements to read from file. This may be
-    #'   `NA` to read to the end of the data.
-    #' @param attributes Optional. A `data.frame` with the attributes of the
-    #'   axis. When an empty `data.frame` (default) and argument `var` is an
-    #'   NCVariable instance, attributes of the axis will be taken from the
-    #'   netCDF resource.
-    initialize = function(var, length, start = 1L, count = NA, attributes = data.frame()) {
-      if (missing(length))
-        super$initialize(var, start = start, count = count, attributes = attributes)
-      else
-        super$initialize(var, values = seq(length), attributes = attributes)
-
-      self$set_attribute("actual_range", "NC_INT", c(1L,self$length))
+    #' @param start Optional. Integer value that indicates the starting value of
+    #'   this axis. Defults to `1L`.
+    #' @param count Number of elements in the axis.
+    initialize = function(var, start = 1L, count) {
+      super$initialize(var)
+      private$.values <- start:(start + count - 1L)
     },
 
     #' @description Summary of the axis printed to the console.
@@ -63,35 +58,21 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     },
 
     #' @description Create a copy of this axis. The copy is completely separate
-    #'   from `self`, meaning that both `self` and all of its components are
-    #'   made from new instances. If this axis is backed by a netCDF resource,
-    #'   the copy will retain the reference to the resource.
+    #'   from this axis, meaning that both this axis and all of its components
+    #'   are made from new instances.
     #' @param name The name for the new axis. If an empty string is passed, will
     #'   use the name of this axis.
     #' @return The newly created axis.
     copy = function(name = "") {
-      if (self$has_resource) {
-        ax <- CFAxisDiscrete$new(self$NCvar, start = private$.start_count$start,
-                                 count = private$.start_count$count, attributes = self$attributes)
-        if (nzchar(name))
-          ax$name <- name
-      } else {
-        if (!nzchar(name))
-          name <- self$name
-        ax <- CFAxisDiscrete$new(name, length = self$length, attributes = self$attributes)
-      }
-
-      if (inherits(private$.bounds, "CFBounds"))
-        ax$bounds <- private$.bounds$copy()
-
-      private$subset_coordinates(ax, c(1L, self$length))
-      ax
+      if (!nzchar(name))
+        name <- self$name
+      ax <- CFAxisDiscrete$new(name, start = private$.values[1L], count = length(private$.values))
+      private$copy_properties_into(ax)
     },
 
     #' @description Find indices in the axis domain. Given a vector of numerical
-    #'   values `x`, find their indices in the values of the axis. In effect,
-    #'   this returns index values into the axis, but outside values will be
-    #'   dropped.
+    #'   values `x`, find their indices in the values of the axis. Outside
+    #'   values will be dropped.
     #'
     #' @param x Vector of numeric values to find axis indices for.
     #' @param method Ignored.
@@ -100,7 +81,7 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #' @return Numeric vector of the same length as `x`. Values of `x` outside
     #'   of the range of the values in the axis are returned as `NA`.
     indexOf = function(x, method = "constant", rightmost.closed = TRUE) {
-      x[x < 1 | x > self$length] <- NA
+      x[x < private$.values[1L] | x > private$.values[length(private$.values)]] <- NA
       as.integer(x)
     },
 
@@ -119,13 +100,14 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
       if (private$.active_coords > 1L)
         private$.aux[[private$.active_coords - 1L]]$slice(rng)
       else {
-        len <- self$length
+        lo <- private$.values[1L]
+        hi <- private$.values[length(private$.values)]
         rng <- range(rng)
         rng <- as.integer(c(ceiling(rng[1L]), floor(rng[2L])))
-        if (rng[2L] < 1L || rng[1L] > len) NULL
+        if (rng[2L] < lo || rng[1L] > hi) NULL
         else {
-          if (rng[1L] < 1L) rng[1L] <- 1L
-          if (rng[2L] > len) rng[2L] <- len
+          if (rng[1L] < lo) rng[1L] <- lo
+          if (rng[2L] > hi) rng[2L] <- hi
           rng
         }
       }
@@ -146,19 +128,10 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
       if (is.null(rng))
         self$copy(name)
       else {
-        if (self$has_resource) {
-          ax <- CFAxisDiscrete$new(self$NCvar, start = private$.start_count$start + rng[1L] - 1L,
-                                   count = rng[2L] - rng[1L] + 1L, attributes = self$attributes)
-          if (nzchar(name))
-            ax$name <- name
-        } else {
-          if (!nzchar(name))
-            name <- self$name
-          ax <- CFAxisDiscrete$new(name, length = rng[2L] - rng[1L] + 1L, attributes = self$attributes)
-        }
-
-        private$subset_coordinates(ax, rng)
-        ax
+        if (!nzchar(name))
+          name <- self$name
+        ax <- CFAxisDiscrete$new(name, start = rng[1L], count = rng[2L] - rng[1L] + 1L)
+        private$copy_properties_into(ax, rng)
       }
     },
 
@@ -170,7 +143,7 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #'   the lengths of this axis and the `from` axis.
     append = function(from) {
       if (super$can_append(from)) {
-        CFAxisDiscrete$new(self$name, length = self$length + from$length, attributes = self$attributes)
+        CFAxisDiscrete$new(self$name, start = private$.values[1L], count = self$length + from$length)
       } else
         stop("Axis values cannot be appended.", call. = FALSE)
     },

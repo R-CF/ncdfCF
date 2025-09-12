@@ -193,18 +193,16 @@ makeTimeAxis <- function(name, values, attributes = NULL) {
 #'
 #' @param name Name of the axis.
 #' @param length The length of the axis.
-#' @param attributes `data.frame` with the attributes of the axis to create.
-#'   Attribute "actual_range" will be set or updated.
 #'
 #' @return A [CFAxisDiscrete] instance. The values will be a sequence of size
 #'   `length`.
 #' @export
-makeDiscreteAxis <- function(name, length, attributes = NULL) {
+makeDiscreteAxis <- function(name, length) {
   if (!.is_valid_name(name))
     stop("Name for axis is not valid", call. = FALSE)
 
   length <- as.integer(length)
-  CFAxisDiscrete$new(name, length, attributes = attributes)
+  CFAxisDiscrete$new(name, start = 1L, count = length)
 }
 
 #' Create a character axis
@@ -259,7 +257,7 @@ as_CF <- function(name, values) {
   # Helper function - "nm" is name for the axis, "len" is length of the dimension, "vals" is coordinate values
   .makeArrayAxis <- function(nm, len, vals) {
     if (is.null(vals))              # values has no dimnames so make discrete axis
-      return(CFAxisDiscrete$new(nm, len))
+      return(CFAxisDiscrete$new(nm, count = len))
 
     crds <- suppressWarnings(as.numeric(vals))
     if (any(is.na(crds))) {         # Not numeric so time or character
