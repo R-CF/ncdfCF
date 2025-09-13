@@ -1,3 +1,7 @@
+## Resubmission
+
+Fixed faulty cross-reference from one package vignette to another.
+
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes

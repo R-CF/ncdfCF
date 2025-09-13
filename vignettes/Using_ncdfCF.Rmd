@@ -64,7 +64,7 @@ Package `ncdfCF` provides a high-level interface using functions and methods tha
  * **Labels**, as separate variables identified through the `coordinates` attribute of axes, are read, including when multiple sets of labels are defined for a single axis. Users can select which set of labels to make active for display, selection and processing.
  * The **grid_mapping variables**, providing the coordinate reference system (CRS) of the data, with support for all defined objects in the latest EPSG database as well as "manual" construction of CRSs.
  
-More details on how package `ncdfCF` implements the CF Metadata Conventions, including a feature matrix of supported sections, can be found [here](`vignette("R-CF")`).
+More details on how package `ncdfCF` implements the CF Metadata Conventions, including a feature matrix of supported sections, can be found in the "R-CF" vignette.
 
 ## Basic usage
 
