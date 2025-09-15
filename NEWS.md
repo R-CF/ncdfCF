@@ -1,3 +1,5 @@
+# ncdfCF (development version)
+
 # ncdfCF 0.7.0
 
 This is a major restructuring of the code logic to better separate between file-based netCDF objects and in-memory CF objects. Additionally, there are important additions to the user-facing API, in particular with regards to arithmetic, math and logical expressions on CF objects.
