@@ -43,8 +43,8 @@ CFVariable <- R6::R6Class("CFVariable",
     # with a dimension of the data of the variable. This may include axes with
     # length 1 if the netCDF resource lists them as a dimension.
     num_dim_axes = function() {
-      if (!is.null(private$.values))
-        length(dim(private$.values))
+      if (!is.null(self$values))
+        length(dim(self$values))
       else if (self$has_resource)
         self$ndims
       else 0L
@@ -122,9 +122,9 @@ CFVariable <- R6::R6Class("CFVariable",
       atts
     },
 
-    # Orient private$.values in such a way that it conforms to regular R arrays:
+    # Orient self$values in such a way that it conforms to regular R arrays:
     # axis order will be Y-X-Z-T-others and Y values will go from the top to the
-    # bottom. Alternatively, order private$.values in the CF canonical order.
+    # bottom. Alternatively, order self$values in the CF canonical order.
     # Argument data is the array to order, argument ordering must be "R" or
     # "CF". Returns a new array with an attribute "axes" that lists dimensional
     # axis names in the order of the new array.
@@ -215,8 +215,8 @@ CFVariable <- R6::R6Class("CFVariable",
     # This is usually applied over the temporal domain but could be others
     # as well (untested).
     process_data = function(tdim, fac, fun, ...) {
-      if (!is.null(private$.values))
-        return(.process.data(private$.values, tdim, fac, fun, ...))
+      if (!is.null(self$values))
+        return(.process.data(self$values, tdim, fac, fun, ...))
       else if (prod(sapply(private$.axes, function(x) x$length)) < CF.options$memory_cell_limit)
         # Read the whole data array because size is manageable
         return(.process.data(private$read_data(), tdim, fac, fun, ...))
@@ -320,17 +320,17 @@ CFVariable <- R6::R6Class("CFVariable",
       if (!is.na(longname) && longname != self$name)
         cat("Long name:", longname, "\n")
 
-      if (!is.null(private$.values)) {
+      if (!is.null(self$values)) {
         rng <- self$attribute("actual_range")
         if (is.na(rng[1L])) {
           cat("\nValues: -\n")
-          cat(sprintf("    NA: %d (100%%)\n", length(private$.values)))
+          cat(sprintf("    NA: %d (100%%)\n", length(self$values)))
         } else {
           units <- self$attribute("units")
           if (is.na(units)) units <- ""
           cat("\nValues: [", rng[1L], " ... ", rng[2L], "] ", units, "\n", sep = "")
-          NAs <- sum(is.na(private$.values))
-          cat(sprintf("    NA: %d (%.1f%%)\n", NAs, NAs * 100 / length(private$.values)))
+          NAs <- sum(is.na(self$values))
+          cat(sprintf("    NA: %d (%.1f%%)\n", NAs, NAs * 100 / length(self$values)))
         }
       } else
         cat("\nValues: (not loaded)\n")
@@ -604,7 +604,7 @@ CFVariable <- R6::R6Class("CFVariable",
       d <- NULL
       if (is.null(aux)) {
         # Regular axes selected
-        if (!is.null(private$.values))
+        if (!is.null(self$values))
           d <- private$read_chunk(start, count)
       } else {
         # Auxiliary grids selected, index the data
@@ -964,7 +964,7 @@ CFVariable <- R6::R6Class("CFVariable",
 
       # Merge the data values
       app <- from$raw()
-      private$set_values(abind::abind(private$.values, app, along = axno))
+      private$set_values(abind::abind(self$values, app, along = axno))
 
       # Unlink from any netCDF resource
       self$detach()
@@ -1038,7 +1038,8 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @param var_as_column Logical to flag if the name of the variable should
     #'   become a column (`TRUE`) or be used as the name of the column with the
     #'   data values (`FALSE`, default). Including the name of the variable as a
-    #'   column is useful when multiple `data.table`s are merged into one.
+    #'   column is useful when multiple `data.table`s are merged by rows into
+    #'   one.
     #' @return A `data.table` with all data points in individual rows. All axes
     #'   will become columns. Two attributes are added: `name` indicates the
     #'   long name of this data variable, `units` indicates the physical unit of
@@ -1053,9 +1054,9 @@ CFVariable <- R6::R6Class("CFVariable",
       dt <- data.table::as.data.table(exp)
       if (var_as_column) {
         dt[ , .variable := private$.name]
-        suppressWarnings(dt[ , .value := private$.values])
+        suppressWarnings(dt[ , .value := self$values])
       } else
-        suppressWarnings(dt[ , eval(private$.name) := private$.values])
+        suppressWarnings(dt[ , eval(private$.name) := self$values])
 
       long_name <- self$attribute("long_name")
       if (is.na(long_name)) long_name <- ""
@@ -1223,6 +1224,15 @@ CFVariable <- R6::R6Class("CFVariable",
         if (is.null(private$.llgrid)) NULL
         else private$.llgrid$grid_names
       }
+    },
+
+    #' @field values (read-only) Retrieve the raw values of the data variable.
+    #'   In general you should use the `raw()` function rather than this method
+    #'   because the `raw()` function will attach `dimnames` to the array that
+    #'   is returned.
+    values = function(value) {
+      if (missing(value))
+        private$read_data()
     },
 
     #' @field gridLongLat  Retrieve or set the grid of longitude and latitude

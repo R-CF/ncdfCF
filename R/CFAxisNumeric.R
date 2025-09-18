@@ -105,7 +105,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #' @return A numeric vector with two elements with the minimum and maximum
     #' values in the axis, respectively.
     range = function() {
-      range(private$.values)
+      range(self$values)
     },
 
     #' @description Retrieve the indices of supplied coordinates on the axis. If
@@ -225,7 +225,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       } else {
         if (!nzchar(name))
           name <- self$name
-        ax <- CFAxisNumeric$new(name, values = private$.values, orientation = private$.orient, attributes = self$attributes)
+        ax <- CFAxisNumeric$new(name, values = self$values, orientation = private$.orient, attributes = self$attributes)
       }
       private$copy_properties_into(ax)
     },
@@ -253,7 +253,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #' @return `TRUE` if the two axes are identical, `FALSE` if not.
     identical = function(axis) {
       super$identical(axis) &&
-      all(.near(private$.values, axis$values))
+      all(.near(self$values, axis$values))
     },
 
     #' @description Append a vector of values at the end of the current values
@@ -305,7 +305,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
         } else {
           if (!nzchar(name))
             name <- self$name
-          ax <- CFAxisNumeric$new(name, values = private$.values[rng[1L]:rng[2L]],
+          ax <- CFAxisNumeric$new(name, values = self$values[rng[1L]:rng[2L]],
                                   orientation = private$.orient, attributes = self$attributes)
         }
         private$copy_properties_into(ax, rng)

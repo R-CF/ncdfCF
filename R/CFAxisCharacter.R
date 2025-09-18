@@ -129,7 +129,7 @@ CFAxisCharacter <- R6::R6Class("CFAxisCharacter",
         } else {
           if (!nzchar(name))
             name <- self$name
-          ax <- CFAxisCharacter$new(name, values = private$.values[rng[1L]:rng[2L]],
+          ax <- CFAxisCharacter$new(name, values = self$values[rng[1L]:rng[2L]],
                                     attributes = self$attributes)
         }
         private$copy_properties_into(ax, rng)

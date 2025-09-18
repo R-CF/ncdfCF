@@ -74,7 +74,8 @@ CFLabel <- R6::R6Class("CFLabel",
         NULL
       else {
         if (self$has_resource) {
-          l <- CFLabel$new(private$.NCvar, values = private$.values[rng[1L]:rng[2L]], start = rng[1L], count = rng[2L] - rng[1L] + 1L)
+          l <- CFLabel$new(private$.NCvar, values = self$values[rng[1L]:rng[2L]],
+                           start = rng[1L], count = rng[2L] - rng[1L] + 1L)
           l$name <- name
           l
         } else
@@ -106,32 +107,31 @@ CFLabel <- R6::R6Class("CFLabel",
         "Label set"
     },
 
-    #' @field coordinates Set or retrieve the labels of this object. Upon
-    #'   retrieval, label values are read from the netCDF resource, if there is
-    #'   one, upon first access and cached thereafter. Upon setting values, if
-    #'   there is a linked netCDF resource, this object will be detached from
-    #'   it.
-    coordinates = function(value) {
+    #' @field values (read-only) Retrieve the labels of this object. In general
+    #'   you should use the `coordinates` field rather than this one.
+    values = function(value) {
       if (missing(value)) {
-        if (is.null(private$.values)) {
-          vals <- private$read_data()
-          if (!is.null(vals)) {
-            dim(vals) <- NULL
-            private$set_values(trimws(vals))
-          }
-        }
-        private$.values
+        private$read_data()
       } else {
         private$set_values(value)
         self$detach()
       }
     },
 
+    #' @field coordinates Set or retrieve the labels of this object. Upon
+    #'   retrieval, label values are read from the netCDF resource, if there is
+    #'   one, upon first access and cached thereafter. Upon setting values, if
+    #'   there is a linked netCDF resource, this object will be detached from
+    #'   it.
+    coordinates = function(value) {
+      self$values
+    },
+
     #' @field length (read-only) The number of labels in the set.
     length = function(value) {
       if (missing(value)) {
-        if (!is.null(private$.values))
-          length(private$.values)
+        if (!is.null(self$values))
+          length(self$values)
         else self$dim(1L)
       }
     },

@@ -233,7 +233,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
       } else {
         if (!nzchar(name))
           name <- self$name
-        ax <- CFAxisVertical$new(name, values = private$.values, attributes = self$attributes)
+        ax <- CFAxisVertical$new(name, values = self$values, attributes = self$attributes)
       }
       private$copy_properties_into(ax)
 
@@ -349,7 +349,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
         } else {
           if (!nzchar(name))
             name <- self$name
-          ax <- CFAxisVertical$new(name, values = private$.values[rng[1L]:rng[2L]],
+          ax <- CFAxisVertical$new(name, values = self$values[rng[1L]:rng[2L]],
                                    attributes = self$attributes)
         }
         private$copy_properties_into(ax, rng)

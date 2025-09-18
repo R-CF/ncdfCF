@@ -47,7 +47,7 @@ CFAxis <- R6::R6Class("CFAxis",
     # extend this method.
     get_coordinates = function() {
       crds <- if (private$.active_coords == 1L) {
-        private$.values
+        self$values
       } else
         private$.aux[[private$.active_coords - 1L]]$coordinates
       dim(crds) <- NULL
@@ -240,7 +240,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   not.
     can_append = function(axis) {
       all(class(self) == class(axis)) &&
-      mode(private$.values) == mode(axis$values) &&
+      mode(self$values) == mode(axis$values) &&
       self$name == axis$name
     },
 
@@ -328,7 +328,7 @@ CFAxis <- R6::R6Class("CFAxis",
         self$set_attribute("axis", "NC_CHAR", private$.orient)
       self$write_attributes(h, self$name)
 
-      RNetCDF::var.put.nc(h, self$name, private$.values)
+      RNetCDF::var.put.nc(h, self$name, self$values)
 
       if (!is.null(private$.bounds))
         private$.bounds$write(h, self$name)
@@ -357,7 +357,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #' @field length (read-only) The declared length of this axis.
     length = function(value) {
       if (missing(value))
-        length(private$.values)
+        length(self$values)
     },
 
     #' @field orientation Set or retrieve the orientation of the axis, a single

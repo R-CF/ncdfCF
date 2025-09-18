@@ -17,6 +17,9 @@ See also \link{CFAxisCharacter}, which is an axis with character labels.
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
+\item{\code{values}}{(read-only) Retrieve the labels of this object. In general
+you should use the \code{coordinates} field rather than this one.}
+
 \item{\code{coordinates}}{Set or retrieve the labels of this object. Upon
 retrieval, label values are read from the netCDF resource, if there is
 one, upon first access and cached thereafter. Upon setting values, if

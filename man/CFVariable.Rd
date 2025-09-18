@@ -43,6 +43,11 @@ NC variable used by this variable.}
 longitude and latitude grids as a vector of two character strings, in
 that order. If no auxiliary grids are defined, returns \code{NULL}.}
 
+\item{\code{values}}{(read-only) Retrieve the raw values of the data variable.
+In general you should use the \code{raw()} function rather than this method
+because the \code{raw()} function will attach \code{dimnames} to the array that
+is returned.}
+
 \item{\code{gridLongLat}}{Retrieve or set the grid of longitude and latitude
 values of every grid cell when the main variable grid has a different
 coordinate system.}
@@ -562,7 +567,8 @@ If present, attributes 'long_name' and 'units' are attached to the
 \item{\code{var_as_column}}{Logical to flag if the name of the variable should
 become a column (\code{TRUE}) or be used as the name of the column with the
 data values (\code{FALSE}, default). Including the name of the variable as a
-column is useful when multiple \code{data.table}s are merged into one.}
+column is useful when multiple \code{data.table}s are merged by rows into
+one.}
 }
 \if{html}{\out{</div>}}
 }
