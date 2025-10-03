@@ -51,7 +51,8 @@ open_ncdf <- function(resource) {
   # Mop up any non-CV dimensions except bounds - additional to CF Conventions
   all_axis_dims <- sapply(axes, function(x) x$dimid)
   all_axis_dims <- all_axis_dims[!is.na(all_axis_dims)]
-  all_var_dims <- unique(unlist(sapply(root$NCvars, function(v) v$dimids)))
+  allNCvars <- .listNCvars(root)
+  all_var_dims <- unique(unlist(sapply(allNCvars, function(v) v$dimids)))
   all_var_dims <- all_var_dims[!is.na(all_var_dims)]
   add_dims <- all_var_dims[!(all_var_dims %in% c(all_axis_dims, bnds))]
   if (length(add_dims)) {
@@ -70,7 +71,7 @@ open_ncdf <- function(resource) {
   # Coordinate reference systems
   .makeCRS(root)
 
-  if (length(axes)) {
+  if (is.null(l3bgrp <- root$subgroups[["level-3_binned_data"]])) {
     # Try to identify the type of the file
     ds$file_type <- if (!is.na(ft <- root$attribute("featureType")) &&
         ft %in% c("point", "timeSeries", "trajectory", "profile", "timeSeriesProfile", "trajectoryProfile"))
@@ -86,18 +87,14 @@ open_ncdf <- function(resource) {
 
     vars <- .buildVariables(root, root$CFaxes)
   } else {
-    # Try L3b
+    # L3b
     units <- root$attribute("units")
     if (!is.na(units)) {
       units <- strsplit(units, ":")[[1L]]
-
-      l3bgrp <- root$subgroups[["level-3_binned_data"]]
-      if (!is.null(l3bgrp)) {
-        nm <- names(l3bgrp$NCvars)
-        if (all(c("BinList", "BinIndex", units[1L]) %in% nm)) {
-          ds$file_type <- "NASA level-3 binned data"
-          l3bgrp$CFvars <- setNames(list(CFVariableL3b$new(l3bgrp, units)), units[1L])
-        }
+      nm <- names(l3bgrp$NCvars)
+      if (all(c("BinList", "BinIndex", units[1L]) %in% nm)) {
+        ds$file_type <- "NASA level-3 binned data"
+        l3bgrp$CFvars <- setNames(list(CFVariableL3b$new(l3bgrp, units)), units[1L])
       }
     }
   }
@@ -193,6 +190,16 @@ peek_ncdf <- function(resource) {
                  netcdf4 = vmeta[-(1L:6L)])
 }
 
+# List all the NCvars in the group and any sub-groups
+.listNCvars <- function(g) {
+  vars <- g$NCvars
+  if (length(g$subgroups)) {
+    v <- lapply(g$subgroups, .listNCvars)
+    vars <- append(vars, unlist(v))
+  }
+  vars
+}
+
 .buildAxes <- function(grp) {
   if (length(grp$NCvars) > 0L) {
     # Create axis for local variables with name equal to visible dimensions
@@ -207,7 +214,7 @@ peek_ncdf <- function(resource) {
 
   # Descend into subgroups
   if (length(grp$subgroups)) {
-    ax <- lapply(grp$subgroups, function(g) .buildAxes(g))
+    ax <- lapply(grp$subgroups, .buildAxes)
     axes <- append(axes, unlist(ax))
   }
 
@@ -224,13 +231,13 @@ peek_ncdf <- function(resource) {
 # @return An instance of `CFAxis`.
 # @noRd
 .makeAxis <- function(grp, var) {
-  h <- grp$handle
-
   # Dimension values
-  vals <- try(as.vector(RNetCDF::var.get.nc(h, var$name)), silent = TRUE)
-  if (inherits(vals, "try-error"))
+  vals <- try(as.vector(RNetCDF::var.get.nc(var$group$handle, var$name)), silent = TRUE)
+  if (inherits(vals, "try-error")) {
     # No dimension values so it's an identity axis
-    return(CFAxisDiscrete$new(var))
+    d <- grp$find_dim_by_id(var$dimids[[1L]])
+    return(CFAxisDiscrete$new(var, count = d$length))
+  }
 
   # Does `var` have attributes?
   if (!nrow(var$attributes)) {
@@ -620,6 +627,7 @@ peek_ncdf <- function(resource) {
 
           if (inherits(varLon, "NCVariable") && inherits(varLat, "NCVariable"))
             ll <- varLon$group$find_by_name(paste(varLon$name, varLat$name, sep = "_"), "CF")
+          else ll <- NULL
         } # coordinates
 
         # Make the CFVariable

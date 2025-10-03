@@ -279,7 +279,7 @@ This method extracts a subset of values from the array of
 the variable, with the range along each axis to extract expressed in
 coordinate values of the domain of each axis.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$subset(..., rightmost.closed = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$subset(..., rightmost.closed = FALSE, .resolution = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -297,6 +297,12 @@ clipped to the extent of the axis.}
 boundary of range in each axis should be included. You must use the
 argument name when specifying this, like \code{rightmost.closed = TRUE}, to
 avoid the argument being treated as an axis name.}
+
+\item{\code{.resolution}}{For interpolation with auxiliary coordinates, the
+resolution in longitude and latitude directions as numeric values in
+decimal degrees, optional. If a single value is given, it will apply in
+both directions. If not supplied, the resolution in the center of the
+requested area will be calculated and applied over the entire area.}
 }
 \if{html}{\out{</div>}}
 }

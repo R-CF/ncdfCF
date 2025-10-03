@@ -43,8 +43,8 @@ CFVariable <- R6::R6Class("CFVariable",
     # with a dimension of the data of the variable. This may include axes with
     # length 1 if the netCDF resource lists them as a dimension.
     num_dim_axes = function() {
-      if (!is.null(self$values))
-        length(dim(self$values))
+      if (!is.null(private$.values))
+        length(dim(private$.values))
       else if (self$has_resource)
         self$ndims
       else 0L
@@ -98,8 +98,9 @@ CFVariable <- R6::R6Class("CFVariable",
         is_axis[ax_na] <- is_aux[ax_na]
       }
 
-      if (anyDuplicated(is_axis, incomparables = NA))
-        stop("Duplicated axis names and orientations not allowed", call. = FALSE)
+      # FIXME: is_aux and is_axis look at different sets of names so can't be compared
+      #if (anyDuplicated(is_axis, incomparables = NA))
+      #  stop("Duplicated axis names and orientations not allowed", call. = FALSE)
       if (any(is.na(is_axis)))
         stop("Arguments contain names not corresponding to an axis", call. = FALSE)
 
@@ -122,9 +123,9 @@ CFVariable <- R6::R6Class("CFVariable",
       atts
     },
 
-    # Orient self$values in such a way that it conforms to regular R arrays:
+    # Orient data values in such a way that it conforms to regular R arrays:
     # axis order will be Y-X-Z-T-others and Y values will go from the top to the
-    # bottom. Alternatively, order self$values in the CF canonical order.
+    # bottom. Alternatively, order data values in the CF canonical order.
     # Argument data is the array to order, argument ordering must be "R" or
     # "CF". Returns a new array with an attribute "axes" that lists dimensional
     # axis names in the order of the new array.
@@ -171,8 +172,9 @@ CFVariable <- R6::R6Class("CFVariable",
 
     # Do the auxiliary grid interpolation. Argument "subset" is passed from the
     # `subset()` method. Argument "ll_names" give the auxiliary longitude and
-    # latitude names. Return a list of useful objects to `subset()`.
-    auxiliary_interpolation = function(subset, ll_names) {
+    # latitude names and possibly the resolution. Return a list of useful
+    # objects to `subset()`.
+    auxiliary_interpolation = function(subset, ll_names, res) {
       # This code assumes that the grid orientation of the data variable is the
       # same as that of the longitude-latitude grid
       ext <- private$.llgrid$extent
@@ -183,7 +185,12 @@ CFVariable <- R6::R6Class("CFVariable",
       Yrng <- if (ll_names[2L] %in% sel_names && !is.na(subset[[ ll_names[2L] ]][1L]))
                 range(subset[[ ll_names[2L] ]])
               else ext[3L:4L]
-      private$.llgrid$aoi <-  aoi(Xrng[1L], Xrng[2L], Yrng[1L], Yrng[2L])
+      if (is.null(res))
+        private$.llgrid$aoi <-  aoi(Xrng[1L], Xrng[2L], Yrng[1L], Yrng[2L])
+      else {
+        if (length(res) == 1L) res <- c(res, res)
+        private$.llgrid$aoi <-  aoi(Xrng[1L], Xrng[2L], Yrng[1L], Yrng[2L], res[1L], res[2L])
+      }
 
       index <- private$.llgrid$grid_index()
       dim_index <- dim(index)
@@ -215,7 +222,7 @@ CFVariable <- R6::R6Class("CFVariable",
     # This is usually applied over the temporal domain but could be others
     # as well (untested).
     process_data = function(tdim, fac, fun, ...) {
-      if (!is.null(self$values))
+      if (!is.null(private$.values))
         return(.process.data(self$values, tdim, fac, fun, ...))
       else if (prod(sapply(private$.axes, function(x) x$length)) < CF.options$memory_cell_limit)
         # Read the whole data array because size is manageable
@@ -320,7 +327,7 @@ CFVariable <- R6::R6Class("CFVariable",
       if (!is.na(longname) && longname != self$name)
         cat("Long name:", longname, "\n")
 
-      if (!is.null(self$values)) {
+      if (!is.null(private$.values)) {
         rng <- self$attribute("actual_range")
         if (is.na(rng[1L])) {
           cat("\nValues: -\n")
@@ -513,6 +520,11 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   boundary of range in each axis should be included. You must use the
     #'   argument name when specifying this, like `rightmost.closed = TRUE`, to
     #'   avoid the argument being treated as an axis name.
+    #' @param .resolution For interpolation with auxiliary coordinates, the
+    #'   resolution in longitude and latitude directions as numeric values in
+    #'   decimal degrees, optional. If a single value is given, it will apply in
+    #'   both directions. If not supplied, the resolution in the center of the
+    #'   requested area will be calculated and applied over the entire area.
     #' @return A `CFVariable` instance, having the axes and attributes of the
     #'   variable, or `NULL` if one or more of the selectors in the `...`
     #'   argument fall entirely outside of the range of the axis. Note that
@@ -523,7 +535,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   If `self` is linked to a netCDF resource then the result will be linked
     #'   to the same netCDF resource as well, except when *auxiliary coordinate
     #'   variables* have been selected for the planar axes.
-    subset = function(..., rightmost.closed = FALSE) {
+    subset = function(..., rightmost.closed = FALSE, .resolution = NULL) {
       num_axes <- private$num_dim_axes()
       if (!num_axes)
         stop("Cannot subset a scalar variable", call. = FALSE)
@@ -541,7 +553,7 @@ CFVariable <- R6::R6Class("CFVariable",
       if (inherits(private$.llgrid, "CFAuxiliaryLongLat")) {
         aux_names <- private$.llgrid$grid_names
         if (any(aux_names %in% sel_names)) {
-          aux <- private$auxiliary_interpolation(selectors, aux_names)
+          aux <- private$auxiliary_interpolation(selectors, aux_names, .resolution)
           sel_names <- sel_names[-which(sel_names %in% aux_names)]
           ll_dimids <- private$.llgrid$dimids
           aoi_bounds <- aux$aoi$bounds()
@@ -566,13 +578,15 @@ CFVariable <- R6::R6Class("CFVariable",
           # start and count relative to the data variable on file
           start[ax] <- aux$X[1L]
           count[ax] <- aux$X[2L]
-          out_axis <- CFAxisLongitude$new(aux_names[1L], values = aux$aoi$dimnames[[2L]], attributes = axis$attributes)
+          out_axis <- CFAxisLongitude$new(aux_names[1L], values = aux$aoi$dimnames[[2L]],
+                                          attributes = axis$attributes)
           out_axis$bounds <- aoi_bounds$lon
         } else if (!is.null(aux) && ax_dimid == ll_dimids[2L]) {
           # start and count relative to the data variable on file
           start[ax] <- aux$Y[1L]
           count[ax] <- aux$Y[2L]
-          out_axis <- CFAxisLatitude$new(aux_names[2L], values = aux$aoi$dimnames[[1L]], attributes = axis$attributes)
+          out_axis <- CFAxisLatitude$new(aux_names[2L], values = aux$aoi$dimnames[[1L]],
+                                         attributes = axis$attributes)
           out_axis$bounds <- aoi_bounds$lat
         } else { # No auxiliary long-lat coordinates
           rng <- selectors[[ axis_names[ax] ]]
@@ -603,12 +617,24 @@ CFVariable <- R6::R6Class("CFVariable",
       # Get the data for the result CFVariable
       d <- NULL
       if (is.null(aux)) {
-        # Regular axes selected
-        if (!is.null(self$values))
+        # Regular axes selected so stay virtual if data has not been loaded yet
+        if (!is.null(private$.values))
           d <- private$read_chunk(start, count)
       } else {
         # Auxiliary grids selected, index the data
         d <- private$read_chunk(start, count)
+
+        lon_idx <- which(sapply(out_axes_dim, inherits, "CFAxisLongitude"))
+        lat_idx <- which(sapply(out_axes_dim, inherits, "CFAxisLatitude"))
+        if (lon_idx != 1L || lat_idx != 2L) {
+          # Permute the data so lon & lat are the first two axes
+          dims <- seq(length(dim(d)))
+          d <- aperm(d, c(lon_idx, lat_idx, dims[-c(lon_idx, lat_idx)]))
+
+          out_axes_dim <- c(out_axes_dim[lon_idx], out_axes_dim[lat_idx],
+                            out_axes_dim[-c(lon_idx, lat_idx)])
+        }
+
         dim(d) <- dim_in <- c(aux$X[2L] * aux$Y[2L], prod(ZT_dim))
         d <- d[aux$index, ]
         dim(d) <- dim_out <- c(aux$box, ZT_dim)

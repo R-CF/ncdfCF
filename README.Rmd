@@ -71,10 +71,12 @@ peek_ncdf(fn)
 
 ## Extracting data
 
-There are three ways to read data for a data variable from the resource: 
+There are various ways to read data for a data variable from the resource: 
 
  * **`[]`:** The usual R array operator gives you access to the raw, non-interpreted data in the netCDF resource. This uses index values into the dimensions and requires you to know the order in which the dimensions are specified for the variable. With a bit of tinkering and some helper functions in `ncdfCF` this is still very easy to do.
- * **`subset()`:** The `subset()` method lets you specify what you want to extract from each dimension in real-world coordinates and timestamps, in whichever order. This can also rectify non-Cartesian grids to regular longitude-latitude grids.
+ * **`raw()`:** This also gets the data in the layout of the file (or the data set) but with dimnames set. Importantly, you can call this after calling `subset()` and you will get the raw data for the specific spatial and temporal domain that you are interested in.
+ * **`array()`:** Like `raw()`, this extracts all the (subsetted) data, but now the data will be oriented in the standard R way of column-major order. Y coordinates will run from the top to the bottom (so latitude values, for instance, will be decresing).
+ * **`subset()`:** The `subset()` method lets you specify what you want to extract from each dimension in real-world coordinates and timestamps, in whichever order. This can also rectify non-Cartesian grids to regular longitude-latitude grids. Subsetting is lazy: data is not loaded so long as a direct relationship to the data in the netCDF resource is maintained.
  * **`profile()`:** Extract "profiles" from the data variable. This can take different forms, such as a temporal or depth profile for a single location, but it could also be a zonal field (such as a transect in latitude - atmospheric depth for a given longitude) or some other profile in the physical space of the data variable.
  
 ```{r extract}
@@ -101,7 +103,7 @@ Note that the results contain degenerate dimensions (of length 1). This by desig
                        Y = seq(-2, -1, by = 0.05))))
 ```
 
-The latter two methods will read only as much data from the netCDF resource as is requested.
+Data loading is lazy. In the examples above, you can see that data did not yet get loaded. This is intentional: you can subset your data in multiple ways before actually reading the data from the resource. This is particularly important when getting data from an online location, such as aremote THREDDS server. Use `raw()` or `array()` to get the arrays.
 
 ##### Make a profile of data
 

@@ -165,7 +165,7 @@ NCGroup <- R6::R6Class("NCGroup",
         dotdots <- length(dotdot)
         if (dotdots > 0L) {
           if (range(dotdot)[2L] > dotdots)
-            stop("Malformed group path:", name[1L])
+            stop("Malformed group path:", name[1L], call. = FALSE) # nocov
           for (i in seq_len(dotdots))
             grp <- grp$parent
           elements <- elements[-dotdot]
@@ -177,7 +177,7 @@ NCGroup <- R6::R6Class("NCGroup",
         for (i in 1L:(length(elements) - 1L)) {
           grp <- grp$subgroups[[ elements[i] ]]
           if (is.null(grp))
-            stop("Path not found in the resource:", name[1L])
+            stop("Path not found in the resource:", name[1L], call. = FALSE) # nocov
         }
 
       nm <- elements[length(elements)]
@@ -221,13 +221,29 @@ NCGroup <- R6::R6Class("NCGroup",
       obj <- .find_here(grp)
       if (!is.null(obj)) return(obj)
 
-      # If the named object was not qualified, search higher groups
-      if (parts == 1L)
+      if (parts == 1L) {
+        # If the named object was not qualified, search higher groups
         while (grp$name != "/") {
           grp <- grp$parent
           obj <- .find_here(grp)
           if (!is.null(obj)) return(obj)
         }
+
+        # If still not found, try lateral search
+        .traverse_subgroups <- function(g, level) {
+          obj <- .find_here(g)
+          if (is.null(obj))
+            lapply(g$subgroups, .traverse_subgroups, level = level + 1L)
+          else
+            list(level = level, obj = obj)
+        }
+
+        res <- lapply(grp$subgroups, .traverse_subgroups, level = 1L)
+        res <- res[lengths(res) > 0L]
+        # FIXME: The below takes the first occurrence, rather than the one with the lowest level
+        if (length(res))
+          return(res[[1L]]$obj)
+      }
 
       # Give up
       NULL

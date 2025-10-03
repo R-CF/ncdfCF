@@ -141,3 +141,30 @@ test_that("Create from scratch", {
   unlink(fn)
 })
 
+test_that("Math and Ops functions", {
+  arr <- array(1:120, c(3, 8, 5))
+  arr[2, 5:7, 2] <- NA
+  dv <- as_CF("testing", arr)
+
+  dv2 <- dv * 2L
+  expect_true(all(dv2$raw() == arr * 2L, na.rm = TRUE))
+  dv2 <- 2L * dv
+  expect_true(all(dv2$raw() == arr * 2L, na.rm = TRUE))
+  dv2 <- dv + dv
+  expect_true(all(dv2$raw() == arr * 2L, na.rm = TRUE))
+  dv3 <- dv2 + dv
+  expect_true(all(dv3$raw() == arr * 3L, na.rm = TRUE))
+  dv5 <- (3L * dv2) - dv
+  expect_true(all(dv5$raw() == arr * 5L, na.rm = TRUE))
+  dv5 <- -dv + (3L * dv2)
+  expect_true(all(dv5$raw() == arr * 5L, na.rm = TRUE))
+  dv7 <- (3L * dv2) + dv
+  expect_true(all(dv7$raw() == arr * 7L, na.rm = TRUE))
+  dvsq <- sqrt(dv)^4
+  expect_true(all(.near(dvsq$raw(), arr * arr), na.rm = TRUE))
+  dvcos <- cos(dv)
+  expect_true(all(.near(dvcos$raw(), cos(arr)), na.rm = TRUE))
+
+  dvabove0 <- dvcos > 0
+  expect_true(is.logical(dvabove0$raw()))
+})

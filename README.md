@@ -74,7 +74,7 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 # Open the file, all metadata is read
 (ds <- open_ncdf(fn))
 #> <Dataset> ERA5land_Rwanda_20160101 
-#> Resource   : /private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpWtgooh/temp_libpath49db3636d842/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
+#> Resource   : /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
 #> Format     : offset64 
 #> Collection : Generic netCDF data 
 #> Conventions: CF-1.6 
@@ -154,7 +154,7 @@ resource, use the `peek_ncdf()` function:
 ``` r
 peek_ncdf(fn)
 #> $uri
-#> [1] "/private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpWtgooh/temp_libpath49db3636d842/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc"
+#> [1] "/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc"
 #> 
 #> $type
 #> [1] "Generic netCDF data"
@@ -198,17 +198,28 @@ peek_ncdf(fn)
 
 ## Extracting data
 
-There are three ways to read data for a data variable from the resource:
+There are various ways to read data for a data variable from the
+resource:
 
 - **`[]`:** The usual R array operator gives you access to the raw,
   non-interpreted data in the netCDF resource. This uses index values
   into the dimensions and requires you to know the order in which the
   dimensions are specified for the variable. With a bit of tinkering and
   some helper functions in `ncdfCF` this is still very easy to do.
+- **`raw()`:** This also gets the data in the layout of the file (or the
+  data set) but with dimnames set. Importantly, you can call this after
+  calling `subset()` and you will get the raw data for the specific
+  spatial and temporal domain that you are interested in.
+- **`array()`:** Like `raw()`, this extracts all the (subsetted) data,
+  but now the data will be oriented in the standard R way of
+  column-major order. Y coordinates will run from the top to the bottom
+  (so latitude values, for instance, will be decresing).
 - **`subset()`:** The `subset()` method lets you specify what you want
   to extract from each dimension in real-world coordinates and
   timestamps, in whichever order. This can also rectify non-Cartesian
-  grids to regular longitude-latitude grids.
+  grids to regular longitude-latitude grids. Subsetting is lazy: data is
+  not loaded so long as a direct relationship to the data in the netCDF
+  resource is maintained.
 - **`profile()`:** Extract “profiles” from the data variable. This can
   take different forms, such as a temporal or depth profile for a single
   location, but it could also be a zonal field (such as a transect in
@@ -299,8 +310,12 @@ attributes:
 #>  units     NC_CHAR  1     K
 ```
 
-The latter two methods will read only as much data from the netCDF
-resource as is requested.
+Data loading is lazy. In the examples above, you can see that data did
+not yet get loaded. This is intentional: you can subset your data in
+multiple ways before actually reading the data from the resource. This
+is particularly important when getting data from an online location,
+such as aremote THREDDS server. Use `raw()` or `array()` to get the
+arrays.
 
 ##### Make a profile of data
 
@@ -501,7 +516,7 @@ arr <- array(rnorm(120), dim = c(6, 5, 4))
 as_CF("my_first_CF_object", arr)
 #> <Variable> my_first_CF_object 
 #> 
-#> Values: [-3.054023 ... 2.954466] 
+#> Values: [-2.918616 ... 2.570924] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -512,7 +527,7 @@ as_CF("my_first_CF_object", arr)
 #> 
 #> Attributes:
 #>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -3.054023, 2.954466
+#>  actual_range NC_DOUBLE 2      -2.918616, 2.570924
 ```
 
 Usable but not very impressive. The axes have dull names without any
@@ -534,7 +549,7 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 (obj <- as_CF("a_better_CF_object", arr))
 #> <Variable> a_better_CF_object 
 #> 
-#> Values: [-3.054023 ... 2.954466] 
+#> Values: [-2.918616 ... 2.570924] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -545,7 +560,7 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 #> 
 #> Attributes:
 #>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -3.054023, 2.954466
+#>  actual_range NC_DOUBLE 2      -2.918616, 2.570924
 
 # Axes are of a specific type and have basic attributes set
 obj$axes[["lat"]]
@@ -594,14 +609,14 @@ these methods.
 # install.packages("data.table")
 library(data.table)
 head(dt <- ts$data.table())
-#>    longitude latitude                time
-#>        <num>    <num>              <char>
-#> 1:      28.9       -1 2016-01-01T09:00:00
-#> 2:      29.0       -1 2016-01-01T09:00:00
-#> 3:      29.1       -1 2016-01-01T09:00:00
-#> 4:      29.2       -1 2016-01-01T09:00:00
-#> 5:      29.3       -1 2016-01-01T09:00:00
-#> 6:      29.4       -1 2016-01-01T09:00:00
+#>    longitude latitude                time      t2m
+#>        <num>    <num>              <char>    <num>
+#> 1:      28.9       -1 2016-01-01T09:00:00 295.7120
+#> 2:      29.0       -1 2016-01-01T09:00:00 296.1809
+#> 3:      29.1       -1 2016-01-01T09:00:00 297.6046
+#> 4:      29.2       -1 2016-01-01T09:00:00 298.8195
+#> 5:      29.3       -1 2016-01-01T09:00:00 300.1376
+#> 6:      29.4       -1 2016-01-01T09:00:00 300.8583
 
 #install.packages("terra")
 suppressMessages(library(terra))

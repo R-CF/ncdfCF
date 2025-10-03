@@ -16,7 +16,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Imports: 
     abind,
-    CFtime (>= 1.7),
+    CFtime,
     methods,
     R6,
     RNetCDF,

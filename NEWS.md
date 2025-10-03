@@ -1,5 +1,14 @@
 # ncdfCF (development version)
 
+#### API
+- The `CFVariable::subset()` method now has an optional `.resolution` argument that can be specified when interpolation with auxiliary latitude-longitude coordinates is requested; otherwise it has no effect. This does not break any existing code.
+- Documentation updated.
+
+#### Code
+- Access to data values is now consistently using the public field `values` for "standard" objects. Only objects that require special values management use private fields and expose the data values in another, more appropriate form.
+- Support some edge cases in reading marginally-CF netCDF files, including lateral search.
+- Additional testing added.
+
 # ncdfCF 0.7.0
 
 This is a major restructuring of the code logic to better separate between file-based netCDF objects and in-memory CF objects. Additionally, there are important additions to the user-facing API, in particular with regards to arithmetic, math and logical expressions on CF objects.
