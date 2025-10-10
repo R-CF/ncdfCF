@@ -100,9 +100,7 @@ CFObject <- R6::R6Class("CFObject",
           # Data is packed in the netCDF file: throw away the attributes and let
           # RNetCDF deal with unpacking when reading the data using the
           # attributes in the NCVariable.
-          self$delete_attribute(c("_FillValue", "scale_factor", "add_offset",
-                                  "valid_range", "valid_min", "valid_max",
-                                  "missing_value"))
+          self$delete_attribute(c("scale_factor", "add_offset", "valid_range", "valid_min", "valid_max"))
       } else if (!is.null(values)) {
         if (storage.mode(values) == "double") {
           # If the data is numeric, check attributes to select between NC_DOUBLE and NC_FLOAT
@@ -468,15 +466,15 @@ CFObject <- R6::R6Class("CFObject",
     #' @field fullname (read-only) The fully-qualified name of the CF object.
     fullname = function(value) {
       if (missing(value)) {
-
         grp <- self$group
         if (is.null(grp))
           private$.name
         else {
-          if ((gnm <- grp$name) == "/")
+          gnm <- grp$fullname
+          if (gnm == "/")
             private$.name
           else
-            paste0("/", gnm, "/", private$.name)
+            paste(gnm, private$.name, sep = "/")
         }
       }
     },

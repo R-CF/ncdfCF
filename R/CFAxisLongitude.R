@@ -33,8 +33,7 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
     initialize = function(var, values, start = 1L, count = NA, attributes = data.frame()) {
       super$initialize(var, values = values, start = start, count = count, orientation =  "X", attributes = attributes)
       self$set_attribute("standard_name", "NC_CHAR", "longitude")
-      if (is.na(self$attribute("units")))
-        self$set_attribute("units", "NC_CHAR", "degrees_east")
+      self$set_attribute("units", "NC_CHAR", "degrees_east")
 
       if (!missing(values) && !.check_longitude_domain(values))
         stop("Longitude coordinate values span a range of more than 360 degrees.", call. = FALSE) # nocov

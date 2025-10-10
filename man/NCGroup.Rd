@@ -42,6 +42,8 @@ group.}
 \item{\code{CFvars}}{List of CF data variables in this group. There must be a
 corresponding item in \code{NCvars} for each item in this list.}
 
+\item{\code{CFancillary}}{List of ancillary variables defined in this group.}
+
 \item{\code{CFaxes}}{List of axes of CF data variables in this group. There must
 be a corresponding item in \code{NCvars} for each item in this list. Note
 that the CF data variable(s) that an axis is associated with may be
@@ -98,6 +100,7 @@ belongs to. If the group is not attached to a \code{CFDataset}, returns
 \item \href{#method-NCGroup-unused}{\code{NCGroup$unused()}}
 \item \href{#method-NCGroup-add_auxiliary_coordinate}{\code{NCGroup$add_auxiliary_coordinate()}}
 \item \href{#method-NCGroup-add_auxiliary_longlat}{\code{NCGroup$add_auxiliary_longlat()}}
+\item \href{#method-NCGroup-add_ancillary_variable}{\code{NCGroup$add_ancillary_variable()}}
 \item \href{#method-NCGroup-addCellMeasure}{\code{NCGroup$addCellMeasure()}}
 \item \href{#method-NCGroup-fullnames}{\code{NCGroup$fullnames()}}
 \item \href{#method-NCGroup-dimensions}{\code{NCGroup$dimensions()}}
@@ -319,6 +322,27 @@ grid of longitude and latitude values.}
 \item{\code{bndsLong, bndsLat}}{Instances of \link{CFBounds} with the 2D bounds of the
 longitude and latitude grid values, respectively, or \code{NULL} when not
 set.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{self} invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-add_ancillary_variable"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-add_ancillary_variable}{}}}
+\subsection{Method \code{add_ancillary_variable()}}{
+Add an ancillary variable to the group. This method adds
+the supplied data variable to the group if it isn't already present.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$add_ancillary_variable(var)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{var}}{Instance of \link{CFVariable} with ancillary information.}
 }
 \if{html}{\out{</div>}}
 }

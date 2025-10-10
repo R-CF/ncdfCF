@@ -314,7 +314,7 @@ Data loading is lazy. In the examples above, you can see that data did
 not yet get loaded. This is intentional: you can subset your data in
 multiple ways before actually reading the data from the resource. This
 is particularly important when getting data from an online location,
-such as aremote THREDDS server. Use `raw()` or `array()` to get the
+such as a remote THREDDS server. Use `raw()` or `array()` to get the
 arrays.
 
 ##### Make a profile of data
@@ -516,7 +516,7 @@ arr <- array(rnorm(120), dim = c(6, 5, 4))
 as_CF("my_first_CF_object", arr)
 #> <Variable> my_first_CF_object 
 #> 
-#> Values: [-2.918616 ... 2.570924] 
+#> Values: [-1.925378 ... 2.716479] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -527,7 +527,7 @@ as_CF("my_first_CF_object", arr)
 #> 
 #> Attributes:
 #>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -2.918616, 2.570924
+#>  actual_range NC_DOUBLE 2      -1.925378, 2.716479
 ```
 
 Usable but not very impressive. The axes have dull names without any
@@ -549,7 +549,7 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 (obj <- as_CF("a_better_CF_object", arr))
 #> <Variable> a_better_CF_object 
 #> 
-#> Values: [-2.918616 ... 2.570924] 
+#> Values: [-1.925378 ... 2.716479] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -560,7 +560,7 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 #> 
 #> Attributes:
 #>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -2.918616, 2.570924
+#>  actual_range NC_DOUBLE 2      -1.925378, 2.716479
 
 # Axes are of a specific type and have basic attributes set
 obj$axes[["lat"]]

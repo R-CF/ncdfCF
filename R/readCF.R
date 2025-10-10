@@ -65,6 +65,9 @@ open_ncdf <- function(resource) {
   # Auxiliary CVs and scalar CVs
   .makeCoordinates(root)
 
+  # Ancillary variables
+  .makeAncillary(root)
+
   # Cell measure variables
   .makeCellMeasures(root, axes)
 
@@ -83,9 +86,9 @@ open_ncdf <- function(resource) {
     else "Generic netCDF data"
 
     # Configure any parametric vertical axes
-    .configureParametricTerms(root$CFaxes)
+    .configureParametricTerms(axes)
 
-    vars <- .buildVariables(root, root$CFaxes)
+    vars <- .buildVariables(root, axes)
   } else {
     # L3b
     units <- root$attribute("units")
@@ -231,8 +234,11 @@ peek_ncdf <- function(resource) {
 # @return An instance of `CFAxis`.
 # @noRd
 .makeAxis <- function(grp, var) {
-  # Dimension values
-  vals <- try(as.vector(RNetCDF::var.get.nc(var$group$handle, var$name)), silent = TRUE)
+  # Dimension values - can't handle integer64
+  vals <- try(if (var$vtype %in% c("NC_INT64", "NCUINT64"))
+    RNetCDF::var.get.nc(var$group$handle, var$name, collapse = FALSE, unpack = TRUE, fitnum = FALSE)
+  else
+    RNetCDF::var.get.nc(var$group$handle, var$name, collapse = FALSE, unpack = TRUE, fitnum = TRUE), silent = TRUE)
   if (inherits(vals, "try-error")) {
     # No dimension values so it's an identity axis
     d <- grp$find_dim_by_id(var$dimids[[1L]])
@@ -325,7 +331,7 @@ peek_ncdf <- function(resource) {
   axes
 }
 
-#' Make a CFtime object. This will try to create a CFTime or CFClimatology object,
+#' Make a CFTime object. This will try to create a CFTime or CFClimatology object,
 #' including its bounds if set. If it fails it will return NULL, otherwise the
 #' object.
 #' @noRd
@@ -347,19 +353,19 @@ peek_ncdf <- function(resource) {
 
 #' Make CF constructs for "coordinates" references
 #'
-#' NC variables are scanned for a "coordinates" attribute (which must be a data
-#' variable, domain variable or geometry container variable). If not already
-#' present, the NC variable referenced is converted into one of 3 objects,
-#' depending on context: 1. A scalar coordinate variable in the group where its
-#' NC variable is located; 2. A label variable in the group where its NC
-#' variable is located; multiple label coordinates (such as in the case of taxon
-#' name and identifier) are stored in a single label variable; 3. A long-lat
-#' auxiliary coordinate variable when both a longitude and latitude NC variable
-#' are found, in the group of the longitude NC variable.
+#' NC variables are scanned for a "coordinates" attribute (which must reference
+#' a data variable, domain variable or geometry container variable). If not
+#' already present, the NC variable referenced is converted into one of 3
+#' objects, depending on context: 1. A scalar coordinate variable in the group
+#' where its NC variable is located; 2. A label variable in the group where its
+#' NC variable is located; multiple label coordinates (such as in the case of
+#' taxon name and identifier) are stored in a single label variable; 3. A
+#' long-lat auxiliary coordinate variable when both a longitude and latitude NC
+#' variable are found, in the group of the longitude NC variable.
 #' @param grp The group to scan.
-#' @return Nothing. CFAxis, CFLabel and CFAuxiliaryLongLat instances are created
-#'   in the groups where the NC variables are found. These will later be picked
-#'   up when CFVariables are created.
+#' @return Nothing. `CFAxis`, `CFLabel` and `CFAuxiliaryLongLat` instances are
+#'   created in the groups where the NC variables are found. These will later be
+#'   picked up when `CFVariable` instances are created.
 #' @noRd
 .makeCoordinates <- function(grp) {
   if (length(grp$NCvars) > 0L) {
@@ -381,14 +387,16 @@ peek_ncdf <- function(resource) {
             # If aux is a 2D NCVariable having an attribute "units" with value
             # "degrees_east" or "degrees_north" it is a longitude or latitude,
             # respectively. Record the fact and move on.
-            if (nd == 2L && !is.na(units <- aux$attribute("units"))) {
+            # This also allows for higher-dimensional NCVariables but those
+            # additional dimensions will get dropped.
+            if (nd >= 2L && !is.na(units <- aux$attribute("units"))) {
               if (grepl("^degree(s?)(_?)(east|E)$", units)) {
                 varLon <- aux
-                bndsLon <- .readBounds(aux$group, bounds)
+                bndsLon <- .readBounds(aux$group, bounds, 2L)
                 found_one <- TRUE
               } else if (grepl("^degree(s?)(_?)(north|N)$", units)) {
                 varLat <- aux
-                bndsLat <- .readBounds(aux$group, bounds)
+                bndsLat <- .readBounds(aux$group, bounds, 2L)
                 found_one <- TRUE
               }
             }
@@ -431,6 +439,43 @@ peek_ncdf <- function(resource) {
   # Descend into subgroups
   if (length(grp$subgroups))
     lapply(grp$subgroups, function(g) .makeCoordinates(g))
+}
+
+#' Make CF constructs for "ancillary_variables" references
+#'
+#' NC variables are scanned for an "ancillary_variables" attribute (which must
+#' reference data variables). If not already present, the NC variable referenced
+#' is converted into a data variable and associated with the referring data
+#' variable (and not separately).
+#' @param grp The group to scan.
+#' @return Nothing. `CFVariable` instances are created in the groups where the
+#'   NC variables are found. These will later be picked up when referring
+#'   `CFVariable` instances are created.
+#' @noRd
+.makeAncillary <- function(grp) {
+  if (length(grp$NCvars) > 0L)
+    for (refid in seq_along(grp$NCvars)) {
+      v <- grp$NCvars[[refid]]
+      if (!is.na(ancillary <- v$attribute("ancillary_variables"))) {
+        ancillary <- strsplit(ancillary, " ", fixed = TRUE)[[1L]]
+        for (aid in seq_along(ancillary)) {
+          anc <- grp$find_by_name(ancillary[aid], "NC")
+          if (is.null(anc))
+            warning("Unmatched `ancillary_variables` value '", ancillary[aid], "' found in variable '", v$name, "'.", call. = FALSE)
+          else {
+            ax <- lapply(anc$dimids, function(did) {
+              dname <- anc$group$find_dim_by_id(did)$name
+              anc$group$find_by_name(dname, "NC")$CF[[1L]]
+            })
+            anc$group$add_ancillary_variable(CFVariable$new(anc, ax))
+          }
+        }
+      }
+    }
+
+  # Descend into subgroups
+  if (length(grp$subgroups))
+    lapply(grp$subgroups, function(g) .makeAncillary(g))
 }
 
 #' @description Configure the formula terms of a parametric vertical axis. If
@@ -560,12 +605,13 @@ peek_ncdf <- function(resource) {
 # Utility function to read bounds values
 # grp - the current group being processed
 # bounds - the name of the boundary variable, or NA if no bounds attribute present
-.readBounds <- function(grp, bounds) {
+# owner_dims - the number of dimensions of the owning object: 1 for an axis, 2 for an aux CV grid
+.readBounds <- function(grp, bounds, owner_dims = 1L) {
   if (is.na(bounds)) NULL
   else {
     NCbounds <- grp$find_by_name(bounds, "NC")
     if (is.null(NCbounds)) NULL
-    else CFBounds$new(NCbounds)
+    else CFBounds$new(NCbounds, owner_dims = owner_dims)
   }
 }
 
@@ -595,7 +641,7 @@ peek_ncdf <- function(resource) {
             if (coords[cid] %in% ax_names) next
 
             aux <- grp$find_by_name(coords[cid], "CF")
-            if (!is.null(aux)) {
+            if (!is.null(aux) && !inherits(aux, "CFVariable")) {
               clss <- class(aux)
               if (aux$length == 1L)
                 all_ax[[aux$name]] <- aux
@@ -633,6 +679,16 @@ peek_ncdf <- function(resource) {
         # Make the CFVariable
         var <- CFVariable$new(v, all_ax)
         if (!is.null(ll)) var$gridLongLat <- ll
+
+        # Add references to any "ancillary_variables" of the variable
+        if (!is.na(ancillary <- v$attribute("ancillary_variables"))) {
+          ancillary <- strsplit(ancillary, " ", fixed = TRUE)[[1L]]
+          for (aid in seq_along(ancillary)) {
+            anc <- grp$find_by_name(ancillary[aid], "CF")
+            if (inherits(anc, "CFVariable"))
+              var$add_ancillary_variable(anc)
+          }
+        } # ancillary variables
 
         # Add cell_measures
         if (!is.na(cm <- v$attribute("cell_measures"))) {

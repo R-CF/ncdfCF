@@ -53,7 +53,12 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #'   `NCVariable` instance, attributes of the axis will be taken from the
     #'   netCDF resource.
     initialize = function(var, values, start = 1L, count = NA, orientation = "", attributes = data.frame()) {
-      if (!missing(values) && !(is.numeric(values) && .monotonicity(values)))
+      # Check monotonicity if not an auxiliary coordinate variable
+      is_cv <- if (inherits(var, "NCVariable")) {
+        dim <- var$group$find_dim_by_id(var$dimids)
+        !is.null(dim) && var$name == dim$name
+      } else TRUE
+      if (is_cv && !missing(values) && !(is.numeric(values) && .monotonicity(values)))
         stop("Numeric axis must have numeric monotonic coordinates.", call. = FALSE) # nocov
 
       super$initialize(var, values = values, start = start, count = count, orientation = orientation, attributes = attributes)

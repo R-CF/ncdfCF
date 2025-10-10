@@ -1,12 +1,17 @@
 # ncdfCF (development version)
 
+#### Conventions
+- Ancillary variables are now associated with the data variables that reference them. They can be added with the `CFVariable::add_ancillary_variable()` method and the list of registered ancillary variables can be retrieved with the `CFVariable$ancillary_variables` field. Ancillary variables are `CFVariable` instances themselves and can have bounds and other data variable properties, and be processed like regular data variables.
+
 #### API
-- The `CFVariable::subset()` method now has an optional `.resolution` argument that can be specified when interpolation with auxiliary latitude-longitude coordinates is requested; otherwise it has no effect. This does not break any existing code.
+- The `CFVariable::subset()` method now has an optional `.resolution` argument that can be specified when interpolation with auxiliary latitude-longitude coordinates is requested; otherwise it has no effect. This change does not break any existing code.
 - Documentation updated.
 
 #### Code
 - Access to data values is now consistently using the public field `values` for "standard" objects. Only objects that require special values management use private fields and expose the data values in another, more appropriate form.
 - Support some edge cases in reading marginally-CF netCDF files, including lateral search.
+- `CFVariable` S3 methods fixed.
+- Multi-dimensional auxiliary lat-long grids are silently truncated to 2D.
 - Additional testing added.
 
 # ncdfCF 0.7.0

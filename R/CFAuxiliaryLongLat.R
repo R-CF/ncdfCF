@@ -38,6 +38,20 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     # indicate the orientation of the latitude and longitude grids.
     .axis_order = c("X", "Y"),
 
+    # Get the values of the longitude variable
+    # Drop any additional dimension
+    get_lon_values = function() {
+      d <- private$.varLong$values
+      if (length(dim(d)) > 2L) d[,,1L] else d
+    },
+
+    # Get the values of the latitude variable
+    # Drop any additional dimension
+    get_lat_values = function() {
+      d <- private$.varLat$values
+      if (length(dim(d)) > 2L) d[,,1L] else d
+    },
+
     # Set the nominal resolution of the grid at the location indicated. If no
     # location is indicated, use the center of the grids. The location must be
     # given as an integer vector of length with indices into the lat-long grids.
@@ -46,8 +60,8 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
       if (is.null(location))
         location <- as.integer(dim * 0.5)
 
-      lon <- private$.varLong$raw()
-      lat <- private$.varLat$raw()
+      lon <- private$get_lon_values()
+      lat <- private$get_lat_values()
       private$.res[1L] <- abs(if (location[1L] == 1L)
         lon[location[1L] + 1L, location[2L]] - lon[location[1L], location[2L]]
       else if (location[1L] == dim[1L])
@@ -183,8 +197,8 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
       if (is.null(maxDist))
         maxDist <- max(private$.res)
 
-      varlon <- private$.varLong$raw()
-      varlat <- private$.varLat$raw()
+      varlon <- private$get_lon_values()
+      varlat <- private$get_lat_values()
       out <- mapply(function(lon, lat, max2) {
         dlon <- varlon - lon
         dlat <- varlat - lat
@@ -214,8 +228,8 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
       # up but the grid may be oriented differently, hence why indices into AOI
       # properties aoires and aoidim are determined based on the orientation.
       # Create vectors of AOI longitude and latitude coordinates.
-      lat <- private$.varLat$raw()
-      lon <- private$.varLong$raw()
+      lat <- private$get_lat_values()
+      lon <- private$get_lon_values()
       aoiext <- private$.aoi$extent
       aoidim <- private$.aoi$dim
       aoires <- private$.aoi$resolution
@@ -309,7 +323,7 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     #'   longitude and latitude grids.
     dimids = function(value) {
       if (missing(value))
-        private$.varLong$dimids
+        private$.varLong$dimids[1L:2L]
     },
 
     #' @field aoi Set or retrieve the AOI for the long-lat grid.
@@ -356,7 +370,7 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
           if (inherits(private$.boundsLong, "CFBounds")) {
             private$.ext <- c(private$.boundsLong$range(), private$.boundsLat$range())
           } else {
-            private$.ext <- c(range(private$.varLong$raw()), range(private$.varLat$raw()))
+            private$.ext <- c(range(private$get_lon_values()), range(private$get_lat_values()))
           }
         }
         private$.ext
@@ -367,7 +381,7 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     #' grids.
     dim = function(value) {
       if (missing(value))
-        private$.varLong$dim()
+        private$.varLong$dim()[1L:2L]
     }
   )
 )

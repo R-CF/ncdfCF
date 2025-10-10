@@ -47,6 +47,10 @@ NCGroup <- R6::R6Class("NCGroup",
     #'   corresponding item in `NCvars` for each item in this list.
     CFvars    = list(),
 
+
+    #' @field CFancillary List of ancillary variables defined in this group.
+    CFancillary = list(),
+
     #' @field CFaxes List of axes of CF data variables in this group. There must
     #'   be a corresponding item in `NCvars` for each item in this list. Note
     #'   that the CF data variable(s) that an axis is associated with may be
@@ -198,6 +202,9 @@ NCGroup <- R6::R6Class("NCGroup",
           idx <- which(names(g$CFaux) == nm)
           if (length(idx)) return(g$CFaux[[idx]])
 
+          idx <- which(names(g$CFancillary) == nm)
+          if (length(idx)) return(g$CFancillary[[idx]])
+
           idx <- which(names(g$CFmeasures) == nm)
           if (length(idx)) return(g$CFmeasures[[idx]])
 
@@ -258,6 +265,9 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @return The [NCDimension] object with an identifier equal to the `id`
     #'   argument. If the object is not found, returns `NULL`.
     find_dim_by_id = function(id) {
+      if (is.null(id))
+        return(NULL)
+
       dims <- sapply(self$NCdims, function(d) d$id)
       if (length(dims)) {
         idx <- which(dims == id)
@@ -344,6 +354,18 @@ NCGroup <- R6::R6Class("NCGroup",
         if (!any(sapply(known, function(k) k[1L] == lon$id && k[2L] == lat$id)))
           self$CFlonglat[[nm]] <- CFAuxiliaryLongLat$new(lon, lat, bndsLong, bndsLat)
       }
+      invisible(self)
+    },
+
+    #' @description Add an ancillary variable to the group. This method adds
+    #'   the supplied data variable to the group if it isn't already present.
+    #' @param var Instance of [CFVariable] with ancillary information.
+    #' @return `self` invisibly.
+    add_ancillary_variable = function(var) {
+      # if (!length(private$.CFancillary))
+      #   private$.CFancillary <- setNames(list(var), var$name)
+      # else if (!(var$name %in% names(private$.CFancillary)))
+        self$CFancillary[[var$name]] <- var ###append(private$.CFancillary, setNames(list(var), var$name))
       invisible(self)
     },
 

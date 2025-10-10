@@ -103,7 +103,7 @@ Note that the results contain degenerate dimensions (of length 1). This by desig
                        Y = seq(-2, -1, by = 0.05))))
 ```
 
-Data loading is lazy. In the examples above, you can see that data did not yet get loaded. This is intentional: you can subset your data in multiple ways before actually reading the data from the resource. This is particularly important when getting data from an online location, such as aremote THREDDS server. Use `raw()` or `array()` to get the arrays.
+Data loading is lazy. In the examples above, you can see that data did not yet get loaded. This is intentional: you can subset your data in multiple ways before actually reading the data from the resource. This is particularly important when getting data from an online location, such as a remote THREDDS server. Use `raw()` or `array()` to get the arrays.
 
 ##### Make a profile of data
 

@@ -105,7 +105,8 @@ NCVariable <- R6::R6Class("NCVariable",
     #'   start index to the end of the dimension.
     #' @return An array with the requested data, or an error object.
     get_data = function(start = NA, count = NA) {
-      RNetCDF::var.get.nc(private$.group$handle, private$.name, start, count, collapse = FALSE, unpack = TRUE, fitnum = TRUE)
+      RNetCDF::var.get.nc(private$.group$handle, private$.name, start, count, collapse = FALSE, unpack = TRUE,
+                          fitnum = !(private$.vtype %in% c("NC_INT64", "NCUINT64")))
     },
 
     #' @description Get the [NCDimension] object(s) that this variable uses.

@@ -12,12 +12,13 @@ CFVariable <- R6::R6Class("CFVariable",
   inherit = CFObject,
   private = list(
     # A list with the axes of the variable.
-    .axes = NULL,
+    .axes = list(),
 
-    # Auxiliary coordinates reference, if the data variable uses them. Only
-    # applicable to CFVariable but it is here to allow referencing it in
-    # check_names()
+    # Auxiliary coordinates reference, if the data variable uses them.
     .llgrid = NULL,
+
+    # List of ancillary variables associated with this data variable.
+    .ancillary = list(),
 
     # The CFGridMapping object for the variable, if set.
     .crs = NULL,
@@ -311,6 +312,9 @@ CFVariable <- R6::R6Class("CFVariable",
     initialize = function(var, axes, values = values, start = NA, count = NA, attributes = data.frame()) {
       super$initialize(var, values = values, start = start, count = count, attributes = attributes)
       private$.axes <- axes
+
+      # Delete useless attributes
+      self$delete_attribute(c("_FillValue", "missing_value"))
     },
 
     #' @description Print a summary of the data variable to the console.
@@ -354,6 +358,13 @@ CFVariable <- R6::R6Class("CFVariable",
         axes <- as.data.frame(axes[lengths(axes) > 0L])
         print(.slim.data.frame(axes, ...), right = FALSE, row.names = FALSE)
       } else cat(" (none)\n")
+
+      len <- length(private$.ancillary)
+      if (len) {
+        cat("\nAncillary variable", if (len > 1L) "s", ":\n", sep = "")
+        anc <- do.call(rbind, lapply(private$.ancillary, function(a) a$brief()))
+        print(.slim.data.frame(anc, ...), right = FALSE, row.names = FALSE)
+      }
 
       len <- length(private$.cell_measures)
       if (len) {
@@ -410,7 +421,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @return Self, invisibly.
     detach = function() {
       lapply(private$.cell_measures, function(cm) cm$detach())
-      if (!is.null(private$.crs)) crs$detach()
+      if (!is.null(private$.crs)) private$.crs$detach()
       if (!is.null(private$.llgrid)) private$.llgrid$detach()
       lapply(private$.axes, function(ax) ax$detach())
       super$detach()
@@ -581,6 +592,7 @@ CFVariable <- R6::R6Class("CFVariable",
           out_axis <- CFAxisLongitude$new(aux_names[1L], values = aux$aoi$dimnames[[2L]],
                                           attributes = axis$attributes)
           out_axis$bounds <- aoi_bounds$lon
+          out_axis$delete_attribute("long_name")
         } else if (!is.null(aux) && ax_dimid == ll_dimids[2L]) {
           # start and count relative to the data variable on file
           start[ax] <- aux$Y[1L]
@@ -588,6 +600,7 @@ CFVariable <- R6::R6Class("CFVariable",
           out_axis <- CFAxisLatitude$new(aux_names[2L], values = aux$aoi$dimnames[[1L]],
                                          attributes = axis$attributes)
           out_axis$bounds <- aoi_bounds$lat
+          out_axis$delete_attribute("long_name")
         } else { # No auxiliary long-lat coordinates
           rng <- selectors[[ axis_names[ax] ]]
           if (is.null(rng)) rng <- selectors[[ orient ]]
@@ -1006,12 +1019,12 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @return A `terra::SpatRaster` or `terra::SpatRasterDataset` instance.
     terra = function() {
       if (!requireNamespace("terra", quietly = TRUE))
-        stop("Please install package 'terra' before using this funcionality")
+        stop("Please install package 'terra' before using this functionality")
 
       # Extent
       YX <- private$YXZT()[1L:2L]
       if (!all(YX))
-        stop("Cannot create `terra` object because data does not have X and Y axes.", call. = FALSE)
+        stop("Data variable does not have X and Y axes.", call. = FALSE) # nocov
 
       Xbnds <- private$.axes[[YX[2L]]]$bounds
       if (inherits(Xbnds, "CFBounds")) Xbnds <- Xbnds$range()
@@ -1129,6 +1142,17 @@ CFVariable <- R6::R6Class("CFVariable",
       }
     },
 
+    #' @description Add an ancillary variable to this variable.
+    #' @param var An instance of [CFVariable].
+    #' @return Self, invisibly.
+    add_ancillary_variable = function(var) {
+      if (inherits(var, "CFVariable")) {
+        private$.ancillary[[var$name]] <- var
+        #if (aux$name %in% axis$coordinate_names)
+        #  self$update_coordinates_attribute(aux$name)
+      }
+    },
+
     #' @description Save the data object to a netCDF file.
     #' @param fn The name of the netCDF file to create.
     #' @param pack Logical to indicate if the data should be packed. Packing is
@@ -1192,6 +1216,15 @@ CFVariable <- R6::R6Class("CFVariable",
         "Data variable"
     },
 
+    #' @field dim_axes (read-only) The number of dimensional axes, i.e. those
+    #'   axes that make up the dimensionality of the underlying the data array.
+    #'   This may include axes with a length of 1, but not any "true" scalar
+    #'   axes (in the sense of the CF metadata conventions).
+    dim_axes = function(value) {
+      if (missing(value))
+        private$num_dim_axes()
+    },
+
     #' @field axes (read-only) List of instances of classes descending from
     #'   [CFAxis] that are the axes of the data object. If there are any scalar
     #'   axes, they are listed after the axes that associate with the dimensions
@@ -1200,6 +1233,13 @@ CFVariable <- R6::R6Class("CFVariable",
     axes = function(value) {
       if (missing(value))
         private$.axes
+    },
+
+    #' @field ancillary_variables A list of ancillary data variables associated
+    #' with this data variable.
+    ancillary_variables = function(value) {
+      if (missing(value))
+        private$.ancillary
     },
 
     #' @field crs The coordinate reference system of this variable,
@@ -1304,7 +1344,11 @@ CFVariable <- R6::R6Class("CFVariable",
 
 #' @export
 dim.CFVariable <- function(x) {
-  sapply(x$axes, function(z) z$NCdim$length)
+  nd <- x$dim_axes
+  if (nd) {
+    ax <- x$axes[1L:nd]
+    sapply(ax, function(z) z$length)
+  } else NULL
 }
 
 #' @export
@@ -1371,7 +1415,7 @@ dimnames.CFVariable <- function(x) {
 #' summer <- pr[, , 173:263]
 #' str(summer)
 "[.CFVariable" <- function(x, i, j, ..., drop = FALSE) {
-  numaxes <- sum(sapply(x$axes, function(ax) ax$length > 1L))
+  numaxes <- x$dim_axes
   t <- vector("list", numaxes)
   names(t) <- dimnames(x)[1:numaxes]
 

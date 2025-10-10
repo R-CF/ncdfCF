@@ -20,11 +20,19 @@ mapping parameters, etc.
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
+\item{\code{dim_axes}}{(read-only) The number of dimensional axes, i.e. those
+axes that make up the dimensionality of the underlying the data array.
+This may include axes with a length of 1, but not any "true" scalar
+axes (in the sense of the CF metadata conventions).}
+
 \item{\code{axes}}{(read-only) List of instances of classes descending from
 \link{CFAxis} that are the axes of the data object. If there are any scalar
 axes, they are listed after the axes that associate with the dimensions
 of the data. (In other words, axes \verb{1..n} describe the \verb{1..n} data
 dimensions, while any axes \verb{n+1..m} are scalar axes.)}
+
+\item{\code{ancillary_variables}}{A list of ancillary data variables associated
+with this data variable.}
 
 \item{\code{crs}}{The coordinate reference system of this variable,
 as an instance of \link{CFGridMapping}. If this field is \code{NULL}, the
@@ -78,6 +86,7 @@ description of the variable as a WKT2 string.}
 \item \href{#method-CFVariable-is_coincident}{\code{CFVariable$is_coincident()}}
 \item \href{#method-CFVariable-add_cell_measure}{\code{CFVariable$add_cell_measure()}}
 \item \href{#method-CFVariable-add_auxiliary_coordinate}{\code{CFVariable$add_auxiliary_coordinate()}}
+\item \href{#method-CFVariable-add_ancillary_variable}{\code{CFVariable$add_ancillary_variable()}}
 \item \href{#method-CFVariable-save}{\code{CFVariable$save()}}
 \item \href{#method-CFVariable-clone}{\code{CFVariable$clone()}}
 }
@@ -644,6 +653,26 @@ auxiliary labels.
 
 \item{\code{axis}}{An instance of \code{CFAxis} that these auxiliary coordinates are
 for.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-add_ancillary_variable"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-add_ancillary_variable}{}}}
+\subsection{Method \code{add_ancillary_variable()}}{
+Add an ancillary variable to this variable.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$add_ancillary_variable(var)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{var}}{An instance of \link{CFVariable}.}
 }
 \if{html}{\out{</div>}}
 }

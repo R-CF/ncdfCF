@@ -31,8 +31,7 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
     initialize = function(var, values, start = 1L, count = NA, attributes = data.frame()) {
       super$initialize(var, values = values, start = start, count = count, orientation =  "Y", attributes = attributes)
       self$set_attribute("standard_name", "NC_CHAR", "latitude")
-      if (is.na(self$attribute("units")))
-        self$set_attribute("units", "NC_CHAR", "degrees_north")
+      self$set_attribute("units", "NC_CHAR", "degrees_north")
 
       if (!missing(values) && !.check_latitude_domain(values))
         stop("Latitude coordinate values are not in the domain [-90, 90].", call. = FALSE) # nocov

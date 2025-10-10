@@ -7,10 +7,12 @@
 \method{dim}{CFAxis}(x)
 }
 \arguments{
-\item{x}{The \code{CFVariable} or a descendant of \code{CFAxis}.}
+\item{x}{A \code{CFVariable} instance or a descendant of \code{CFAxis}.}
 }
 \value{
-Vector of axis lengths.
+For a \code{CFVariable} instance in argument \code{x}, a named vector of axis
+lengths, excluding any scalar axes. For a \code{CFAxis} descendant instance in
+argument \code{x}, the length of the axis.
 }
 \description{
 This method returns the lengths of the axes of a variable or axis.
@@ -20,4 +22,5 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 ds <- open_ncdf(fn)
 t2m <- ds[["t2m"]]
 dim(t2m)
+dim(t2m$axes[["time"]])
 }
