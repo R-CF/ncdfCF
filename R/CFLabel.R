@@ -46,6 +46,24 @@ CFLabel <- R6::R6Class("CFLabel",
       self$print_attributes(...)
     },
 
+    #' @description Create a copy of this label set. The copy is completely
+    #'   separate from `self`, meaning that both `self` and all of its
+    #'   components are made from new instances.
+    #' @param name The name for the new label set. If an empty string is passed,
+    #'   will use the name of this label set.
+    #' @return The newly created label set.
+    copy = function(name = "") {
+      if (self$has_resource) {
+        lbl <- CFLabel$new(self$NCvar, start = private$.start_count$start, count = private$.start_count$count)
+        if (nzchar(name))
+          lbl$name <- name
+      } else {
+        if (!nzchar(name))
+          name <- self$name
+        lbl <- CFLabel$new(name, values = self$values)
+      }
+    },
+
     #' @description Given a range of domain coordinate values, returns the
     #'   indices into the axis that fall within the supplied range.
     #' @param rng A character vector whose extreme (alphabetic) values indicate
@@ -68,18 +86,22 @@ CFLabel <- R6::R6Class("CFLabel",
     #'   the returned axis.
     #' @return A `CFLabel` instance, or `NULL` if the `rng` values are invalid.
     subset = function(name, rng) {
-      if (missing(name)) name <- self$name
-      rng <- range(rng)
-      if (rng[1L] < 1L || rng[2L] > self$length)
-        NULL
+      if (is.null(rng))
+        self$copy(name)
       else {
-        if (self$has_resource) {
-          l <- CFLabel$new(private$.NCvar, values = self$values[rng[1L]:rng[2L]],
-                           start = rng[1L], count = rng[2L] - rng[1L] + 1L)
-          l$name <- name
-          l
-        } else
-          CFLabel$new(name, values = self$coordinates[rng[1L]:rng[2L]])
+        if (missing(name)) name <- self$name
+        rng <- as.integer(range(rng))
+        if (rng[1L] < 1L || rng[2L] > self$length)
+          NULL
+        else {
+          if (self$has_resource) {
+            l <- CFLabel$new(private$.NCvar, values = self$values[rng[1L]:rng[2L]],
+                             start = rng[1L], count = rng[2L] - rng[1L] + 1L)
+            l$name <- name
+            l
+          } else
+            CFLabel$new(name, values = self$coordinates[rng[1L]:rng[2L]])
+        }
       }
     },
 

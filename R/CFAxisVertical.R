@@ -65,6 +65,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     compute = function() {
       if (is.null(private$.computed_values))
         switch(private$.parameter_name,
+          "atmosphere_hybrid_sigma_pressure_coordinate" = private$atmosphere_hybrid_sigma_pressure_coordinate(),
           "ocean_s_coordinate_g1" = private$ocean_s_coordinate_g1(),
           "ocean_s_coordinate_g2" = private$ocean_s_coordinate_g2()
         )
@@ -72,12 +73,17 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     },
 
     # Helper function to get the data for a specific formula term. Can also
-    # return 0 if the data is not found.
+    # return `NULL` if the data is not found.
     get_data = function(term) {
-      v <- private$.terms[private$.terms$term == term, ]$param[[1L]]
-      if (inherits(v, "CFVerticalParametricTerm"))
-        v$raw()
-      else 0
+      term <- private$.terms[private$.terms$term == term, ]
+      if (nrow(term)) {
+        v <- term$param[[1L]]
+        if (inherits(v, "CFVerticalParametricTerm"))
+          v$values
+        else if (term$variable[[1L]] == self$name)
+          self$values
+        else NULL
+      } else NULL
     },
 
     # Helper function to compute z(i,j,k,n) = s(i,j,k) * t(i,j,n)
@@ -89,10 +95,49 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
       ijkn * aperm(ijnk, c(1, 2, 4, 3))
     },
 
+    atmosphere_hybrid_sigma_pressure_coordinate = function() {
+      # p(n,k,j,i) = a(k)*p0 + b(k)*ps(n,j,i)
+      # or
+      # p(n,k,j,i) = ap(k) + b(k)*ps(n,j,i)
+      # Alternatively: a/ap(k,l) and b(k,l) to calculate layer boundary values as in Sentinel 5P
+      ps <- private$get_data("ps")
+      b <- private$get_data("b")
+
+      # Construct the axes for the result. Use "ps" axes [i,j,n], combine with
+      # self axis [k].
+      ps_var <- private$.terms[private$.terms$term == "ps", ]$param[[1L]]
+      ax <- ps_var$axes
+      axes <- list(ax[[1L]], ax[[2L]], self, ax[[3L]])
+
+      a <- private$get_data("a")
+      ap <- if (is.null(a)) private$get_data("ap")
+            else a * private$get_data("p0")
+
+      if (is.matrix(b)) {
+        # layer boundary values variant
+        crds <- sweep(ps %o% b, 4:5, ap, "+")
+        crds <- aperm(crds, c(1, 2, 5, 3, 4))
+        axes <- append(axes, CFAxisDiscrete$new("layer_position", start = 0L, count = 2L))
+      } else {
+        # layer mid-point variant
+        crds <- sweep(ps %o% b, 4, ap, "+")
+        crds <- aperm(crds, c(1, 2, 4, 3))
+      }
+
+      # Construct the result
+      names(axes) <- sapply(axes, function(ax) ax$name)
+      private$.name_computed <- "air_pressure"
+      v <- CFVariable$new(private$.name_computed, values = crds, axes = axes)
+      un <- ps_var$attribute("units")
+      if (!is.na(un))
+        v$set_attribute("units", "NC_CHAR", un)
+      private$.computed_values <- v
+    },
+
     ocean_s_coordinate_g1 = function() {
       # z(n,k,j,i) = S(k,j,i) + eta(n,j,i) * (1 + S(k,j,i) / depth(j,i))
       # where S(k,j,i) = depth_c * s(k) + (depth(j,i) - depth_c) * C(k)
-      s <- self$values
+      s <- private$get_data("s")
       C <- private$get_data("C")
       eta <- private$get_data("eta")
       depth <- private$get_data("depth")
@@ -102,9 +147,9 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
 
       # Construct the axes for the result. Use "depth" axes [i,j], combine with
       # self axis [k].
-      ax <- private$.terms[private$.terms$term == "depth", ]$param[[1L]]
-      axes <- append(ax$axes, self)
-      names(axes) <- c(names(ax$axes), self$name)
+      ax <- private$.terms[private$.terms$term == "depth", ]$param[[1L]]$axes
+      axes <- append(ax, self)
+      names(axes) <- c(names(ax), self$name)
 
       crds <- if (identical(eta, 0))
         S
@@ -134,7 +179,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     ocean_s_coordinate_g2 = function() {
       # z(n,k,j,i) = eta(n,j,i) + (eta(n,j,i) + depth(j,i)) * S(k,j,i)
       # where S(k,j,i) = (depth_c * s(k) + depth(j,i) * C(k)) / (depth_c + depth(j,i))
-      s <- self$values
+      s <- private$get_data("s")
       C <- private$get_data("C")
       eta <- private$get_data("eta")
       depth <- private$get_data("depth")

@@ -39,6 +39,7 @@ resource.}
 \itemize{
 \item \href{#method-CFLabel-new}{\code{CFLabel$new()}}
 \item \href{#method-CFLabel-print}{\code{CFLabel$print()}}
+\item \href{#method-CFLabel-copy}{\code{CFLabel$copy()}}
 \item \href{#method-CFLabel-slice}{\code{CFLabel$slice()}}
 \item \href{#method-CFLabel-subset}{\code{CFLabel$subset()}}
 \item \href{#method-CFLabel-write}{\code{CFLabel$write()}}
@@ -112,6 +113,29 @@ Prints a summary of the labels to the console.
 is \verb{width = } to indicate a maximum width of attribute columns.}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFLabel-copy"></a>}}
+\if{latex}{\out{\hypertarget{method-CFLabel-copy}{}}}
+\subsection{Method \code{copy()}}{
+Create a copy of this label set. The copy is completely
+separate from \code{self}, meaning that both \code{self} and all of its
+components are made from new instances.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFLabel$copy(name = "")}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{The name for the new label set. If an empty string is passed,
+will use the name of this label set.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The newly created label set.
 }
 }
 \if{html}{\out{<hr>}}

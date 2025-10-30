@@ -82,8 +82,10 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
     # @param refresh Flag to indicate if a fresh read from file should be made.
     # @return A matrix with the data of the variable in raw format.
     read_data = function(refresh = FALSE) {
-      if (is.null(private$.values) || refresh)
+      if (is.null(private$.values) || refresh) {
         private$.values <- private$as_matrix()
+        self$set_attribute("actual_range", "NC_FLOAT", range(private$.values, na.rm = TRUE))
+      }
       private$.values
     },
 

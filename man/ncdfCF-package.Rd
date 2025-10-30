@@ -67,11 +67,13 @@ class that you need to access netCDF data from a file or an online resource.
 \itemize{
 \item \code{show()}: Print information about the data set to the console. This will
 print some information on the resource, as well as all identified data
-variables, axes, and the global attributes.
+variables and the global attributes.
 \item \code{name}: The name of the data set.
 \item \code{conventions}: The conventions that this data set complies with. There
 could be multiple conventions listed in a single character string. CF
 Metadata Conventions use a "CF-1.*" label.
+\item \code{var_names()}, \code{axis_names}: Return a character vector with the names of the
+objects.
 \item \code{variables()}, \code{axes()}, \code{attributes()}: Return a \code{list} or \code{data.frame} with
 all objects of the specific type found in the data set.
 \item \code{find_by_name()}: Find a named object in the data set. This can be a data

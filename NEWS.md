@@ -2,6 +2,7 @@
 
 #### Conventions
 - Ancillary variables are now associated with the data variables that reference them. They can be added with the `CFVariable::add_ancillary_variable()` method and the list of registered ancillary variables can be retrieved with the `CFVariable$ancillary_variables` field. Ancillary variables are `CFVariable` instances themselves and can have bounds and other data variable properties, and be processed like regular data variables.
+- Vertical parametric coordinate "Atmosphere hybrid sigma pressure coordinate" added. This supports both the layer mid-point formulation of CF and the layer top and bottom formulation often found in satellite observations of the atmosphere.
 
 #### API
 - The `CFVariable::subset()` method now has an optional `.resolution` argument that can be specified when interpolation with auxiliary latitude-longitude coordinates is requested; otherwise it has no effect. This change does not break any existing code.
@@ -13,6 +14,7 @@
 - `CFVariable` S3 methods fixed.
 - Multi-dimensional auxiliary lat-long grids are silently truncated to 2D.
 - Additional testing added.
+- Bug fixes.
 
 # ncdfCF 0.7.0
 
