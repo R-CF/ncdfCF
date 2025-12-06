@@ -32,7 +32,7 @@ NCVariable uses.}
 
 \item{\code{netcdf4}}{(read-only) Additional properties for a \code{netcdf4} resource.}
 
-\item{\code{CF}}{Register CF object that uses this netCDF variable, or retrieve
+\item{\code{CF}}{Register CF objects that use this netCDF variable, or retrieve
 the list of registered CF objects.}
 
 \item{\code{fullname}}{(read-only) Name of this netCDF variable including the

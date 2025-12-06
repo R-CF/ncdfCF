@@ -6,10 +6,14 @@
 
 #### API
 - The `CFVariable::subset()` method now has an optional `.resolution` argument that can be specified when interpolation with auxiliary latitude-longitude coordinates is requested; otherwise it has no effect. This change does not break any existing code.
+- Function `create_ncdf()` creates a new netCDF resource on disk, as a container for persisting `CFVariable` instances. Work in progress.
 - Documentation updated.
 
 #### Code
 - Access to data values is now consistently using the public field `values` for "standard" objects. Only objects that require special values management use private fields and expose the data values in another, more appropriate form.
+- `CFGroup` hierarchy maintains all CF objects. 1:1 alignment with the `NCGroup` hierarchy for NC objects backed by a netCDF resource.
+- `CFData` class spawned from `CFObject` to act as a base class for CF objects that hold data, most notably `CFVariable` and `CFAxis` and descendant classes.
+- Attributes are now considered when testing for axis equality.
 - Support some edge cases in reading marginally-CF netCDF files, including lateral search.
 - `CFVariable` S3 methods fixed.
 - Multi-dimensional auxiliary lat-long grids are silently truncated to 2D.

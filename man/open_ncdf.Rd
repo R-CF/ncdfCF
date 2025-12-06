@@ -4,15 +4,19 @@
 \alias{open_ncdf}
 \title{Open a netCDF resource}
 \usage{
-open_ncdf(resource)
+open_ncdf(resource, write = FALSE)
 }
 \arguments{
 \item{resource}{The name of the netCDF resource to open, either a local file
 name or a remote URI.}
+
+\item{write}{\code{TRUE} if the file is to be opened for writing, \code{FALSE}
+(default) for read-only access. Ignored for online resources, which are
+always opened for read-only access.}
 }
 \value{
-An \code{CFDataset} instance, or an error if the resource was not found
-or errored upon reading.
+An \code{CFDataset} instance, or an error if the resource was not found or
+errored upon reading.
 }
 \description{
 This function will read the metadata of a netCDF resource and interpret the

@@ -108,7 +108,7 @@ netcdf_data_types <- c("NC_BYTE", "NC_UBYTE", "NC_CHAR", "NC_SHORT",
 #' @return `TRUE` if all `nm` are valid, `FALSE` otherwise.
 #' @noRd
 .is_valid_name <- function(nm) {
-  !is.null(nm) && all(grepl("^[a-zA-Z][a-zA-Z0-9_]{0,254}$", nm))
+  is.character(nm) & nzchar(nm) & all(grepl("^[a-zA-Z][a-zA-Z0-9_]{0,254}$", nm))
 }
 
 #' Convert regular character strings to valid CF names. Non-permitted characters
@@ -145,7 +145,7 @@ netcdf_data_types <- c("NC_BYTE", "NC_UBYTE", "NC_CHAR", "NC_SHORT",
 #' Test if vectors `x` and `y` have near-identical values.
 #' @noRd
 .near <- function(x, y) {
-  abs(x - y) < CF$eps
+  abs(x - y) <= max(CF$eps * max(abs(x), abs(y)), 1e-12)
 }
 
 #' Test if vector `x` is monotonic, either increasing or decreasing. Return value

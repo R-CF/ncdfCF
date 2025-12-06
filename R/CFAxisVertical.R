@@ -271,7 +271,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     #' @return The newly created axis.
     copy = function(name = "") {
       if (self$has_resource) {
-        ax <- CFAxisVertical$new(self$NCvar, start = private$.start_count$start,
+        ax <- CFAxisVertical$new(self$NC, start = private$.start_count$start,
                                  count = private$.start_count$count, attributes = self$attributes)
         if (nzchar(name))
           ax$name <- name
@@ -387,7 +387,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
       else {
         rng <- range(rng)
         if (self$has_resource) {
-          ax <- CFAxisVertical$new(private$.NCvar, start = private$.start_count$start + rng[1L] -1L,
+          ax <- CFAxisVertical$new(private$.NCobj, start = private$.start_count$start + rng[1L] -1L,
                                    count = rng[2L] - rng[1L] + 1L, attributes = self$attributes)
           if (nzchar(name))
             ax$name <- name

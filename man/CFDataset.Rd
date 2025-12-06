@@ -171,7 +171,7 @@ Find an object by its name. Given the name of a CF data
 variable or axis, possibly preceded by an absolute group path, return
 the object to the caller.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$find_by_name(name, scope = "CF")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$find_by_name(name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -179,10 +179,6 @@ the object to the caller.
 \describe{
 \item{\code{name}}{The name of a CF data variable or axis, with an optional
 absolute group path.}
-
-\item{\code{scope}}{The scope to look for the name. Either "CF" (default) to
-search for CF variables or axes, or "NC" to look for groups or NC
-variables.}
 }
 \if{html}{\out{</div>}}
 }

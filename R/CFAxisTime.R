@@ -130,7 +130,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     copy = function(name = "") {
       time <- private$.tm$copy()
       if (self$has_resource) {
-        ax <- CFAxisTime$new(self$NCvar, values = time, start = private$.start_count$start,
+        ax <- CFAxisTime$new(self$NC, values = time, start = private$.start_count$start,
                              count = private$.start_count$count, attributes = self$attributes)
         if (nzchar(name))
           ax$name <- name
@@ -140,6 +140,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         ax <- CFAxisTime$new(name, values = time, attributes = self$attributes)
       }
       private$copy_properties_into(ax)
+      ax
     },
 
     #' @description Create a copy of this axis but using the supplied values.
@@ -254,7 +255,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         newtm <- attr(idx, "CFTime")
 
         if (self$has_resource) {
-          ax <- CFAxisTime$new(private$.NCvar, values = newtm, start = private$.start_count$start + rng[1L] - 1L,
+          ax <- CFAxisTime$new(private$.NCobj, values = newtm, start = private$.start_count$start + rng[1L] - 1L,
                                count = rng[2L] - rng[1L] + 1L, attributes = self$attributes)
           if (nzchar(name))
             ax$name <- name

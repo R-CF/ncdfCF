@@ -31,6 +31,8 @@ by higher-level methods.
 
 \item{\code{uri}}{(read-only) The URI of the netCDF resource, either a local
 filename or the location of an online resource.}
+
+\item{\code{can_write}}{(read-only) Is the resource writable?}
 }
 \if{html}{\out{</div>}}
 }
@@ -38,8 +40,10 @@ filename or the location of an online resource.}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFResource-new}{\code{CFResource$new()}}
+\item \href{#method-CFResource-print}{\code{CFResource$print()}}
 \item \href{#method-CFResource-create}{\code{CFResource$create()}}
 \item \href{#method-CFResource-close}{\code{CFResource$close()}}
+\item \href{#method-CFResource-sync}{\code{CFResource$sync()}}
 \item \href{#method-CFResource-group_handle}{\code{CFResource$group_handle()}}
 \item \href{#method-CFResource-clone}{\code{CFResource$clone()}}
 }
@@ -52,18 +56,34 @@ Create a connection to a netCDF resource. This is called by
 \code{\link[=open_ncdf]{open_ncdf()}} when opening a netCDF resource or when saving a dataset
 to file. You should never have to call this directly.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFResource$new(uri)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFResource$new(uri, write)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{uri}}{The URI to the netCDF resource.}
+
+\item{\code{write}}{Logical flag to indicate if the resource should be
+read-write.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
 An instance of this class.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFResource-print"></a>}}
+\if{latex}{\out{\hypertarget{method-CFResource-print}{}}}
+\subsection{Method \code{print()}}{
+Print a summary of the netCDF resource to the console.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFResource$print()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}
@@ -87,6 +107,16 @@ Closing an open netCDF resource. It should rarely be
 necessary to call this method directly.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFResource$close()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFResource-sync"></a>}}
+\if{latex}{\out{\hypertarget{method-CFResource-sync}{}}}
+\subsection{Method \code{sync()}}{
+Write any buffered data to the netCDF resource.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFResource$sync()}\if{html}{\out{</div>}}
 }
 
 }

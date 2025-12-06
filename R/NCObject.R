@@ -111,6 +111,17 @@ NCObject <- R6::R6Class("NCObject",
     #     } else
     #       warning("Cannot set attributes without all required columns", call. = FALSE)
     #   }
+    },
+
+    #' @field CF Register CF object that uses this netCDF object, or retrieve
+    #' the list of registered CF objects.
+    CF = function(value) {
+      if (missing(value))
+        private$.CFobjects
+      else if (inherits(value, "CFObject"))
+        private$.CFobjects[[value$fullname]] <- value
+      else
+        warning("Can only reference an object descending from `CFObject` from an NC object", call. = FALSE) # nocov
     }
   )
 )

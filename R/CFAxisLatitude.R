@@ -45,7 +45,7 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
     #' @return The newly created axis.
     copy = function(name = "") {
       if (self$has_resource) {
-        ax <- CFAxisLatitude$new(self$NCvar, values = self$values, start = private$.start_count$start,
+        ax <- CFAxisLatitude$new(self$NC, values = self$values, start = private$.start_count$start,
                                  count = private$.start_count$count, attributes = self$attributes)
         if (nzchar(name))
           ax$name <- name
@@ -91,7 +91,7 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
       else {
         rng <- range(rng)
         if (self$has_resource) {
-          ax <- CFAxisLatitude$new(private$.NCvar, start = private$.start_count$start + rng[1L] - 1L,
+          ax <- CFAxisLatitude$new(private$.NCobj, start = private$.start_count$start + rng[1L] - 1L,
                                    count = rng[2L] - rng[1L] + 1L, attributes = self$attributes)
           if (nzchar(name))
             ax$name <- name

@@ -22,6 +22,9 @@ this class manages the attributes for its descendent classes.
 
 \item{\code{attributes}}{(read-only) Read the attributes of the object. When
 there are no attributes, an empty \code{data.frame} will be returned.}
+
+\item{\code{CF}}{Register CF object that uses this netCDF object, or retrieve
+the list of registered CF objects.}
 }
 \if{html}{\out{</div>}}
 }

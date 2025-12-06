@@ -63,16 +63,17 @@ CFDataset <- R6::R6Class("CFDataset",
       if (private$.format == "netcdf4")
         cat("Has groups :", self$has_subgroups(), "\n")
 
-      nvars <- length(self$root$variables())
+      vars <- self$root$objects("CFVariable")
+      nvars <- length(vars)
       if (nvars) {
         if (nvars == 1L) cat("\nVariable:\n") else cat("\nVariables:\n")
-        vars <- do.call(rbind, lapply(self$root$variables(), function(v) v$brief()))
+        vars <- do.call(rbind, lapply(vars, function(v) v$brief()))
         if (all(vars$long_name == "")) vars$long_name <- NULL
         if (all(vars$units == "")) vars$units <- NULL
         vars <- as.data.frame(vars[lengths(vars) > 0L])
         print(.slim.data.frame(vars, ...), right = FALSE, row.names = FALSE)
 
-        ev <- self$root$CFmeasures
+        ev <- self$root$objects("CFCellMeasure", recursive = FALSE)
         if (length(ev))
           cat("\nExternal variable", if (length(ev) > 1L) "s", ": ", paste(names(ev), collapse = ", "), "\n", sep = "")
       }
@@ -123,17 +124,16 @@ CFDataset <- R6::R6Class("CFDataset",
     #' @description Find an object by its name. Given the name of a CF data
     #'   variable or axis, possibly preceded by an absolute group path, return
     #'   the object to the caller.
-    #'
     #' @param name The name of a CF data variable or axis, with an optional
     #'   absolute group path.
-    #' @param scope The scope to look for the name. Either "CF" (default) to
-    #'   search for CF variables or axes, or "NC" to look for groups or NC
-    #'   variables.
-    #'
     #' @return The object with the provided name. If the object is not found,
     #'   returns `NULL`.
-    find_by_name = function(name, scope = "CF") {
-      self$root$find_by_name(name, scope)
+    find_by_name = function(name) {
+      obj <- self$root$find_by_name(name)
+      if (is.null(obj))
+        self$root$NC$find_by_name(name)
+      else
+        obj
     },
 
     #' @description This method lists the CF data variables located in this
@@ -141,7 +141,7 @@ CFDataset <- R6::R6Class("CFDataset",
     #'
     #' @return A list of `CFVariable` instances.
     variables = function() {
-      self$root$variables()
+      self$root$objects("CFVariable", recursive = TRUE)
     },
 
     #' @description This method lists the axes located in this netCDF resource,
@@ -149,7 +149,7 @@ CFDataset <- R6::R6Class("CFDataset",
     #'
     #' @return A list of `CFAxis` descendants.
     axes = function() {
-      self$root$axes()
+      self$root$objects("CFAxis", recursive = TRUE)
     },
 
     #' @description List all the attributes of a group. This method returns a
@@ -163,7 +163,7 @@ CFDataset <- R6::R6Class("CFDataset",
       if (missing(group))
         self$root$attributes
       else {
-        grp <- self$root$find_by_name(group, "NC")
+        grp <- self$root$find_by_name(group)
         if (is.null(grp)) NULL
         else grp$attributes
       }
@@ -307,8 +307,5 @@ groups.CFDataset <- function(x) {
 #' var <- ds[[v1]]
 #' var
 `[[.CFDataset` <- function(x, i) {
-  obj <- x$find_by_name(i)
-  if (is.null(obj))
-    obj <- x$find_by_name(i, "NC")
-  obj
+  x$find_by_name(i)
 }

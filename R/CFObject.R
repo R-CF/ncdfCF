@@ -6,40 +6,27 @@ NULL
 #' CF base object
 #'
 #' @description This class is a basic ancestor to all classes that represent CF
-#'   objects, specifically data variables and axes. More useful classes use this
-#'   class as ancestor.
+#'   objects, specifically groups, data variables and axes. More useful classes
+#'   use this class as ancestor.
 #'
 #' @docType class
 CFObject <- R6::R6Class("CFObject",
   private = list(
-    # The NCVariable instance that this CF object represents if it was read from
+    # The NC object that this CF object represents if it was read from
     # file.
-    .NCvar = NULL,
+    .NCobj = NULL,
 
-    # The id and name of this object. They are taken from the NCVariable upon
+    # The id and name of this object. They are taken from the NC object upon
     # creation, if supplied, otherwise the name should be supplied and the id
     # will be generated.
     .id = -1L,
     .name = "",
 
-    # The values of this object. This class does not manipulate the values in
-    # any way - that is the job of descendant classes.
-    .values = NULL,
-
-    # List of start and count vectors for reading data from file. The length of
-    # the vectors must agree with the array on file or be `NA`.
-    .start_count = list(start = NA, count = NA),
-
-    # The data type of the data in the object. Taken from NCvar if set,
-    # otherwise the descending class must set it explicitly when receiving its
-    # data values.
-    .data_type = "NC_NAT", # Not a type
-
-    # Flag to indicate if the data on disk is too large for memory.
-    .data_oversized = FALSE,
+    # Flag to indicate if there are any unsaved edits to the object.
+    .dirty = FALSE,
 
     # The attributes of the CF object. Upon read from a netCDF resource they are
-    # copied from the NCVariable. For a new CF object, just an empty data.frame
+    # copied from the NC object. For a new CF object, just an empty data.frame
     # with the appropriate columns.
     .attributes = data.frame(name = character(0), type = character(0), length = integer(0), value = numeric(0)),
 
@@ -56,219 +43,52 @@ CFObject <- R6::R6Class("CFObject",
       attributes
     },
 
-    # Sanitize the start and count values. NAs are converted to numbers and
-    # values have to agree with .values and .NCvar. Returns the sanitized start
-    # and count vectors as a list.
-    check_start_count = function(start, count) {
-      d <- as.integer(self$dim())
-      if (!length(d)) # When a NC variable does not have any data
-        return(list(start = NA, count = NA))
-
-      if (length(start) == 1L && is.na(start))
-        start <- rep(1L, length(d))
-      else
-        start[is.na(start)] <- 1L
-
-      if (any(start > d))
-        stop("Start values cannot be larger than the dimensions of the data.", call. = FALSE) # nocov
-      if (length(count) == 1L && is.na(count))
-        count <- d - start + 1L
-      else {
-        ndx <- which(is.na(count))
-        count[ndx] <- d[ndx] - start[ndx] + 1L
-      }
-
-      if (any(count > d - start + 1L))
-        stop("Count values cannot extend beyond the dimensions of the data.", call. = FALSE) # nocov
-
-      list(start = start, count = count)
-    },
-
-    # Set the values of the object. Perform some basic checks when set programmatically.
-    # Values may be NULL
-    set_values = function(values) {
-      # FIXME: Check that dim(values) agrees with NCvar and data_type
-
-      # Check if we can find a vtype from the NCvar, possibly packed
-      if (!is.null(private$.NCvar)) {
-        private$.data_type <- private$.NCvar$attribute("scale_factor", "type")
-        if (is.na(private$.data_type))
-          private$.data_type <- private$.NCvar$attribute("add_offset", "type")
-        if (is.na(private$.data_type))
-          private$.data_type <- private$.NCvar$vtype
-        else
-          # Data is packed in the netCDF file: throw away the attributes and let
-          # RNetCDF deal with unpacking when reading the data using the
-          # attributes in the NCVariable.
-          self$delete_attribute(c("scale_factor", "add_offset", "valid_range", "valid_min", "valid_max"))
-      } else if (!is.null(values)) {
-        if (storage.mode(values) == "double") {
-          # If the data is numeric, check attributes to select between NC_DOUBLE and NC_FLOAT
-          if (!is.na(dt <- self$attribute("_FillValue", "type"))) private$.data_type <- dt
-          else if (!is.na(dt <- self$attribute("missing_value", "type"))) private$.data_type <- dt
-          else private$.data_type <- "NC_DOUBLE"
-        } else {
-          # Get the data_type from the values
-          private$.data_type <- switch(storage.mode(values),
-                                        "character" = "NC_STRING",
-                                        "integer" = "NC_INT",
-                                        "logical" = "NC_SHORT",
-                                        stop("Unsupported data type for a CF object.", call. = FALSE))
-        }
-      } else
-        private$.data_type <- "NC_NAT"
-
-      # Set the actual_range attribute for the values
-      if (is.null(values))
-        self$delete_attribute("actual_range")
-      else {
-        rng <- range(values, na.rm = TRUE)
-        if (is.na(rng[1L]))
-          self$delete_attribute("actual_range")
-        else {
-          if (is.numeric(rng))
-            rng <- round(rng, CF.options$digits)
-          self$set_attribute("actual_range", private$.data_type, rng)
-        }
-      }
-
-      private$.values <- values
-    },
-
-    # Read the data of the CF object from file. The data is cached by `self` so
-    # repeated calls do not access the netCDF resource, unless argument
-    # `refresh` is `TRUE`.
-    # This method will not assess how big the data is before reading it so there
-    # is a chance that memory will be exhausted. The calling code should check
-    # for this possibility and break up the reading of data into chunks.
-    # @param refresh Should the data be read from file if the object is linked?
-    #   This will replace current values, if previously loaded. Default `FALSE`.
-    # @return An array of data, invisibly, as prescribed by the `start` and
-    #   `count` values used to create this object. If the object is not backed
-    #   by a netCDF resource, returns `NULL`.
-    read_data = function(refresh = FALSE) {
-      if ((!is.null(private$.NCvar)) && (is.null(private$.values) || refresh))
-        private$set_values(private$.NCvar$get_data(private$.start_count$start, private$.start_count$count))
-      invisible(private$.values)
-    },
-
-    # Read a chunk of data of the CF object, as defined by the `start` and
-    # `count` vectors. Note that these vectors are relative to any subset of the
-    # netCDF data variable that this CF object refers to. The data read by this
-    # method will not be stored in `self` so the calling code must take a
-    # reference to it.
-    # @param start Vector of indices where to start reading data along the
-    #   dimensions of the array. The vector must be `NA` to read all data,
-    #   otherwise it must have agree with the dimensions of the array.
-    # @param count Vector of number of elements to read along each dimension of
-    #   the array on file. The vector must be `NA` to read to the end of each
-    #   dimension, otherwise its value must agree with the corresponding `start`
-    #   value and the dimension of the array.
-    # @return An array of data, as prescribed by the `start` and `count`
-    #   arguments, or `NULL` if there is no data.
-    read_chunk = function(start, count) {
-      sc <- private$check_start_count(start, count)
-      if (is.na(sc$start[1L])) return(NULL)
-
-      if (!is.null(private$.values)) {
-        # Extract from loaded data
-        cll <- paste0("private$.values[", paste(sc$start, ":", sc$start + sc$count - 1L, sep = "", collapse = ", "), "]")
-        eval(parse(text = cll))
-      } else {
-        # Read from the netCDF resource
-        start <- private$.start_count$start + sc$start - 1L
-        private$.NCvar$get_data(start, sc$count)
-      }
-    },
-
     # Make sure we detach before we poof out.
     finalize = function() {
-      if (!is.null(private$.NCvar))
-        private$.NCvar$detach(self)
+      if (!is.null(private$.NCobj) && inherits(private$.NCobj, "NCVariable"))
+        private$.NCobj$detach(self)
     }
   ),
   public = list(
-    #' @description Create a new `CFobject` instance from a variable in a netCDF
+    #' @description Create a new `CFobject` instance from an object in a netCDF
     #'   resource. This method is called upon opening a netCDF resource. It is
     #'   rarely, if ever, useful to call this constructor directly. Instead, use
     #'   the methods from higher-level classes such as [CFVariable].
-    #'
-    #' @param var The [NCVariable] instance upon which this CF object is based
+    #' @param obj The [NCObject] instance upon which this CF object is based
     #'   when read from a netCDF resource, or the name for the new CF object to
     #'   be created.
-    #' @param values Optional. The values of the object in an array.
-    #' @param start Optional. Vector of indices where to start reading data
-    #'   along the dimensions of the array on file. The vector must be `NA` to
-    #'   read all data, otherwise it must have agree with the dimensions of the
-    #'   array on file. Ignored when argument `var` is not an `NCVariable`
-    #'   instance.
-    #' @param count Optional. Vector of number of elements to read along each
-    #'   dimension of the array on file. The vector must be `NA` to read to the
-    #'   end of each dimension, otherwise its value must agree with the
-    #'   corresponding `start` value and the dimension of the array on file.
-    #'   Ignored when argument `var` is not an `NCVariable` instance.
     #' @param attributes Optional. A `data.frame` with the attributes of the
-    #'   object. When argument `var` is an `NCVariable` instance and this
-    #'   argument is an empty `data.frame` (default), arguments will be read
-    #'   from the resource.
+    #'   object. When argument `obj` is an `NCGroup` instance and this argument
+    #'   is an empty `data.frame` (default), arguments will be read from the
+    #'   resource.
     #' @return A `CFObject` instance.
-    initialize = function(var, values, start = 1L, count = NA, attributes = data.frame()) {
+    initialize = function(obj, attributes = data.frame()) {
       atts <- private$check_attributes(attributes)
 
-      if (is.character(var)) {
-        if (!.is_valid_name(var))
+      if (is.character(obj)) {
+        if (!.is_valid_name(obj))
           stop("Name is not valid for a CF object.", call. = FALSE) # nocov
-        private$.name <- var
+        private$.name <- obj
         private$.id <- CF$newVarId()
         private$.attributes <- atts
+        private$.dirty <- TRUE
       } else {
-        var$CF <- self
-        private$.NCvar <- var
-        private$.id <- var$id
-        private$.name <- var$name
-        private$.start_count <- private$check_start_count(start, count)
+        obj$CF <- self
+        private$.NCobj <- obj
+        private$.id <- obj$id
+        private$.name <- obj$name
         private$.attributes <- if (nrow(attributes)) atts
-                               else var$attributes[-1L]
+                               else obj$attributes[-1L]
       }
-
-      if (missing(values) || (length(values) == 1L && is.na(values)))
-        values <- NULL
-      private$set_values(values)
     },
 
     #' @description Detach the current object from its underlying netCDF
-    #'   resource. If necessary, data is read from the resource before
-    #'   detaching.
+    #'   resource.
     detach = function() {
-      if (!is.null(private$.NCvar)) {
-        if (is.null(private$.values))
-          private$read_data()
-        private$.NCvar$detach(self)
-        private$.NCvar <- NULL
+      if (!is.null(private$.NCobj)) {
+        private$.NCobj$detach(self)
+        private$.NCobj <- NULL
       }
-    },
-
-    #' @description Retrieve the dimensions of the data of this object. This
-    #' could be for the data on file or for in-memory data.
-    #' @param dimension Optional. The index of the dimension to retrieve the
-    #' length for. If omitted, retrieve the lengths of all dimensions.
-    #' @return Integer vector with the length of each requested dimension.
-    dim = function(dimension) {
-      len <- if (!is.null(private$.values)) {
-        d <- dim(private$.values)
-        if (length(d) == 0L) length(private$.values) else d
-      } else if (self$has_resource) {
-        if (length(private$.start_count$count) > 1L || !is.na(private$.start_count$count))
-          private$.start_count$count - private$.start_count$start + 1L
-        else
-          private$.NCvar$dim()
-      } else
-        return(NULL)
-
-      if (missing(dimension))
-        len
-      else
-        len[dimension]
     },
 
     #' @description Retrieve an attribute of a CF object.
@@ -360,6 +180,31 @@ CFObject <- R6::R6Class("CFObject",
       invisible(self)
     },
 
+    #' @description Test if the supplied attributes are identical to the
+    #'   attributes of this instance. The order of the attributes may differ but
+    #'   the names, types and values must coincide.
+    #' @param cmp `data.frame` with attributes to compare to the attributes of
+    #'   this instance.
+    #' @return `TRUE` if attributes in argument `cmp` are identical to the
+    #'   attributes of this instance, `FALSE` otherwise.
+    attributes_identical = function(cmp) {
+      atts <- self$attributes
+      if (nrow(atts) == nrow(cmp)) {
+        # Find matching order between attribute sets
+        cmp_idx <- match(cmp$name, atts$name)
+        if (any(is.na(cmp_idx)))
+          return(FALSE)
+
+        # All same type and length
+        if (all(atts[cmp_idx, "type"] == cmp$type & atts[cmp_idx, "length"] == cmp$length))
+          # All same values - consider vectorized data
+          return(all(mapply(function(s, c) {
+            all(if (is.double(s)) .near(s, c) else s == c)
+          }, atts$value[cmp_idx], cmp$value)))
+      }
+      FALSE
+    },
+
     #' @description Append the text value of an attribute. If an attribute
     #'   `name` already exists, the `value` will be appended to the existing
     #'   value of the attribute. If the attribute `name` does not exist it will
@@ -417,25 +262,6 @@ CFObject <- R6::R6Class("CFObject",
           RNetCDF::att.put.nc(nc, nm, attr$name, attr$type, unlist(attr$value, use.names = FALSE))
         }
       invisible(self)
-    },
-
-    #' @description Add names of axes or auxiliary coordinates to the
-    #'   "coordinates" attribute, avoiding duplicates and retaining previous
-    #'   values.
-    #' @param crds Vector of axis or auxiliary coordinate names to add to the
-    #'   attribute.
-    #' @return Self, invisibly.
-    update_coordinates_attribute = function(crds) {
-      current <- private$.attributes[private$.attributes$name == "coordinates", ]
-      if (nrow(current)) {
-        # There is a "coordinates" attribute already so append values
-        new_val <- paste(unique(c(strsplit(current[[1L, "value"]], " ")[[1L]], crds)), collapse = " ")
-        private$.attributes[private$.attributes$name == "coordinates", ]$value <- new_val
-        private$.attributes[private$.attributes$name == "coordinates", ]$length <- nchar(new_val)
-      } else
-        # Make a new "coordinates" attribute
-        self$set_attribute("coordinates", "NC_CHAR", paste(crds, collapse = " "))
-      invisible(self)
     }
   ),
   active = list(
@@ -483,7 +309,7 @@ CFObject <- R6::R6Class("CFObject",
     #'   located in.
     group = function(value) {
       if (missing(value) && self$has_resource)
-        private$.NCvar$group
+        private$.NCobj$group
       else
         NULL
     },
@@ -498,43 +324,24 @@ CFObject <- R6::R6Class("CFObject",
     #' @field has_resource (read-only) Flag that indicates if this object has an
     #'   underlying netCDF resource.
     has_resource = function(value) {
-      !is.null(private$.NCvar)
+      !is.null(private$.NCobj)
     },
 
-    #' @field NCvar (read-only) The `NCVariable` object that links to an
-    #'   underlying netCDF resource, or `NULL` if not linked.
-    NCvar = function(value) {
+    #' @field NC (read-only) The NC object that links to an underlying netCDF
+    #'   resource, or `NULL` if not linked.
+    NC = function(value) {
       if (missing(value))
-        private$.NCvar
+        private$.NCobj
     },
 
-    #' @field data_type Set or retrieve the data type of the data in the
-    #'   object. Setting the data type to a wrong value can have unpredictable
-    #'   but catastrophic consequences.
-    data_type = function(value) {
+    #' @field is_dirty Flag to indicate if the object has any unsaved changes.
+    is_dirty = function(value) {
       if (missing(value))
-        private$.data_type
-      else if (self$has_resource)
-        stop("Cannot set the data type of a variable present on file.", call. = FALSE) # nocov
-      else if (value %in% netcdf_data_types)
-        private$.data_type <- value
+        private$.dirty
+      else if (is.logical(value) && length(value) == 1L)
+        private$.dirty <- value
       else
-        stop("Unrecognized data type for a netCDF variable.", call. = FALSE) # nocov
-    },
-
-    #' @field ndims (read-only) Retrieve the dimensionality of the data in the
-    #'   array, or the netCDF resource.
-    ndims = function(value) {
-      if (missing(value))
-        length(self$dim())
-    },
-
-    #' @field array_indices Returns a list with columns "start" and "count"
-    #'   giving the indices for reading the data of this object from a netCDF
-    #'   resource.
-    array_indices = function(value) {
-      if (missing(value))
-        private$.start_count
+        stop("Must supply single logical value.", call. = FALSE)
     }
   )
 )

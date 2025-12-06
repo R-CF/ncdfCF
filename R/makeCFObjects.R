@@ -1,3 +1,32 @@
+#' Create a new data set
+#'
+#' This function creates a new, empty data set with an associated netCDF file
+#' in "netcdf4" format.
+#' @param fn The fully qualified filename of the netCDF file to create. The
+#' file cannot already exist. It is recommended that the filename uses an
+#' extension of ".nc".
+#' @export
+create_ncdf <- function(fn) {
+  # Create the netCDF file on disk
+  res <- CFResource$new(fn, write = TRUE)
+  res$create()
+
+  # Create the CFDataset and associate it with the new netCDF file
+  ds <- CFDataset$new(res, "netcdf4")
+
+  # Fetch the root group and add it to the CFDataset
+  g <- RNetCDF::grp.inq.nc(res$handle)
+  grp <- NCGroup$new(id = as.integer(g$self), name = g$name, parent = ds, resource = res)
+  root <- CFGroup$new(grp, parent = ds)
+
+  # Minimal attributes
+  root$set_attribute("Conventions", "NC_CHAR", "CF-1.13")
+  root$set_attribute("source", "NC_CHAR", paste("Created with R package ncdfCF", utils::packageVersion("ncdfCF"), "on", format(Sys.time(), usetz = TRUE, digits = 0L)))
+
+  ds$root <- root
+  ds
+}
+
 #' Create an axis
 #'
 #' With this method you can create an axis to use with new [CFVariable]

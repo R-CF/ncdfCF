@@ -222,7 +222,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #' @return The newly created axis.
     copy = function(name = "") {
       if (self$has_resource) {
-        ax <- CFAxisNumeric$new(self$NCvar, start = private$.start_count$start,
+        ax <- CFAxisNumeric$new(self$NC, start = private$.start_count$start,
                                 count = private$.start_count$count,
                                 orientation = private$.orient, attributes = self$attributes)
         if (nzchar(name))
@@ -302,7 +302,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       else {
         rng <- range(rng)
         if (self$has_resource) {
-          ax <- CFAxisNumeric$new(private$.NCvar, start = private$.start_count$start + rng[1L] -1L,
+          ax <- CFAxisNumeric$new(private$.NCobj, start = private$.start_count$start + rng[1L] -1L,
                                   count = rng[2L] - rng[1L] + 1L, orientation = private$.orient,
                                   attributes = self$attributes)
           if (nzchar(name))

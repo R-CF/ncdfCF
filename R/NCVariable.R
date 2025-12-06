@@ -178,7 +178,7 @@ NCVariable <- R6::R6Class("NCVariable",
         stop("Cannot set the netcdf4 properties of a NC object.", call. = FALSE) # nocov
     },
 
-    #' @field CF Register CF object that uses this netCDF variable, or retrieve
+    #' @field CF Register CF objects that use this netCDF variable, or retrieve
     #' the list of registered CF objects.
     CF = function(value) {
       if (missing(value))

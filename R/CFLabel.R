@@ -7,7 +7,8 @@
 #' @docType class
 #' @export
 CFLabel <- R6::R6Class("CFLabel",
-  inherit = CFObject,
+  inherit = CFData,
+  cloneable = FALSE,
   public = list(
     #' @description Create a new instance of this class.
     #' @param var The [NCVariable] instance upon which this CF object is based
@@ -54,7 +55,7 @@ CFLabel <- R6::R6Class("CFLabel",
     #' @return The newly created label set.
     copy = function(name = "") {
       if (self$has_resource) {
-        lbl <- CFLabel$new(self$NCvar, start = private$.start_count$start, count = private$.start_count$count)
+        lbl <- CFLabel$new(self$NC, start = private$.start_count$start, count = private$.start_count$count)
         if (nzchar(name))
           lbl$name <- name
       } else {
@@ -95,7 +96,7 @@ CFLabel <- R6::R6Class("CFLabel",
           NULL
         else {
           if (self$has_resource) {
-            l <- CFLabel$new(private$.NCvar, values = self$values[rng[1L]:rng[2L]],
+            l <- CFLabel$new(private$.NCobj, values = self$values[rng[1L]:rng[2L]],
                              start = rng[1L], count = rng[2L] - rng[1L] + 1L)
             l$name <- name
             l
@@ -115,7 +116,7 @@ CFLabel <- R6::R6Class("CFLabel",
     #'   have been written to file before this method is called.
     #' @return Self, invisibly.
     write = function(nc, dim) {
-      h <- if (inherits(nc, "NetCDF")) nc else self$NCvar$handle
+      h <- if (inherits(nc, "NetCDF")) nc else self$NC$handle
 
       self$id <- RNetCDF::var.def.nc(h, self$name, private$.data_type, dim)
       self$write_attributes(h, self$name)
@@ -164,7 +165,7 @@ CFLabel <- R6::R6Class("CFLabel",
     #'   resource.
     dimid = function(value) {
       if (missing(value)) {
-        if (self$has_resource) private$.NCvar$dimids[1L]
+        if (self$has_resource) private$.NCobj$dimids[1L]
         else -1L
       }
     }

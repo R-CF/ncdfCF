@@ -1,7 +1,7 @@
 #' CF data variable
 #'
-#' @description This class represents a CF data variable,
-#'   the object that provides access to an array of data.
+#' @description This class represents a CF data variable, the object that
+#'   provides access to an array of data.
 #'
 #'   The CF data variable instance provides access to all the details that have
 #'   been associated with the data variable, such as axis information, grid
@@ -9,7 +9,8 @@
 #'
 #' @docType class
 CFVariable <- R6::R6Class("CFVariable",
-  inherit = CFObject,
+  inherit = CFData,
+  cloneable = FALSE,
   private = list(
     # A list with the axes of the variable.
     .axes = list(),
@@ -401,7 +402,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #'
     #' @return Character string with very basic variable information.
     shard = function() {
-      self$NCvar$shard()
+      self$NC$shard()
     },
 
     #' @description Retrieve interesting details of the data variable.
@@ -439,6 +440,25 @@ CFVariable <- R6::R6Class("CFVariable",
         if (want == "axis") private$.axes[[which(ndx)]]
         else private$.axes[[which(ndx)]]$time
       } else NULL
+    },
+
+    #' @description Add names of axes or auxiliary coordinates to the
+    #'   "coordinates" attribute, avoiding duplicates and retaining previous
+    #'   values.
+    #' @param crds Vector of axis or auxiliary coordinate names to add to the
+    #'   attribute.
+    #' @return Self, invisibly.
+    update_coordinates_attribute = function(crds) {
+      current <- private$.attributes[private$.attributes$name == "coordinates", ]
+      if (nrow(current)) {
+        # There is a "coordinates" attribute already so append values
+        new_val <- paste(unique(c(strsplit(current[[1L, "value"]], " ")[[1L]], crds)), collapse = " ")
+        private$.attributes[private$.attributes$name == "coordinates", ]$value <- new_val
+        private$.attributes[private$.attributes$name == "coordinates", ]$length <- nchar(new_val)
+      } else
+        # Make a new "coordinates" attribute
+        self$set_attribute("coordinates", "NC_CHAR", paste(crds, collapse = " "))
+      invisible(self)
     },
 
     #' @description Retrieve the data in the object exactly as it was read from
@@ -677,7 +697,7 @@ CFVariable <- R6::R6Class("CFVariable",
       axes <- c(axes, private$.axes[-(1L:num_axes)])  # Add the scalar axes to the list
       names(axes) <- sapply(axes, function(a) a$name) # New axis names
       if (is.null(aux)) {
-        v <- CFVariable$new(private$.NCvar, values = d, axes = axes,
+        v <- CFVariable$new(private$.NCobj, values = d, axes = axes,
                             start = start + private$.start_count$start - 1L, count = count,
                             attributes = atts)
         v$crs <- private$.crs
@@ -1266,7 +1286,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   NC variable used by this variable.
     dimids = function(value) {
       if (missing(value))
-        self$NCvar$dimids
+        self$NC$dimids
     },
 
     #' @field dimnames (read-only) Retrieve dimnames of the data variable.
@@ -1462,7 +1482,7 @@ dimnames.CFVariable <- function(x) {
       }
     }
   }
-  data <- x$NCvar$get_data(start, count)
+  data <- x$NC$get_data(start, count)
 
   # Apply dimension data and other attributes
   if (length(x$axes) && length(dim(data)) == length(dnames)) { # dimensions may have been dropped automatically, e.g. NC_CHAR to character string

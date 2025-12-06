@@ -11,7 +11,7 @@
 #'
 #' @docType class
 CFAxis <- R6::R6Class("CFAxis",
-  inherit = CFObject,
+  inherit = CFData,
   cloneable = FALSE,
   private = list(
     # A character "X", "Y", "Z" or "T" to indicate the
@@ -108,8 +108,8 @@ CFAxis <- R6::R6Class("CFAxis",
 
       super$initialize(var, values = values, start = start, count = count, attributes = attributes)
       if (inherits(var, "NCVariable")) {
-        private$.unlimited <- if (private$.NCvar$ndims) private$.NCvar$dimension(1L)$unlim else FALSE
-        private$.dimid <- private$.NCvar$dimids[1L]
+        private$.unlimited <- if (private$.NCobj$ndims) private$.NCobj$dimension(1L)$unlim else FALSE
+        private$.dimid <- private$.NCobj$dimids[1L]
       }
 
       private$.orient <- orientation
@@ -222,14 +222,15 @@ CFAxis <- R6::R6Class("CFAxis",
     },
 
     #' @description Tests if the axis passed to this method is identical to
-    #'   `self`. This only tests for generic properties - class, length and name - with
-    #'   further assessment done in sub-classes.
+    #'   `self`. This only tests for generic properties - class, length, name
+    #'   and attributes - with further assessment done in sub-classes.
     #' @param axis The `CFAxis` instance to test.
     #' @return `TRUE` if the two axes are identical, `FALSE` if not.
     identical = function(axis) {
-      all(class(self) == class(axis)) &&
+      all(class(self)[1L] == class(axis)[1L]) &&
       self$length == axis$length &&
-      self$name == axis$name
+      self$name == axis$name &&
+      self$attributes_identical(axis$attributes)
     },
 
     #' @description Tests if the axis passed to this method can be appended to
@@ -306,7 +307,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   was read from (the file must have been opened for writing).
     #' @return Self, invisibly.
     write = function(nc = NULL) {
-      h <- if (inherits(nc, "NetCDF")) nc else private$.NCvar$handle
+      h <- if (inherits(nc, "NetCDF")) nc else private$.NCobj$handle
 
       private$.id <- if (self$length == 1L && !private$.unlimited)
         RNetCDF::var.def.nc(h, self$name, private$.data_type, NA)

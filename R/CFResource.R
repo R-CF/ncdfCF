@@ -16,6 +16,7 @@ CFResource <- R6::R6Class("CFResource",
   private = list(
     .uri    = "",
     .handle = NULL,
+    .write = FALSE,
 
     open = function() {
       if (!is.null(private$.handle)) {
@@ -24,7 +25,7 @@ CFResource <- R6::R6Class("CFResource",
           return()
       }
 
-      err <- try(private$.handle <- RNetCDF::open.nc(private$.uri), silent = TRUE)
+      err <- try(private$.handle <- RNetCDF::open.nc(private$.uri, write = private$.write), silent = TRUE)
       if (inherits(err, "try-error")) {
         self$error <- "Error opening netCDF resource"
         private$.handle <- NULL
@@ -47,11 +48,24 @@ CFResource <- R6::R6Class("CFResource",
     #'   to file. You should never have to call this directly.
     #'
     #' @param uri The URI to the netCDF resource.
+    #' @param write Logical flag to indicate if the resource should be
+    #'   read-write.
     #' @return An instance of this class.
-    initialize = function(uri) {
+    initialize = function(uri, write) {
       private$.uri <- uri
       private$.handle <- NULL
+      private$.write <- write
       self$error <- ""
+    },
+
+    #' @description Print a summary of the netCDF resource to the console.
+    #' @return Self, invisibly.
+    print = function() {
+      cat("<netCDF resource>", private$.uri, "\n")
+      cat("Open    :", if (is.null(private$.handle)) "\u2718" else "\u2714", "\n")
+      cat("Writable:", if (private$.write) "\u2714" else "\u2718", "\n")
+
+      invisible(self)
     },
 
     #' @description Create a new file on disk for the netCDF resource.
@@ -67,6 +81,12 @@ CFResource <- R6::R6Class("CFResource",
     close = function() {
       try(RNetCDF::close.nc(private$.handle), silent = TRUE)
       private$.handle <- NULL
+    },
+
+    #' @description Write any buffered data to the netCDF resource.
+    sync = function() {
+      private$open()
+      try(RNetCDF::sync.nc(private$.handle), silent = TRUE)
     },
 
     #' @description Every group in a netCDF file has its own handle, with the
@@ -109,6 +129,12 @@ CFResource <- R6::R6Class("CFResource",
         private$.uri
       } else
         stop("Can't assign a new value to a netCDF resource URI", call. = FALSE)
+    },
+
+    #' @field can_write (read-only) Is the resource writable?
+    can_write = function(value) {
+      if (missing(value))
+        private$.write
     }
   )
 )

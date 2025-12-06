@@ -21,7 +21,8 @@ CRS_names <- c("albers_conical_equal_area", "azimuthal_equidistant",
 #' @docType class
 #' @export
 CFGridMapping <- R6::R6Class("CFGridMapping",
-  inherit = CFObject,
+  inherit = CFData,
+  cloneable = FALSE,
   private = list(
     # The formal grid mapping name as defined in CF
     .grid_mapping_name = "latitude_longitude",

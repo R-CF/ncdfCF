@@ -10,7 +10,8 @@
 #'
 #' @export
 CFBounds <- R6::R6Class("CFBounds",
-  inherit = CFObject,
+  inherit = CFData,
+  cloneable = FALSE,
   private = list(
     # The number of dimensions that the owning object has.
     .owner_dims = 1L
@@ -99,7 +100,7 @@ CFBounds <- R6::R6Class("CFBounds",
     #' @return The newly created bounds object.
     copy = function(name = "") {
       if (self$has_resource) {
-        b <- CFBounds$new(private$.NCvar, start = private$.start_count$start,
+        b <- CFBounds$new(private$.NCobj, start = private$.start_count$start,
                           count = private$.start_count$count, attributes = self$attributes)
         if (nzchar(name))
           b$name <- name
@@ -127,7 +128,7 @@ CFBounds <- R6::R6Class("CFBounds",
       vals <- if (is.null(self$values)) NULL
               else vals <- self$values[, rng[1L]:rng[2L]]
 
-      if (is.null(private$.NCvar))
+      if (is.null(private$.NCobj))
         CFBounds$new(private$.name, values = vals, attributes = self$attributes)
       else {
         # The rng argument applies to anything but the first dimension (= # of vertices)
@@ -139,14 +140,14 @@ CFBounds <- R6::R6Class("CFBounds",
 
         # Add 1L to start and count to read first layer of any additional dimensions that shouldn't be there,
         # if there are such additional dimensions.
-        if ((nd <- private$.NCvar$ndims) > length(start)) {
+        if ((nd <- private$.NCobj$ndims) > length(start)) {
           ones <- rep(1L, nd - length(start))
           start <- c(start, ones)
           count <- c(count, ones)
           vals <- NULL
         }
 
-        CFBounds$new(private$.NCvar, values = vals, start = start, count = count, attributes = self$attributes)
+        CFBounds$new(private$.NCobj, values = vals, start = start, count = count, attributes = self$attributes)
       }
     },
 

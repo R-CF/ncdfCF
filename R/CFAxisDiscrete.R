@@ -156,7 +156,7 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #'   `NULL`, the handle to a netCDF file or a group therein.
     #' @return Self, invisibly.
     write = function(nc = NULL) {
-      h <- if (inherits(nc, "NetCDF")) nc else self$NCvar$handle
+      h <- if (inherits(nc, "NetCDF")) nc else self$NC$handle
 
       # Write the dimension for the axis. Error will be thrown when trying to
       # write a dimension that's already defined, such as when a dimension is

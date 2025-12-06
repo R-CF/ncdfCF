@@ -9,7 +9,7 @@ This class represents a formula term for a parametric vertical
 axis.
 }
 \section{Super classes}{
-\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFVariable]{ncdfCF::CFVariable}} -> \code{CFVerticalParametricTerm}
+\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFData]{ncdfCF::CFData}} -> \code{\link[ncdfCF:CFVariable]{ncdfCF::CFVariable}} -> \code{CFVerticalParametricTerm}
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
@@ -32,7 +32,6 @@ Metadata Conventions.}
 \item \href{#method-CFVerticalParametricTerm-new}{\code{CFVerticalParametricTerm$new()}}
 \item \href{#method-CFVerticalParametricTerm-print}{\code{CFVerticalParametricTerm$print()}}
 \item \href{#method-CFVerticalParametricTerm-subset}{\code{CFVerticalParametricTerm$subset()}}
-\item \href{#method-CFVerticalParametricTerm-clone}{\code{CFVerticalParametricTerm$clone()}}
 }
 }
 \if{html}{\out{
@@ -40,12 +39,12 @@ Metadata Conventions.}
 <ul>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>ncdfCF::CFObject$attributes_identical()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="dim"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-dim'><code>ncdfCF::CFObject$dim()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="update_coordinates_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-update_coordinates_attribute'><code>ncdfCF::CFObject$update_coordinates_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href='../../ncdfCF/html/CFData.html#method-CFData-dim'><code>ncdfCF::CFData$dim()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="add_ancillary_variable"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-add_ancillary_variable'><code>ncdfCF::CFVariable$add_ancillary_variable()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="add_auxiliary_coordinate"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-add_auxiliary_coordinate'><code>ncdfCF::CFVariable$add_auxiliary_coordinate()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="add_cell_measure"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-add_cell_measure'><code>ncdfCF::CFVariable$add_cell_measure()</code></a></span></li>
@@ -63,6 +62,7 @@ Metadata Conventions.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="summarise"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-summarise'><code>ncdfCF::CFVariable$summarise()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="terra"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-terra'><code>ncdfCF::CFVariable$terra()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="time"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-time'><code>ncdfCF::CFVariable$time()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="update_coordinates_attribute"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-update_coordinates_attribute'><code>ncdfCF::CFVariable$update_coordinates_attribute()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -181,23 +181,6 @@ grid transformation is specified.}
 }
 \subsection{Returns}{
 The new parametric term object.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFVerticalParametricTerm-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-CFVerticalParametricTerm-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVerticalParametricTerm$clone(deep = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
 }
 }
 }

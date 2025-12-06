@@ -13,14 +13,13 @@ imagery.
 https://oceancolor.gsfc.nasa.gov/resources/docs/technical/ocean_level-3_binned_data_products.pdf
 }
 \section{Super classes}{
-\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFVariable]{ncdfCF::CFVariable}} -> \code{CFVariableL3b}
+\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFData]{ncdfCF::CFData}} -> \code{\link[ncdfCF:CFVariable]{ncdfCF::CFVariable}} -> \code{CFVariableL3b}
 }
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFVariableL3b-new}{\code{CFVariableL3b$new()}}
 \item \href{#method-CFVariableL3b-subset}{\code{CFVariableL3b$subset()}}
-\item \href{#method-CFVariableL3b-clone}{\code{CFVariableL3b$clone()}}
 }
 }
 \if{html}{\out{
@@ -28,12 +27,12 @@ https://oceancolor.gsfc.nasa.gov/resources/docs/technical/ocean_level-3_binned_d
 <ul>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>ncdfCF::CFObject$attributes_identical()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="dim"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-dim'><code>ncdfCF::CFObject$dim()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="update_coordinates_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-update_coordinates_attribute'><code>ncdfCF::CFObject$update_coordinates_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href='../../ncdfCF/html/CFData.html#method-CFData-dim'><code>ncdfCF::CFData$dim()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="add_ancillary_variable"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-add_ancillary_variable'><code>ncdfCF::CFVariable$add_ancillary_variable()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="add_auxiliary_coordinate"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-add_auxiliary_coordinate'><code>ncdfCF::CFVariable$add_auxiliary_coordinate()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="add_cell_measure"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-add_cell_measure'><code>ncdfCF::CFVariable$add_cell_measure()</code></a></span></li>
@@ -52,6 +51,7 @@ https://oceancolor.gsfc.nasa.gov/resources/docs/technical/ocean_level-3_binned_d
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="summarise"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-summarise'><code>ncdfCF::CFVariable$summarise()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="terra"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-terra'><code>ncdfCF::CFVariable$terra()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="time"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-time'><code>ncdfCF::CFVariable$time()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="update_coordinates_attribute"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-update_coordinates_attribute'><code>ncdfCF::CFVariable$update_coordinates_attribute()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -136,23 +136,6 @@ argument falls entirely outside of the range of the axis. Note that
 degenerate dimensions (having \code{length(.) == 1}) are dropped from the
 array but the corresponding axis is maintained in the result as a
 scalar axis.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFVariableL3b-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-CFVariableL3b-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariableL3b$clone(deep = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
 }
 }
 }
