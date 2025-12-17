@@ -54,10 +54,12 @@ current group.}
 \item \href{#method-CFGroup-new}{\code{CFGroup$new()}}
 \item \href{#method-CFGroup-print}{\code{CFGroup$print()}}
 \item \href{#method-CFGroup-hierarchy}{\code{CFGroup$hierarchy()}}
+\item \href{#method-CFGroup-create_subgroup}{\code{CFGroup$create_subgroup()}}
 \item \href{#method-CFGroup-add_subgroups}{\code{CFGroup$add_subgroups()}}
 \item \href{#method-CFGroup-add_CF_object}{\code{CFGroup$add_CF_object()}}
 \item \href{#method-CFGroup-objects}{\code{CFGroup$objects()}}
 \item \href{#method-CFGroup-find_by_name}{\code{CFGroup$find_by_name()}}
+\item \href{#method-CFGroup-add_variable}{\code{CFGroup$add_variable()}}
 }
 }
 \if{html}{\out{
@@ -141,10 +143,34 @@ recursion when there are groups below the current group.}
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFGroup-create_subgroup"></a>}}
+\if{latex}{\out{\hypertarget{method-CFGroup-create_subgroup}{}}}
+\subsection{Method \code{create_subgroup()}}{
+Create a new group as a subgroup of the current group.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFGroup$create_subgroup(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{The name of the new subgroup. This must be a valid CF name,
+so not contain any slash '/' characters among other restrictions, and
+it cannot be already present in the group.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The newly created group, invisibly, or an error.
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGroup-add_subgroups"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGroup-add_subgroups}{}}}
 \subsection{Method \code{add_subgroups()}}{
-Add subgroups to the current group.
+Add subgroups to the current group. These subgroups must be
+fully formed, including having set their parent to this group. Use the
+\code{create_subgroup()} method to add a group from scratch.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFGroup$add_subgroups(grps)}\if{html}{\out{</div>}}
 }
@@ -164,9 +190,13 @@ Self, invisibly.
 \if{html}{\out{<a id="method-CFGroup-add_CF_object"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGroup-add_CF_object}{}}}
 \subsection{Method \code{add_CF_object()}}{
-Add one or more CF object to the current group.
+Add one or more CF object to the current group. This is an
+internal method that should not be invoked by the user. The objects to
+be added are considered atomic and not assessed for any contained
+objects. Use a method like \code{add_variable()} to add a CF variable to
+this group as well as its composing sub-objects such as axes.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGroup$add_CF_object(obj, silent = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFGroup$add_CF_object(obj, silent = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -176,10 +206,10 @@ Add one or more CF object to the current group.
 thereof. If it is a \code{list}, the list elements must be named after the
 CF object they contain.}
 
-\item{\code{silent}}{Logical. If \code{TRUE}, CF objects in argument \code{obj} whose name
-is already present in the list of CF objects \emph{and} whose class is
-identical to the already present object are silently dropped; otherwise
-or when the argument is \code{FALSE} (default) an error is thrown.}
+\item{\code{silent}}{Logical. If \code{TRUE} (default), CF objects in argument \code{obj}
+whose name is already present in the list of CF objects \emph{and} whose
+class is identical to the already present object are silently dropped;
+otherwise or when the argument is \code{FALSE} an error is thrown.}
 }
 \if{html}{\out{</div>}}
 }
@@ -238,6 +268,41 @@ group, data variable, axis, auxiliary axis, label, grid mapping, etc.}
 \subsection{Returns}{
 The object with the provided name. If the object is not found,
 returns \code{NULL}.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFGroup-add_variable"></a>}}
+\if{latex}{\out{\hypertarget{method-CFGroup-add_variable}{}}}
+\subsection{Method \code{add_variable()}}{
+Add a \link{CFVariable} object to the group. If there is another
+object with the same name in this group an error is thrown. For
+associated objects (such as axes, CRS, boundary variables, etc), if
+another object with the same name is otherwise identical to the
+associated object then that object will be linked from the variable,
+otherwise an error is thrown.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFGroup$add_variable(var, locations = list())}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{var}}{An instance of \code{CFVariable} or any of its descendants.}
+
+\item{\code{locations}}{Optional. A \code{list} whose named elements correspond to
+the names of objects associated with the variable in argument \code{var}.
+Each list element has a single character string indicating the group in
+the hierarchy where the object should be stored. As an example, if the
+variable has axes "lon" and "lat" and they should be stored in the
+parent group of this group, then specify \code{locations = list(lon = "..", lat = "..")}. Locations can use absolute paths or relative paths from
+the current group. Associated objects that are not in the list will be
+stored in this group. If the argument \code{locations} is not provided, all
+associated objects will be stored in this group.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Argument \code{var}, invisibly.
 }
 }
 }

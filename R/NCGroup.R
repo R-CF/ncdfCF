@@ -100,6 +100,8 @@ NCGroup <- R6::R6Class("NCGroup",
             stop("Malformed group path:", name[1L], call. = FALSE) # nocov
           for (i in seq_len(dotdots))
             grp <- grp$parent
+          if (parts == dotdots)
+            return(grp)
           elements <- elements[-dotdot]
         }
       }

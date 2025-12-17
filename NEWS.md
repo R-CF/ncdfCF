@@ -5,8 +5,9 @@
 - Vertical parametric coordinate "Atmosphere hybrid sigma pressure coordinate" added. This supports both the layer mid-point formulation of CF and the layer top and bottom formulation often found in satellite observations of the atmosphere.
 
 #### API
+- `CFGroup` is now the main hierarchy from the user perspective, maintaining all CF objects. The `CFGroup$add_variable()` method places a `CFVariable` somewhere in the hierarchy, with owned CF objects (like axes, boundary values, CRS, etc) automatically attached to the same group or some other specified group.
 - The `CFVariable::subset()` method now has an optional `.resolution` argument that can be specified when interpolation with auxiliary latitude-longitude coordinates is requested; otherwise it has no effect. This change does not break any existing code.
-- Function `create_ncdf()` creates a new netCDF resource on disk, as a container for persisting `CFVariable` instances. Work in progress.
+- Function `create_ncdf()` creates a new netCDF resource on disk, as a container for persisting CFobjects. Work in progress.
 - Documentation updated.
 
 #### Code

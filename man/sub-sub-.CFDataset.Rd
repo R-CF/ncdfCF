@@ -4,7 +4,7 @@
 \name{[[.CFDataset}
 \alias{[[.CFDataset}
 \alias{[[,CFDataset-method}
-\title{Get a variable or axis object from a data set}
+\title{Get a CF object from a data set}
 \usage{
 \method{[[}{CFDataset}(x, i)
 }

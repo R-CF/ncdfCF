@@ -280,7 +280,7 @@ groups.CFDataset <- function(x) {
   nm
 }
 
-#' Get a variable or axis object from a data set
+#' Get a CF object from a data set
 #'
 #' This method can be used to retrieve a variable or axis from the data set by
 #' name.

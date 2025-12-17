@@ -11,7 +11,6 @@
 #'   by higher-level methods.
 #'
 #' @docType class
-#'
 CFResource <- R6::R6Class("CFResource",
   private = list(
     .uri    = "",

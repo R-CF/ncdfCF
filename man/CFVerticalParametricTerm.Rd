@@ -50,6 +50,7 @@ Metadata Conventions.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="add_cell_measure"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-add_cell_measure'><code>ncdfCF::CFVariable$add_cell_measure()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="append"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-append'><code>ncdfCF::CFVariable$append()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="array"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-array'><code>ncdfCF::CFVariable$array()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="attach_to_group"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-attach_to_group'><code>ncdfCF::CFVariable$attach_to_group()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="brief"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-brief'><code>ncdfCF::CFVariable$brief()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="data.table"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-data.table'><code>ncdfCF::CFVariable$data.table()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="detach"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-detach'><code>ncdfCF::CFVariable$detach()</code></a></span></li>

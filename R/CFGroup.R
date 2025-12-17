@@ -41,7 +41,12 @@ CFGroup <- R6::R6Class("CFGroup",
       super$initialize(grp)
 
       private$.parent <- parent
-      private$.name <- if (inherits(grp, "NCGroup")) grp$name else grp
+      if (inherits(grp, "NCGroup"))
+        private$.name <- grp$name
+      else {
+        private$.name <- grp
+        private$.dirty <- TRUE
+      }
     },
 
     #' @description Summary of the group printed to the console.
@@ -95,7 +100,25 @@ CFGroup <- R6::R6Class("CFGroup",
       hier
     },
 
-    #' @description Add subgroups to the current group.
+    #' @description Create a new group as a subgroup of the current group.
+    #' @param name The name of the new subgroup. This must be a valid CF name,
+    #'   so not contain any slash '/' characters among other restrictions, and
+    #'   it cannot be already present in the group.
+    #' @return The newly created group, invisibly, or an error.
+    create_subgroup = function(name) {
+      if (!.is_valid_name(name))
+        stop("Specified name is not valid.", call. = FALSE)
+      if (name %in% names(private$.subgroups))
+        stop("Specified name is a duplicate of another object.", call. = FALSE)
+
+      grp <- CFGroup$new(name, parent = self)
+      private$.subgroups <- c(private$.subgroups, setNames(list(grp), name))
+      invisible(grp)
+    },
+
+    #' @description Add subgroups to the current group. These subgroups must be
+    #' fully formed, including having set their parent to this group. Use the
+    #' `create_subgroup()` method to add a group from scratch.
     #' @param grps A `CFGroup`, or `list` thereof.
     #' @return Self, invisibly.
     add_subgroups = function(grps) {
@@ -105,16 +128,20 @@ CFGroup <- R6::R6Class("CFGroup",
       invisible(self)
     },
 
-    #' @description Add one or more CF object to the current group.
+    #' @description Add one or more CF object to the current group. This is an
+    #'   internal method that should not be invoked by the user. The objects to
+    #'   be added are considered atomic and not assessed for any contained
+    #'   objects. Use a method like `add_variable()` to add a CF variable to
+    #'   this group as well as its composing sub-objects such as axes.
     #' @param obj An instance of a `CFObject` descendant class, or a `list`
     #'   thereof. If it is a `list`, the list elements must be named after the
     #'   CF object they contain.
-    #' @param silent Logical. If `TRUE`, CF objects in argument `obj` whose name
-    #'   is already present in the list of CF objects *and* whose class is
-    #'   identical to the already present object are silently dropped; otherwise
-    #'   or when the argument is `FALSE` (default) an error is thrown.
+    #' @param silent Logical. If `TRUE` (default), CF objects in argument `obj`
+    #'   whose name is already present in the list of CF objects *and* whose
+    #'   class is identical to the already present object are silently dropped;
+    #'   otherwise or when the argument is `FALSE` an error is thrown.
     #' @return Self, invisibly, or an error.
-    add_CF_object = function(obj, silent = FALSE) {
+    add_CF_object = function(obj, silent = TRUE) {
       if (is.list(obj)) {
         names <- sapply(obj, function(o) o$name)
         idx <- match(names, names(private$.objects))
@@ -186,6 +213,8 @@ CFGroup <- R6::R6Class("CFGroup",
             stop("Malformed group path:", name[1L], call. = FALSE) # nocov
           for (i in seq_len(dotdots))
             grp <- grp$parent
+          if (parts == dotdots)
+            return(grp)
           elements <- elements[-dotdot]
         }
       }
@@ -195,7 +224,7 @@ CFGroup <- R6::R6Class("CFGroup",
         for (i in 1L:(length(elements) - 1L)) {
           grp <- grp$subgroups[[ elements[i] ]]
           if (is.null(grp))
-            stop("Path not found in the resource:", name[1L], call. = FALSE) # nocov
+            stop("Path not found in the resource: ", name[1L], call. = FALSE) # nocov
         }
 
       nm <- elements[length(elements)]
@@ -206,8 +235,8 @@ CFGroup <- R6::R6Class("CFGroup",
         idx <- which(names(objs) == nm)
         if (length(idx))
           objs[[idx]]
-        else if (nm %in% names(private$.subgroups))
-          private$.subgroups[[nm]]
+        else if (nm %in% names(g$subgroups))
+          g$subgroups[[nm]]
         else NULL
       }
 
@@ -241,6 +270,29 @@ CFGroup <- R6::R6Class("CFGroup",
 
       # Give up
       NULL
+    },
+
+    #' @description Add a [CFVariable] object to the group. If there is another
+    #'   object with the same name in this group an error is thrown. For
+    #'   associated objects (such as axes, CRS, boundary variables, etc), if
+    #'   another object with the same name is otherwise identical to the
+    #'   associated object then that object will be linked from the variable,
+    #'   otherwise an error is thrown.
+    #' @param var An instance of `CFVariable` or any of its descendants.
+    #' @param locations Optional. A `list` whose named elements correspond to
+    #'   the names of objects associated with the variable in argument `var`.
+    #'   Each list element has a single character string indicating the group in
+    #'   the hierarchy where the object should be stored. As an example, if the
+    #'   variable has axes "lon" and "lat" and they should be stored in the
+    #'   parent group of this group, then specify `locations = list(lon = "..",
+    #'   lat = "..")`. Locations can use absolute paths or relative paths from
+    #'   the current group. Associated objects that are not in the list will be
+    #'   stored in this group. If the argument `locations` is not provided, all
+    #'   associated objects will be stored in this group.
+    #' @return Argument `var`, invisibly.
+    add_variable = function(var, locations = list()) {
+      var$attach_to_group(self, locations)
+      invisible(var)
     }
   ),
   active = list(

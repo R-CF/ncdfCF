@@ -65,10 +65,10 @@ CFVariable <- R6::R6Class("CFVariable",
       sapply(1L:private$num_dim_axes(), function(i) private$.axes[[i]]$length)
     },
 
-    # Check that names passed as arguments to $subset() and $profile() are valid.
-    # This means that they must refer to an axis by name or orientation and
-    # there can be no duplication. It returns an integer vector with the order
-    # in which the axes are specified.
+    # Check that names passed as arguments to $subset() and $profile() are
+    # valid. This means that they must refer to an axis by name or orientation
+    # and there can be no duplication. It returns an integer vector with the
+    # order in which the axes are specified.
     check_names = function(nm) {
       axis_names <- names(private$.axes)
       is_axis <- match(nm, axis_names)
@@ -1171,6 +1171,37 @@ CFVariable <- R6::R6Class("CFVariable",
         #if (aux$name %in% axis$coordinate_names)
         #  self$update_coordinates_attribute(aux$name)
       }
+    },
+
+    #' @description Attach this variable to a group. If there is another object
+    #'   with the same name in this group an error is thrown. For associated
+    #'   objects (such as axes, CRS, boundary variables, etc), if another object
+    #'   with the same name is otherwise identical to the associated object then
+    #'   that object will be linked from the variable, otherwise an error is
+    #'   thrown.
+    #' @param grp An instance of [CFGroup].
+    #' @param locations Optional. A `list` whose named elements correspond to
+    #'   the names of objects associated with this variable (but not the
+    #'   variable itself). Each list element has a single character string
+    #'   indicating the group in the hierarchy where the object should be
+    #'   stored. As an example, if the variable has axes "lon" and "lat" and
+    #'   they should be stored in the parent group of `grp`, then specify
+    #'   `locations = list(lon = "..", lat = "..")`. Locations can use absolute
+    #'   paths or relative paths from the group. Associated objects that are not
+    #'   in the list will be stored in this group. If the argument `locations`
+    #'   is not provided, all associated objects will be stored in this group.
+    #' @return Self, invisibly.
+    attach_to_group = function(grp, locations) {
+      if (self$name %in% names(grp$objects))
+        stop("Duplicate name for CF object in group.", call. = FALSE)
+
+      # All objects that are added must be registered so that they can be
+      # removed if there is an error later on. General process: every object
+      # type has an attach_to_group method to handle its own attachment. If
+      # an error occurs, clean up and cascade the error to the caller.
+
+      grp$add_CF_object(self)
+      invisible(self)
     },
 
     #' @description Save the data object to a netCDF file.

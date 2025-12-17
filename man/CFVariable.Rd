@@ -88,6 +88,7 @@ description of the variable as a WKT2 string.}
 \item \href{#method-CFVariable-add_cell_measure}{\code{CFVariable$add_cell_measure()}}
 \item \href{#method-CFVariable-add_auxiliary_coordinate}{\code{CFVariable$add_auxiliary_coordinate()}}
 \item \href{#method-CFVariable-add_ancillary_variable}{\code{CFVariable$add_ancillary_variable()}}
+\item \href{#method-CFVariable-attach_to_group}{\code{CFVariable$attach_to_group()}}
 \item \href{#method-CFVariable-save}{\code{CFVariable$save()}}
 }
 }
@@ -696,6 +697,42 @@ Add an ancillary variable to this variable.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{var}}{An instance of \link{CFVariable}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-attach_to_group"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-attach_to_group}{}}}
+\subsection{Method \code{attach_to_group()}}{
+Attach this variable to a group. If there is another object
+with the same name in this group an error is thrown. For associated
+objects (such as axes, CRS, boundary variables, etc), if another object
+with the same name is otherwise identical to the associated object then
+that object will be linked from the variable, otherwise an error is
+thrown.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$attach_to_group(grp, locations)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{grp}}{An instance of \link{CFGroup}.}
+
+\item{\code{locations}}{Optional. A \code{list} whose named elements correspond to
+the names of objects associated with this variable (but not the
+variable itself). Each list element has a single character string
+indicating the group in the hierarchy where the object should be
+stored. As an example, if the variable has axes "lon" and "lat" and
+they should be stored in the parent group of \code{grp}, then specify
+\code{locations = list(lon = "..", lat = "..")}. Locations can use absolute
+paths or relative paths from the group. Associated objects that are not
+in the list will be stored in this group. If the argument \code{locations}
+is not provided, all associated objects will be stored in this group.}
 }
 \if{html}{\out{</div>}}
 }
