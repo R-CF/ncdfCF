@@ -564,7 +564,7 @@ variable and in the \code{CFVariable} instance in argument \code{from}.}
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-\code{self}, invisibly, with the arrays from this data variable and
+Self, invisibly, with the arrays from this data variable and
 \code{from} appended.
 }
 }

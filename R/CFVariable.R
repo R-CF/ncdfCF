@@ -1002,14 +1002,14 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @param along The name of the axis to append along. This must be a single
     #'   character string and the named axis has to be present both in this data
     #'   variable and in the `CFVariable` instance in argument `from`.
-    #' @return `self`, invisibly, with the arrays from this data variable and
+    #' @return Self, invisibly, with the arrays from this data variable and
     #'   `from` appended.
     append = function(from, along) {
       # Check if the `from` variable can be appended to self
       if (length(along) != 1L || !(along %in% names(private$.axes)))
-        stop("Argument `along` must be a single name of an existing axis.", call. = FALSE)
+        stop("Argument `along` must be the name of an axis present in this data variable.", call. = FALSE)
       if (length(from$axes) != length(private$.axes))
-        stop("Array `from` must have the same number of axes as this data variable", call. = FALSE)
+        stop("Data variable `from` must have the same number of axes as this data variable", call. = FALSE)
       for (ax in seq_along(self$axes)) {
         if (self$axes[[ax]]$name == along)
           axno <- ax
@@ -1023,7 +1023,17 @@ CFVariable <- R6::R6Class("CFVariable",
 
       # Merge the data values
       app <- from$raw()
-      private$set_values(abind::abind(self$values, app, along = axno))
+      dimx <- private$num_dim_axes()
+      if (axno > dimx + 1L) {
+        # The append is along a scalar axis (in self) but not the first one.
+        # The axis being merged will no longer be scalar so re-arrange axes and
+        # do an appropriate abind
+        allx <- seq_along(private$.axes)
+        ord <- c(seq(dimx), axno, allx[-c(seq(dimx), axno)])
+        private$.axes <- private$.axes[ord]
+        private$set_values(abind::abind(self$values, app, along = dimx + 1L))
+      } else
+        private$set_values(abind::abind(self$values, app, along = axno))
 
       # Unlink from any netCDF resource
       self$detach()
@@ -1063,26 +1073,25 @@ CFVariable <- R6::R6Class("CFVariable",
       if (Ybnds[1L] > Ybnds[2L]) Ybnds <- rev(Ybnds)
       ext <- round(c(Xbnds, Ybnds), CF.options$digits) # Round off spurious "accuracy"
 
+      # CRS
+      wkt2 <- if (is.null(self$crs)) "" else self$crs$wkt2(.wkt2_axis_info(self))
+
       # Create the object
       arr <- self$array()
       numdims <- length(dim(arr))
       dn <- dimnames(arr)
       if (numdims == 4L) {
-        r <- terra::sds(arr, extent = ext)
+        r <- terra::sds(arr, extent = ext, crs = wkt2)
         for (d4 in seq_along(dn[[4L]]))
           names(r[d4]) <- dn[[3L]]
         names(r) <- dn[[4L]]
       } else {
-        r <- terra::rast(arr, extent = ext)
+        r <- terra::rast(arr, extent = ext, crs = wkt2)
         if (numdims == 3L)
           names(r) <- dn[[3L]]
         else if (length(private$.axes) > 2L) # Use coordinate of a scalar axis
           names(r) <- private$.axes[[3L]]$coordinates
       }
-
-      # CRS
-      if (!is.null(self$crs))
-        crs(r) <- self$crs$wkt2(.wkt2_axis_info(self))
 
       r
     },
