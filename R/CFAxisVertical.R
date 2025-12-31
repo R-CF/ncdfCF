@@ -387,7 +387,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
       else {
         rng <- range(rng)
         if (self$has_resource) {
-          ax <- CFAxisVertical$new(private$.NCobj, start = private$.start_count$start + rng[1L] -1L,
+          ax <- CFAxisVertical$new(private$.NCobj, start = private$.start_count$start + rng[1L] - 1L,
                                    count = rng[2L] - rng[1L] + 1L, attributes = self$attributes)
           if (nzchar(name))
             ax$name <- name

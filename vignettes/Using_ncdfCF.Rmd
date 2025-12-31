@@ -56,10 +56,9 @@ Package `ncdfCF` provides a high-level interface using functions and methods tha
  * **Groups** are a feature of the newer `netcdf4` format, allowing for a directory-like structure in the netCDF resource. The specific scoping rules to find related objects distributed over multiple groups are supported.
  * The **axis designation**. The three mechanisms to identify the axis each dimension represents are applied until an axis is determined.
  * The **time axis**. Time is usually encoded as an offset from an origin. Using the [`CFtime` package](https://cran.r-project.org/web//packages//CFtime/index.html) these offsets can be turned into intelligible dates and times, for all defined calendars.
- * **Bounds** information. When present, bounds are read and used in analyses.
+ * **Bounds** information defines the size of grid cells in data variables. When present, bounds are read and used in analyses.
  * **Discrete dimensions**, possibly with character labels.
- * **Auxiliary coordinate variables** which describe **scalar axes** and
- **auxiliary longitude-latitude grids**. The latter can be used by `ncdfCF` to automatically align data variables that are not on a Cartesian grid to a longitude-latitude grid.
+ * **Auxiliary coordinate variables** which describe **scalar axes** and **auxiliary longitude-latitude grids**. The latter can be used by `ncdfCF` to automatically align data variables that are not on a Cartesian grid to a longitude-latitude grid.
  * The **cell measure variables** are read and linked to any data variables referencing them. Cell measure variables that are external to the netCDF resource with the referring data variable can be linked to the data set and then they are immediately available to the referring data variables.
  * **Labels**, as separate variables identified through the `coordinates` attribute of axes, are read, including when multiple sets of labels are defined for a single axis. Users can select which set of labels to make active for display, selection and processing.
  * The **grid_mapping variables**, providing the coordinate reference system (CRS) of the data, with support for all defined objects in the latest EPSG database as well as "manual" construction of CRSs.

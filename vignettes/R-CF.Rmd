@@ -172,7 +172,7 @@ Upon saving a `CFVariable` to a netCDF file, data may be packed and the appropri
 
 This package only interprets attributes that are defined by CF to have a special meaning that is relevant to reading, processing or writing data. Other attributes are read and presented to the user.
 
-The attribute `Conventions` is written to file with value "CF-1.12".
+The attribute `Conventions` is written to file with value "CF-1.13".
 
 The attribute `history` is created in the group of the data variable or prepended with information on any processing that has been applied to the data.
 
@@ -181,6 +181,10 @@ Other global, group or data variable attributes are not written to file automati
 ##### 2.7. Groups
 
 Fully implemented. This includes lateral search *for all objects*, which is allowed but discouraged by CF for regular coordinate variables only. Lateral search is included because some important data collections, particularly in the field of earth observation, depend on it to locate related objects over complex group hierarchies.
+
+##### 2.8. Aggregation variables
+
+Not implemented.
 
 #### 3. Description of the data
 
@@ -231,11 +235,11 @@ Fully implemented.
 
 Fully implemented for dimensional vertical axes. If the `units` library is available, a unit of pressure will be identified.
 
-Parametric vertical coordinates are partially supported. Of the nine available formulations, the "Ocean s-coordinate, generic form 1" and "Ocean s-coordinate, generic form 2" are implemented. Other formulations will be implemented as sample data is made available for testing the code.
+Parametric vertical coordinates are partially supported. Of the nine available formulations, the "Ocean s-coordinate, generic form 1", "Ocean s-coordinate, generic form 2" and "Atmosphere hybrid sigma pressure coordinate" are implemented. Other formulations will be implemented as sample data is made available for testing the code.
 
 ##### 4.4. Time coordinate
 
-The time coordinate is managed by the [CFtime](https://cran.r-project.org/package=CFtime) package. All defined calendars, including the recently added `utc` and `tai` calendars, are supported, with some restrictions. Leap seconds are fully supported in notation and arithmetic when using the `utc` calendar.
+The time coordinate is managed by the [CFtime](https://cran.r-project.org/package=CFtime) package. All defined calendars, including the recently added `utc` and `tai` calendars, are supported. Leap seconds are fully supported in notation and arithmetic when using the `utc` calendar.
 
 When encountered upon opening a netCDF resource, the deprecated `gregorian` calendar is replaced by the equivalent `standard` calendar in the user-facing code.
 

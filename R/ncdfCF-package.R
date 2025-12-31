@@ -7,7 +7,7 @@
 #' the developers of the `netcdf` library, package `ncdfCF` provides high-level
 #' access to netCDF resources. Resources are matched against the [Climate and
 #' Forecast (CF) Metadata Conventions](https://cfconventions.org/) for climate
-#' and forecasting data, current version 1.12. The CF Metadata Conventions is
+#' and forecasting data, current version 1.13. The CF Metadata Conventions is
 #' widely used for distributing files with climate observations or projections,
 #' including the Coupled Model Intercomparison Project (CMIP) data used by
 #' climate change scientists and the Intergovernmental Panel on Climate Change

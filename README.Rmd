@@ -204,6 +204,13 @@ suppressMessages(library(terra))
 terra::plot(r)
 ```
 
+A `stars` object can be created from a `CFVariable` or a `CFDataset` with multiple variables with the function `stars::st_as_stars()`.
+
+```{r stars}
+library(stars)
+(st <- st_as_stars(ts))
+```
+
 A `CFVariable` object can also be written back to a netCDF file. The object will have all its relevant attributes and properties written together with the actual data: axes, bounds, attributes, CRS. The netCDF file is of version "netcdf4" and will have the axes oriented in such a way that the file has maximum portability (specifically, data will be stored in row-major order with increasing Y values).
 
 ```{r save, eval=FALSE}

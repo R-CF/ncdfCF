@@ -86,11 +86,11 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 #>  tp   Total precipitation   m     NC_DOUBLE longitude, latitude, time
 #> 
 #> Attributes:
-#>  name        type    length value                                             
-#>  CDI         NC_CHAR  64    Climate Data Interface version 2.4.1 (https://m...
-#>  Conventions NC_CHAR   6    CF-1.6                                            
-#>  history     NC_CHAR 482    Tue May 28 18:39:12 2024: cdo seldate,2016-01-0...
-#>  CDO         NC_CHAR  64    Climate Data Operators version 2.4.1 (https://m...
+#>  name        type    length value                         
+#>  CDI         NC_CHAR  64    Climate Data Interface vers...
+#>  Conventions NC_CHAR   6    CF-1.6                        
+#>  history     NC_CHAR 482    Tue May 28 18:39:12 2024: c...
+#>  CDO         NC_CHAR  64    Climate Data Operators vers...
 
 # ...or very brief details
 ds$var_names
@@ -184,11 +184,11 @@ peek_ncdf(fn)
 #> latitude                1
 #> 
 #> $attributes
-#>   id        name    type length
-#> 1  0         CDI NC_CHAR     64
-#> 2  1 Conventions NC_CHAR      6
-#> 3  2     history NC_CHAR    482
-#> 4  3         CDO NC_CHAR     64
+#>          name    type length
+#> 1         CDI NC_CHAR     64
+#> 2 Conventions NC_CHAR      6
+#> 3     history NC_CHAR    482
+#> 4         CDO NC_CHAR     64
 #>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 value
 #> 1                                                                                                                                                                                                                                                                                                                                                                                                                                    Climate Data Interface version 2.4.1 (https://mpimet.mpg.de/cdi)
 #> 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              CF-1.6
@@ -340,14 +340,14 @@ which will return data as it is recorded in the netCDF resource.
 rwa <- t2m$profile(longitude = c(30.07, 30.07, 29.74), latitude = c(-1.94, -1.58, -2.60), 
                    .names = c("Kigali", "Byumba", "Butare"), .as_table = TRUE)
 head(rwa)
-#>                   time longitude latitude .variable   .value
-#>                 <char>     <num>    <num>    <char>    <num>
-#> 1: 2016-01-01T00:00:00     30.07    -1.94    Kigali 290.4055
-#> 2: 2016-01-01T01:00:00     30.07    -1.94    Kigali 290.0088
-#> 3: 2016-01-01T02:00:00     30.07    -1.94    Kigali 289.3608
-#> 4: 2016-01-01T03:00:00     30.07    -1.94    Kigali 288.8414
-#> 5: 2016-01-01T04:00:00     30.07    -1.94    Kigali 288.4713
-#> 6: 2016-01-01T05:00:00     30.07    -1.94    Kigali 289.9276
+#>    longitude latitude                time .variable   .value
+#>        <num>    <num>              <char>    <char>    <num>
+#> 1:     30.07    -1.94 2016-01-01T00:00:00    Kigali 290.4055
+#> 2:     30.07    -1.94 2016-01-01T01:00:00    Kigali 290.0088
+#> 3:     30.07    -1.94 2016-01-01T02:00:00    Kigali 289.3608
+#> 4:     30.07    -1.94 2016-01-01T03:00:00    Kigali 288.8414
+#> 5:     30.07    -1.94 2016-01-01T04:00:00    Kigali 288.4713
+#> 6:     30.07    -1.94 2016-01-01T05:00:00    Kigali 289.9276
 attr(rwa, "value")
 #> $name
 #> [1] "2 metre temperature"
@@ -374,20 +374,20 @@ latitudinal transect, for instance, provide only a longitude coordinate:
 #> 
 #> Axes:
 #>  axis name      length values                                       
+#>  X    longitude 1      [29.74]                                      
 #>  Y    latitude  21     [-1 ... -3]                                  
 #>  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
-#>  X    longitude 1      [29.74]                                      
 #>  unit                             
+#>  degrees_east                     
 #>  degrees_north                    
 #>  hours since 1900-01-01 00:00:00.0
-#>  degrees_east                     
 #> 
 #> Attributes:
-#>  name         type      length value                
-#>  long_name    NC_CHAR   19     2 metre temperature  
-#>  units        NC_CHAR    1     K                    
-#>  actual_range NC_DOUBLE  2     286.539447, 298.96298
-#>  coordinates  NC_CHAR    9     longitude
+#>  name         type      length value                  
+#>  long_name    NC_CHAR   19     2 metre temperature    
+#>  units        NC_CHAR    1     K                      
+#>  actual_range NC_DOUBLE  2     286.539447, 298.96298  
+#>  coordinates  NC_CHAR   23     longitude latitude time
 ```
 
 Note that there is only a single longitude coordinate left, at exactly
@@ -516,7 +516,7 @@ arr <- array(rnorm(120), dim = c(6, 5, 4))
 as_CF("my_first_CF_object", arr)
 #> <Variable> my_first_CF_object 
 #> 
-#> Values: [-1.925378 ... 2.716479] 
+#> Values: [-2.058679 ... 2.65144] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -526,8 +526,8 @@ as_CF("my_first_CF_object", arr)
 #>  axis_3 4      [1 ... 4]
 #> 
 #> Attributes:
-#>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -1.925378, 2.716479
+#>  name         type      length value             
+#>  actual_range NC_DOUBLE 2      -2.058679, 2.65144
 ```
 
 Usable but not very impressive. The axes have dull names without any
@@ -549,7 +549,7 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 (obj <- as_CF("a_better_CF_object", arr))
 #> <Variable> a_better_CF_object 
 #> 
-#> Values: [-1.925378 ... 2.716479] 
+#> Values: [-2.058679 ... 2.65144] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -559,8 +559,8 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 #>  T    time 4      [2025-07-01 ... 2025-07-04] days since 1970-01-01T00:00:00
 #> 
 #> Attributes:
-#>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -1.925378, 2.716479
+#>  name         type      length value             
+#>  actual_range NC_DOUBLE 2      -2.058679, 2.65144
 
 # Axes are of a specific type and have basic attributes set
 obj$axes[["lat"]]
@@ -627,13 +627,34 @@ suppressMessages(library(terra))
 #> extent      : 27.95, 31.05, -3.05, -0.95  (xmin, xmax, ymin, ymax)
 #> coord. ref. :  
 #> source(s)   : memory
-#> name        : 2016-01-01T12:00:00 
-#> min value   :            1.819982 
-#> max value   :           11.273690
+#> name        :     lyr.1 
+#> min value   :  1.819982 
+#> max value   : 11.273690 
+#> time        : 2016-01-01 UTC
 terra::plot(r)
 ```
 
-<img src="man/figures/README-export-1.png" width="100%" />
+<img src="man/figures/README-export-1.png" alt="" width="100%" />
+
+A `stars` object can be created from a `CFVariable` or a `CFDataset`
+with multiple variables with the function `stars::st_as_stars()`.
+
+``` r
+library(stars)
+#> Loading required package: abind
+#> Loading required package: sf
+#> Linking to GEOS 3.13.0, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE
+(st <- st_as_stars(ts))
+#> stars object with 3 dimensions and 1 attribute
+#> attribute(s):
+#>             Min.  1st Qu.   Median     Mean  3rd Qu.     Max.
+#> t2m [K] 288.2335 293.2838 294.7573 294.9324 296.6282 301.2081
+#> dimension(s):
+#>           from to                  offset   delta    refsys x/y
+#> longitude    1  7                   28.85     0.1 OGC:CRS84 [x]
+#> latitude     1 11                   -0.95    -0.1 OGC:CRS84 [y]
+#> time         1  6 2016-01-01 09:00:00 UTC 1 hours   POSIXct
+```
 
 A `CFVariable` object can also be written back to a netCDF file. The
 object will have all its relevant attributes and properties written
