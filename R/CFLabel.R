@@ -55,7 +55,7 @@ CFLabel <- R6::R6Class("CFLabel",
     #' @return The newly created label set.
     copy = function(name = "") {
       if (self$has_resource) {
-        lbl <- CFLabel$new(self$NC, start = private$.start_count$start, count = private$.start_count$count)
+        lbl <- CFLabel$new(self$NC, start = private$.NC_map$start, count = private$.NC_map$count)
         if (nzchar(name))
           lbl$name <- name
       } else {

@@ -19,9 +19,8 @@ CRS_names <- c("albers_conical_equal_area", "azimuthal_equidistant",
 #' https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings
 #'
 #' @docType class
-#' @export
 CFGridMapping <- R6::R6Class("CFGridMapping",
-  inherit = CFData,
+  inherit = CFObject,
   cloneable = FALSE,
   private = list(
     # The formal grid mapping name as defined in CF

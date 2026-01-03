@@ -106,6 +106,10 @@ CFAxis <- R6::R6Class("CFAxis",
       if (!(orientation %in% c("X", "Y", "Z", "T", "")))
         stop("Invalid orientation for the axis.", call. = FALSE) # nocov
 
+      # Scalar axes don't have .NC_map, so catch NULL values from $copy() etc
+      if (is.null(start)) start <- 1L
+      if (is.null(count)) count <- NA
+
       super$initialize(var, values = values, start = start, count = count, attributes = attributes)
       if (inherits(var, "NCVariable")) {
         private$.unlimited <- if (private$.NCobj$ndims) private$.NCobj$dimension(1L)$unlim else FALSE

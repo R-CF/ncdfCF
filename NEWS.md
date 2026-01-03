@@ -6,14 +6,15 @@
 
 #### API
 - `CFGroup` is now the main hierarchy from the user perspective, maintaining all CF objects. The `CFGroup$add_variable()` method places a `CFVariable` somewhere in the hierarchy, with owned CF objects (like axes, boundary values, CRS, etc) automatically attached to the same group or some other specified group.
+- All `[]` indexing and selection operations must include axes of length 1. This means that the indexing always has as many elements as there are axes in the CF variable. Reported dimensions include degenerate dimensions.
 - The `CFVariable::subset()` method now has an optional `.resolution` argument that can be specified when interpolation with auxiliary latitude-longitude coordinates is requested; otherwise it has no effect. This change does not break any existing code.
-- Function `create_ncdf()` creates a new netCDF resource on disk, as a container for persisting CFobjects. Work in progress.
+- Function `create_ncdf()` creates a new netCDF resource on disk, as a container for persisting CF objects. Work in progress.
 - Documentation updated.
 
 #### Code
 - Access to data values is now consistently using the public field `values` for "standard" objects. Only objects that require special values management use private fields and expose the data values in another, more appropriate form.
 - `CFGroup` hierarchy maintains all CF objects. 1:1 alignment with the `NCGroup` hierarchy for NC objects backed by a netCDF resource.
-- `CFData` class spawned from `CFObject` to act as a base class for CF objects that hold data, most notably `CFVariable` and `CFAxis` and descendant classes.
+- `CFData` class spawned from `CFObject` to act as a base class for CF objects that hold data, most notably `CFVariable` and `CFAxis` and descendant classes. The class manages the "shape" of the data, including degenerate dimensions, to maintain consistency with the owning object, principally the axes in a `CFVariable` instance.
 - Attributes are now considered when testing for axis equality.
 - Support some edge cases in reading marginally-CF netCDF files, including lateral search.
 - `CFVariable` S3 methods fixed.

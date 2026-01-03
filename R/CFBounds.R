@@ -7,8 +7,6 @@
 #'   element) or an auxiliary longitude-latitude grid (4 vertices per element).
 #'
 #' @docType class
-#'
-#' @export
 CFBounds <- R6::R6Class("CFBounds",
   inherit = CFData,
   cloneable = FALSE,
@@ -45,10 +43,12 @@ CFBounds <- R6::R6Class("CFBounds",
       private$.owner_dims <- owner_dims
       super$initialize(var, values, start, count, attributes)
 
-      if (length(private$.start_count$count) > owner_dims + 1L) {
-        private$.start_count$count[owner_dims + 2L] <- 1L
+      if (length(private$.NC_map$count) > owner_dims + 1L) {
+        private$.NC_map$count[owner_dims + 2L] <- 1L
+        private$.dims <- private$.NC_map$count
         private$read_data()
         private$.values <- drop(private$.values)
+        private$.dims <- private$.dims[seq(owner_dims + 1L)]
       }
     },
 
@@ -100,8 +100,8 @@ CFBounds <- R6::R6Class("CFBounds",
     #' @return The newly created bounds object.
     copy = function(name = "") {
       if (self$has_resource) {
-        b <- CFBounds$new(private$.NCobj, start = private$.start_count$start,
-                          count = private$.start_count$count, attributes = self$attributes)
+        b <- CFBounds$new(private$.NCobj, start = private$.NC_map$start,
+                          count = private$.NC_map$count, attributes = self$attributes)
         if (nzchar(name))
           b$name <- name
       } else {
@@ -134,7 +134,7 @@ CFBounds <- R6::R6Class("CFBounds",
         # The rng argument applies to anything but the first dimension (= # of vertices)
         # of the values. Apply any subsets in self before making the new boundary variable.
         # Currently only for 1-D axes.
-        sc <- private$.start_count
+        sc <- private$.NC_map
         start <- c(1L, sc$start[2L] + rng[1L] - 1L)
         count <- c(sc$count[1L], rng[2L] - rng[1L] + 1L)
 

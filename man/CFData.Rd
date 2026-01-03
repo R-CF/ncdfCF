@@ -15,16 +15,16 @@ classes use this class as ancestor.
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
-\item{\code{data_type}}{Set or retrieve the data type of the data in the
-object. Setting the data type to a wrong value can have unpredictable
-and mostly catastrophic consequences.}
+\item{\code{data_type}}{Set or retrieve the data type of the data in the object.
+Setting the data type to a wrong value can have unpredictable and
+mostly catastrophic consequences.}
 
 \item{\code{ndims}}{(read-only) Retrieve the dimensionality of the data in the
-array, or the netCDF resource.}
+array.}
 
-\item{\code{array_indices}}{Returns a list with columns "start" and "count"
-giving the indices for reading the data of this object from a netCDF
-resource.}
+\item{\code{NC_map}}{Returns a list with columns "start" and "count" giving the
+indices for reading the data of this object from a netCDF resource. The
+list is empty if this object is not backed by a netCDF resource.}
 }
 \if{html}{\out{</div>}}
 }
@@ -53,10 +53,11 @@ resource.}
 \if{html}{\out{<a id="method-CFData-new"></a>}}
 \if{latex}{\out{\hypertarget{method-CFData-new}{}}}
 \subsection{Method \code{new()}}{
-Create a new \code{CFobject} instance from a variable in a netCDF
-resource. This method is called upon opening a netCDF resource. It is
-rarely, if ever, useful to call this constructor directly. Instead, use
-the methods from higher-level classes such as \link{CFVariable}.
+Create a new \code{CFData} instance from a variable in a netCDF
+resource. This method is called upon creating CF objects, such as when
+opening a netCDF resource or creating a new CF object. It is rarely, if
+ever, useful to call this constructor directly. Instead, use the
+methods from higher-level classes such as \link{CFVariable}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFData$new(obj, values, start = 1L, count = NA, attributes = data.frame())}\if{html}{\out{</div>}}
 }
@@ -68,19 +69,22 @@ the methods from higher-level classes such as \link{CFVariable}.
 when read from a netCDF resource, or the name for the new CF object to
 be created.}
 
-\item{\code{values}}{Optional. The values of the object in an array.}
+\item{\code{values}}{Optional. The values of the object in an array. Ignored
+when argument \code{obj} is an \code{NCVariable} instance.}
 
 \item{\code{start}}{Optional. Vector of indices where to start reading data
 along the dimensions of the array on file. The vector must be \code{NA} to
 read all data, otherwise it must have agree with the dimensions of the
-array on file. Ignored when argument \code{obj} is not an \code{NCVariable}
+array on file. Default value is \code{1}, i.e. start from the beginning of
+the 1-D NC variable. Ignored when argument \code{obj} is not an \code{NCVariable}
 instance.}
 
 \item{\code{count}}{Optional. Vector of number of elements to read along each
 dimension of the array on file. The vector must be \code{NA} to read to the
 end of each dimension, otherwise its value must agree with the
 corresponding \code{start} value and the dimension of the array on file.
-Ignored when argument \code{obj} is not an \code{NCVariable} instance.}
+Default is \code{NA}. Ignored when argument \code{obj} is not an \code{NCVariable}
+instance.}
 
 \item{\code{attributes}}{Optional. A \code{data.frame} with the attributes of the
 object.}
@@ -107,8 +111,7 @@ detaching.
 \if{html}{\out{<a id="method-CFData-dim"></a>}}
 \if{latex}{\out{\hypertarget{method-CFData-dim}{}}}
 \subsection{Method \code{dim()}}{
-Retrieve the dimensions of the data of this object. This
-could be for the data on file or for in-memory data.
+Retrieve the dimensions of the data of this object.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFData$dim(dimension)}\if{html}{\out{</div>}}
 }

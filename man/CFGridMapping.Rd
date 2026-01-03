@@ -15,8 +15,8 @@ string in WKT2 format is returned, following the OGC standard.
 https://docs.ogc.org/is/18-010r11/18-010r11.pdf
 https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings
 }
-\section{Super classes}{
-\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFData]{ncdfCF::CFData}} -> \code{CFGridMapping}
+\section{Super class}{
+\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFGridMapping}
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
@@ -42,11 +42,10 @@ https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappi
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>ncdfCF::CFObject$attributes_identical()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-detach'><code>ncdfCF::CFObject$detach()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="detach"><a href='../../ncdfCF/html/CFData.html#method-CFData-detach'><code>ncdfCF::CFData$detach()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href='../../ncdfCF/html/CFData.html#method-CFData-dim'><code>ncdfCF::CFData$dim()</code></a></span></li>
 </ul>
 </details>
 }}

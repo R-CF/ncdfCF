@@ -236,8 +236,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     #' @param var The name of the axis when creating a new axis. When reading an
     #'   axis from file, the [NCVariable] object that describes this instance.
     #' @param values Optional. The values of the axis in a vector. The values
-    #'   have to be numeric and monotonic. Ignored when argument `var` is a
-    #'   `NCVariable` object.
+    #'   have to be numeric and monotonic.
     #' @param start Optional. Integer index where to start reading axis data
     #'   from file. The index may be `NA` to start reading data from the start.
     #' @param count Optional. Number of elements to read from file. This may be
@@ -271,8 +270,8 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     #' @return The newly created axis.
     copy = function(name = "") {
       if (self$has_resource) {
-        ax <- CFAxisVertical$new(self$NC, start = private$.start_count$start,
-                                 count = private$.start_count$count, attributes = self$attributes)
+        ax <- CFAxisVertical$new(self$NC, values = private$.values, start = private$.NC_map$start,
+                                 count = private$.NC_map$count, attributes = self$attributes)
         if (nzchar(name))
           ax$name <- name
       } else {
@@ -387,7 +386,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
       else {
         rng <- range(rng)
         if (self$has_resource) {
-          ax <- CFAxisVertical$new(private$.NCobj, start = private$.start_count$start + rng[1L] - 1L,
+          ax <- CFAxisVertical$new(private$.NCobj, start = private$.NC_map$start + rng[1L] - 1L,
                                    count = rng[2L] - rng[1L] + 1L, attributes = self$attributes)
           if (nzchar(name))
             ax$name <- name

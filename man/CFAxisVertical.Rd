@@ -107,8 +107,7 @@ Create a new instance of this class.
 axis from file, the \link{NCVariable} object that describes this instance.}
 
 \item{\code{values}}{Optional. The values of the axis in a vector. The values
-have to be numeric and monotonic. Ignored when argument \code{var} is a
-\code{NCVariable} object.}
+have to be numeric and monotonic.}
 
 \item{\code{start}}{Optional. Integer index where to start reading axis data
 from file. The index may be \code{NA} to start reading data from the start.}

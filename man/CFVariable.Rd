@@ -20,11 +20,6 @@ mapping parameters, etc.
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{dim_axes}}{(read-only) The number of dimensional axes, i.e. those
-axes that make up the dimensionality of the underlying the data array.
-This may include axes with a length of 1, but not any "true" scalar
-axes (in the sense of the CF metadata conventions).}
-
 \item{\code{axes}}{(read-only) List of instances of classes descending from
 \link{CFAxis} that are the axes of the data object. If there are any scalar
 axes, they are listed after the axes that associate with the dimensions
@@ -134,21 +129,21 @@ to be created.}
 \item{\code{values}}{Optional. The values of the variable in an array.}
 
 \item{\code{start}}{Optional. Vector of indices where to start reading data
-along the dimensions of the array on file. The vector must be \code{NA} to
-read all data, otherwise it must have agree with the dimensions of the
-array on file. Ignored when argument \code{var} is not an \code{NCVariable}
+along the dimensions of the NC variable on file. The vector must be
+\code{NA} to read all data, otherwise it must have agree with the dimensions
+of the NC variable. Ignored when argument \code{var} is not an \code{NCVariable}
 instance.}
 
 \item{\code{count}}{Optional. Vector of number of elements to read along each
-dimension of the array on file. The vector must be \code{NA} to read to the
-end of each dimension, otherwise its value must agree with the
-corresponding \code{start} value and the dimension of the array on file.
+dimension of the NC variable on file. The vector must be \code{NA} to read
+to the end of each dimension, otherwise its value must agree with the
+corresponding \code{start} value and the dimension of the NC variable.
 Ignored when argument \code{var} is not an \code{NCVariable} instance.}
 
 \item{\code{attributes}}{Optional. A \code{data.frame} with the attributes of the
 object. When argument \code{var} is an \code{NCVariable} instance and this
 argument is an empty \code{data.frame} (default), arguments will be read
-from the resource.}
+from the netCDF resource.}
 }
 \if{html}{\out{</div>}}
 }
@@ -362,8 +357,8 @@ are all either smaller or larger than the valid range of the axis then
 nothing is extracted and \code{NULL} is returned.
 
 The extracted data has the same dimensional structure as the data in
-the variable, with degenerate dimensions dropped. The order of the axes
-in argument \code{...} does not reorder the axes in the result; use the
+the variable, with degenerate dimensions preserved. The order of the
+axes in argument \code{...} does not reorder the axes in the result; use the
 \code{array()} method for this.
 
 As an example, to extract values of a variable for Australia for the
@@ -394,9 +389,7 @@ to extract the full extent, specify \code{NA} for both axes.
 A \code{CFVariable} instance, having the axes and attributes of the
 variable, or \code{NULL} if one or more of the selectors in the \code{...}
 argument fall entirely outside of the range of the axis. Note that
-degenerate dimensions (having \code{length(.) == 1}) are dropped from the
-data array but the corresponding axis is maintained in the result as a
-scalar axis.
+degenerate dimensions (having \code{length(.) == 1}) are preserved.
 
 If \code{self} is linked to a netCDF resource then the result will be linked
 to the same netCDF resource as well, except when \emph{auxiliary coordinate
@@ -409,15 +402,6 @@ variables} have been selected for the planar axes.
 \subsection{Method \code{summarise()}}{
 Summarise the temporal domain of the data, if present, to a
 lower resolution, using a user-supplied aggregation function.
-
-Attributes are copied from the input data variable or data array. Note
-that after a summarisation the attributes may no longer be accurate.
-This method tries to sanitise attributes but the onus is on the calling
-code (or yourself as interactive coder). Attributes like
-\code{standard_name} and \code{cell_methods} likely require an update in the
-output of this method, but the appropriate new values are not known to
-this method. Use \code{CFVariable$set_attribute()} on the result of this
-method to set or update attributes as appropriate.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFVariable$summarise(name, fun, period, era = NULL, ...)}\if{html}{\out{</div>}}
 }
@@ -458,6 +442,17 @@ if used, should have names as these will be used to label the results.}
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Details}{
+Attributes are copied from the input data variable or data
+array. Note that after a summarisation the attributes may no longer be
+accurate. This method tries to sanitise attributes but the onus is on
+the calling code (or yourself as interactive coder). Attributes like
+\code{standard_name} and \code{cell_methods} likely require an update in the
+output of this method, but the appropriate new values are not known to
+this method. Use \code{CFVariable$set_attribute()} on the result of this
+method to set or update attributes as appropriate.
+}
+
 \subsection{Returns}{
 A \code{CFVariable} object, or a list thereof with as many
 \code{CFVariable} objects as \code{fun} returns values.

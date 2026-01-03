@@ -142,7 +142,6 @@ test_that("CRU data", {
     expect_equal(prof$axes[["time"]]$length, 120)
     expect_equal(prof$axes[["lon"]]$coordinates, 5)
     expect_equal(prof$axes[["lat"]]$coordinates, 50)
-    expect_equal(prof$attribute("coordinates"), "lon lat")
 
     prof <- tmp$profile(lat = c(5, 10, 15), lon = c(30, 30, 30), .names = c("South_Sudan", "Sudan__South_Kordofan"))
     expect_true(is.list(prof))
@@ -156,12 +155,11 @@ test_that("CRU data", {
     expect_equal(prof$axes[["lat"]]$length, 360)
     expect_equal(prof$axes[["time"]]$length, 120)
     expect_equal(prof$axes[["lon"]]$coordinates, 5)
-    expect_equal(prof$attribute("coordinates"), "lon")
 
     # Summarise data
-    summ <- tmp$summarise("Tmean", mean, "season")
+    summ <- tmp$summarise("Tmean", mean, "year")
     expect_equal(summ$name, "Tmean")
-    expect_equal(summ$axes[["time"]]$length, 41)
+    expect_equal(summ$axes[["time"]]$length, 10)
     expect_length(summ$attribute("actual_range"), 2)
 
     summ <- sub$summarise("Tmean", mean, "season")
@@ -236,7 +234,7 @@ test_that("CMEMS example online", {
 
     # Make a vertical profile of temperature at a single location for the month of July 2024
     tprof <- thetao$profile(longitude = 12.71, latitude = 40.33, time = "2024-07-01", .names = "Tyrrhenian_Sea")
-    expect_equal(sapply(tprof$axes, function(ax) ax$length), c(depth = 141, longitude = 1, latitude = 1, time = 1))
+    expect_equal(sapply(tprof$axes, function(ax) ax$length), c(longitude = 1, latitude = 1, depth = 141, time = 1))
     Tjuly <- tprof$data.table()
     expect_length(Tjuly, 5)
     expect_equal(nrow(Tjuly), 141)
@@ -292,7 +290,7 @@ test_that("Multiple label sets", {
     expect_equal(member$coordinates[1], "ACCESS-CM2")
     sel <- t$subset(time = "2020-01-01", member = c("CAMS-CSM1-0", "CESM2"))
     expect_true(inherits(sel, "CFVariable"))
-    expect_equal(sapply(sel$axes, function(x) x$length), c(lon = 360, lat = 180, member = 3, time = 1, height2m = 1))
+    expect_equal(sapply(sel$axes, function(x) x$length), c(lon = 360, lat = 180, time = 1, member = 3, height2m = 1))
     expect_equal(sel$axes[["member"]]$coordinates, c("CAMS-CSM1-0", "CESM2-WACCM", "CESM2"))
   }
 })

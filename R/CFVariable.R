@@ -27,42 +27,16 @@ CFVariable <- R6::R6Class("CFVariable",
     # A list of cell measure objects, if the variable has cell measures.
     .cell_measures = NULL,
 
-    # Return the R order of dimensional axes that "receive special treatment".
-    # Scalar axes are not considered here.
+    # Return the R order of axes that "receive special treatment".
     YXZT = function() {
-      orient <- sapply(private$.axes, function(x) if (x$length > 1L) x$orientation)
+      orient <- sapply(private$.axes, function(x) x$orientation)
       match(c("Y", "X", "Z", "T"), orient, nomatch = 0L)
     },
 
-    # Return the CF canonical order of dimensional axes that "receive special
-    # treatment". Scalar axes are not considered here.
+    # Return the CF canonical order of axes that "receive special treatment".
     XYZT = function() {
-      orient <- sapply(private$.axes, function(x) if (x$length > 1L) x$orientation)
+      orient <- sapply(private$.axes, function(x)  x$orientation)
       match(c("X", "Y", "Z", "T"), orient, nomatch = 0L)
-    },
-
-    # Return the number of "dimensional" axes, i.e. axes that are associated
-    # with a dimension of the data of the variable. This may include axes with
-    # length 1 if the netCDF resource lists them as a dimension.
-    num_dim_axes = function() {
-      if (!is.null(private$.values))
-        length(dim(private$.values))
-      else if (self$has_resource)
-        self$ndims
-      else 0L
-    },
-
-    # Return the names of the dimensional axes.
-    dim_names = function() {
-      num <- private$num_dim_axes()
-      if (num > 0L)
-        sapply(1L:num, function(i) private$.axes[[i]]$name)
-      else character(0)
-    },
-
-    # Return the lengths of the dimensional axes.
-    dim = function() {
-      sapply(1L:private$num_dim_axes(), function(i) private$.axes[[i]]$length)
     },
 
     # Check that names passed as arguments to $subset() and $profile() are
@@ -231,7 +205,7 @@ CFVariable <- R6::R6Class("CFVariable",
         return(.process.data(private$read_data(), tdim, fac, fun, ...))
 
       # If data variable is too large, go by individual factor levels
-      num_dims <- private$num_dim_axes()
+      num_dims <- self$ndims
       start <- rep(1L, num_dims)
       count <- rep(NA_integer_, num_dims)
 
@@ -296,23 +270,32 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @param axes List of instances of [CFAxis] to use with this variable.
     #' @param values Optional. The values of the variable in an array.
     #' @param start Optional. Vector of indices where to start reading data
-    #'   along the dimensions of the array on file. The vector must be `NA` to
-    #'   read all data, otherwise it must have agree with the dimensions of the
-    #'   array on file. Ignored when argument `var` is not an `NCVariable`
+    #'   along the dimensions of the NC variable on file. The vector must be
+    #'   `NA` to read all data, otherwise it must have agree with the dimensions
+    #'   of the NC variable. Ignored when argument `var` is not an `NCVariable`
     #'   instance.
     #' @param count Optional. Vector of number of elements to read along each
-    #'   dimension of the array on file. The vector must be `NA` to read to the
-    #'   end of each dimension, otherwise its value must agree with the
-    #'   corresponding `start` value and the dimension of the array on file.
+    #'   dimension of the NC variable on file. The vector must be `NA` to read
+    #'   to the end of each dimension, otherwise its value must agree with the
+    #'   corresponding `start` value and the dimension of the NC variable.
     #'   Ignored when argument `var` is not an `NCVariable` instance.
     #' @param attributes Optional. A `data.frame` with the attributes of the
     #'   object. When argument `var` is an `NCVariable` instance and this
     #'   argument is an empty `data.frame` (default), arguments will be read
-    #'   from the resource.
+    #'   from the netCDF resource.
     #' @return A `CFVariable` instance.
     initialize = function(var, axes, values = values, start = NA, count = NA, attributes = data.frame()) {
       super$initialize(var, values = values, start = start, count = count, attributes = attributes)
+
+      # Axes - If they do not agree with the .dims parameter (from CFData) then
+      # adjust as appropriate. In general this is only necessary when axes are
+      # modified as part of a data-transformation operation and become length-1.
+      # The below code is simple but should always work - presumably...
       private$.axes <- axes
+      ax_dims <- sapply(axes, function(ax) ax$length)
+      if (length(ax_dims) > self$ndims) {
+        private$set_dims(ax_dims)
+      }
 
       # Delete useless attributes
       self$delete_attribute(c("_FillValue", "missing_value"))
@@ -513,8 +496,8 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   nothing is extracted and `NULL` is returned.
     #'
     #'   The extracted data has the same dimensional structure as the data in
-    #'   the variable, with degenerate dimensions dropped. The order of the axes
-    #'   in argument `...` does not reorder the axes in the result; use the
+    #'   the variable, with degenerate dimensions preserved. The order of the
+    #'   axes in argument `...` does not reorder the axes in the result; use the
     #'   `array()` method for this.
     #'
     #'   As an example, to extract values of a variable for Australia for the
@@ -559,15 +542,13 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @return A `CFVariable` instance, having the axes and attributes of the
     #'   variable, or `NULL` if one or more of the selectors in the `...`
     #'   argument fall entirely outside of the range of the axis. Note that
-    #'   degenerate dimensions (having `length(.) == 1`) are dropped from the
-    #'   data array but the corresponding axis is maintained in the result as a
-    #'   scalar axis.
+    #'   degenerate dimensions (having `length(.) == 1`) are preserved.
     #'
     #'   If `self` is linked to a netCDF resource then the result will be linked
     #'   to the same netCDF resource as well, except when *auxiliary coordinate
     #'   variables* have been selected for the planar axes.
     subset = function(..., rightmost.closed = FALSE, .resolution = NULL) {
-      num_axes <- private$num_dim_axes()
+      num_axes <- self$ndims
       if (!num_axes)
         stop("Cannot subset a scalar variable", call. = FALSE)
       axis_names <- names(private$.axes)
@@ -597,24 +578,21 @@ CFVariable <- R6::R6Class("CFVariable",
       count <- self$dim()
 
       ZT_dim <- vector("integer")
-      out_axes_dim <- list(); ax_nm_dim <- list()
-      out_axes_other <- list(); ax_nm_other <- list()
-      for (ax in 1:num_axes) {
+      out_axes <- vector("list", num_axes)
+      for (ax in seq(num_axes)) {
         axis <- private$.axes[[ax]]
         orient <- axis$orientation
         ax_dimid <- axis$dimid
 
         # In every section, set start and count values and create a corresponding axis
-        if (!is.null(aux) && ax_dimid == ll_dimids[1L]) {
-          # start and count relative to the data variable on file
+        if (!is.null(aux) && !is.null(ax_dimid) && ax_dimid == ll_dimids[1L]) {
           start[ax] <- aux$X[1L]
           count[ax] <- aux$X[2L]
           out_axis <- CFAxisLongitude$new(aux_names[1L], values = aux$aoi$dimnames[[2L]],
                                           attributes = axis$attributes)
           out_axis$bounds <- aoi_bounds$lon
           out_axis$delete_attribute("long_name")
-        } else if (!is.null(aux) && ax_dimid == ll_dimids[2L]) {
-          # start and count relative to the data variable on file
+        } else if (!is.null(aux) && !is.null(ax_dimid) && ax_dimid == ll_dimids[2L]) {
           start[ax] <- aux$Y[1L]
           count[ax] <- aux$Y[2L]
           out_axis <- CFAxisLatitude$new(aux_names[2L], values = aux$aoi$dimnames[[1L]],
@@ -638,14 +616,9 @@ CFVariable <- R6::R6Class("CFVariable",
         }
 
         # Collect axes for result
-        if (out_axis$length == 1L) {
-          out_axes_other <- append(out_axes_other, out_axis)
-          ax_nm_other <- append(ax_nm_other, axis$name)
-        } else {
-          out_axes_dim <- append(out_axes_dim, out_axis)
-          ax_nm_dim <- append(ax_nm_dim, axis$name)
-        }
+        out_axes[[ax]] <- out_axis
       }
+      names(out_axes) <- sapply(out_axes, function(ax) ax$name)
 
       # Get the data for the result CFVariable
       d <- NULL
@@ -657,30 +630,23 @@ CFVariable <- R6::R6Class("CFVariable",
         # Auxiliary grids selected, index the data
         d <- private$read_chunk(start, count)
 
-        lon_idx <- which(sapply(out_axes_dim, inherits, "CFAxisLongitude"))
-        lat_idx <- which(sapply(out_axes_dim, inherits, "CFAxisLatitude"))
+        lon_idx <- which(sapply(out_axes, inherits, "CFAxisLongitude"))
+        lat_idx <- which(sapply(out_axes, inherits, "CFAxisLatitude"))
         if (lon_idx != 1L || lat_idx != 2L) {
           # Permute the data so lon & lat are the first two axes
           dims <- seq(length(dim(d)))
           d <- aperm(d, c(lon_idx, lat_idx, dims[-c(lon_idx, lat_idx)]))
-
-          out_axes_dim <- c(out_axes_dim[lon_idx], out_axes_dim[lat_idx],
-                            out_axes_dim[-c(lon_idx, lat_idx)])
+          out_axes <- c(out_axes[lon_idx], out_axes[lat_idx], out_axes[-c(lon_idx, lat_idx)])
         }
 
         dim(d) <- dim_in <- c(aux$X[2L] * aux$Y[2L], prod(ZT_dim))
         d <- d[aux$index, ]
         dim(d) <- dim_out <- c(aux$box, ZT_dim)
       }
-      d <- drop(d)
-
-      # Put the dimensional axes in one list, with original names
-      axes <- c(out_axes_dim, out_axes_other)
-      original_axis_names <- unlist(c(ax_nm_dim, ax_nm_other))
-      names(axes) <- original_axis_names
 
       # If there is a parametric vertical axis, subset its terms
-      lapply(axes, function(ax) {
+      original_axis_names <- names(private$.axes)
+      lapply(out_axes, function(ax) {
         if (ax$is_parametric)
           ax$subset_parametric_terms(original_axis_names, axes, start, count, aux, ZT_dim)
       })
@@ -694,15 +660,17 @@ CFVariable <- R6::R6Class("CFVariable",
       }
 
       # Assemble the new instance
-      axes <- c(axes, private$.axes[-(1L:num_axes)])  # Add the scalar axes to the list
-      names(axes) <- sapply(axes, function(a) a$name) # New axis names
       if (is.null(aux)) {
-        v <- CFVariable$new(private$.NCobj, values = d, axes = axes,
-                            start = start + private$.start_count$start - 1L, count = count,
-                            attributes = atts)
+        v <- if (self$has_resource) {
+          NCdims <- length(private$.NC_map$start)
+          CFVariable$new(private$.NCobj, values = d, axes = out_axes,
+                         start = start[1:NCdims] + private$.NC_map$start - 1L, count = count[1:NCdims],
+                         attributes = atts)
+        } else
+          CFVariable$new(self$name, values = d, axes = out_axes, attributes = atts)
         v$crs <- private$.crs
       } else {
-        v <- CFVariable$new(self$name, values = d, axes = axes, attributes = atts)
+        v <- CFVariable$new(self$name, values = d, axes = out_axes, attributes = atts)
         v$crs <- NULL
         v$detach()
       }
@@ -712,10 +680,10 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @description Summarise the temporal domain of the data, if present, to a
     #'   lower resolution, using a user-supplied aggregation function.
     #'
-    #'   Attributes are copied from the input data variable or data array. Note
-    #'   that after a summarisation the attributes may no longer be accurate.
-    #'   This method tries to sanitise attributes but the onus is on the calling
-    #'   code (or yourself as interactive coder). Attributes like
+    #' @details Attributes are copied from the input data variable or data
+    #'   array. Note that after a summarisation the attributes may no longer be
+    #'   accurate. This method tries to sanitise attributes but the onus is on
+    #'   the calling code (or yourself as interactive coder). Attributes like
     #'   `standard_name` and `cell_methods` likely require an update in the
     #'   output of this method, but the appropriate new values are not known to
     #'   this method. Use `CFVariable$set_attribute()` on the result of this
@@ -781,13 +749,9 @@ CFVariable <- R6::R6Class("CFVariable",
         len <- length(new_tm)
         new_ax <- CFAxisTime$new(tax$name, values = new_tm, attributes = tax$attributes)
         other_axes <- private$.axes[-tm]
-        if (len == 1L) {
-          axes <- c(other_axes, new_ax)
-          names(axes) <- c(names(other_axes), tax$name)
-        } else {
-          axes <- c(new_ax, other_axes)
-          names(axes) <- c(tax$name, names(other_axes))
-        }
+        axes <- c(new_ax, other_axes)
+        names(axes) <- c(tax$name, names(other_axes))
+
         if (inherits(new_tm, "CFClimatology")) {
           new_ax$delete_attribute("bounds")
           new_ax$set_attribute("climatology", "NC_CHAR", "climatology_bnds")
@@ -877,7 +841,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   each element along all profiles, with a ".variable" column using the
     #'   values from the `.names` argument.
     profile = function(..., .names = NULL, .as_table = FALSE) {
-      num_axes <- private$num_dim_axes()
+      num_axes <- self$ndims
       if (!num_axes)
         stop("Cannot profile a scalar variable", call. = FALSE)
 
@@ -936,32 +900,26 @@ CFVariable <- R6::R6Class("CFVariable",
         if (!any(indices == 0L, na.rm = TRUE)) { # All selector coordinates are in range
           start <- rep(1L, num_axes)
           count <- self$dim()
-          out_axes_dim <- list()
-          out_axes_other <- list()
+          out_axes <- vector("list", num_axes)
 
-          for (ax in 1L:num_axes) {
+          for (ax in seq(num_axes)) {
             axis <- private$.axes[[ax]]
             ax_ndx <- match(ax, sel_axes)
-            if (!is.na(ax_ndx) && !is.na(indices[ax_ndx])) {
+            out_axes[[ax]] <- if (!is.na(ax_ndx) && !is.na(indices[ax_ndx])) {
               start[ax] <- indices[ax_ndx]
               count[ax] <- 1L
               orient <- axis$orientation
               nm <- if (is.null(xy)) axis$name
                     else if (orient == "X") private$.llgrid$varLong$name
                     else private$.llgrid$varLat$name
-              x <- axis$copy_with_values(nm, selectors[[ax_ndx]][e])
-              out_axes_other <- append(out_axes_other, x)
+              axis$copy_with_values(nm, selectors[[ax_ndx]][e])
             } else
-              out_axes_dim <- append(out_axes_dim, axis$copy())
+              axis$copy()
           }
-
-          scalars <- self$axes[-(1L:num_axes)]
-          axes <- c(out_axes_dim, out_axes_other, scalars)
-          names(axes) <- sapply(axes, function(a) a$name)
+          names(out_axes) <- sapply(out_axes, function(a) a$name)
 
           # Read the data
           d <- private$read_chunk(start, count)
-          d <- drop(d)
 
           # Sanitize the attributes for the result, as required, and make CRS
           if (is.null(xy)) {
@@ -974,9 +932,8 @@ CFVariable <- R6::R6Class("CFVariable",
           }
 
           # Assemble the CFVariable instance
-          v <- CFVariable$new(.names[e], values = d, axes = axes, attributes = atts)
+          v <- CFVariable$new(.names[e], values = d, axes = out_axes, attributes = atts)
           v$crs <- crs
-          v$update_coordinates_attribute(sapply(out_axes_other, function(ax) ax$name))
           out[[e]] <- if (.as_table) v$data.table(var_as_column = TRUE)
           else v
         }
@@ -1013,27 +970,18 @@ CFVariable <- R6::R6Class("CFVariable",
       for (ax in seq_along(self$axes)) {
         if (self$axes[[ax]]$name == along)
           axno <- ax
-        else
-          if (!self$axes[[ax]]$identical(from$axes[[ax]]))
-            stop(paste("Axis", ax, "is not identical between the two data variables."), call. = FALSE)
+        else if (!self$axes[[ax]]$identical(from$axes[[ax]]))
+          stop(paste("Axis", ax, "is not identical between the two data variables."), call. = FALSE)
       }
 
-      # Extend the axis `along` with values from `from`
-      private$.axes[[axno]] <- private$.axes[[axno]]$append(from$axes[[axno]])
-
       # Merge the data values
-      app <- from$raw()
-      dimx <- private$num_dim_axes()
-      if (axno > dimx + 1L) {
-        # The append is along a scalar axis (in self) but not the first one.
-        # The axis being merged will no longer be scalar so re-arrange axes and
-        # do an appropriate abind
-        allx <- seq_along(private$.axes)
-        ord <- c(seq(dimx), axno, allx[-c(seq(dimx), axno)])
-        private$.axes <- private$.axes[ord]
-        private$set_values(abind::abind(self$values, app, along = dimx + 1L))
-      } else
-        private$set_values(abind::abind(self$values, app, along = axno))
+      v <- abind::abind(self$values, from$raw(), along = axno)
+
+      # Extend the axis `along` with values from `from`, increase the
+      # corresponding .dims value and set the values
+      private$.axes[[axno]] <- private$.axes[[axno]]$append(from$axes[[axno]])
+      private$.dims[axno] <- private$.axes[[axno]]$length
+      private$set_values(v)
 
       # Unlink from any netCDF resource
       self$detach()
@@ -1276,15 +1224,6 @@ CFVariable <- R6::R6Class("CFVariable",
         "Data variable"
     },
 
-    #' @field dim_axes (read-only) The number of dimensional axes, i.e. those
-    #'   axes that make up the dimensionality of the underlying the data array.
-    #'   This may include axes with a length of 1, but not any "true" scalar
-    #'   axes (in the sense of the CF metadata conventions).
-    dim_axes = function(value) {
-      if (missing(value))
-        private$num_dim_axes()
-    },
-
     #' @field axes (read-only) List of instances of classes descending from
     #'   [CFAxis] that are the axes of the data object. If there are any scalar
     #'   axes, they are listed after the axes that associate with the dimensions
@@ -1404,7 +1343,7 @@ CFVariable <- R6::R6Class("CFVariable",
 
 #' @export
 dim.CFVariable <- function(x) {
-  nd <- x$dim_axes
+  nd <- x$ndims
   if (nd) {
     ax <- x$axes[1L:nd]
     sapply(ax, function(z) z$length)
@@ -1475,7 +1414,7 @@ dimnames.CFVariable <- function(x) {
 #' summer <- pr[, , 173:263]
 #' str(summer)
 "[.CFVariable" <- function(x, i, j, ..., drop = FALSE) {
-  numaxes <- x$dim_axes
+  numaxes <- x$ndims
   t <- vector("list", numaxes)
   names(t) <- dimnames(x)[1:numaxes]
 

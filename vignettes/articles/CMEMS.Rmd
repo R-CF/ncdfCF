@@ -70,7 +70,7 @@ latitude <- thetao$axes[["latitude"]]$coordinates
 
 # Make a map of the first time slice: January
 library(RColorBrewer)
-image(longitude, latitude, surfaceT$raw()[,,1], col = rev(brewer.pal(10, "RdBu")))
+image(longitude, latitude, surfaceT$raw()[,,,1], col = rev(brewer.pal(10, "RdBu")))
 ```
 
 The `lattice` package's `levelplot()` function enables you to obtain a better map:
@@ -79,7 +79,7 @@ The `lattice` package's `levelplot()` function enables you to obtain a better ma
 library(lattice)
 grid <- expand.grid(lon=longitude, lat=latitude)
 cutpts <- c(12,13,14,15,16,17,18,19,20)
-levelplot(surfaceT$raw()[,,1] ~ lon * lat,
+levelplot(surfaceT$raw()[,,,1] ~ lon * lat,
           data=grid, region=TRUE,
           pretty=T, at=cutpts, cuts=9,
           col.regions=(rev(brewer.pal(9,"RdBu"))), contour=0,

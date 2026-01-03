@@ -130,8 +130,8 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     copy = function(name = "") {
       time <- private$.tm$copy()
       if (self$has_resource) {
-        ax <- CFAxisTime$new(self$NC, values = time, start = private$.start_count$start,
-                             count = private$.start_count$count, attributes = self$attributes)
+        ax <- CFAxisTime$new(self$NC, values = time, start = private$.NC_map$start,
+                             count = private$.NC_map$count, attributes = self$attributes)
         if (nzchar(name))
           ax$name <- name
       } else {
@@ -255,7 +255,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         newtm <- attr(idx, "CFTime")
 
         if (self$has_resource) {
-          ax <- CFAxisTime$new(private$.NCobj, values = newtm, start = private$.start_count$start + rng[1L] - 1L,
+          ax <- CFAxisTime$new(private$.NCobj, values = newtm, start = private$.NC_map$start + rng[1L] - 1L,
                                count = rng[2L] - rng[1L] + 1L, attributes = self$attributes)
           if (nzchar(name))
             ax$name <- name
