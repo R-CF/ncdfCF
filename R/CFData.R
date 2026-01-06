@@ -77,7 +77,7 @@ CFData <- R6::R6Class("CFData",
     # Set the values of the object. Perform some basic checks when set programmatically.
     # Values may be NULL
     set_values = function(values) {
-      # FIXME: Check that values agrees with .dims, .NC_map and .data_type
+      dtype <- storage.mode(values)
 
       # Check if we can find a vtype from the NCvar, possibly packed
       if (!is.null(private$.NCobj)) {
@@ -92,21 +92,18 @@ CFData <- R6::R6Class("CFData",
           # attributes in the NCVariable.
           self$delete_attribute(c("scale_factor", "add_offset", "valid_range", "valid_min", "valid_max"))
       } else if (!is.null(values)) {
-        if (storage.mode(values) == "double") {
+        private$.data_type <- if (dtype == "double") {
           # If the data is numeric, check attributes to select between NC_DOUBLE and NC_FLOAT
-          if (!is.na(dt <- self$attribute("_FillValue", "type"))) private$.data_type <- dt
-          else if (!is.na(dt <- self$attribute("missing_value", "type"))) private$.data_type <- dt
-          else private$.data_type <- "NC_DOUBLE"
-        } else {
-          # Get the data_type from the values
-          private$.data_type <- switch(storage.mode(values),
-                                       "character" = "NC_STRING",
-                                       "integer" = "NC_INT",
-                                       "logical" = "NC_SHORT",
-                                       stop("Unsupported data type for a CF object.", call. = FALSE))
-        }
+          if (!is.na(dt <- self$attribute("_FillValue", "type"))) dt
+          else if (!is.na(dt <- self$attribute("missing_value", "type"))) dt
+          else "NC_DOUBLE"
+        } else .nc_type(dtype)
       } else
         private$.data_type <- "NC_NAT"
+
+      if (!is.null(values) && !.compatible_type(dtype, private$.data_type)) {
+        stop("Bad data type of values for this object.", call. = FALSE)
+      }
 
       # Set the actual_range attribute for the values
       if (is.null(values))

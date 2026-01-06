@@ -74,6 +74,7 @@ NC group.}
 \item \href{#method-NCGroup-has_name}{\code{NCGroup$has_name()}}
 \item \href{#method-NCGroup-unused}{\code{NCGroup$unused()}}
 \item \href{#method-NCGroup-create_group}{\code{NCGroup$create_group()}}
+\item \href{#method-NCGroup-append}{\code{NCGroup$append()}}
 \item \href{#method-NCGroup-fullnames}{\code{NCGroup$fullnames()}}
 \item \href{#method-NCGroup-dimensions}{\code{NCGroup$dimensions()}}
 \item \href{#method-NCGroup-save}{\code{NCGroup$save()}}
@@ -247,6 +248,28 @@ writing.
 }
 \subsection{Returns}{
 The newly created group as a \code{NCGroup} instance, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-append"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-append}{}}}
+\subsection{Method \code{append()}}{
+Append an object to this group.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$append(obj)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{obj}}{The object to append. This must be an \code{NCVariable} or
+\code{NCDimension} instance. Any other type of object will generate a
+warning.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisible.
 }
 }
 \if{html}{\out{<hr>}}

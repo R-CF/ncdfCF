@@ -36,9 +36,7 @@ NCDimension <- R6::R6Class("NCDimension",
       private$.length <- length
       private$.unlim <- unlim
 
-      # Add self to the group
-      # FIXME: Must be a NCGroup method
-      group$NCdims <- append(group$NCdims, setNames(list(self), name))
+      group$append(self)
     },
 
     #' @description Summary of the NC dimension printed to the console.

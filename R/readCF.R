@@ -269,7 +269,8 @@ peek_ncdf <- function(resource) {
     # No dimension values so it's an identity axis
     d <- grp$find_dim_by_id(var$dimids[[1L]])
     return(CFAxisDiscrete$new(var, count = d$length))
-  }
+  } else if (length(dim(vals)) == 1L)
+    dim(vals) <- NULL
 
   # Does `var` have attributes?
   if (!nrow(var$attributes)) {
@@ -284,16 +285,12 @@ peek_ncdf <- function(resource) {
   standard <- var$attribute("standard_name")
   units    <- var$attribute("units")
 
+  # See if we can make time
+  tax <- try(CFAxisTime$new(var, vals), silent = TRUE)
+  if (!inherits(tax, "try-error")) return(tax)
+
   # Read the boundary values
   bnds <- .readBounds(grp, var$attribute("bounds"))
-
-  # See if we can make time
-  t <- .makeTimeObject(var, units, vals, bnds)
-  if (!is.null(t)) {
-    tax <- CFAxisTime$new(var, t)
-    tax$bounds <- bnds
-    return(tax)
-  }
 
   # Create the axis based on units
   axis <- if (!is.na(units)) {
@@ -355,26 +352,6 @@ peek_ncdf <- function(resource) {
   }
 
   axes
-}
-
-#' Make a CFTime object. This will try to create a CFTime or CFClimatology object,
-#' including its bounds if set. If it fails it will return NULL, otherwise the
-#' object.
-#' @noRd
-.makeTimeObject <- function(var, units, vals, bnds) {
-  if (is.na(units)) return(NULL)
-  cal <- if (is.na(cal <- var$attribute("calendar"))) "standard" else cal
-  if (!inherits(bnds, "CFBounds"))
-    bnds <- .readBounds(var$group, var$attribute("bounds"))
-  clim <- if (is.null(bnds))
-            .readBounds(var$group, var$attribute("climatology")) # Climatology must have bounds
-          else NULL
-  t <- if (is.null(clim)) try(CFtime::CFTime$new(units, cal, vals), silent = TRUE)
-  else try(CFtime::CFClimatology$new(units, cal, vals, clim$values), silent = TRUE)
-  if (inherits(t, "try-error")) return(NULL)
-  if (is.null(clim) && inherits(bnds, "CFBounds"))
-    t$bounds <- bnds$values
-  t
 }
 
 #' Make CF constructs for "coordinates" references
@@ -448,9 +425,11 @@ peek_ncdf <- function(resource) {
         }
 
         # Make a CFAuxiliaryLongLat if we have found a varLon and a varLat and
-        # they have identical dimensions, in the varLon CF group.
+        # they have identical dimensions, in the varLon CF group, but only if it
+        # doesn't already exist.
         if ((inherits(varLon, "NCVariable") && inherits(varLat, "NCVariable")) &&
-            identical(varLon$dimids, varLat$dimids)) {
+            identical(varLon$dimids, varLat$dimids) &&
+            is.null(varLon$group$CF$find_by_name(paste(varLon$name, varLat$name, sep = "_")))) {
           ax <- lapply(varLon$dimids, function(did) {
             dname <- varLon$group$find_dim_by_id(did)$name
             varLon$group$find_by_name(dname)$CF[[1L]]
@@ -575,8 +554,7 @@ peek_ncdf <- function(resource) {
             root <- grp$root
             ev <- root$attribute("external_variables")
             if (is.na(ev) || !(meas[m * 2L] %in% trimws(strsplit(ev, " ", fixed = TRUE)[[1L]]))) {
-              # FIXME: warning
-              warning("Unmatched `cell_measures` value '", meas[m * 2L], "' found in variable '", v$name, "'", call. = FALSE)
+              warning("Unmatched `cell_measures` value '", meas[m * 2L], "' found in variable '", v$name, "'.", call. = FALSE)
             } else
               root$add_CF_object(CFCellMeasure$new(meas[m * 2L - 1L], meas[m * 2L]), silent = TRUE)
           } else if (!length(nm$CF)) {
@@ -660,36 +638,33 @@ peek_ncdf <- function(resource) {
         if (!is.na(coords <- v$attribute("coordinates"))) {
           coords <- strsplit(coords, " ", fixed = TRUE)[[1L]]
           for (cid in seq_along(coords)) {
-            if (coords[cid] %in% ax_names) next
+            cv <- coords[cid]
+            if (cv %in% ax_names) next
 
-            aux <- grp$find_by_name(coords[cid])
+            aux <- grp$find_by_name(cv)
             if (!is.null(aux) && !inherits(aux, "CFVariable")) {
               clss <- class(aux)
               if (aux$length == 1L)
                 all_ax[[aux$name]] <- aux
-              # FIXME: Below two branches are identical
-              else if (clss[1L] == "CFLabel") {
+              else if (clss[1L] == "CFLabel" || "CFAxis" %in% clss) {
                 ndx <- which(sapply(dim_ax, function(x) x$dimid == aux$dimid))
                 if (length(ndx)) all_ax[[ndx]]$auxiliary <- aux
-                else {  # FIXME: record warning
-                }
-              } else if ("CFAxis" %in% clss) {
-                ndx <- which(sapply(dim_ax, function(x) x$dimid == aux$dimid))
-                if (length(ndx)) all_ax[[ndx]]$auxiliary <- aux
-                else {  # FIXME: record warning
+                else {
+                  warning("Unmatched `coordinates` value '", cv, "' found in variable '", v$name, "'.", call. = FALSE)
                 }
               } else {
-                # FIXME: Record warning
+                warning("Unmatched `coordinates` value '", cv, "' found in variable '", v$name, "'.", call. = FALSE)
               }
             } else {
-              ll <- grp$NC$find_by_name(coords[cid])
+              ll <- grp$NC$find_by_name(cv)
               if (!is.null(ll)) {
                 units <- ll$attribute("units")
                 if (!is.na(units)) {
                   if (grepl("^degree(s?)(_?)(east|E)$", units)) varLon <- ll
                   else if (grepl("^degree(s?)(_?)(north|N)$", units)) varLat <- ll
                 }
-              }
+              } else
+                warning("Unmatched `coordinates` value '", cv, "' found in variable '", v$name, "'.", call. = FALSE)
             }
           } # coords
 

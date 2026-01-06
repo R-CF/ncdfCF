@@ -57,9 +57,7 @@ NCVariable <- R6::R6Class("NCVariable",
       if (length(netcdf4))
         private$.ncdf4 <- netcdf4
 
-      # FIXME: Must be NCGroup method: group$append(self)
-      # Add self to the group
-      group$NCvars <- append(group$NCvars, setNames(list(self), name))
+      group$append(self)
     },
 
     #' @description Summary of the NC variable printed to the console.
@@ -93,8 +91,8 @@ NCVariable <- R6::R6Class("NCVariable",
     },
 
     #' @description Read (a chunk of) data from the netCDF file. Degenerate
-    #' dimensions are maintained and data is always returned in its smallest
-    #' type.
+    #'   dimensions are maintained and data is always returned in its smallest
+    #'   type.
     #'
     #' @param start A vector of indices specifying the element where reading
     #'   starts along each dimension of the data. When `NA`, all data are read
@@ -103,10 +101,14 @@ NCVariable <- R6::R6Class("NCVariable",
     #'   along each dimension of the data. Any `NA` value in vector count
     #'   indicates that the corresponding dimension should be read from the
     #'   start index to the end of the dimension.
-    #' @return An array with the requested data, or an error object.
+    #' @return An array, matrix or vector with the requested data, or an error
+    #'   object.
     get_data = function(start = NA, count = NA) {
-      RNetCDF::var.get.nc(private$.group$handle, private$.name, start, count, collapse = FALSE, unpack = TRUE,
-                          fitnum = !(private$.vtype %in% c("NC_INT64", "NCUINT64")))
+      d <- RNetCDF::var.get.nc(private$.group$handle, private$.name, start, count, collapse = FALSE, unpack = TRUE,
+                               fitnum = !(private$.vtype %in% c("NC_INT64", "NCUINT64")))
+      if (length(dim(d)) == 1L)
+        dim(d) <- NULL
+      d
     },
 
     #' @description Get the [NCDimension] object(s) that this variable uses.

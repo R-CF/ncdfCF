@@ -125,6 +125,9 @@ CFBounds <- R6::R6Class("CFBounds",
     #'
     #' @return A `CFBounds` instance covering the indicated range of indices.
     subset = function(rng) {
+      if (is.null(rng))
+        return(self$copy())
+
       vals <- if (is.null(self$values)) NULL
               else vals <- self$values[, rng[1L]:rng[2L]]
 

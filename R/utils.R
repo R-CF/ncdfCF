@@ -4,6 +4,29 @@ netcdf_data_types <- c("NC_BYTE", "NC_UBYTE", "NC_CHAR", "NC_SHORT",
                        "NC_USHORT", "NC_INT", "NC_UINT", "NC_INT64",
                        "NC_UINT64", "NC_FLOAT", "NC_DOUBLE", "NC_STRING")
 
+# This function returns TRUE if argument storage_mode is compatible with the
+# nc_data argument, FALSE otherwise.
+.compatible_type <- function(storage_mode, nc_data) {
+  switch(storage_mode,
+         "character" = nc_data %in% c("NC_CHAR", "NC_STRING"),
+         "double"    = nc_data %in% c("NC_DOUBLE", "NC_FLOAT"),
+         "integer"   = nc_data %in% c("NC_BYTE", "NC_UBYTE", "NC_SHORT", "NC_USHORT", "NC_INT", "NC_UINT"),
+         "integer64" = nc_data %in% c("NC_INT64", "NCUINT64"),
+         "logical"   = nc_data == "NC_SHORT",
+         FALSE)
+}
+
+# Return the netCDF data type most appropriate for an R type.
+.nc_type <- function(storage_mode) {
+  switch(storage_mode,
+         "character" = "NC_STRING",
+         "double"    = "NC_DOUBLE",
+         "integer"   = "NC_INT",
+         "integer64" = "NC_INT64",
+         "logical"   = "NC_SHORT",
+         "NC_NAT")
+}
+
 # This function is a bare-bones implementation of `apply(X, MARGIN, tapply, INDEX, FUN, ...)`,
 # i.e. apply a factor over a dimension of an array. There are several restrictions
 # compared to the base::apply/tapply pair (but note that function arguments are

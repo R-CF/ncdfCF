@@ -249,6 +249,22 @@ NCGroup <- R6::R6Class("NCGroup",
       invisible(grp)
     },
 
+    #' @description Append an object to this group.
+    #' @param obj The object to append. This must be an `NCVariable` or
+    #'   `NCDimension` instance. Any other type of object will generate a
+    #'   warning.
+    #' @return Self, invisible.
+    append = function(obj) {
+      cls <- class(obj)[1L]
+      obj <- setNames(list(obj), obj$name)
+      switch(cls,
+             "NCVariable"  = self$NCvars <- c(self$NCvars, obj),
+             "NCDimension" = self$NCdims <- c(self$NCdims, obj),
+             warning("Cannot add object of class ", cls, " to an NC group.", call. = FALSE))
+
+      invisible(self)
+    },
+
     #' @description This method lists the fully qualified name of this group,
     #'   optionally including names in subgroups.
     #' @param recursive Should subgroups be scanned for names too (default is

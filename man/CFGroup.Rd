@@ -190,7 +190,7 @@ Self, invisibly.
 \if{html}{\out{<a id="method-CFGroup-add_CF_object"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGroup-add_CF_object}{}}}
 \subsection{Method \code{add_CF_object()}}{
-Add one or more CF object to the current group. This is an
+Add one or more CF objects to the current group. This is an
 internal method that should not be invoked by the user. The objects to
 be added are considered atomic and not assessed for any contained
 objects. Use a method like \code{add_variable()} to add a CF variable to

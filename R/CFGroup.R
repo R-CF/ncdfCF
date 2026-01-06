@@ -128,7 +128,7 @@ CFGroup <- R6::R6Class("CFGroup",
       invisible(self)
     },
 
-    #' @description Add one or more CF object to the current group. This is an
+    #' @description Add one or more CF objects to the current group. This is an
     #'   internal method that should not be invoked by the user. The objects to
     #'   be added are considered atomic and not assessed for any contained
     #'   objects. Use a method like `add_variable()` to add a CF variable to

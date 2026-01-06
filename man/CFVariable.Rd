@@ -726,7 +726,7 @@ stored. As an example, if the variable has axes "lon" and "lat" and
 they should be stored in the parent group of \code{grp}, then specify
 \code{locations = list(lon = "..", lat = "..")}. Locations can use absolute
 paths or relative paths from the group. Associated objects that are not
-in the list will be stored in this group. If the argument \code{locations}
+in the list will be stored in group \code{grp}. If the argument \code{locations}
 is not provided, all associated objects will be stored in this group.}
 }
 \if{html}{\out{</div>}}
@@ -739,7 +739,11 @@ Self, invisibly.
 \if{html}{\out{<a id="method-CFVariable-save"></a>}}
 \if{latex}{\out{\hypertarget{method-CFVariable-save}{}}}
 \subsection{Method \code{save()}}{
-Save the data object to a netCDF file.
+Save the data variable to a netCDF file, including its
+subordinate objects such as axes, CRS, etc.
+
+Axes with \code{length == 1L} are written as a "scalar axis", unless they are
+unlimited.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFVariable$save(fn, pack = FALSE)}\if{html}{\out{</div>}}
 }

@@ -71,7 +71,7 @@ CFAxis <- R6::R6Class("CFAxis",
       ax$unlimited <- private$.unlimited
 
       if (inherits(private$.bounds, "CFBounds"))
-        ax$bounds <- private$.bounds$copy()
+        ax$bounds <- private$.bounds$subset(rng)
 
       private$subset_coordinates(ax, rng)
       ax$active_coordinates <- self$active_coordinates

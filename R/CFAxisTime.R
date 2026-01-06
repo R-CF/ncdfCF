@@ -37,7 +37,9 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     }
   ),
   public = list(
-    #' @description Create a new instance of this class.
+    #' @description Create a new instance of this class, including its boundary
+    #'   values. A `CFTime` or `CFClimatology` instance will also be created to
+    #'   manage the time magic.
     #'
     #'   Creating a new time axis is more easily done with the [makeTimeAxis()]
     #'   function.
@@ -58,13 +60,45 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       if (inherits(values, "CFTime")) {
         private$.tm <- values
         values <- private$.tm$offsets
-      } else {
-        if (inherits(var, "NCVariable")) {
-          # Make a CFTime of CFClimatology
-          private$.tm <- .makeTimeObject(var, var$attribute("units"), values, NULL)
-        } else
-          stop("When initializing by time axis name, must provide a `CFTime` instance as argument 'values'.", call. = FALSE) # nocov
-      }
+      } else if (inherits(var, "NCVariable")) {
+        # Make a CFTime or CFClimatology instance
+        units <- var$attribute("units")
+        if (is.na(units))
+          stop("Could not create a CFTime object from the arguments.", call. = FALSE)
+        cal <- if (is.na(cal <- var$attribute("calendar"))) "standard" else cal
+
+        bnds <- NULL
+        clim <- var$attribute("climatology")
+        if (!is.na(clim)) {
+          nc <- var$group$find_by_name(clim)
+          if (is.null(nc)) {
+            warning("Unmatched `climatology` value '", clim, "' found in variable '", var$name, "'.", call. = FALSE)
+            stop("Could not create a CFClimatology object from the arguments.", call. = FALSE)
+          } else {
+            bnds <- CFBounds$new(nc, start = c(1L, start), count = c(2L, count))
+            t <- try(CFtime::CFClimatology$new(units, cal, values, bnds$values), silent = TRUE)
+            if (inherits(t, "try-error"))
+              stop("Could not create a CFClimatology object from the arguments.", call. = FALSE)
+          }
+        } else {
+          t <- try(CFtime::CFTime$new(units, cal, values), silent = TRUE)
+          if (inherits(t, "try-error"))
+            stop("Could not create a CFTime object from the arguments.", call. = FALSE)
+          bounds <- var$attribute("bounds")
+          if (!is.na(bounds)) {
+            nc <- var$group$find_by_name(bounds)
+            if (is.null(nc))
+              warning("Unmatched `bounds` value '", bounds, "' found in variable '", var$name, "'.", call. = FALSE)
+            else {
+              bnds <- CFBounds$new(nc, start = c(1L, start), count = c(2L, count))
+              t$bounds <- bnds$values
+            }
+          }
+        }
+        private$.tm <- t
+        private$.bounds <- bnds
+      } else
+        stop("When initializing by time axis name, must provide a `CFTime` instance as argument 'values'.", call. = FALSE) # nocov
 
       super$initialize(var, values = values, start = start, count = count, orientation = "T", attributes = attributes)
       self$set_attribute("standard_name", "NC_CHAR", "time")
@@ -130,7 +164,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     copy = function(name = "") {
       time <- private$.tm$copy()
       if (self$has_resource) {
-        ax <- CFAxisTime$new(self$NC, values = time, start = private$.NC_map$start,
+        ax <- CFAxisTime$new(self$NC, values = self$values, start = private$.NC_map$start,
                              count = private$.NC_map$count, attributes = self$attributes)
         if (nzchar(name))
           ax$name <- name
@@ -237,7 +271,6 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @description Return an axis spanning a smaller coordinate range. This
     #'   method returns an axis which spans the range of indices given by the
     #'   `rng` argument.
-    #'
     #' @param name The name for the new axis. If an empty string is passed
     #'   (default), will use the name of this axis.
     #' @param rng The range of indices whose values from this axis to include in
@@ -251,17 +284,17 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         self$copy(name)
       else {
         rng <- as.integer(range(rng))
-        idx <- private$.tm$indexOf(seq(from = rng[1L], to = rng[2L], by = 1L))
-        newtm <- attr(idx, "CFTime")
-
         if (self$has_resource) {
-          ax <- CFAxisTime$new(private$.NCobj, values = newtm, start = private$.NC_map$start + rng[1L] - 1L,
+          ax <- CFAxisTime$new(private$.NCobj, values = self$values[rng[1L]:rng[2L]],
+                               start = private$.NC_map$start + rng[1L] - 1L,
                                count = rng[2L] - rng[1L] + 1L, attributes = self$attributes)
           if (nzchar(name))
             ax$name <- name
         } else {
           if (!nzchar(name))
             name <- self$name
+          idx <- private$.tm$indexOf(seq(from = rng[1L], to = rng[2L], by = 1L))
+          newtm <- attr(idx, "CFTime")
           ax <- CFAxisTime$new(name, values = newtm, attributes = self$attributes)
         }
         private$copy_properties_into(ax, rng)

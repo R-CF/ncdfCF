@@ -184,7 +184,8 @@ start index to the end of the dimension.}
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-An array with the requested data, or an error object.
+An array, matrix or vector with the requested data, or an error
+object.
 }
 }
 \if{html}{\out{<hr>}}

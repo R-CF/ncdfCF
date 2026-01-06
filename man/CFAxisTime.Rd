@@ -64,7 +64,9 @@ vector.}
 \if{html}{\out{<a id="method-CFAxisTime-new"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisTime-new}{}}}
 \subsection{Method \code{new()}}{
-Create a new instance of this class.
+Create a new instance of this class, including its boundary
+values. A \code{CFTime} or \code{CFClimatology} instance will also be created to
+manage the time magic.
 
 Creating a new time axis is more easily done with the \code{\link[=makeTimeAxis]{makeTimeAxis()}}
 function.

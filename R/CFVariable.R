@@ -67,6 +67,8 @@ CFVariable <- R6::R6Class("CFVariable",
         is_aux <- match(nm, private$.llgrid$grid_names)
         if (anyDuplicated(is_aux, incomparables = NA))
           stop("Duplicated auxiliary axis names not allowed", call. = FALSE)
+        if (!all(is.na(is_aux)) && sum(is_aux > 0L, na.rm = TRUE) != 2L)
+          stop("Must select both auxiliary grid axes or none.", call. = FALSE)
         if (!any(is.na(is_aux)))
           return(is_aux)
 
@@ -669,6 +671,9 @@ CFVariable <- R6::R6Class("CFVariable",
         } else
           CFVariable$new(self$name, values = d, axes = out_axes, attributes = atts)
         v$crs <- private$.crs
+        # FIXME: Attach llgrid if not selecting on its axes. Possibly subset
+        # if (!is.null(private$.llgrid))
+        #  v$gridLongLat <- private$.llgrid
       } else {
         v <- CFVariable$new(self$name, values = d, axes = out_axes, attributes = atts)
         v$crs <- NULL
@@ -1145,7 +1150,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   they should be stored in the parent group of `grp`, then specify
     #'   `locations = list(lon = "..", lat = "..")`. Locations can use absolute
     #'   paths or relative paths from the group. Associated objects that are not
-    #'   in the list will be stored in this group. If the argument `locations`
+    #'   in the list will be stored in group `grp`. If the argument `locations`
     #'   is not provided, all associated objects will be stored in this group.
     #' @return Self, invisibly.
     attach_to_group = function(grp, locations) {
@@ -1161,21 +1166,25 @@ CFVariable <- R6::R6Class("CFVariable",
       invisible(self)
     },
 
-    #' @description Save the data object to a netCDF file.
+    #' @description Save the data variable to a netCDF file, including its
+    #' subordinate objects such as axes, CRS, etc.
+    #'
+    #' Axes with `length == 1L` are written as a "scalar axis", unless they are
+    #' unlimited.
     #' @param fn The name of the netCDF file to create.
     #' @param pack Logical to indicate if the data should be packed. Packing is
     #' only useful for numeric data; packing is not performed on integer values.
     #' Packing is always to the "NC_SHORT" data type, i.e. 16-bits per value.
     #' @return Self, invisibly.
     save = function(fn, pack = FALSE) {
+      # FIXME: Auxiliary long-lat, ancillary, external variables
+
       nc <- RNetCDF::create.nc(fn, prefill = FALSE, format = "netcdf4")
+      on.exit(RNetCDF::close.nc(nc))
       if (!inherits(nc, "NetCDF"))
         stop("Could not create the netCDF file. Please check that the location of the supplied file name is writable.", call. = FALSE)
 
       # FIXME: Use `attributes` argument to set global attributes? Then must have mechanism to create attributes before saving.
-
-      # Axes and auxiliary coordinates
-      lbls <- unlist(sapply(private$.axes, function(ax) {ax$write(nc); ax$coordinate_names[-1L]}), use.names = FALSE)
 
       # CRS
       if (!is.null(self$crs)) {
@@ -1183,36 +1192,36 @@ CFVariable <- R6::R6Class("CFVariable",
         self$set_attribute("grid_mapping", "NC_CHAR", self$crs$name)
       }
 
-      if (!is.null(dt <- private$read_data())) {
-        # Packing
-        pack <- pack && private$.data_type %in% c("NC_FLOAT", "NC_DOUBLE")
-        if (pack) {
-          actual_range <- self$attribute("actual_range")
-          self$set_attribute("add_offset", private$.data_type, (actual_range[1L] + actual_range[2L]) * 0.5)
-          self$set_attribute("scale_factor", private$.data_type, (actual_range[2L] - actual_range[1L]) / 65534)
-          self$set_attribute("missing_value", "NC_SHORT", -32767)
-        }
+      # Packing
+      pack <- pack && private$.data_type %in% c("NC_FLOAT", "NC_DOUBLE")
+      if (pack) {
+        actual_range <- self$attribute("actual_range")
+        self$set_attribute("add_offset", private$.data_type, (actual_range[1L] + actual_range[2L]) * 0.5)
+        self$set_attribute("scale_factor", private$.data_type, (actual_range[2L] - actual_range[1L]) / 65534)
+        self$set_attribute("missing_value", "NC_SHORT", -32767)
+      }
 
-        # Data variable
-        dt <- private$orient(dt, "CF")
-        axes <- attr(dt, "axes")
-        dim_axes <- length(axes)
-        private$.id <- if (dim_axes > 0L)
-          RNetCDF::var.def.nc(nc, self$name, if (pack) "NC_SHORT" else private$.data_type, axes)
-        else
+      if (length(private$.axes)) {
+        # Axes and auxiliary coordinates
+        lbls <- unlist(sapply(private$.axes, function(ax) {ax$write(nc); ax$coordinate_names[-1L]}), use.names = FALSE)
+
+        # Write only non-degenerate axes. Degenerate axes become "coordinates" here
+        scalars <- sapply(private$.axes, function(ax) ax$length == 1L && !ax$unlimited)
+        dt <- private$orient(private$read_data(), "CF")
+        axes <- attr(dt, "axes")[!scalars]
+        dim(dt) <- dim(dt)[!scalars]
+        private$.id <- if (all(scalars))
           RNetCDF::var.def.nc(nc, self$name, if (pack) "NC_SHORT" else private$.data_type, NA)
-        if (length(private$.axes) > dim_axes || length(lbls)) {
-          non_dim_axis_names <- sapply(private$.axes, function(ax) ax$name)[-(1L:dim_axes)]
-          if (length(non_dim_axis_names) > 0L)
-            self$set_attribute("coordinates", "NC_CHAR", paste(c(non_dim_axis_names, lbls), collapse = " "))
-        }
+        else
+          RNetCDF::var.def.nc(nc, self$name, if (pack) "NC_SHORT" else private$.data_type, axes)
+        if (any(scalars) || length(lbls))
+          self$set_attribute("coordinates", "NC_CHAR", paste(c(names(private$.axes[scalars]), lbls), collapse = " "))
         self$write_attributes(nc, self$name)
         RNetCDF::var.put.nc(nc, self$name, dt, pack = pack, na.mode = 2)
 
         if (pack)
           self$delete_attribute(c("scale_factor", "add_offset", "missing_value"))
       }
-      RNetCDF::close.nc(nc)
 
       invisible(self)
     }
