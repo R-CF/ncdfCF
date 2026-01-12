@@ -25,7 +25,7 @@ CFVariable <- R6::R6Class("CFVariable",
     .crs = NULL,
 
     # A list of cell measure objects, if the variable has cell measures.
-    .cell_measures = NULL,
+    .cell_measures = list(),
 
     # Return the R order of axes that "receive special treatment".
     YXZT = function() {
@@ -749,18 +749,19 @@ CFVariable <- R6::R6Class("CFVariable",
       }
 
       res <- lapply(f, function(fac) {
-        # Make a new time axis for the result
+        atts <- tax$attributes
+        # New CFTime object
         new_tm <- attr(fac, "CFTime")
-        len <- length(new_tm)
-        new_ax <- CFAxisTime$new(tax$name, values = new_tm, attributes = tax$attributes)
+        if (inherits(new_tm, "CFClimatology")) {
+          atts <- atts[!(atts$name == "bounds"), ]
+          atts <- rbind(atts, data.frame(name = "climatology", type = "NC_CHAR", length = 16, value = "climatology_bnds"))
+        }
+
+        # Make a new time axis for the result
+        new_ax <- CFAxisTime$new(tax$name, values = new_tm, attributes = atts)
         other_axes <- private$.axes[-tm]
         axes <- c(new_ax, other_axes)
         names(axes) <- c(tax$name, names(other_axes))
-
-        if (inherits(new_tm, "CFClimatology")) {
-          new_ax$delete_attribute("bounds")
-          new_ax$set_attribute("climatology", "NC_CHAR", "climatology_bnds")
-        }
 
         # Summarise
         dt <- private$process_data(tm, fac, fun, ...)
@@ -1153,42 +1154,46 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   in the list will be stored in group `grp`. If the argument `locations`
     #'   is not provided, all associated objects will be stored in this group.
     #' @return Self, invisibly.
-    attach_to_group = function(grp, locations) {
+    attach_to_group = function(grp, locations = list()) {
       if (self$name %in% names(grp$objects))
-        stop("Duplicate name for CF object in group.", call. = FALSE)
+        stop("CF object '", self$name, "' already exists in group ", grp$fullname, ".", call. = FALSE)
 
-      # All objects that are added must be registered so that they can be
+      # FIXME: All objects that are added must be registered so that they can be
       # removed if there is an error later on. General process: every object
       # type has an attach_to_group method to handle its own attachment. If
       # an error occurs, clean up and cascade the error to the caller.
+      lapply(private$.axes, function(ax) ax$attach_to_group(grp, locations))
+      if (!is.null(private$.llgrid))
+        private$.llgrid$attach_to_group(grp, locations)
+      if (!is.null(private$.crs))
+        private$.crs$attach_to_group(grp, locations)
+      lapply(private$.cell_measures, function(cm) cm$attach_to_group(grp, locations))
+      lapply(private$.ancillary, function(anc) anc$attach_to_group(grp, locations))
 
       grp$add_CF_object(self)
-      invisible(self)
     },
 
-    #' @description Save the data variable to a netCDF file, including its
-    #' subordinate objects such as axes, CRS, etc.
+    #' @description Write the data variable to a netCDF file, including its
+    #'   attributes.
     #'
-    #' Axes with `length == 1L` are written as a "scalar axis", unless they are
-    #' unlimited.
-    #' @param fn The name of the netCDF file to create.
+    #'   Axes with `length == 1L` are written as a "scalar axis", unless they
+    #'   are unlimited.
+    #' @param nc The handle of the netCDF file opened for writing or a group in
+    #'   the netCDF file. If `NULL`, write to the file or group where the data
+    #'   variable was read from (the file must have been opened for writing).
     #' @param pack Logical to indicate if the data should be packed. Packing is
-    #' only useful for numeric data; packing is not performed on integer values.
-    #' Packing is always to the "NC_SHORT" data type, i.e. 16-bits per value.
+    #'   only useful for numeric data; packing is not performed on integer
+    #'   values. Packing is always to the "NC_SHORT" data type, i.e. 16-bits per
+    #'   value.
     #' @return Self, invisibly.
-    save = function(fn, pack = FALSE) {
-      # FIXME: Auxiliary long-lat, ancillary, external variables
+    write = function(nc = NULL, pack = FALSE) {
+      # FIXME: Auxiliary long-lat, ancillary, cell measure variables
 
-      nc <- RNetCDF::create.nc(fn, prefill = FALSE, format = "netcdf4")
-      on.exit(RNetCDF::close.nc(nc))
-      if (!inherits(nc, "NetCDF"))
-        stop("Could not create the netCDF file. Please check that the location of the supplied file name is writable.", call. = FALSE)
-
-      # FIXME: Use `attributes` argument to set global attributes? Then must have mechanism to create attributes before saving.
+      h <- if (inherits(nc, "NetCDF")) nc else private$.NCobj$handle
 
       # CRS
       if (!is.null(self$crs)) {
-        self$crs$write(nc)
+        self$crs$write(h)
         self$set_attribute("grid_mapping", "NC_CHAR", self$crs$name)
       }
 
@@ -1203,7 +1208,7 @@ CFVariable <- R6::R6Class("CFVariable",
 
       if (length(private$.axes)) {
         # Axes and auxiliary coordinates
-        lbls <- unlist(sapply(private$.axes, function(ax) {ax$write(nc); ax$coordinate_names[-1L]}), use.names = FALSE)
+        lbls <- unlist(sapply(private$.axes, function(ax) {ax$write(h); ax$coordinate_names[-1L]}), use.names = FALSE)
 
         # Write only non-degenerate axes. Degenerate axes become "coordinates" here
         scalars <- sapply(private$.axes, function(ax) ax$length == 1L && !ax$unlimited)
@@ -1211,17 +1216,45 @@ CFVariable <- R6::R6Class("CFVariable",
         axes <- attr(dt, "axes")[!scalars]
         dim(dt) <- dim(dt)[!scalars]
         private$.id <- if (all(scalars))
-          RNetCDF::var.def.nc(nc, self$name, if (pack) "NC_SHORT" else private$.data_type, NA)
+          RNetCDF::var.def.nc(h, self$name, if (pack) "NC_SHORT" else private$.data_type, NA)
         else
-          RNetCDF::var.def.nc(nc, self$name, if (pack) "NC_SHORT" else private$.data_type, axes)
+          RNetCDF::var.def.nc(h, self$name, if (pack) "NC_SHORT" else private$.data_type, axes)
         if (any(scalars) || length(lbls))
           self$set_attribute("coordinates", "NC_CHAR", paste(c(names(private$.axes[scalars]), lbls), collapse = " "))
-        self$write_attributes(nc, self$name)
-        RNetCDF::var.put.nc(nc, self$name, dt, pack = pack, na.mode = 2)
+        self$write_attributes(h, self$name)
+        RNetCDF::var.put.nc(h, self$name, dt, pack = pack, na.mode = 2)
 
         if (pack)
           self$delete_attribute(c("scale_factor", "add_offset", "missing_value"))
       }
+
+      invisible(self)
+    },
+
+    #' @description Save the data variable to a netCDF file, including its
+    #'   subordinate objects such as axes, CRS, etc. Note that saving a data
+    #'   variable will create a "bare-bones" netCDF file. There is no
+    #'   possibility to define global attributes, for instance. For more
+    #'   flexibility, create a new [CFDataset] and add as many data variables as
+    #'   needed as well as global attributes and other objects before saving the
+    #'   data set.
+    #' @param fn The name of the netCDF file to create.
+    #' @param pack Logical to indicate if the data should be packed. Packing is
+    #'   only useful for numeric data; packing is not performed on integer
+    #'   values. Packing is always to the "NC_SHORT" data type, i.e. 16-bits per
+    #'   value.
+    #' @return Self, invisibly.
+    save = function(fn, pack = FALSE) {
+      nc <- RNetCDF::create.nc(fn, prefill = FALSE, format = "netcdf4")
+      if (!inherits(nc, "NetCDF"))
+        stop("Could not create the netCDF file. Please check that the location of the supplied file name is writable.", call. = FALSE)
+      on.exit(RNetCDF::close.nc(nc))
+
+      self$write(nc, pack)
+
+      RNetCDF::att.put.nc(nc, "NC_GLOBAL", "Conventions", "NC_CHAR", "CF-1.13")
+      RNetCDF::att.put.nc(nc, "NC_GLOBAL", "history", "NC_CHAR",
+        paste0(as.POSIXct(Sys.time()), ": Created by R package ncdfCF ", packageVersion("ncdfCF")))
 
       invisible(self)
     }
@@ -1234,10 +1267,7 @@ CFVariable <- R6::R6Class("CFVariable",
     },
 
     #' @field axes (read-only) List of instances of classes descending from
-    #'   [CFAxis] that are the axes of the data object. If there are any scalar
-    #'   axes, they are listed after the axes that associate with the dimensions
-    #'   of the data. (In other words, axes `1..n` describe the `1..n` data
-    #'   dimensions, while any axes `n+1..m` are scalar axes.)
+    #'   [CFAxis] that are the axes of the data object.
     axes = function(value) {
       if (missing(value))
         private$.axes

@@ -55,10 +55,6 @@ a valid CF name. The name of the root group cannot be changed.}
 
 \item{\code{root}}{(read-only) Retrieve the root group.}
 
-\item{\code{data_set}}{(read-only) Retrieve the \link{CFDataset} that the group
-belongs to. If the group is not attached to a \code{CFDataset}, returns
-\code{NULL}.}
-
 \item{\code{CF}}{Set or retrieve the \link{CFGroup} that is associated with this
 NC group.}
 }
@@ -77,7 +73,6 @@ NC group.}
 \item \href{#method-NCGroup-append}{\code{NCGroup$append()}}
 \item \href{#method-NCGroup-fullnames}{\code{NCGroup$fullnames()}}
 \item \href{#method-NCGroup-dimensions}{\code{NCGroup$dimensions()}}
-\item \href{#method-NCGroup-save}{\code{NCGroup$save()}}
 \item \href{#method-NCGroup-clone}{\code{NCGroup$clone()}}
 }
 }
@@ -102,17 +97,19 @@ Create a new instance of this class.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{id}}{The identifier of the group.}
+\item{\code{id}}{The identifier of the group. If \code{NA}, the new group will be
+created in the netCDF resource, unless argument \code{parent == NULL}, i.e.
+the root group.}
 
 \item{\code{name}}{The name of the group.}
 
 \item{\code{attributes}}{Optional, a \code{data.frame} with group attributes.}
 
-\item{\code{parent}}{The parent group of this group. The owning \link{CFDataset} for
-the root group.}
+\item{\code{parent}}{The parent group of this group. If \code{NULL} then argument
+\code{resource} must be a valid instance of \code{NCResource}.}
 
-\item{\code{resource}}{Reference to the \link{CFResource} instance that provides
-access to the netCDF resource. For in-memory groups this can be \code{NULL}.}
+\item{\code{resource}}{Optional. Reference to the \link{NCResource} instance that
+provides access to the netCDF resource.}
 }
 \if{html}{\out{</div>}}
 }
@@ -317,19 +314,6 @@ parent groups as well (\code{all}, default).}
 }
 \subsection{Returns}{
 A vector of \link{NCDimension} objects.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-NCGroup-save"></a>}}
-\if{latex}{\out{\hypertarget{method-NCGroup-save}{}}}
-\subsection{Method \code{save()}}{
-Save any unsaved changes to the netCDF resource.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$save()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

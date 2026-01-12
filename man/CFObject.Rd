@@ -6,8 +6,7 @@
 \title{CF base object}
 \description{
 This class is a basic ancestor to all classes that represent CF
-objects, specifically groups, data variables and axes. More useful classes
-use this class as ancestor.
+objects. More useful classes use this class as ancestor.
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
@@ -42,6 +41,7 @@ resource, or \code{NULL} if not linked.}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFObject-new}{\code{CFObject$new()}}
+\item \href{#method-CFObject-attach_to_group}{\code{CFObject$attach_to_group()}}
 \item \href{#method-CFObject-detach}{\code{CFObject$detach()}}
 \item \href{#method-CFObject-attribute}{\code{CFObject$attribute()}}
 \item \href{#method-CFObject-print_attributes}{\code{CFObject$print_attributes()}}
@@ -81,6 +81,38 @@ resource.}
 }
 \subsection{Returns}{
 A \code{CFObject} instance.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFObject-attach_to_group"></a>}}
+\if{latex}{\out{\hypertarget{method-CFObject-attach_to_group}{}}}
+\subsection{Method \code{attach_to_group()}}{
+Attach this CF object to a group. If there is another object
+with the same name in this group an error is thrown. This is the basic
+method that may be overridden by descendant classes.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFObject$attach_to_group(grp, locations = list())}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{grp}}{An instance of \link{CFGroup}.}
+
+\item{\code{locations}}{Optional. A \code{list} whose named elements correspond to
+the names of objects, possibly including this object. Each list element
+has a single character string indicating the group in the hierarchy
+where the object should be stored. As an example, if a data variable
+has axes "lon" and "lat" and they should be stored in the parent group
+of \code{grp}, then specify \code{locations = list(lon = "..", lat = "..")}.
+Locations can use absolute paths or relative paths from group \code{grp}. If
+the argument \code{locations} is not provided or the name of the object is
+not in the list, the object will be stored in group \code{grp}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

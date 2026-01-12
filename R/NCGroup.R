@@ -16,8 +16,7 @@ NCGroup <- R6::R6Class("NCGroup",
     # compliant with CF rules when starting with a backslash.
     .name = "",
 
-    # Access to the underlying netCDF resource. This can be `NULL` for instances
-    # created in memory. Managed internally.
+    # Access to the underlying netCDF resource.
     .resource = NULL,
 
     # The CFGroup connected to this NC group
@@ -42,19 +41,34 @@ NCGroup <- R6::R6Class("NCGroup",
     NCudts    = list(),
 
     #' @description Create a new instance of this class.
-    #' @param id The identifier of the group.
+    #' @param id The identifier of the group. If `NA`, the new group will be
+    #'   created in the netCDF resource, unless argument `parent == NULL`, i.e.
+    #'   the root group.
     #' @param name The name of the group.
     #' @param attributes Optional, a `data.frame` with group attributes.
-    #' @param parent The parent group of this group. The owning [CFDataset] for
-    #'   the root group.
-    #' @param resource Reference to the [CFResource] instance that provides
-    #'   access to the netCDF resource. For in-memory groups this can be `NULL`.
+    #' @param parent The parent group of this group. If `NULL` then argument
+    #'   `resource` must be a valid instance of `NCResource`.
+    #' @param resource Optional. Reference to the [NCResource] instance that
+    #'   provides access to the netCDF resource.
     #' @return An instance of this class.
     initialize = function(id, name, attributes = data.frame(), parent, resource) {
+      if (is.na(id)) {
+        if (is.null(parent)) {
+          # Grab the root group from the resource
+          nc <- RNetCDF::grp.inq.nc(resource$handle)
+          id <- as.integer(nc$self)
+        } else {
+          # Add a sub-group
+          nc <- RNetCDF::grp.def.nc(parent$handle, name)
+          private$.resource$sync()
+          id <- as.integer(nc)
+        }
+      }
+
       super$initialize(id, "group", attributes)
       private$.name <- name
       self$parent <- parent
-      private$.resource <- resource
+      private$.resource <- if (missing(resource)) parent$resource else resource
     },
 
     #' @description Summary of the group printed to the console.
@@ -300,23 +314,13 @@ NCGroup <- R6::R6Class("NCGroup",
         } else
           pdims
       }
-    },
-
-    #' @description Save any unsaved changes to the netCDF resource.
-    #' @return Self, invisibly.
-    save = function() {
-      if (self$can_write) {
-        self$write_attributes(self$handle, -1L)
-        # FIXME: Save other items too
-      }
-      invisible(self)
     }
   ),
   active = list(
     #' @field friendlyClassName (read-only) A nice description of the class.
     friendlyClassName = function(value) {
       if (missing(value))
-        "Group"
+        "NetCDF group"
     },
 
     #' @field resource (read-only) The RNetCDF object to the underlying netCDF
@@ -375,17 +379,6 @@ NCGroup <- R6::R6Class("NCGroup",
       if (missing(value)) {
         g <- self
         while (g$name != "/") g <- g$parent
-        g
-      }
-    },
-
-    #' @field data_set (read-only) Retrieve the [CFDataset] that the group
-    #'   belongs to. If the group is not attached to a `CFDataset`, returns
-    #'   `NULL`.
-    data_set = function(value) {
-      if (missing(value)) {
-        g <- self
-        while (inherits(g, "NCGroup")) g <- g$parent
         g
       }
     },

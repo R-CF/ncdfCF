@@ -45,9 +45,10 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #'   function.
     #' @param var The name of the axis when creating a new axis. When reading an
     #'   axis from file, the [NCVariable] object that describes this instance.
-    #' @param values Either the numeric values of this axis, or an instance of
-    #'   `CFTime` or `CFClimatology` with bounds set. If these are numeric
-    #'   values, argument `var` must be a `NCVariable`.
+    #' @param values Either the numeric values of this axis, in which case
+    #'   argument `var` must be a `NCVariable`, or an instance of `CFTime` or
+    #'   `CFClimatology` with bounds set, and then argument `var` must be a name
+    #'   for the axis.
     #' @param start Optional. Integer index where to start reading axis data
     #'   from file. The index may be `NA` to start reading data from the start.
     #' @param count Optional. Number of elements to read from file. This may be
@@ -59,6 +60,15 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     initialize = function(var, values, start = 1L, count = NA, attributes = data.frame()) {
       if (inherits(values, "CFTime")) {
         private$.tm <- values
+        if (!is.null(bv <- values$bounds)) {
+          if (length(att <- attributes[attributes$name %in% c("bounds", "climatology"), "value"]))
+            nm <- att[[1L]]
+          else {
+            nm <- paste(var, "bnds", sep = "_")
+            attributes <- rbind(attributes, data.frame(name = "bounds", type = "NC_CHAR", length = nchar(nm), value = nm))
+          }
+          private$.bounds <- CFBounds$new(nm, values = bv)
+        }
         values <- private$.tm$offsets
       } else if (inherits(var, "NCVariable")) {
         # Make a CFTime or CFClimatology instance

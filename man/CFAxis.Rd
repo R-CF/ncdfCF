@@ -52,8 +52,8 @@ the active coordinate set is the primary axis coordinates.}
 \item{\code{coordinate_names}}{(read-only) Retrieve the names of the coordinate
 sets defined for the axis, as a character vector. The first element in
 the vector is the name of the axis and it refers to the values of the
-coordinates as stored in the netCDF file. Following elements refer to
-auxiliary coordinates.}
+coordinates of this axis. Following elements refer to auxiliary
+coordinates.}
 
 \item{\code{coordinate_range}}{(read-only) Retrieve the range of the coordinates
 of the axis as a vector of two values. The mode of the result depends on
@@ -91,6 +91,7 @@ has dimensional coordinates. Always \code{FALSE} for all axes except for
 \item \href{#method-CFAxis-copy_with_values}{\code{CFAxis$copy_with_values()}}
 \item \href{#method-CFAxis-subset}{\code{CFAxis$subset()}}
 \item \href{#method-CFAxis-indexOf}{\code{CFAxis$indexOf()}}
+\item \href{#method-CFAxis-attach_to_group}{\code{CFAxis$attach_to_group()}}
 \item \href{#method-CFAxis-write}{\code{CFAxis$write()}}
 }
 }
@@ -443,6 +444,40 @@ Default is \code{TRUE}.}
 }
 \subsection{Returns}{
 Numeric vector of the same length as \code{x}.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-attach_to_group"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-attach_to_group}{}}}
+\subsection{Method \code{attach_to_group()}}{
+Attach this axis to a group. If there is another object with
+the same name in this group an error is thrown. For associated objects
+(such as bounds, etc), if another object with the same name is
+otherwise identical to the associated object then that object will be
+linked from the variable, otherwise an error is thrown.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$attach_to_group(grp, locations = list())}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{grp}}{An instance of \link{CFGroup}.}
+
+\item{\code{locations}}{Optional. A \code{list} whose named elements correspond to
+the names of objects associated with this axis, possibly including the
+axis itself. Each list element has a single character string indicating
+the group in the hierarchy where the object should be stored. As an
+example, if the variable has axes "lon" and "lat" and they should be
+stored in the parent group of \code{grp}, then specify \code{locations = list(lon = "..", lat = "..")}. Locations can use absolute paths or relative
+paths from group \code{grp}. The axis and associated objects that are not in
+the list will be stored in group \code{grp}. If the argument \code{locations} is
+not provided, all associated objects will be stored in this group.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

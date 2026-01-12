@@ -7,11 +7,12 @@
 create_ncdf(fn)
 }
 \arguments{
-\item{fn}{The fully qualified filename of the netCDF file to create. The
-file cannot already exist. It is recommended that the filename uses an
-extension of ".nc".}
+\item{fn}{Optional. The fully qualified file name of the netCDF file if that
+should be created. The file cannot already exist. It is recommended that
+the filename uses an extension of ".nc". If the argument is not provided, a
+virtual data set will be created.}
 }
 \description{
-This function creates a new, empty data set with an associated netCDF file
-in "netcdf4" format.
+This function creates a new, empty data set with an associated netCDF file in
+"netcdf4" format.
 }

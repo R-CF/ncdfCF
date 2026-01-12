@@ -53,6 +53,7 @@ https://oceancolor.gsfc.nasa.gov/resources/docs/technical/ocean_level-3_binned_d
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="terra"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-terra'><code>ncdfCF::CFVariable$terra()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="time"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-time'><code>ncdfCF::CFVariable$time()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="update_coordinates_attribute"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-update_coordinates_attribute'><code>ncdfCF::CFVariable$update_coordinates_attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="write"><a href='../../ncdfCF/html/CFVariable.html#method-CFVariable-write'><code>ncdfCF::CFVariable$write()</code></a></span></li>
 </ul>
 </details>
 }}

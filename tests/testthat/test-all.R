@@ -338,3 +338,34 @@ test_that("external_variables", {
     expect_true(inherits(area_var, "CFVariable"))
   }
 })
+
+test_that("NORA3: Multiple length-1 dimensions - append, create new data set", {
+  fn <- "../testdata/fc2024062600_003_sfx.nc"
+  if (file.exists(fn)) {
+    nora3 <- open_ncdf(fn)
+    t2m <- nora3[["T2M"]]
+    q2m <- nora3[["Q2M"]]
+    h <- nora3[["H"]]
+    hr <- c("06", "12", "18")
+    for (i in seq_along(hr)) {
+      ds <- open_ncdf(paste0("../testdata/fc20240626", hr[i], "_003_sfx.nc"))
+      t2mx <- ds[["T2M"]]
+      t2m$append(t2mx, "time")
+      expect_equal(dim(t2m), c(x = 889, y = 1489, grib1_vLevel1053 = 1, time = i + 1L))
+      q2mx <- ds[["Q2M"]]
+      q2m$append(q2mx, "time")
+      expect_equal(dim(q2m), c(x = 889, y = 1489, grib1_vLevel1053 = 1, time = i + 1L))
+      hx <- ds[["H"]]
+      h$append(hx, "time")
+      expect_equal(dim(h), c(x = 889, y = 1489, grib1_vLevel1052 = 1, time = i + 1L))
+    }
+    expect_false(t2m$has_resource)
+    expect_equal(dim(t2m$values), c(889, 1489, 1, 4))
+  }
+
+  # Create new data set and append the new data variables
+  #fn <- tempfile(fileext = ".nc")
+  #ds <- create_ncdf(fn)
+
+  #unlink(fn)
+})

@@ -188,7 +188,9 @@ CFBounds <- R6::R6Class("CFBounds",
       if (inherits(did, "try-error"))
         did <- RNetCDF::dim.inq.nc(h, nv)$id
 
-      private$.id <- RNetCDF::var.def.nc(h, self$name, private$.data_type, c(nm, object_name))
+      private$.id <- try(RNetCDF::var.def.nc(h, self$name, private$.data_type, c(nm, object_name)), silent = TRUE)
+      if (inherits(private$.id, "try-error"))
+        private$.id <- RNetCDF::var.inq.nc(h, self$name)$id
       self$write_attributes(h, self$name)
       RNetCDF::var.put.nc(h, self$name, v)
     }

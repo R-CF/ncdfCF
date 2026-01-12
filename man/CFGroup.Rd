@@ -60,12 +60,15 @@ current group.}
 \item \href{#method-CFGroup-objects}{\code{CFGroup$objects()}}
 \item \href{#method-CFGroup-find_by_name}{\code{CFGroup$find_by_name()}}
 \item \href{#method-CFGroup-add_variable}{\code{CFGroup$add_variable()}}
+\item \href{#method-CFGroup-write}{\code{CFGroup$write()}}
+\item \href{#method-CFGroup-write_variables}{\code{CFGroup$write_variables()}}
 }
 }
 \if{html}{\out{
 <details><summary>Inherited methods</summary>
 <ul>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attach_to_group'><code>ncdfCF::CFObject$attach_to_group()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>ncdfCF::CFObject$attributes_identical()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
@@ -89,7 +92,10 @@ Create a new CF group instance.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{grp}}{Either a \link{NCGroup} instance when opening a netCDF resource, or
-a character string when creating a new CF group in memory.}
+a character string with a name for the group when creating a new CF
+group in memory. When a character string, it should be the local name,
+without any slash "/" characters. For the root group, specify an empty
+string "".}
 
 \item{\code{parent}}{The parent group for this group, or a \code{CFDataset} for the
 root group.}
@@ -161,7 +167,7 @@ it cannot be already present in the group.}
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-The newly created group, invisibly, or an error.
+The newly created group, or an error.
 }
 }
 \if{html}{\out{<hr>}}
@@ -303,6 +309,54 @@ associated objects will be stored in this group.}
 }
 \subsection{Returns}{
 Argument \code{var}, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFGroup-write"></a>}}
+\if{latex}{\out{\hypertarget{method-CFGroup-write}{}}}
+\subsection{Method \code{write()}}{
+Write the group to file, including its attributes, if it
+doesn't already exist.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFGroup$write(recursive = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{recursive}}{If \code{TRUE} (default), write sub-groups as well.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFGroup-write_variables"></a>}}
+\if{latex}{\out{\hypertarget{method-CFGroup-write_variables}{}}}
+\subsection{Method \code{write_variables()}}{
+Write data variables in the group to file, including its
+associated objects, if it doesn't already exist.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFGroup$write_variables(pack = FALSE, recursive = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pack}}{Logical to indicate if the data should be packed. Packing is
+only useful for numeric data; packing is not performed on integer
+values. Packing is always to the "NC_SHORT" data type, i.e. 16-bits per
+value.}
+
+\item{\code{recursive}}{If \code{TRUE} (default), write data variables in sub-groups
+as well.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 }

@@ -32,21 +32,28 @@ CFGroup <- R6::R6Class("CFGroup",
   public = list(
     #' @description Create a new CF group instance.
     #' @param grp Either a [NCGroup] instance when opening a netCDF resource, or
-    #'   a character string when creating a new CF group in memory.
+    #'   a character string with a name for the group when creating a new CF
+    #'   group in memory. When a character string, it should be the local name,
+    #'   without any slash "/" characters. For the root group, specify an empty
+    #'   string "".
     #' @param parent The parent group for this group, or a `CFDataset` for the
     #'   root group.
     #' @return An instance of this class.
     initialize = function(grp, parent) {
-      # FIXME: what about backslashes in group names, e.g. root?
-      super$initialize(grp)
-
-      private$.parent <- parent
-      if (inherits(grp, "NCGroup"))
+      if (inherits(grp, "NCGroup")) {
+        super$initialize(grp)
         private$.name <- grp$name
-      else {
-        private$.name <- grp
+      } else {
+        if (nzchar(grp)) {
+          super$initialize(grp)
+          private$.name <- grp
+        } else {
+          super$initialize("root")
+          private$.name <- "/"
+        }
         private$.dirty <- TRUE
       }
+      private$.parent <- parent
     },
 
     #' @description Summary of the group printed to the console.
@@ -62,7 +69,7 @@ CFGroup <- R6::R6Class("CFGroup",
       if (self$has_subgroups)
         cat("Subgroups :", paste(names(self$subgroups), collapse = ", "), "\n")
 
-      self$print_attributes(...)
+      self$print_attributes(width = 50L)
     },
 
     #' @description Prints the hierarchy of the group and its subgroups to the
@@ -104,7 +111,7 @@ CFGroup <- R6::R6Class("CFGroup",
     #' @param name The name of the new subgroup. This must be a valid CF name,
     #'   so not contain any slash '/' characters among other restrictions, and
     #'   it cannot be already present in the group.
-    #' @return The newly created group, invisibly, or an error.
+    #' @return The newly created group, or an error.
     create_subgroup = function(name) {
       if (!.is_valid_name(name))
         stop("Specified name is not valid.", call. = FALSE)
@@ -113,7 +120,7 @@ CFGroup <- R6::R6Class("CFGroup",
 
       grp <- CFGroup$new(name, parent = self)
       private$.subgroups <- c(private$.subgroups, setNames(list(grp), name))
-      invisible(grp)
+      grp
     },
 
     #' @description Add subgroups to the current group. These subgroups must be
@@ -196,6 +203,8 @@ CFGroup <- R6::R6Class("CFGroup",
     #' @return The object with the provided name. If the object is not found,
     #'   returns `NULL`.
     find_by_name = function(name) {
+      if (is.null(name)) return(NULL)
+
       grp <- self
       elements <- strsplit(name[1L], "/", fixed = TRUE)[[1L]]
       parts <- length(elements)
@@ -293,6 +302,48 @@ CFGroup <- R6::R6Class("CFGroup",
     add_variable = function(var, locations = list()) {
       var$attach_to_group(self, locations)
       invisible(var)
+    },
+
+    #' @description Write the group to file, including its attributes, if it
+    #' doesn't already exist.
+    #' @param recursive If `TRUE` (default), write sub-groups as well.
+    #' @return Self, invisibly.
+    write = function(recursive = TRUE) {
+      if (is.null(private$.NCobj)) {
+        parent <- if (self$name == "/") NULL else private$.parent$NC
+        private$.NCobj <- NCGroup$new(id = NA, name = private$.name, attributes = self$attributes,
+                                      parent = parent, resource = self$data_set$resource)
+        private$.id <- private$.NCobj$id
+        private$.NCobj$CF <- self
+        if (!is.null(parent))
+          parent$subgroups <- c(parent$subgroups, setNames(list(private$.NCobj), private$.name))
+      }
+      self$write_attributes(private$.NCobj$handle, "NC_GLOBAL")
+
+      if (recursive)
+        lapply(private$.subgroups, function(g) g$write(recursive))
+
+      invisible(self)
+    },
+
+    #' @description Write data variables in the group to file, including its
+    #'   associated objects, if it doesn't already exist.
+    #' @param pack Logical to indicate if the data should be packed. Packing is
+    #'   only useful for numeric data; packing is not performed on integer
+    #'   values. Packing is always to the "NC_SHORT" data type, i.e. 16-bits per
+    #'   value.
+    #' @param recursive If `TRUE` (default), write data variables in sub-groups
+    #'   as well.
+    #' @return Self, invisibly.
+    write_variables = function(pack = FALSE, recursive = TRUE) {
+      lapply(private$.objects, function(obj) {
+        if (inherits(obj, "CFVariable"))
+          obj$write(self$NC$handle, pack)
+      })
+      if (recursive)
+        lapply(private$.subgroups, function(g) g$write_variables(pack, recursive))
+
+      invisible(self)
     }
   ),
   active = list(

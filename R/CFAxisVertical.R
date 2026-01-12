@@ -252,6 +252,32 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
         private$.parameter_name <- self$attribute("standard_name")
     },
 
+    #' @description Attach this verical axis to a group, including any
+    #'   parameteric terms. If there is another object with the same name in
+    #'   this group an error is thrown. For associated objects (such as bounds,
+    #'   etc), if another object with the same name is otherwise identical to
+    #'   the associated object then that object will be linked from the
+    #'   variable, otherwise an error is thrown.
+    #' @param grp An instance of [CFGroup].
+    #' @param locations Optional. A `list` whose named elements correspond to
+    #'   the names of objects associated with this axis, possibly including the
+    #'   axis itself. Each list element has a single character string indicating
+    #'   the group in the hierarchy where the object should be stored. As an
+    #'   example, if the variable has axes "lon" and "lat" and they should be
+    #'   stored in the parent group of `grp`, then specify `locations = list(lon
+    #'   = "..", lat = "..")`. Locations can use absolute paths or relative
+    #'   paths from group `grp`. The axis and associated objects that are not in
+    #'   the list will be stored in group `grp`. If the argument `locations` is
+    #'   not provided, all associated objects will be stored in this group.
+    #' @return Self, invisibly.
+    attach_to_group = function(grp, locations = list()) {
+      # Parametric terms
+      # FIXME
+
+      # Now add the axis, boundary values and auxiliary coordinates to the group
+      super$attach_to_group(grp, locations)
+    },
+
     #' @description Detach the parametric terms from an underlying netCDF
     #' resource.
     #' @return Self, invisibly.

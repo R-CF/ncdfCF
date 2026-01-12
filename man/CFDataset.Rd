@@ -6,13 +6,14 @@
 \title{CF data set}
 \description{
 This class represents a CF data set, the object that
-encapsulates a netCDF resource. You should never have to instantiate this
-class directly; instead, call \code{\link[=open_ncdf]{open_ncdf()}} which will return an instance
-that has all properties read from the netCDF resource. Class methods can then
-be called, or the base R functions called with this instance.
+encapsulates a netCDF resource. You should never instantiate this class
+directly; instead, call \code{\link[=open_ncdf]{open_ncdf()}} which will return an instance that
+has all properties read from the netCDF resource, or \code{\link[=create_ncdf]{create_ncdf()}} for a
+new, empty instance. Class methods can then be called, or the base R
+functions called with this instance.
 
-The CF data set instance provides access to all the objects in the
-netCDF resource, organized in groups.
+The CF data set instance provides access to all the objects in the netCDF
+resource, organized in groups.
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -66,6 +67,11 @@ resource conforms to.}
 \item \href{#method-CFDataset-axes}{\code{CFDataset$axes()}}
 \item \href{#method-CFDataset-attributes}{\code{CFDataset$attributes()}}
 \item \href{#method-CFDataset-attribute}{\code{CFDataset$attribute()}}
+\item \href{#method-CFDataset-set_attribute}{\code{CFDataset$set_attribute()}}
+\item \href{#method-CFDataset-append_attribute}{\code{CFDataset$append_attribute()}}
+\item \href{#method-CFDataset-delete_attribute}{\code{CFDataset$delete_attribute()}}
+\item \href{#method-CFDataset-add_variable}{\code{CFDataset$add_variable()}}
+\item \href{#method-CFDataset-save}{\code{CFDataset$save()}}
 \item \href{#method-CFDataset-clone}{\code{CFDataset$clone()}}
 }
 }
@@ -73,7 +79,10 @@ resource conforms to.}
 \if{html}{\out{<a id="method-CFDataset-new"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-new}{}}}
 \subsection{Method \code{new()}}{
-Create an instance of this class.
+Create an instance of this class. Do not instantiate this
+class directly; instead, call \code{\link[=open_ncdf]{open_ncdf()}} which will return an
+instance that has all properties read from the netCDF resource, or
+\code{\link[=create_ncdf]{create_ncdf()}} for a new, empty instance.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFDataset$new(resource, format)}\if{html}{\out{</div>}}
 }
@@ -81,11 +90,12 @@ Create an instance of this class.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{resource}}{An instance of \code{CFResource} that links to the netCDF
-resource.}
+\item{\code{resource}}{An instance of \code{NCResource} that links to the netCDF
+resource, or a character string with the name of a new data set.}
 
 \item{\code{format}}{Character string with the format of the netCDF resource as
-reported by the call opening the resource.}
+reported by the call opening the resource. Ignored when argument
+\code{resource} is a character string.}
 }
 \if{html}{\out{</div>}}
 }
@@ -261,6 +271,167 @@ If the \code{field} argument is "type", a character string. If \code{field}
 is "value", a single value of the type of the attribute, or a vector
 when the attribute has multiple values. If no attribute is named with a
 value of argument \code{att} \code{NA} is returned.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-set_attribute"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-set_attribute}{}}}
+\subsection{Method \code{set_attribute()}}{
+Add an attribute to the global attributes. If an attribute
+\code{name} already exists, it will be overwritten.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$set_attribute(name, type, value)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{The name of the attribute. The name must begin with a letter
+and be composed of letters, digits, and underscores, with a maximum
+length of 255 characters. UTF-8 characters are not supported in
+attribute names.}
+
+\item{\code{type}}{The type of the attribute, as a string value of a netCDF data
+type.}
+
+\item{\code{value}}{The value of the attribute. This can be of any supported
+type, including a vector or list of values. Matrices, arrays and like
+compound data structures should be stored as a data variable, not as an
+attribute and they are thus not allowed. In general, an attribute
+should be a character value, a numeric value, a logical value, or a
+short vector or list of any of these. Values passed in a list will be
+coerced to their common mode.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-append_attribute"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-append_attribute}{}}}
+\subsection{Method \code{append_attribute()}}{
+Append the text value of a global attribute. If an attribute
+\code{name} already exists, the \code{value} will be appended to the existing
+value of the attribute. If the attribute \code{name} does not exist it will
+be created. The attribute must be of "NC_CHAR" or "NC_STRING" type; in
+the latter case having only a single string value.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$append_attribute(name, value, sep = "; ", prepend = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{The name of the attribute. The name must begin with a letter
+and be composed of letters, digits, and underscores, with a maximum
+length of 255 characters. UTF-8 characters are not supported in
+attribute names.}
+
+\item{\code{value}}{The character value of the attribute to append. This must be
+a character string.}
+
+\item{\code{sep}}{The separator to use. Default is \code{"; "}.}
+
+\item{\code{prepend}}{Logical to flag if the supplied \code{value} should be placed
+before the existing value. Default is \code{FALSE}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-delete_attribute"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-delete_attribute}{}}}
+\subsection{Method \code{delete_attribute()}}{
+Delete attributes. If an attribute \code{name} is not present
+this method simply returns.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$delete_attribute(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{Vector of names of the attributes to delete.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-add_variable"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-add_variable}{}}}
+\subsection{Method \code{add_variable()}}{
+Add a \link{CFVariable} object to the data set. If there is
+another object with the same name in the group where the data variable
+should be placed an error is thrown. For objects associated with the
+data variable (such as axes, CRS, boundary variables, etc), if another
+object with the same name is otherwise identical to the associated
+object then that object will be linked from the variable, otherwise an
+error is thrown.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$add_variable(var, group, locations = list())}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{var}}{An instance of \code{CFVariable} or any of its descendants.}
+
+\item{\code{group}}{Optional. An instance of \link{CFGroup} where the data variable
+should be located. If omitted, the data variable will be stored in the
+root group.}
+
+\item{\code{locations}}{Optional. A \code{list} whose named elements correspond to
+the names of objects associated with the data variable in argument
+\code{var}. Each list element has a single character string indicating the
+group in the hierarchy where the object should be stored. As an
+example, if the data variable has axes "lon" and "lat" and they should
+be stored in the parent group of \code{group}, then specify \code{locations = list(lon = "..", lat = "..")}. Locations can use absolute paths or
+relative paths from the \code{group}. Associated objects that are not in the
+list will be stored in \code{group}. If the argument \code{locations} is not
+provided, all associated objects will be stored in \code{group}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Argument \code{var}, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-save"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-save}{}}}
+\subsection{Method \code{save()}}{
+Save the data set to file, including its subordinate objects
+such as attributes, data variables, axes, CRS, etc.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$save(fn, pack = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{fn}}{Fully-qualified file name indicating where to save the data set
+to. This argument must be provided if the data set is virtual. If the
+argument is provided on a data set that was read from a netCDF file, a
+new netCDF file will be written to the indicated location. If the
+argument is missing, the existing netCDF file will be updated.}
+
+\item{\code{pack}}{Optional. Logical to indicate if the data should be packed;
+default is \code{FALSE}. Packing is only useful for numeric data; packing is
+not performed on integer values. Packing is always to the "NC_SHORT"
+data type, i.e. 16-bits per value.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

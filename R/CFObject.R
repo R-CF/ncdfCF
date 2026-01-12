@@ -6,8 +6,7 @@ NULL
 #' CF base object
 #'
 #' @description This class is a basic ancestor to all classes that represent CF
-#'   objects, specifically groups, data variables and axes. More useful classes
-#'   use this class as ancestor.
+#'   objects. More useful classes use this class as ancestor.
 #'
 #' @docType class
 CFObject <- R6::R6Class("CFObject",
@@ -79,7 +78,28 @@ CFObject <- R6::R6Class("CFObject",
         private$.name <- obj$name
         private$.attributes <- if (nrow(attributes)) atts
                                else obj$attributes[-1L]
+        self$delete_attribute(c("_ChunkSizes", "coordinates"))
       }
+    },
+
+    #' @description Attach this CF object to a group. If there is another object
+    #'   with the same name in this group an error is thrown. This is the basic
+    #'   method that may be overridden by descendant classes.
+    #' @param grp An instance of [CFGroup].
+    #' @param locations Optional. A `list` whose named elements correspond to
+    #'   the names of objects, possibly including this object. Each list element
+    #'   has a single character string indicating the group in the hierarchy
+    #'   where the object should be stored. As an example, if a data variable
+    #'   has axes "lon" and "lat" and they should be stored in the parent group
+    #'   of `grp`, then specify `locations = list(lon = "..", lat = "..")`.
+    #'   Locations can use absolute paths or relative paths from group `grp`. If
+    #'   the argument `locations` is not provided or the name of the object is
+    #'   not in the list, the object will be stored in group `grp`.
+    #' @return Self, invisibly.
+    attach_to_group = function(grp, locations = list()) {
+      g <- grp$find_by_name(locations[[self$name]]) %||% grp
+      g$add_CF_object(self)
+      invisible(self)
     },
 
     #' @description Detach the current object from its underlying netCDF

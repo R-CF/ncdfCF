@@ -50,6 +50,7 @@ will access the standard names table.}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-CFAxisVertical-new}{\code{CFAxisVertical$new()}}
+\item \href{#method-CFAxisVertical-attach_to_group}{\code{CFAxisVertical$attach_to_group()}}
 \item \href{#method-CFAxisVertical-detach}{\code{CFAxisVertical$detach()}}
 \item \href{#method-CFAxisVertical-copy}{\code{CFAxisVertical$copy()}}
 \item \href{#method-CFAxisVertical-copy_with_values}{\code{CFAxisVertical$copy_with_values()}}
@@ -121,6 +122,41 @@ axis. When an empty \code{data.frame} (default) and argument \code{var} is an
 netCDF resource.}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisVertical-attach_to_group"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisVertical-attach_to_group}{}}}
+\subsection{Method \code{attach_to_group()}}{
+Attach this verical axis to a group, including any
+parameteric terms. If there is another object with the same name in
+this group an error is thrown. For associated objects (such as bounds,
+etc), if another object with the same name is otherwise identical to
+the associated object then that object will be linked from the
+variable, otherwise an error is thrown.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisVertical$attach_to_group(grp, locations = list())}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{grp}}{An instance of \link{CFGroup}.}
+
+\item{\code{locations}}{Optional. A \code{list} whose named elements correspond to
+the names of objects associated with this axis, possibly including the
+axis itself. Each list element has a single character string indicating
+the group in the hierarchy where the object should be stored. As an
+example, if the variable has axes "lon" and "lat" and they should be
+stored in the parent group of \code{grp}, then specify \code{locations = list(lon = "..", lat = "..")}. Locations can use absolute paths or relative
+paths from group \code{grp}. The axis and associated objects that are not in
+the list will be stored in group \code{grp}. If the argument \code{locations} is
+not provided, all associated objects will be stored in this group.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

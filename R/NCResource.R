@@ -11,7 +11,7 @@
 #'   by higher-level methods.
 #'
 #' @docType class
-CFResource <- R6::R6Class("CFResource",
+NCResource <- R6::R6Class("NCResource",
   private = list(
     .uri    = "",
     .handle = NULL,
@@ -52,9 +52,8 @@ CFResource <- R6::R6Class("CFResource",
     #' @return An instance of this class.
     initialize = function(uri, write) {
       private$.uri <- uri
-      private$.handle <- NULL
       private$.write <- write
-      self$error <- ""
+      private$open()
     },
 
     #' @description Print a summary of the netCDF resource to the console.
@@ -73,6 +72,8 @@ CFResource <- R6::R6Class("CFResource",
       private$.handle <- try(RNetCDF::create.nc(private$.uri, prefill = FALSE, format = "netcdf4"), silent = TRUE)
       if (!inherits(private$.handle, "NetCDF"))
         stop("Could not create the netCDF file. Please check that the location of the supplied file name is writable.", call. = FALSE)
+      self$error <- ""
+      invisible(self)
     },
 
     #' @description Closing an open netCDF resource. It should rarely be

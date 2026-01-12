@@ -9,7 +9,7 @@
 - All `[]` indexing and selection operations must include axes of length 1. This means that the indexing always has as many elements as there are axes in the CF variable. Reported dimensions include degenerate dimensions.
 - The `CFVariable::subset()` method now has an optional `.resolution` argument that can be specified when interpolation with auxiliary latitude-longitude coordinates is requested; otherwise it has no effect. This change does not break any existing code.
 - In `CFVariable$subset()` and `$profile()`, when selecting on auxiliary grid axes then both axes must be specified.
-- Function `create_ncdf()` creates a new netCDF resource on disk, as a container for persisting CF objects. Work in progress.
+- Function `create_ncdf()` creates a new netCDF resource on disk, as a container for persisting CF objects, or in memory.
 - Documentation updated.
 
 #### Code
@@ -22,6 +22,7 @@
 - `CFVariable` S3 methods fixed.
 - Multi-dimensional auxiliary lat-long grids are silently truncated to 2D.
 - Improved speed of opening netCDF files with multiple data variables using the same auxiliary long-lat grid.
+- `CFResource` has been renamed `NCResource`.
 - Additional testing added.
 - Bug fixes.
 
@@ -104,7 +105,7 @@ This is a major restructuring of the code logic to better separate between file-
 - `CFAxis` has new `coordinates` field with which to retrieve the coordinates along the axis.
 - New attributes can be defined on any object that supports attributes, or deleted.
 - Fixed error on reading bounds for auxiliary coordinate variables. Various other minor code fixes.
-- `CFResource` fixed to conform to new `R6` version.
+- `NCResource` fixed to conform to new `R6` version.
 - Documentation updated, including vignettes.
 
 # ncdfCF 0.3.0

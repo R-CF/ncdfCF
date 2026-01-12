@@ -17,14 +17,14 @@ See also \link{CFAxisCharacter}, which is an axis with character labels.
 \describe{
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{values}}{(read-only) Retrieve the labels of this object. In general
-you should use the \code{coordinates} field rather than this one.}
+\item{\code{values}}{Set or retrieve the labels of this object. In general you
+should use the \code{coordinates} field rather than this one. Upon setting
+values, if there is a linked netCDF resource, this object will be
+detached from it.}
 
-\item{\code{coordinates}}{Set or retrieve the labels of this object. Upon
+\item{\code{coordinates}}{(read-only) Retrieve the labels of this object. Upon
 retrieval, label values are read from the netCDF resource, if there is
-one, upon first access and cached thereafter. Upon setting values, if
-there is a linked netCDF resource, this object will be detached from
-it.}
+one, upon first access and cached thereafter.}
 
 \item{\code{length}}{(read-only) The number of labels in the set.}
 
@@ -39,6 +39,7 @@ resource.}
 \itemize{
 \item \href{#method-CFLabel-new}{\code{CFLabel$new()}}
 \item \href{#method-CFLabel-print}{\code{CFLabel$print()}}
+\item \href{#method-CFLabel-identical}{\code{CFLabel$identical()}}
 \item \href{#method-CFLabel-copy}{\code{CFLabel$copy()}}
 \item \href{#method-CFLabel-slice}{\code{CFLabel$slice()}}
 \item \href{#method-CFLabel-subset}{\code{CFLabel$subset()}}
@@ -49,6 +50,7 @@ resource.}
 <details><summary>Inherited methods</summary>
 <ul>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attach_to_group'><code>ncdfCF::CFObject$attach_to_group()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>ncdfCF::CFObject$attributes_identical()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
@@ -112,6 +114,27 @@ Prints a summary of the labels to the console.
 is \verb{width = } to indicate a maximum width of attribute columns.}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFLabel-identical"></a>}}
+\if{latex}{\out{\hypertarget{method-CFLabel-identical}{}}}
+\subsection{Method \code{identical()}}{
+Tests if the object passed to this method is identical to
+\code{self}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFLabel$identical(lbl)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{lbl}}{The \code{CFLabel} instance to test.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+\code{TRUE} if the two label sets are identical, \code{FALSE} if not.
 }
 }
 \if{html}{\out{<hr>}}

@@ -288,6 +288,30 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
       invisible(self)
     },
 
+    #' @description Attach the auxiliary long-lat grids and any bounds to a
+    #'   group. If there is another object with the same name in this group an
+    #'   error is thrown.
+    #' @param grp An instance of [CFGroup].
+    #' @param locations Optional. A `list` whose named elements correspond to
+    #'   the names of objects associated with these auxiliary grids. Each list
+    #'   element has a single character string indicating the group in the
+    #'   hierarchy where the object should be stored. As an example, if the
+    #'   variable has axes "lon" and "lat" and they should be stored in the
+    #'   parent group of `grp`, then specify `locations = list(lon = "..", lat =
+    #'   "..")`. Locations can use absolute paths or relative paths from group
+    #'   `grp`. The auxiliary grids and bounds that are not in the list will be
+    #'   stored in group `grp`. If the argument `locations` is not provided, all
+    #'   objects will be stored in this group.
+    #' @return Self, invisibly.
+    attach_to_group = function(grp, locations = list()) {
+      private$.varLong$attach_to_group(grp, locations)
+      private$.varLat$attach_to_group(grp, locations)
+      if (!is.null(private$.boundsLong))
+        private$.boundsLong$attach_to_group(grp, locations)
+      if (!is.null(private$.boundsLat))
+        private$.boundsLat$attach_to_group(grp, locations)
+    },
+
     #' @description Detach the latitude and longitude from an underlying netCDF
     #' resource.
     #' @return Self, invisibly.

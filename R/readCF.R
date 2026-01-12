@@ -27,7 +27,9 @@ open_ncdf <- function(resource, write = FALSE) {
     stop("Argument `write` must be a single logical value.", call. = FALSE) #nocov
   write <- write && file.exists(resource)
 
-  res <- CFResource$new(resource, write)
+  res <- NCResource$new(resource, write)
+  if (nchar(res$error))
+    stop(res$error, call. = FALSE)
   h <- res$handle
   g <- RNetCDF::file.inq.nc(h)
 

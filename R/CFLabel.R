@@ -47,6 +47,16 @@ CFLabel <- R6::R6Class("CFLabel",
       self$print_attributes(...)
     },
 
+    #' @description Tests if the object passed to this method is identical to
+    #'   `self`.
+    #' @param lbl The `CFLabel` instance to test.
+    #' @return `TRUE` if the two label sets are identical, `FALSE` if not.
+    identical = function(lbl) {
+      class(lbl)[1L] == "CFLabel" && self$length == lbl$length &&
+      self$name == lbl$name && self$attributes_identical(lbl$attributes) &&
+      all(self$coordinates == lbl$coordinates)
+    },
+
     #' @description Create a copy of this label set. The copy is completely
     #'   separate from `self`, meaning that both `self` and all of its
     #'   components are made from new instances.
@@ -130,8 +140,10 @@ CFLabel <- R6::R6Class("CFLabel",
         "Label set"
     },
 
-    #' @field values (read-only) Retrieve the labels of this object. In general
-    #'   you should use the `coordinates` field rather than this one.
+    #' @field values Set or retrieve the labels of this object. In general you
+    #'   should use the `coordinates` field rather than this one. Upon setting
+    #'   values, if there is a linked netCDF resource, this object will be
+    #'   detached from it.
     values = function(value) {
       if (missing(value)) {
         private$read_data()
@@ -141,13 +153,12 @@ CFLabel <- R6::R6Class("CFLabel",
       }
     },
 
-    #' @field coordinates Set or retrieve the labels of this object. Upon
+    #' @field coordinates (read-only) Retrieve the labels of this object. Upon
     #'   retrieval, label values are read from the netCDF resource, if there is
-    #'   one, upon first access and cached thereafter. Upon setting values, if
-    #'   there is a linked netCDF resource, this object will be detached from
-    #'   it.
+    #'   one, upon first access and cached thereafter.
     coordinates = function(value) {
-      self$values
+      if (missing(value))
+        self$values
     },
 
     #' @field length (read-only) The number of labels in the set.

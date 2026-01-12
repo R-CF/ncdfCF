@@ -169,8 +169,12 @@ CFAxis <- R6::R6Class("CFAxis",
     #' @return Character string with very basic axis information.
     shard = function() {
       unlim <- if (self$unlimited) "-U" else ""
-      crds <- self$coordinate_range
-      paste0("[", self$name, " (", self$length, unlim, "): ", crds[1L], " ... ", crds[2L], "]")
+      if (self$length == 1L)
+        paste0("[", self$name, " (", self$length, unlim, "): ", self$coordinates, "]")
+      else {
+        crds <- self$coordinate_range
+        paste0("[", self$name, " (", self$length, unlim, "): ", crds[1L], " ... ", crds[2L], "]")
+      }
     },
 
     #' @description Retrieve interesting details of the axis.
@@ -231,7 +235,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #' @param axis The `CFAxis` instance to test.
     #' @return `TRUE` if the two axes are identical, `FALSE` if not.
     identical = function(axis) {
-      all(class(self)[1L] == class(axis)[1L]) &&
+      class(self)[1L] == class(axis)[1L] &&
       self$length == axis$length &&
       self$name == axis$name &&
       self$attributes_identical(axis$attributes)
@@ -305,6 +309,33 @@ CFAxis <- R6::R6Class("CFAxis",
       stop("`indexOf()` must be implemented by descendant CFAxis class.")
     },
 
+    #' @description Attach this axis to a group. If there is another object with
+    #'   the same name in this group an error is thrown. For associated objects
+    #'   (such as bounds, etc), if another object with the same name is
+    #'   otherwise identical to the associated object then that object will be
+    #'   linked from the variable, otherwise an error is thrown.
+    #' @param grp An instance of [CFGroup].
+    #' @param locations Optional. A `list` whose named elements correspond to
+    #'   the names of objects associated with this axis, possibly including the
+    #'   axis itself. Each list element has a single character string indicating
+    #'   the group in the hierarchy where the object should be stored. As an
+    #'   example, if the variable has axes "lon" and "lat" and they should be
+    #'   stored in the parent group of `grp`, then specify `locations = list(lon
+    #'   = "..", lat = "..")`. Locations can use absolute paths or relative
+    #'   paths from group `grp`. The axis and associated objects that are not in
+    #'   the list will be stored in group `grp`. If the argument `locations` is
+    #'   not provided, all associated objects will be stored in this group.
+    #' @return Self, invisibly.
+    attach_to_group = function(grp, locations = list()) {
+      # Boundary values and auxiliary coordinates first
+      if (!is.null(private$.bounds))
+        private$.bounds$attach_to_group(grp, locations)
+      lapply(private$.aux, function(aux) aux$attach_to_group(grp, locations))
+
+      # Now add the axis to the group
+      super$attach_to_group(grp, locations)
+    },
+
     #' @description Write the axis to a netCDF file, including its attributes.
     #' @param nc The handle of the netCDF file opened for writing or a group in
     #'   the netCDF file. If `NULL`, write to the file or group where the axis
@@ -313,7 +344,7 @@ CFAxis <- R6::R6Class("CFAxis",
     write = function(nc = NULL) {
       h <- if (inherits(nc, "NetCDF")) nc else private$.NCobj$handle
 
-      private$.id <- if (self$length == 1L && !private$.unlimited)
+      id <- try(if (self$length == 1L && !private$.unlimited)
         RNetCDF::var.def.nc(h, self$name, private$.data_type, NA)
       else {
         # Write the dimension for the axis. Error will be thrown when trying to
@@ -327,7 +358,10 @@ CFAxis <- R6::R6Class("CFAxis",
           did <- RNetCDF::dim.inq.nc(h, self$name)$id
 
         RNetCDF::var.def.nc(h, self$name, private$.data_type, did)
-      }
+      }, silent = TRUE)
+      private$.id <- if (inherits(id, "try-error"))
+        RNetCDF::var.inq.nc(h, self$name)$id
+      else id
 
       if (private$.orient %in% c("X", "Y", "Z", "T"))
         self$set_attribute("axis", "NC_CHAR", private$.orient)
@@ -402,7 +436,7 @@ CFAxis <- R6::R6Class("CFAxis",
       if (missing(value))
         private$.bounds
       else if (inherits(value, "CFBounds")) {
-        # FIXME: Check the bounds values
+        # FIXME: Check the bounds values, could be climatology
         private$.bounds <- value
         self$set_attribute("bounds", "NC_CHAR", value$name)
       } else if (!is.null(value))
@@ -419,7 +453,7 @@ CFAxis <- R6::R6Class("CFAxis",
         if (private$.active_coords == 1L) NULL
         else private$.aux[[private$.active_coords - 1L]]
       } else {
-        if ((inherits(value, "CFLabel") || inherits(value, "CFAxis")) &&
+        if (inherits(value, c("CFLabel", "CFAxis")) &&
             value$length == self$length && !(value$name %in% private$aux_names())) {
           private$.aux <- append(private$.aux, setNames(list(value), value$name))
         }
@@ -429,8 +463,8 @@ CFAxis <- R6::R6Class("CFAxis",
     #' @field coordinate_names (read-only) Retrieve the names of the coordinate
     #'   sets defined for the axis, as a character vector. The first element in
     #'   the vector is the name of the axis and it refers to the values of the
-    #'   coordinates as stored in the netCDF file. Following elements refer to
-    #'   auxiliary coordinates.
+    #'   coordinates of this axis. Following elements refer to auxiliary
+    #'   coordinates.
     coordinate_names = function(value) {
       if (missing(value))
         c(self$name, names(private$.aux))

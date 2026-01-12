@@ -21,10 +21,7 @@ mapping parameters, etc.
 \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
 \item{\code{axes}}{(read-only) List of instances of classes descending from
-\link{CFAxis} that are the axes of the data object. If there are any scalar
-axes, they are listed after the axes that associate with the dimensions
-of the data. (In other words, axes \verb{1..n} describe the \verb{1..n} data
-dimensions, while any axes \verb{n+1..m} are scalar axes.)}
+\link{CFAxis} that are the axes of the data object.}
 
 \item{\code{ancillary_variables}}{A list of ancillary data variables associated
 with this data variable.}
@@ -84,6 +81,7 @@ description of the variable as a WKT2 string.}
 \item \href{#method-CFVariable-add_auxiliary_coordinate}{\code{CFVariable$add_auxiliary_coordinate()}}
 \item \href{#method-CFVariable-add_ancillary_variable}{\code{CFVariable$add_ancillary_variable()}}
 \item \href{#method-CFVariable-attach_to_group}{\code{CFVariable$attach_to_group()}}
+\item \href{#method-CFVariable-write}{\code{CFVariable$write()}}
 \item \href{#method-CFVariable-save}{\code{CFVariable$save()}}
 }
 }
@@ -710,7 +708,7 @@ with the same name is otherwise identical to the associated object then
 that object will be linked from the variable, otherwise an error is
 thrown.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$attach_to_group(grp, locations)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$attach_to_group(grp, locations = list())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -736,14 +734,47 @@ Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-write"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-write}{}}}
+\subsection{Method \code{write()}}{
+Write the data variable to a netCDF file, including its
+attributes.
+
+Axes with \code{length == 1L} are written as a "scalar axis", unless they
+are unlimited.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$write(nc = NULL, pack = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{nc}}{The handle of the netCDF file opened for writing or a group in
+the netCDF file. If \code{NULL}, write to the file or group where the data
+variable was read from (the file must have been opened for writing).}
+
+\item{\code{pack}}{Logical to indicate if the data should be packed. Packing is
+only useful for numeric data; packing is not performed on integer
+values. Packing is always to the "NC_SHORT" data type, i.e. 16-bits per
+value.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFVariable-save"></a>}}
 \if{latex}{\out{\hypertarget{method-CFVariable-save}{}}}
 \subsection{Method \code{save()}}{
 Save the data variable to a netCDF file, including its
-subordinate objects such as axes, CRS, etc.
-
-Axes with \code{length == 1L} are written as a "scalar axis", unless they are
-unlimited.
+subordinate objects such as axes, CRS, etc. Note that saving a data
+variable will create a "bare-bones" netCDF file. There is no
+possibility to define global attributes, for instance. For more
+flexibility, create a new \link{CFDataset} and add as many data variables as
+needed as well as global attributes and other objects before saving the
+data set.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFVariable$save(fn, pack = FALSE)}\if{html}{\out{</div>}}
 }
@@ -754,8 +785,9 @@ unlimited.
 \item{\code{fn}}{The name of the netCDF file to create.}
 
 \item{\code{pack}}{Logical to indicate if the data should be packed. Packing is
-only useful for numeric data; packing is not performed on integer values.
-Packing is always to the "NC_SHORT" data type, i.e. 16-bits per value.}
+only useful for numeric data; packing is not performed on integer
+values. Packing is always to the "NC_SHORT" data type, i.e. 16-bits per
+value.}
 }
 \if{html}{\out{</div>}}
 }
