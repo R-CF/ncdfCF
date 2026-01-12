@@ -85,22 +85,6 @@ CFVariable <- R6::R6Class("CFVariable",
       is_axis
     },
 
-    # Drop unwanted values in the "coordinates" attribute
-    drop_coordinates_attribute = function(atts, names) {
-      crd <- atts[atts$name == "coordinates", ]$value
-      if (!length(crd)) return(atts)
-
-      crds <- strsplit(crd[[1L]], " ")[[1L]]
-      keep <- !(crds %in% names)
-      if (!any(keep))
-        return(atts[!(atts$name == "coordinates"), ])
-
-      crds <- paste(crds[keep], collapse = " ")
-      atts[atts$name == "coordinates", ]$length <- nchar(crds)
-      atts[atts$name == "coordinates", ]$value <- crds
-      atts
-    },
-
     # Orient data values in such a way that it conforms to regular R arrays:
     # axis order will be Y-X-Z-T-others and Y values will go from the top to the
     # bottom. Alternatively, order data values in the CF canonical order.
@@ -427,25 +411,6 @@ CFVariable <- R6::R6Class("CFVariable",
       } else NULL
     },
 
-    #' @description Add names of axes or auxiliary coordinates to the
-    #'   "coordinates" attribute, avoiding duplicates and retaining previous
-    #'   values.
-    #' @param crds Vector of axis or auxiliary coordinate names to add to the
-    #'   attribute.
-    #' @return Self, invisibly.
-    update_coordinates_attribute = function(crds) {
-      current <- private$.attributes[private$.attributes$name == "coordinates", ]
-      if (nrow(current)) {
-        # There is a "coordinates" attribute already so append values
-        new_val <- paste(unique(c(strsplit(current[[1L, "value"]], " ")[[1L]], crds)), collapse = " ")
-        private$.attributes[private$.attributes$name == "coordinates", ]$value <- new_val
-        private$.attributes[private$.attributes$name == "coordinates", ]$length <- nchar(new_val)
-      } else
-        # Make a new "coordinates" attribute
-        self$set_attribute("coordinates", "NC_CHAR", paste(crds, collapse = " "))
-      invisible(self)
-    },
-
     #' @description Retrieve the data in the object exactly as it was read from
     #'   a netCDF resource or produced by an operation.
     #' @return An `array`, `matrix` or `vector` with (dim)names set.
@@ -657,7 +622,8 @@ CFVariable <- R6::R6Class("CFVariable",
       if (is.null(aux)) {
         atts <- self$attributes
       } else {
-        atts <- private$drop_coordinates_attribute(self$attributes, private$.llgrid$grid_names)
+        atts <- self$attributes
+        #atts <- private$drop_coordinates_attribute(self$attributes, private$.llgrid$grid_names)
         atts <- atts[!(atts$name == "grid_mapping"), ]  # drop attribute: warped to lat-long
       }
 
@@ -769,8 +735,8 @@ CFVariable <- R6::R6Class("CFVariable",
         # Create the output
         atts <- self$attributes
         aux_nm <- self$auxiliary_names
-        if (!is.null(aux_nm))
-          atts <- private$drop_coordinates_attribute(atts, aux_nm)
+        #if (!is.null(aux_nm))
+          #atts <- private$drop_coordinates_attribute(atts, aux_nm)
 
         len <- length(dt) # Number of fun outputs
         if (len == 1L)
@@ -932,7 +898,7 @@ CFVariable <- R6::R6Class("CFVariable",
             atts <- self$attributes
             crs <- self$crs
           } else {
-            atts <- private$drop_coordinates_attribute(self$attributes, private$.llgrid$grid_names)
+            #atts <- private$drop_coordinates_attribute(self$attributes, private$.llgrid$grid_names)
             atts <- atts[!(atts$name == "grid_mapping"), ]  # drop: warped to lat-long
             crs <- NULL
           }
@@ -1118,10 +1084,10 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   for.
     #' @return Self, invisibly.
     add_auxiliary_coordinate = function(aux, axis) {
-      if (inherits(aux, "CFLabel") || inherits(aux, "CFAxis")) {
+      if (inherits(aux, c("CFLabel", "CFAxis"))) {
         axis$auxiliary <- aux
-        if (aux$name %in% axis$coordinate_names)
-          self$update_coordinates_attribute(aux$name)
+        #if (aux$name %in% axis$coordinate_names)
+        #  self$update_coordinates_attribute(aux$name)
       }
     },
 

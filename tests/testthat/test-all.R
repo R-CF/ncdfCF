@@ -35,7 +35,6 @@ test_that("sample data", {
   names(lst) <- aux_names
   sub <- tm$subset(lst)
   expect_equal(sapply(sub$axes, function (x) x$length), c(lon = 31, lat = 23, time = 1, height = 1))
-  expect_equal(sub$attribute("coordinates"), "height")
 })
 
 # Offline data, not available to CRAN or Github
@@ -250,10 +249,8 @@ test_that("Auxiliary grids", {
   if (file.exists(aux)) {
     ds <- open_ncdf(aux)
     pr <- ds[["pr"]]
-    expect_equal(pr$attribute("coordinates"), "lat lon")
     expect_equal(pr$attribute("grid_mapping"), "rotated_latitude_longitude")
     sel <- pr$subset(lon = -10:5, lat = 45:60, time = c("2009-01-01", "2010-01-01"))
-    expect_true(is.na(sel$attribute("coordinates")))
     expect_true(is.na(sel$attribute("grid_mapping")))
     lon_crds <- sel$axes[["lon"]]$coordinates
     lon_res <- diff(lon_crds[1:2])

@@ -132,7 +132,6 @@ test_that("Create from scratch", {
   expect_true(inherits(dv$axes[["longitude"]], "CFAxisLongitude"))
   expect_true(inherits(dv$axes[["latitude"]], "CFAxisLatitude"))
   expect_true(inherits(dv$axes[["time"]], "CFAxisTime"))
-  expect_equal(dv$attribute("coordinates"), "ap7_a9")
   expect_equal(dv$axes[["latitude"]]$coordinate_names, c("latitude", "ap7_a9"))
   arr3 <- dv$raw()
   expect_true(all(dim(arr3)[1] == dim(arr)[2], dim(arr3)[2] == dim(arr)[1], dim(arr3)[3] == dim(arr)[3]))
