@@ -67,7 +67,6 @@ description of the variable as a WKT2 string.}
 \item \href{#method-CFVariable-peek}{\code{CFVariable$peek()}}
 \item \href{#method-CFVariable-detach}{\code{CFVariable$detach()}}
 \item \href{#method-CFVariable-time}{\code{CFVariable$time()}}
-\item \href{#method-CFVariable-update_coordinates_attribute}{\code{CFVariable$update_coordinates_attribute()}}
 \item \href{#method-CFVariable-raw}{\code{CFVariable$raw()}}
 \item \href{#method-CFVariable-array}{\code{CFVariable$array()}}
 \item \href{#method-CFVariable-subset}{\code{CFVariable$subset()}}
@@ -107,6 +106,7 @@ Create an instance of this class.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFVariable$new(
   var,
+  group,
   axes,
   values = values,
   start = NA,
@@ -121,6 +121,8 @@ Create an instance of this class.
 \item{\code{var}}{The \link{NCVariable} instance upon which this CF variable is based
 when read from a netCDF resource, or the name for the new CF variable
 to be created.}
+
+\item{\code{group}}{The \link{CFGroup} that this instance will live in.}
 
 \item{\code{axes}}{List of instances of \link{CFAxis} to use with this variable.}
 
@@ -246,29 +248,6 @@ If \code{want = "axis"} the \link{CFAxisTime} axis; if \code{want = "time"} the
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFVariable-update_coordinates_attribute"></a>}}
-\if{latex}{\out{\hypertarget{method-CFVariable-update_coordinates_attribute}{}}}
-\subsection{Method \code{update_coordinates_attribute()}}{
-Add names of axes or auxiliary coordinates to the
-"coordinates" attribute, avoiding duplicates and retaining previous
-values.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$update_coordinates_attribute(crds)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{crds}}{Vector of axis or auxiliary coordinate names to add to the
-attribute.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
-\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFVariable-raw"></a>}}
 \if{latex}{\out{\hypertarget{method-CFVariable-raw}{}}}
 \subsection{Method \code{raw()}}{
@@ -386,12 +365,12 @@ to extract the full extent, specify \code{NA} for both axes.
 \subsection{Returns}{
 A \code{CFVariable} instance, having the axes and attributes of the
 variable, or \code{NULL} if one or more of the selectors in the \code{...}
-argument fall entirely outside of the range of the axis. Note that
-degenerate dimensions (having \code{length(.) == 1}) are preserved.
+argument fall entirely outside of the range of the axis.
 
 If \code{self} is linked to a netCDF resource then the result will be linked
 to the same netCDF resource as well, except when \emph{auxiliary coordinate
-variables} have been selected for the planar axes.
+variables} have been selected for the planar axes. In all cases the
+result will be attached to a private group.
 }
 }
 \if{html}{\out{<hr>}}
@@ -524,10 +503,10 @@ names of the primary planar axes).
 }
 
 \subsection{Returns}{
-If \code{.as_table = FALSE}, a \code{CFVariable} instance, or a list
+If \code{.as_table == FALSE}, a \code{CFVariable} instance, or a list
 thereof with each having one profile for each of the elements in the
 "location" vectors of argument \code{...} and named with the respective
-\code{.names} value. If \code{.as_table = TRUE}, a \code{data.table} with a row for
+\code{.names} value. If \code{.as_table == TRUE}, a \code{data.table} with a row for
 each element along all profiles, with a ".variable" column using the
 values from the \code{.names} argument.
 }
@@ -558,7 +537,7 @@ variable and in the \code{CFVariable} instance in argument \code{from}.}
 }
 \subsection{Returns}{
 Self, invisibly, with the arrays from this data variable and
-\code{from} appended.
+\code{from} appended, in a new private group.
 }
 }
 \if{html}{\out{<hr>}}
@@ -737,26 +716,24 @@ Self, invisibly.
 \if{html}{\out{<a id="method-CFVariable-write"></a>}}
 \if{latex}{\out{\hypertarget{method-CFVariable-write}{}}}
 \subsection{Method \code{write()}}{
-Write the data variable to a netCDF file, including its
-attributes.
+Write the data variable to a netCDF file, including all of
+its dependent objects, such as axes and attributes.
 
 Axes with \code{length == 1L} are written as a "scalar axis", unless they
 are unlimited.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$write(nc = NULL, pack = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$write(pack)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{nc}}{The handle of the netCDF file opened for writing or a group in
-the netCDF file. If \code{NULL}, write to the file or group where the data
-variable was read from (the file must have been opened for writing).}
-
-\item{\code{pack}}{Logical to indicate if the data should be packed. Packing is
-only useful for numeric data; packing is not performed on integer
-values. Packing is always to the "NC_SHORT" data type, i.e. 16-bits per
-value.}
+\item{\code{pack}}{Optional. Logical to indicate if the data should be packed
+for a \code{CFVariable} first written to file. Packing is only useful for
+numeric data; packing is not performed on integer values. Packing is
+always to the "NC_SHORT" data type, i.e. 16-bits per value. If the
+variable has been written before, the packing state of the variable on
+file will be used.}
 }
 \if{html}{\out{</div>}}
 }
@@ -770,11 +747,8 @@ Self, invisibly.
 \subsection{Method \code{save()}}{
 Save the data variable to a netCDF file, including its
 subordinate objects such as axes, CRS, etc. Note that saving a data
-variable will create a "bare-bones" netCDF file. There is no
-possibility to define global attributes, for instance. For more
-flexibility, create a new \link{CFDataset} and add as many data variables as
-needed as well as global attributes and other objects before saving the
-data set.
+variable will create a "bare-bones" netCDF file and its associated
+\link{CFDataset}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFVariable$save(fn, pack = FALSE)}\if{html}{\out{</div>}}
 }
@@ -792,7 +766,7 @@ value.}
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Self, invisibly.
+The newly create \code{CFDataset}, invisibly.
 }
 }
 }

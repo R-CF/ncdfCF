@@ -71,7 +71,7 @@ the axis on file, if there is one.
 Creating a new discrete axis is more easily done with the
 \code{\link[=makeDiscreteAxis]{makeDiscreteAxis()}} function.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$new(var, start = 1L, count)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$new(var, group, start = 1L, count)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -79,6 +79,8 @@ Creating a new discrete axis is more easily done with the
 \describe{
 \item{\code{var}}{The name of the axis when creating a new axis. When reading an
 axis from file, the \link{NCVariable} object that describes this instance.}
+
+\item{\code{group}}{The \link{CFGroup} that this instance will live in.}
 
 \item{\code{start}}{Optional. Integer value that indicates the starting value of
 this axis. Defults to \code{1L}.}
@@ -130,7 +132,7 @@ Create a copy of this axis. The copy is completely separate
 from this axis, meaning that both this axis and all of its components
 are made from new instances.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$copy(name = "")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$copy(name = "", group)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -138,6 +140,8 @@ are made from new instances.
 \describe{
 \item{\code{name}}{The name for the new axis. If an empty string is passed, will
 use the name of this axis.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
 }
 \if{html}{\out{</div>}}
 }
@@ -208,7 +212,7 @@ Return an axis spanning a smaller coordinate range. This
 method returns an axis which spans the range of indices given by the
 \code{rng} argument.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$subset(name = "", rng = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$subset(name = "", group, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -216,6 +220,8 @@ method returns an axis which spans the range of indices given by the
 \describe{
 \item{\code{name}}{The name for the new axis. If an empty string is passed, will
 use the name of this axis.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
 
 \item{\code{rng}}{The range of indices whose values from this axis to include in
 the returned axis. If the value of the argument is \code{NULL}, return a
@@ -244,6 +250,8 @@ of the axis.
 \describe{
 \item{\code{from}}{An instance of \code{CFAxisDiscrete} whose length to add to this
 axis.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
 }
 \if{html}{\out{</div>}}
 }

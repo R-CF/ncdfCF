@@ -27,7 +27,21 @@ CFGroup <- R6::R6Class("CFGroup",
     .subgroups = list(),
 
     # List of CF objects defined for this group
-    .objects = list()
+    .objects = list(),
+
+    # Set the name of the group. Cascade to the underlying NCGroup, as necessary.
+    set_name = function(new_name) {
+      if (.is_valid_name(new_name)) {
+        if (!(!is.null(private$.parent) && !is.null(private$.parent$find_by_name(new_name)))) {
+          private$.name <- if (!is.null(private$.NCobj)) {
+            private$.NCobj$set_name(new_name)
+            private$.NCobj$name # new_name may not have been written
+          } else
+            new_name
+        }
+      }
+      invisible(self)
+    }
   ),
   public = list(
     #' @description Create a new CF group instance.
@@ -63,7 +77,8 @@ CFGroup <- R6::R6Class("CFGroup",
     #' @param ... Passed on to other methods.
     print = function(stand_alone = TRUE, ...) {
       if (stand_alone || private$.name != "/") {
-        cat("<CF Group> [", self$id, "] ", private$.name, "\n", sep = "")
+        virtual <- if (is.null(private$.NCobj)) " (virtual)" else ""
+        cat("<CF Group> [", self$id, "] ", private$.name, virtual, "\n", sep = "")
         cat("Path      :", self$fullname, "\n")
       }
       if (self$has_subgroups)
@@ -310,15 +325,17 @@ CFGroup <- R6::R6Class("CFGroup",
     #' @return Self, invisibly.
     write = function(recursive = TRUE) {
       if (is.null(private$.NCobj)) {
+        if (is.null(res <- self$data_set$resource))
+          stop("Can't write a virtual group.", call. = FALSE)
         parent <- if (self$name == "/") NULL else private$.parent$NC
         private$.NCobj <- NCGroup$new(id = NA, name = private$.name, attributes = self$attributes,
-                                      parent = parent, resource = self$data_set$resource)
+                                      parent = parent, resource = res)
         private$.id <- private$.NCobj$id
         private$.NCobj$CF <- self
         if (!is.null(parent))
           parent$subgroups <- c(parent$subgroups, setNames(list(private$.NCobj), private$.name))
       }
-      self$write_attributes(private$.NCobj$handle, "NC_GLOBAL")
+      self$write_attributes()
 
       if (recursive)
         lapply(private$.subgroups, function(g) g$write(recursive))
@@ -338,7 +355,7 @@ CFGroup <- R6::R6Class("CFGroup",
     write_variables = function(pack = FALSE, recursive = TRUE) {
       lapply(private$.objects, function(obj) {
         if (inherits(obj, "CFVariable"))
-          obj$write(self$NC$handle, pack)
+          obj$write(pack)
       })
       if (recursive)
         lapply(private$.subgroups, function(g) g$write_variables(pack, recursive))
@@ -363,9 +380,8 @@ CFGroup <- R6::R6Class("CFGroup",
         private$.name
       else if (private$.name == "/")
         stop("Cannot change the name of the root group", call. = FALSE)
-      else if (.is_valid_name(value)) {
-        private$.name <- value
-      }
+      else
+        private$set_name(value)
     },
 
     #' @field fullname (read-only) The fully qualified absolute path of the group.
@@ -373,10 +389,12 @@ CFGroup <- R6::R6Class("CFGroup",
       if (missing(value)) {
         nm <- private$.name
         if (nm == "/") return(nm)
-        g <- self
-        while (g$parent$name != "/") {
-          g <- g$parent
-          nm <- paste(g$name, nm, sep = "/")
+        if (!is.null(self$parent)) {
+          g <- self
+          while (g$parent$name != "/") {
+            g <- g$parent
+            nm <- paste(g$name, nm, sep = "/")
+          }
         }
       }
       if (nm != "/") paste0("/", nm) else nm
@@ -386,7 +404,7 @@ CFGroup <- R6::R6Class("CFGroup",
     root = function(value) {
       if (missing(value)) {
         g <- self
-        while (g$name != "/") g <- g$parent
+        while (!is.null(g$parent) && g$name != "/") g <- g$parent
         g
       }
     },

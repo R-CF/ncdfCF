@@ -63,7 +63,9 @@ the sub-type of the axis.}
 to use with the axis for printing to the console as well as for
 processing methods such as \code{subset()}.}
 
-\item{\code{unlimited}}{Logical to indicate if the axis is unlimited.}
+\item{\code{unlimited}}{Logical to indicate if the axis is unlimited. The
+setting can only be changed if the axis has not yet been wriiten to
+file.}
 
 \item{\code{time}}{(read-only) Retrieve the \code{CFTime} object associated with the
 axis. Always returns \code{NULL} but \code{CFAxisTime} overrides this field.}
@@ -122,6 +124,7 @@ Creating a new axis is more easily done with the \code{\link[=makeAxis]{makeAxis
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxis$new(
   var,
+  group,
   values,
   start = 1L,
   count = NA,
@@ -135,6 +138,8 @@ Creating a new axis is more easily done with the \code{\link[=makeAxis]{makeAxis
 \describe{
 \item{\code{var}}{The name of the axis when creating a new axis. When reading an
 axis from file, the \link{NCVariable} object that describes this instance.}
+
+\item{\code{group}}{The \link{CFGroup} that this instance will live in.}
 
 \item{\code{values}}{Optional. The values of the axis in a vector. Ignored when
 argument \code{var} is a \code{NCVariable} object.}
@@ -343,7 +348,7 @@ sense that it does not do anything other than return \code{NULL}. This stub
 is here to make the call to this method succeed with no result for the
 \code{CFAxis} descendants that do not implement this method.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$copy(name = "")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$copy(name = "", group)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -351,6 +356,8 @@ is here to make the call to this method succeed with no result for the
 \describe{
 \item{\code{name}}{The name for the new axis. If an empty string is passed, will
 use the name of this axis.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
 }
 \if{html}{\out{</div>}}
 }
@@ -368,7 +375,7 @@ other than return \code{NULL}. This stub is here to make the call to this
 method succeed with no result for the \code{CFAxis} descendants that do not
 implement this method.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$copy_with_values(name = "", values)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$copy_with_values(name = "", group, values)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -376,6 +383,8 @@ implement this method.
 \describe{
 \item{\code{name}}{The name for the new axis. If an empty string is passed, will
 use the name of this axis.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
 
 \item{\code{values}}{The values to the used with the copy of this axis.}
 }
@@ -395,13 +404,15 @@ than return \code{self}. This stub is here to make the call to this method
 succeed with no result for the  \code{CFAxis} descendants that do not
 implement this method.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$subset(name = "", rng = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$subset(name = "", group, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{name}}{The name for the new axis if the \code{rng} argument is provided.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
 
 \item{\code{rng}}{The range of indices whose values from this axis to include in
 the returned axis. If the value of the argument is \code{NULL}, return a
@@ -486,18 +497,9 @@ Self, invisibly.
 \subsection{Method \code{write()}}{
 Write the axis to a netCDF file, including its attributes.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$write(nc = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxis$write()}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{nc}}{The handle of the netCDF file opened for writing or a group in
-the netCDF file. If \code{NULL}, write to the file or group where the axis
-was read from (the file must have been opened for writing).}
-}
-\if{html}{\out{</div>}}
-}
 \subsection{Returns}{
 Self, invisibly.
 }

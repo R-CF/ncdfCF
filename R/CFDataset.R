@@ -234,7 +234,7 @@ CFDataset <- R6::R6Class("CFDataset",
     #' @param name Vector of names of the attributes to delete.
     #' @return Self, invisibly.
     delete_attribute = function(name) {
-      private$.attributes <- private$.attributes[!private$.attributes$name %in% name, ]
+      self$root$delete_attribute(name)
       invisible(self)
     },
 
@@ -285,7 +285,10 @@ CFDataset <- R6::R6Class("CFDataset",
     #' @return Self, invisibly.
     save = function(fn, pack = FALSE) {
       # Create the netCDF file, if necessary
-      if (!missing(fn)) {
+      if (missing(fn)) {
+        if (!inherits(private$.res, "NCResource"))
+          stop("Must supply file name to save the data set.", call. = FALSE)
+      } else {
         res <- NCResource$new(fn, write = TRUE)
         res$create()
         private$.res <- res

@@ -31,6 +31,25 @@ CFData <- R6::R6Class("CFData",
     # Flag to indicate if the data on disk is too large for memory.
     .data_oversized = FALSE,
 
+    # Flag to indicate if the data has edits
+    .data_dirty = FALSE,
+
+    # Set a new name for the CF object. Cascade to the underlying netCDF
+    # resource. This method is here because all descending classes relate to a
+    # NC variable.
+    set_name = function(new_name) {
+      if (.is_valid_name(new_name)) {
+        if (is.null(private$.group$find_by_name(new_name))) {
+          private$.name <- if (!is.null(private$.NCobj)) {
+            private$.NCobj$set_name(new_name)
+            private$.NCobj$name # new_name may not have been written
+          } else
+            new_name
+        }
+      }
+      invisible(self)
+    },
+
     # Set the dimensions of the data in this object. The product of `new_dims`
     # must equal the actual .dims. This method is really only useful to add
     # length-1 dimensions, such as a scalar axis, to the current dimensions.
@@ -172,17 +191,48 @@ CFData <- R6::R6Class("CFData",
         start <- private$.NC_map$start + sc$start[1L:len] - 1L
         private$.NCobj$get_data(start, sc$count[1L:len])
       }
+    },
+
+    # Write a data array to a netCDF file.
+    # dt : Data array to write, optional
+    # @param start Vector of indices where to start reading data along the
+    #   dimensions of the array. The vector must be `NA` to read all data,
+    #   otherwise it must have agree with the dimensions of the array.
+    # @param count Vector of number of elements to read along each dimension of
+    #   the array. The vector must be `NA` to read to the end of each dimension,
+    #   otherwise its value must agree with the corresponding `start` value and
+    #   the dimension of the array.
+    # ...: Additional parameters for RNetCDF::var.put.nc(), like pack and na.mode
+    # Returns self, invisibly.
+    write_data = function(dt = private$.values, start = NA, count = NA, ...) {
+      if (private$.data_dirty) {
+        if (length(private$.NC_map)) {
+          # .NC_map always refers to the initial dimensions, so the arguments
+          # are trimmed to that length (noting that there may be "scalar" axes
+          # in a variable backed by a netCDF resource).
+          sc <- private$check_start_count(start, count)
+          len <- length(private$.NC_map$start)
+          start <- private$.NC_map$start + sc$start[1L:len] - 1L
+          private$.NCobj$write_data(d = dt, start = start, count = sc$count[1L:len], ...)
+        } else {
+          # .NC_map is an empty list for private$.values being a complete array.
+          private$.NCobj$write_data(d = dt, start = NA, count = NA, ...)
+        }
+        private$.data_dirty <- FALSE
+      }
+      invisible(self)
     }
   ),
   public = list(
-    #' @description Create a new `CFData` instance from a variable in a netCDF
-    #'   resource. This method is called upon creating CF objects, such as when
-    #'   opening a netCDF resource or creating a new CF object. It is rarely, if
-    #'   ever, useful to call this constructor directly. Instead, use the
-    #'   methods from higher-level classes such as [CFVariable].
+    #' @description Create a new `CFData` instance. This method is called upon
+    #'   creating CF objects, such as when opening a netCDF resource or creating
+    #'   a new CF object. It is rarely, if ever, useful to call this constructor
+    #'   directly. Instead, use the methods from higher-level classes such as
+    #'   [CFVariable].
     #' @param obj The [NCVariable] instance upon which this CF object is based
     #'   when read from a netCDF resource, or the name for the new CF object to
     #'   be created.
+    #' @param group The [CFGroup] that this instance will live in.
     #' @param values Optional. The values of the object in an array. Ignored
     #'   when argument `obj` is an `NCVariable` instance.
     #' @param start Optional. Vector of indices where to start reading data
@@ -200,8 +250,8 @@ CFData <- R6::R6Class("CFData",
     #' @param attributes Optional. A `data.frame` with the attributes of the
     #'   object.
     #' @return A `CFData` instance.
-    initialize = function(obj, values, start = 1L, count = NA, attributes = data.frame()) {
-      super$initialize(obj, attributes)
+    initialize = function(obj, group, values, start = 1L, count = NA, attributes = data.frame()) {
+      super$initialize(obj, attributes, group = group)
 
       if (inherits(obj, "NCVariable")) {
         # Set the initial .NC_map to cover the entire NC variable
@@ -212,7 +262,8 @@ CFData <- R6::R6Class("CFData",
         # Subset to a smaller dimension space, if needed
         private$.NC_map <- private$check_start_count(start, count)
         private$.dims <- private$.NC_map$count
-      }
+      } else
+        private$.data_dirty <- TRUE
 
       if (missing(values) || is.null(values) || (length(values) == 1L && is.na(values)))
         values <- NULL
@@ -227,6 +278,7 @@ CFData <- R6::R6Class("CFData",
     detach = function() {
       if (!is.null(private$.NCobj) && is.null(private$.values))
         private$read_data()
+      private$.NC_map <- list()
       super$detach()
     },
 

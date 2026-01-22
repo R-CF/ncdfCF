@@ -66,16 +66,37 @@ NCObject <- R6::R6Class("NCObject",
       val[[field]][[1L]]
     },
 
-    #' @description Write the attributes of this object to a netCDF file.
-    #' @param nc The handle to the netCDF file opened for writing.
+    #' @description Write the attributes of this object to a netCDF file. This
+    #'   will retain existing attributes, update modified attributes, and delete
+    #'   and add missing attributes from the passed in argument.
     #' @param nm The NC variable name or "NC_GLOBAL" to write the attributes to.
+    #' @param new_atts The attributes to write.
     #' @return Self, invisibly.
-    write_attributes = function(nc, nm) {
-      if ((num_atts <- nrow(private$.attributes)) > 0L)
-        for (a in 1L:num_atts) {
-          attr <- private$.attributes[a,]
-          RNetCDF::att.put.nc(nc, nm, attr$name, attr$type, unlist(attr$value, use.names = FALSE))
+    write_attributes = function(nm, new_atts) {
+      old_atts <- private$.attributes
+      h <- self$handle
+
+      # Delete attributes
+      names <- old_atts$name[!(old_atts$name %in% new_atts$name)]
+      names <- names[!(names %in% c("_FillValue", "missing_value", "add_offset",
+                                    "scale_factor", "coordinates",
+                                    "valid_range", "valid_min", "valid_max",
+                                    "external_variables"))]
+      for (a in seq_along(names))
+        RNetCDF::att.delete.nc(h, nm, names[a])
+
+      # Changed and new attributes
+      names <- old_atts$name[old_atts$name %in% new_atts$name]
+      names <- unlist(sapply(names, function(n) {
+        if (!identical(old_atts[old_atts$name == n, "value"], new_atts[new_atts$name == n, "value"])) n else ""
+      }))
+      names <- c(names, new_atts$name[!(new_atts$name %in% old_atts$name)])
+      for (a in seq_along(names))
+        if (nzchar(n <- names[a])) {
+          att <- new_atts[new_atts$name == n,]
+          RNetCDF::att.put.nc(h, nm, n, att$type, unlist(att$value, use.names = FALSE))
         }
+      private$.attributes <- new_atts
       invisible(self)
     }
   ),
@@ -86,10 +107,13 @@ NCObject <- R6::R6Class("NCObject",
         private$.id
     },
 
-    #' @field name (read-only) Retrieve the name of the object.
+    #' @field name Set or retrieve the name of the NC object. The netCDF file
+    #' must be open for writing to change the name.
     name = function(value) {
       if (missing(value))
         private$.name
+      else
+        self$set_name(value)
     },
 
     #' @field attributes (read-only) Read the attributes of the object. When
@@ -97,20 +121,6 @@ NCObject <- R6::R6Class("NCObject",
     attributes = function(value) {
       if (missing(value))
         private$.attributes
-    #   else if (is.null(value))
-    #     private$.attributes <- data.frame()
-    #   else if (is.data.frame(value) && nrow(value)) {
-    #     req <- c("id", "name", "type", "length", "value")
-    #     cols <- names(value)
-    #     if (all(req %in% cols)) {
-    #       if (is.numeric(value$id) && is.character(value$name) &&
-    #           is.character(value$type) && is.numeric(value$length))
-    #         private$.attributes <- value[req]
-    #       else
-    #         warning("Attributes to be set have columns with wrong mode.", call. = FALSE)
-    #     } else
-    #       warning("Cannot set attributes without all required columns", call. = FALSE)
-    #   }
     },
 
     #' @field CF Register CF object that uses this netCDF object, or retrieve

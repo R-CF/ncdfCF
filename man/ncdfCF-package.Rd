@@ -226,6 +226,7 @@ auxiliary coordinates associated with the axis.
 Useful links:
 \itemize{
   \item \url{https://github.com/R-CF/ncdfCF}
+  \item \url{https://r-cf.github.io/ncdfCF/}
   \item Report bugs at \url{https://github.com/R-CF/ncdfCF/issues}
 }
 

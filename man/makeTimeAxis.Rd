@@ -4,7 +4,7 @@
 \alias{makeTimeAxis}
 \title{Create a time axis}
 \usage{
-makeTimeAxis(name, values, attributes = NULL)
+makeTimeAxis(name, values, attributes = data.frame(), group = NULL)
 }
 \arguments{
 \item{name}{Name of the axis.}
@@ -15,6 +15,9 @@ optionally bounds set.}
 \item{attributes}{\code{data.frame} with the attributes of the axis to create.
 Attributes "standard_name", "units", "calendar", "actual_range" and "axis"
 will be set or updated.}
+
+\item{group}{\link{CFGroup} instance where the axis will be located. If \code{NULL}
+(default), a private group will be created for the axis.}
 }
 \value{
 A \link{CFAxisTime} instance.

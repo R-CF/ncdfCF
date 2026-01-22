@@ -31,11 +31,12 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #'   [makeDiscreteAxis()] function.
     #' @param var The name of the axis when creating a new axis. When reading an
     #'   axis from file, the [NCVariable] object that describes this instance.
+    #' @param group The [CFGroup] that this instance will live in.
     #' @param start Optional. Integer value that indicates the starting value of
     #'   this axis. Defults to `1L`.
     #' @param count Number of elements in the axis.
-    initialize = function(var, start = 1L, count) {
-      super$initialize(var)
+    initialize = function(var, group, start = 1L, count) {
+      super$initialize(var, group)
       private$.values <- start:(start + count - 1L)
     },
 
@@ -62,11 +63,12 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #'   are made from new instances.
     #' @param name The name for the new axis. If an empty string is passed, will
     #'   use the name of this axis.
+    #' @param group The [CFGroup] where the copy of this axis will live.
     #' @return The newly created axis.
-    copy = function(name = "") {
+    copy = function(name = "", group) {
       if (!nzchar(name))
         name <- self$name
-      ax <- CFAxisDiscrete$new(name, start = private$.values[1L], count = length(private$.values))
+      ax <- CFAxisDiscrete$new(name, group = group, start = private$.values[1L], count = length(private$.values))
       private$copy_properties_into(ax)
     },
 
@@ -118,19 +120,20 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #'   `rng` argument.
     #' @param name The name for the new axis. If an empty string is passed, will
     #'   use the name of this axis.
+    #' @param group The [CFGroup] where the copy of this axis will live.
     #' @param rng The range of indices whose values from this axis to include in
     #'   the returned axis. If the value of the argument is `NULL`, return a
     #'   copy of the axis.
     #' @return A new `CFAxisDiscrete` instance covering the indicated range of
     #'   indices. If the value of the argument is `NULL`, return a copy of
     #'   `self` as the new axis.
-    subset = function(name = "", rng = NULL) {
+    subset = function(name = "", group, rng = NULL) {
       if (is.null(rng))
-        self$copy(name)
+        self$copy(name, group)
       else {
         if (!nzchar(name))
           name <- self$name
-        ax <- CFAxisDiscrete$new(name, start = rng[1L], count = rng[2L] - rng[1L] + 1L)
+        ax <- CFAxisDiscrete$new(name, group = group, start = rng[1L], count = rng[2L] - rng[1L] + 1L)
         private$copy_properties_into(ax, rng)
       }
     },
@@ -139,11 +142,12 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #'   of the axis.
     #' @param from An instance of `CFAxisDiscrete` whose length to add to this
     #'   axis.
+    #' @param group The [CFGroup] where the copy of this axis will live.
     #' @return A new `CFAxisDiscrete` instance with a length that is the sum of
     #'   the lengths of this axis and the `from` axis.
     append = function(from) {
       if (super$can_append(from)) {
-        CFAxisDiscrete$new(self$name, start = private$.values[1L], count = self$length + from$length)
+        CFAxisDiscrete$new(self$name, group = group, start = private$.values[1L], count = self$length + from$length)
       } else
         stop("Axis values cannot be appended.", call. = FALSE)
     },

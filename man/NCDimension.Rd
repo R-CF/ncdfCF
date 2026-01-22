@@ -5,7 +5,7 @@
 \alias{NCDimension}
 \title{NetCDF dimension object}
 \description{
-This class represents an netCDF dimensions. It contains the
+This class represents an netCDF dimension. It contains the
 information on a dimension that is stored in an netCDF file. Consequently,
 the properties of this class are all read-only. The length of the dimension
 may change if data is written to an unlimited dimension, but that is
@@ -55,7 +55,7 @@ Create a new netCDF dimension. This class should not be
 instantiated directly, create CF objects instead. This class is
 instantiated when opening a netCDF resource.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCDimension$new(id, name, length, unlim, group)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{NCDimension$new(id, name, length = 1L, unlim = FALSE, group)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -65,11 +65,11 @@ instantiated when opening a netCDF resource.
 
 \item{\code{name}}{Character string with the name of the netCDF dimension.}
 
-\item{\code{length}}{Length of the dimension.}
+\item{\code{length}}{Length of the dimension. Default is 1.}
 
-\item{\code{unlim}}{Is the dimension unlimited?}
+\item{\code{unlim}}{Is the dimension unlimited? Default is \code{FALSE}.}
 
-\item{\code{group}}{The group where the dimension is located.}
+\item{\code{group}}{The NC group where the dimension is located.}
 }
 \if{html}{\out{</div>}}
 }

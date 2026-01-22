@@ -16,11 +16,11 @@ NCGroup <- R6::R6Class("NCGroup",
     # compliant with CF rules when starting with a backslash.
     .name = "",
 
-    # Access to the underlying netCDF resource.
-    .resource = NULL,
-
     # The CFGroup connected to this NC group
-    .CF = NULL
+    .CF = NULL,
+
+    # Access to the underlying netCDF resource.
+    .resource = NULL
   ),
   public = list(
     #' @field parent Parent group of this group, the owning `CFDataset` for the
@@ -43,7 +43,7 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @description Create a new instance of this class.
     #' @param id The identifier of the group. If `NA`, the new group will be
     #'   created in the netCDF resource, unless argument `parent == NULL`, i.e.
-    #'   the root group.
+    #'   the root group which already exists.
     #' @param name The name of the group.
     #' @param attributes Optional, a `data.frame` with group attributes.
     #' @param parent The parent group of this group. If `NULL` then argument
@@ -89,8 +89,7 @@ NCGroup <- R6::R6Class("NCGroup",
 
     #' @description Find an object by its name. Given the name of an object,
     #'   possibly preceded by an absolute or relative group path, return the
-    #'   object to the caller. Typically, this method is called
-    #'   programmatically.
+    #'   object to the caller. Usually this method is called programmatically.
     #' @param name The name of an object, with an optional absolute or relative
     #'   group path from the calling group. The object must be an NC group,
     #'   dimension or variable.
@@ -131,6 +130,7 @@ NCGroup <- R6::R6Class("NCGroup",
       nm <- elements[length(elements)]
 
       # Helper function to find a named object in the group `g`
+      # FIXME: How to get to the dimension with the same name as a variable?
       .find_here <- function(g) {
         idx <- which(names(g$NCvars) == nm)
         if (length(idx)) return(g$NCvars[[idx]])
@@ -201,29 +201,26 @@ NCGroup <- R6::R6Class("NCGroup",
     },
 
     #' @description Has a given name been defined in this group already?
-    #'
     #' @param name Character string. The name will be searched for, regardless
     #' of case.
-    #' @param scope Either "CF" for a CF construct, "NC" for a
-    #'   netCDF variable, or "both" (default) to test both scopes.
-    #'
     #' @return `TRUE` if `name` is present in the group, `FALSE` otherwise.
-    has_name = function(name, scope = "both") {
+    has_name = function(name) {
+      # FIXME: Must check for sub-group names too?
       name <- tolower(name)
-      res <- if (scope %in% c("NC", "both")) name %in% tolower(names(self$NCvars))
-             else FALSE
-      if (scope %in% c("CF", "both"))
-        res <- res ||
-               name %in% tolower(c(names(self$CFvars),
-                                   names(self$CFaxes),
-                                   names(self$CFlonglat),
-                                   names(self$CFaux),
-                                   names(self$CFcrs),
-                                   names(self$CFmeasures)))
-      else
-        stop("Invalid 'scope' argument supplied.", call. = FALSE)
+      name %in% tolower(names(self$NCvars))
+    },
 
-      res
+    #' @description Change the name of the NC group. The new name must be
+    #'   valid and should not duplicate a sibling group.
+    #' @param new_name The new name for the NC group.
+    #' @return Self, invisibly.
+    set_name = function(new_name) {
+      if (new_name != private$.name && is.null(group$parent$find_by_name(new_name)) &&
+          private$.resource$can_write) {
+        RNetCDF::grp.rename.nc(private$.resource$handle, new_name)
+        private$.name <- new_name
+      }
+      invisible(self)
     },
 
     #' @description Find NC variables that are not referenced by CF objects. For
@@ -333,10 +330,10 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @field handle (read-only) Get the handle to the netCDF resource for the
     #'   group
     handle = function(value) {
-      if (missing(value))
+      if (missing(value)) {
         if (is.null(private$.resource)) NULL
         else private$.resource$group_handle(self$fullname)
-      else
+      } else
         stop("Can't assign a value to a netCDF resource handle", call. = FALSE)
     },
 
@@ -355,9 +352,8 @@ NCGroup <- R6::R6Class("NCGroup",
         private$.name
       else if (private$.name == "/")
         stop("Cannot change the name of the root group", call. = FALSE)
-      else if (.is_valid_name(value)) {
-        private$.name <- value
-      }
+      else
+        self$set_name(value)
     },
 
     #' @field fullname (read-only) The fully qualified absolute path of the group.

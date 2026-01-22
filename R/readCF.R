@@ -104,7 +104,7 @@ open_ncdf <- function(resource, write = FALSE) {
       nm <- names(l3bgrp$NC$NCvars)
       if (all(c("BinList", "BinIndex", units[1L]) %in% nm)) {
         ds$file_type <- "NASA level-3 binned data"
-        l3bgrp$add_CF_object(CFVariableL3b$new(l3bgrp, units))
+        #l3bgrp$add_CF_object(CFVariableL3b$new(l3bgrp, units))
       }
     }
   }
@@ -238,8 +238,8 @@ peek_ncdf <- function(resource) {
     if (length(dim_names)) {
       local_vars <- nc$NCvars[dim_names]
       local_CVs <- local_vars[lengths(local_vars) > 0L]
-      axes <- lapply(local_CVs, function(v) .makeAxis(nc, v))
-      grp$add_CF_object(axes)
+      axes <- lapply(local_CVs, function(v) .makeAxis(grp, v))
+      #grp$add_CF_object(axes)
     } else axes <- list()
   } else axes <- list()
 
@@ -256,7 +256,7 @@ peek_ncdf <- function(resource) {
 #
 # This method creates the various kinds of axes.
 #
-# @param grp NC group in which the NC variable is defined.
+# @param grp CF group to place the axis in.
 # @param var `NCVariable` instance to create the axis from.
 #
 # @return An instance of `CFAxis`.
@@ -269,8 +269,8 @@ peek_ncdf <- function(resource) {
     RNetCDF::var.get.nc(var$group$handle, var$name, collapse = FALSE, unpack = TRUE, fitnum = TRUE), silent = TRUE)
   if (inherits(vals, "try-error")) {
     # No dimension values so it's an identity axis
-    d <- grp$find_dim_by_id(var$dimids[[1L]])
-    return(CFAxisDiscrete$new(var, count = d$length))
+    d <- var$group$find_dim_by_id(var$dimids[[1L]])
+    return(CFAxisDiscrete$new(var, grp, count = d$length))
   } else if (length(dim(vals)) == 1L)
     dim(vals) <- NULL
 
@@ -278,8 +278,8 @@ peek_ncdf <- function(resource) {
   if (!nrow(var$attributes)) {
     # No attributes so nothing left to do
     if (var$vtype %in% c("NC_CHAR", "NC_STRING"))
-      return(CFAxisCharacter$new(var, values = vals))
-    else return(CFAxisNumeric$new(var, values = vals))
+      return(CFAxisCharacter$new(var, grp, values = vals))
+    else return(CFAxisNumeric$new(var, grp, values = vals))
   }
 
   # Read some useful attributes
@@ -288,7 +288,7 @@ peek_ncdf <- function(resource) {
   units    <- var$attribute("units")
 
   # See if we can make time
-  tax <- try(CFAxisTime$new(var, vals), silent = TRUE)
+  tax <- try(CFAxisTime$new(var, grp, vals), silent = TRUE)
   if (!inherits(tax, "try-error")) return(tax)
 
   # Read the boundary values
@@ -297,26 +297,28 @@ peek_ncdf <- function(resource) {
   # Create the axis based on units
   axis <- if (!is.na(units)) {
     if (grepl("^degree(s?)(_?)(east|E)$", units))
-      CFAxisLongitude$new(var, values = vals)
+      CFAxisLongitude$new(var, grp, values = vals)
     else if (grepl("^degree(s?)(_?)(north|N)$", units))
-      CFAxisLatitude$new(var, values = vals)
+      CFAxisLatitude$new(var, grp, values = vals)
     else if (requireNamespace("units", quietly = TRUE) && units::ud_are_convertible(units, "bar"))
-      CFAxisVertical$new(var, values = vals)
+      CFAxisVertical$new(var, grp, values = vals)
     else
       NULL
   }
   if (is.null(axis) && !is.na(standard)) {
     axis <- switch(standard,
-                   "longitude" = CFAxisLongitude$new(var, values = vals),
-                   "latitude"  = CFAxisLatitude$new(var, values = vals),
-                   "projection_x_coordinate" = CFAxisNumeric$new(var, values = vals, orientation = "X"),
-                   "projection_y_coordinate" = CFAxisNumeric$new(var, values = vals, orientation = "Y"),
+                   "longitude" = CFAxisLongitude$new(var, grp, values = vals),
+                   "latitude"  = CFAxisLatitude$new(var, grp, values = vals),
+                   "projection_x_coordinate" = CFAxisNumeric$new(var, grp, values = vals, orientation = "X"),
+                   "projection_y_coordinate" = CFAxisNumeric$new(var, grp, values = vals, orientation = "Y"),
                    NULL)
     if (is.null(axis) && (standard %in% Z_parametric_standard_names || !is.na(var$attribute("positive"))))
-      axis <- CFAxisVertical$new(var, values = vals)
+      axis <- CFAxisVertical$new(var, grp, values = vals)
   }
   if (is.na(orient)) orient <- ""
-  if (is.null(axis)) axis <- CFAxisNumeric$new(var, values = vals, orientation = orient)
+  if (is.null(axis)) {
+    axis <- CFAxisNumeric$new(var, grp, values = vals, orientation = orient)
+  }
 
   axis$bounds <- bnds
   axis
@@ -337,10 +339,10 @@ peek_ncdf <- function(resource) {
     axes <- lapply(grp$NC$NCdims, function(d) {
       if (d$id %in% add_dims) {
         nm <- d$name
-        axis <- CFAxisDiscrete$new(nm, count = d$length)
+        axis <- CFAxisDiscrete$new(nm, grp, count = d$length)
         axis$dimid <- d$id
         lx <- list(axis); names(lx) <- nm
-        grp$add_CF_object(lx)
+        #grp$add_CF_object(lx)
         add_dims <- add_dims[-which(add_dims == d$id)]
         axis
       }
@@ -398,11 +400,11 @@ peek_ncdf <- function(resource) {
             if (nd >= 2L && !is.na(units <- aux$attribute("units"))) {
               if (grepl("^degree(s?)(_?)(east|E)$", units)) {
                 varLon <- aux
-                bndsLon <- .readBounds(aux$group, bounds, 2L)
+                bndsLon <- .readBounds(aux$group$CF, bounds, 2L)
                 found_one <- TRUE
               } else if (grepl("^degree(s?)(_?)(north|N)$", units)) {
                 varLat <- aux
-                bndsLat <- .readBounds(aux$group, bounds, 2L)
+                bndsLat <- .readBounds(aux$group$CF, bounds, 2L)
                 found_one <- TRUE
               }
             }
@@ -410,12 +412,12 @@ peek_ncdf <- function(resource) {
             if (!found_one) {
               if (nd > 0L && aux$vtype %in% c("NC_CHAR", "NC_STRING")) {
                 # Label
-                aux$group$CF$add_CF_object(CFLabel$new(aux))
+                CFLabel$new(aux, aux$group$CF)
                 found_one <- TRUE
               } else if (nd < 2L) {
                 # Scalar or auxiliary coordinate with a single dimension: make an axis out of it if it doesn't already exist.
                 if (is.null(grp$find_by_name(aux$name))) {
-                  aux$group$CF$add_CF_object(.makeAxis(grp$NC, aux))
+                  .makeAxis(aux$group$CF, aux)
                   found_one <- TRUE
                 }
               }
@@ -436,8 +438,8 @@ peek_ncdf <- function(resource) {
             dname <- varLon$group$find_dim_by_id(did)$name
             varLon$group$find_by_name(dname)$CF[[1L]]
           })
-          lon <- CFVariable$new(varLon, ax)
-          lat <- CFVariable$new(varLat, ax)
+          lon <- CFVariable$new(varLon, grp, ax)
+          lat <- CFVariable$new(varLat, grp, ax)
           ll <- CFAuxiliaryLongLat$new(lon, lat, bndsLon, bndsLat)
           varLon$group$CF$add_CF_object(ll)
         }
@@ -477,7 +479,7 @@ peek_ncdf <- function(resource) {
               dname <- anc$group$find_dim_by_id(did)$name
               anc$group$find_by_name(dname)$CF[[1L]]
             })
-            anc$group$CF$add_CF_object(CFVariable$new(anc, ax))
+            CFVariable$new(anc, anc$group$CF, ax)
           }
         }
       }
@@ -511,10 +513,10 @@ peek_ncdf <- function(resource) {
         else {
           ncvar <- ax$NC$group$find_by_name(v)
           if (is.null(ncvar)) {
-            CFVerticalParametricTerm$new(0, NULL)
+            CFVerticalParametricTerm$new(0, ax$group, NULL)
           } else {
             local_axes <- .buildVariableAxisList(ncvar, axes)
-            CFVerticalParametricTerm$new(ncvar, local_axes)
+            CFVerticalParametricTerm$new(ncvar, ax$group, local_axes)
           }
         }
       })
@@ -580,9 +582,7 @@ peek_ncdf <- function(resource) {
 #' NC variables are scanned for a "grid_mapping_name" attribute. The NC variable
 #' referenced is converted into a CFGridMapping instance in the group where its
 #' NC variable is located.
-#'
 #' @param grp The CF group to scan.
-#'
 #' @return Nothing. CFGridMapping instances are created in the groups where the
 #'   NC variables are found. These will later be picked up when CFvariables are
 #'   created.
@@ -594,7 +594,7 @@ peek_ncdf <- function(resource) {
     for (refid in seq_along(vars)) {
       v <- vars[[refid]]
       if (!length(v$CF) && !is.na(gm <- v$attribute("grid_mapping_name")))
-        grp$add_CF_object(CFGridMapping$new(v))
+        CFGridMapping$new(v, grp)
     }
   }
 
@@ -604,15 +604,15 @@ peek_ncdf <- function(resource) {
 }
 
 # Utility function to read bounds values
-# grp - the current group being processed
+# grp - the current CF group being processed
 # bounds - the name of the boundary variable, or NA if no bounds attribute present
 # owner_dims - the number of dimensions of the owning object: 1 for an axis, 2 for an aux CV grid
 .readBounds <- function(grp, bounds, owner_dims = 1L) {
   if (is.na(bounds)) NULL
   else {
-    NCbounds <- grp$find_by_name(bounds)
+    NCbounds <- grp$NC$find_by_name(bounds)
     if (is.null(NCbounds)) NULL
-    else CFBounds$new(NCbounds, owner_dims = owner_dims)
+    else CFBounds$new(NCbounds, group = grp, owner_dims = owner_dims)
   }
 }
 
@@ -676,7 +676,7 @@ peek_ncdf <- function(resource) {
         } # coordinates
 
         # Make the CFVariable
-        var <- CFVariable$new(v, all_ax)
+        var <- CFVariable$new(v, grp, all_ax)
         if (!is.null(ll)) var$gridLongLat <- ll
 
         # Add references to any "ancillary_variables" of the variable
@@ -714,8 +714,6 @@ peek_ncdf <- function(resource) {
       }
     })
     vars <- vars[lengths(vars) > 0L]
-    if (length(vars))
-      grp$add_CF_object(vars)
   } else vars <- list()
 
   # Descend into subgroups

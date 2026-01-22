@@ -611,13 +611,14 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
     #' @param var When creating a new grid mapping object, the name of the
     #'   object. When reading from a netCDF resource, the netCDF variable that
     #'   describes this instance.
+    #' @param group The [CFGroup] that this instance will live in.
     #' @param grid_mapping_name Optional. When creating a new grid mapping
     #'   object, the formal name of the grid mapping, as specified in the CF
     #'   Metadata Conventions. This value is stored in the new object as
     #'   attribute "grid_mapping_name". Ignored when argument `var` is a NC
     #'   object.
-    initialize = function(var, grid_mapping_name) {
-      super$initialize(var)
+    initialize = function(var, group, grid_mapping_name) {
+      super$initialize(var, group = group)
 
       if (is.character(var)) {
         if (missing(grid_mapping_name))
@@ -726,11 +727,14 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
     },
 
     #' @description Write the CRS object to a netCDF file.
-    #' @param h Handle to the netCDF file opened for writing.
     #' @return Self, invisibly.
-    write = function(h) {
-      self$id <- RNetCDF::var.def.nc(h, self$name, "NC_CHAR", NA)
-      self$write_attributes(h, self$name)
+    write = function() {
+      if (is.null(private$.NCobj)) {
+        private$.NCobj <- NCVariable$new(NA, self$name, self$group$NC, "NC_CHAR", NA)
+        private$.id <- private$.NCobj$id
+        private$.NCobj$CF <- self
+      }
+      self$write_attributes()
       invisible(self)
     }
   ),

@@ -4,7 +4,13 @@
 \alias{makeVerticalAxis}
 \title{Create a vertical axis}
 \usage{
-makeVerticalAxis(name, values, bounds, attributes = NULL)
+makeVerticalAxis(
+  name,
+  values,
+  bounds = NULL,
+  attributes = data.frame(),
+  group = NULL
+)
 }
 \arguments{
 \item{name}{Name of the axis.}
@@ -16,6 +22,9 @@ available.}
 
 \item{attributes}{\code{data.frame} with the attributes of the axis to create.
 Attributes "actual_range" and "axis" will be set or updated.}
+
+\item{group}{\link{CFGroup} instance where the axis will be located. If \code{NULL}
+(default), a private group will be created for the axis.}
 }
 \value{
 A \link{CFAxisVertical} instance.

@@ -28,9 +28,8 @@ one, upon first access and cached thereafter.}
 
 \item{\code{length}}{(read-only) The number of labels in the set.}
 
-\item{\code{dimid}}{(read-only) The netCDF dimension id of this label set. This
-field should only be accessed if the label set is backed by a netCDF
-resource.}
+\item{\code{dimid}}{The netCDF dimension id of this label set. Setting this
+value to anything other than the correct value will lead to disaster.}
 }
 \if{html}{\out{</div>}}
 }
@@ -68,7 +67,7 @@ resource.}
 \subsection{Method \code{new()}}{
 Create a new instance of this class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFLabel$new(var, values = NA, start = NA, count = NA)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFLabel$new(var, group, values = NA, start = NA, count = NA)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -77,6 +76,8 @@ Create a new instance of this class.
 \item{\code{var}}{The \link{NCVariable} instance upon which this CF object is based
 when read from a netCDF resource, or the name for the object new CF
 object to be created.}
+
+\item{\code{group}}{The \link{CFGroup} that this instance will live in.}
 
 \item{\code{values}}{Optional. The labels of the CF object. Ignored when
 argument \code{var} is a \code{NCVariable} object.}
@@ -145,7 +146,7 @@ Create a copy of this label set. The copy is completely
 separate from \code{self}, meaning that both \code{self} and all of its
 components are made from new instances.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFLabel$copy(name = "")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFLabel$copy(name = "", group)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -153,6 +154,8 @@ components are made from new instances.
 \describe{
 \item{\code{name}}{The name for the new label set. If an empty string is passed,
 will use the name of this label set.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
 }
 \if{html}{\out{</div>}}
 }
@@ -191,13 +194,15 @@ coordinates.
 \subsection{Method \code{subset()}}{
 Retrieve a subset of the labels.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFLabel$subset(name, rng)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFLabel$subset(name, group, rng)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{name}}{The name for the new label set, optional.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this label set will live.}
 
 \item{\code{rng}}{The range of indices whose values from this axis to include in
 the returned axis.}
@@ -214,23 +219,9 @@ A \code{CFLabel} instance, or \code{NULL} if the \code{rng} values are invalid.
 \subsection{Method \code{write()}}{
 Write the labels to a netCDF file, including its attributes.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFLabel$write(nc, dim)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFLabel$write()}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{nc}}{The handle of the netCDF file opened for writing or a group in
-the netCDF file. If \code{NULL}, write to the file or group where the labels
-were read from (the file must have been opened for writing). If not
-\code{NULL}, the handle to a netCDF file or a group therein.}
-
-\item{\code{dim}}{The dimension to write the labels for. This is the name or
-dimension id of the object that owns these labels. The dimension must
-have been written to file before this method is called.}
-}
-\if{html}{\out{</div>}}
-}
 \subsection{Returns}{
 Self, invisibly.
 }

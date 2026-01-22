@@ -61,7 +61,7 @@ reading from a netCDF resource), only the \code{grid_mapping_name} attribute
 will be set. The caller must set all other parameters through their
 respective attributes, following the CF Metadata Conventions.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$new(var, grid_mapping_name)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$new(var, group, grid_mapping_name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -70,6 +70,8 @@ respective attributes, following the CF Metadata Conventions.
 \item{\code{var}}{When creating a new grid mapping object, the name of the
 object. When reading from a netCDF resource, the netCDF variable that
 describes this instance.}
+
+\item{\code{group}}{The \link{CFGroup} that this instance will live in.}
 
 \item{\code{grid_mapping_name}}{Optional. When creating a new grid mapping
 object, the formal name of the grid mapping, as specified in the CF
@@ -128,16 +130,9 @@ A character string with the CRS in WKT2 format.
 \subsection{Method \code{write()}}{
 Write the CRS object to a netCDF file.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$write(h)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$write()}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{h}}{Handle to the netCDF file opened for writing.}
-}
-\if{html}{\out{</div>}}
-}
 \subsection{Returns}{
 Self, invisibly.
 }

@@ -68,6 +68,7 @@ Create an instance of this class.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFBounds$new(
   var,
+  group,
   values,
   start = NA,
   count = NA,
@@ -82,6 +83,8 @@ Create an instance of this class.
 \item{\code{var}}{The name of the boundary variable when creating a new boundary
 variable. When reading a boundary variable from file, the \link{NCVariable}
 object that describes this instance.}
+
+\item{\code{group}}{The \link{CFGroup} that this instance will live in.}
 
 \item{\code{values}}{Optional. The values of the boundary variable. This must be
 a numeric matrix whose first dimension has a length equal to the number
@@ -152,7 +155,7 @@ Create a copy of this bounds object The copy is completely
 separate from \code{self}, meaning that both \code{self} and all of its
 components are made from new instances.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$copy(name = "")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFBounds$copy(name = "", group)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -160,6 +163,8 @@ components are made from new instances.
 \describe{
 \item{\code{name}}{The name for the new bounds object. If an empty string is
 passed, will use the name of this bounds object.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
 }
 \if{html}{\out{</div>}}
 }
@@ -177,12 +182,14 @@ range. This currently only applies to 1-D axes.
 This method returns boundary values which span the range of indices
 given by the \code{rng} argument.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$subset(rng)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFBounds$subset(group, rng)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{group}}{The \link{CFGroup} where the copy of these bounds will live.}
+
 \item{\code{rng}}{The range of values from this bounds object to include in the
 returned object.}
 }
@@ -199,7 +206,7 @@ A \code{CFBounds} instance covering the indicated range of indices.
 Append boundary values at the end of the current values of
 the boundary variable.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$append(from)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFBounds$append(from, group)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -207,6 +214,8 @@ the boundary variable.
 \describe{
 \item{\code{from}}{An instance of \code{CFBounds} whose values to append to the
 values of this boundary variable.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of these bounds will live.}
 }
 \if{html}{\out{</div>}}
 }
@@ -221,17 +230,15 @@ and the \code{from} boundary variable appended. If argument \code{from} is
 \if{latex}{\out{\hypertarget{method-CFBounds-write}{}}}
 \subsection{Method \code{write()}}{
 Write the boundary variable to a netCDF file. This method
-should not be called directly; instead, \code{CFVariable::save()} will call
+should not be called directly; instead, \code{CFVariable$save()} will call
 this method automatically.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$write(h, object_name)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFBounds$write(object_name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{h}}{The handle to a netCDF file open for writing.}
-
 \item{\code{object_name}}{The name of the object that uses these boundary
 values, usually an axis but could also be an auxiliary CV or a
 parametric Z axis.}

@@ -18,7 +18,8 @@ this class manages the attributes for its descendent classes.
 \describe{
 \item{\code{id}}{(read-only) Retrieve the identifier of the netCDF object.}
 
-\item{\code{name}}{(read-only) Retrieve the name of the object.}
+\item{\code{name}}{Set or retrieve the name of the NC object. The netCDF file
+must be open for writing to change the name.}
 
 \item{\code{attributes}}{(read-only) Read the attributes of the object. When
 there are no attributes, an empty \code{data.frame} will be returned.}
@@ -109,17 +110,19 @@ value of argument \code{att} \code{NA} is returned.
 \if{html}{\out{<a id="method-NCObject-write_attributes"></a>}}
 \if{latex}{\out{\hypertarget{method-NCObject-write_attributes}{}}}
 \subsection{Method \code{write_attributes()}}{
-Write the attributes of this object to a netCDF file.
+Write the attributes of this object to a netCDF file. This
+will retain existing attributes, update modified attributes, and delete
+and add missing attributes from the passed in argument.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCObject$write_attributes(nc, nm)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{NCObject$write_attributes(nm, new_atts)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{nc}}{The handle to the netCDF file opened for writing.}
-
 \item{\code{nm}}{The NC variable name or "NC_GLOBAL" to write the attributes to.}
+
+\item{\code{new_atts}}{The attributes to write.}
 }
 \if{html}{\out{</div>}}
 }

@@ -8,7 +8,8 @@
 #' The functions always return a new `CFVariable` object. Functions can thus be
 #' concatenated to create more complex expressions. The data type of the new
 #' object is determined by the base R function; its name is concatenated from
-#' the names in the argument object(s).
+#' the names in the argument object(s). The result will be assigned to a private
+#' group and is thus completely disjoint from other CF objects.
 #'
 #' For the Ops functions with two arguments, if both arguments are a
 #' `CFVariable` object they have to be compatible: same shape, axis coordinate
@@ -85,7 +86,7 @@ Ops.CFVariable <- function(e1, e2) {
 
   name <- gsub("\\.|,", "_", name)
 
-  v <- CFVariable$new(name, values = res, axes = axes)
+  v <- CFVariable$new(name, group = CFGroup$new("", NULL), values = res, axes = axes)
   v$crs <- crs
   v
 }
@@ -100,7 +101,8 @@ Ops.CFVariable <- function(e1, e2) {
 Math.CFVariable <- function(x, ...) {
   fun <- match.fun(.Generic)
   res <- fun(x$raw(), ...)
-  v <- CFVariable$new(paste(.Generic, x$name, sep = "_"), values = res, axes = x$axes)
+  v <- CFVariable$new(paste(.Generic, x$name, sep = "_"), group = CFGroup$new("", NULL),
+                      values = res, axes = x$axes)
   v$crs <- x$crs
   v
 }

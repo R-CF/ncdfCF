@@ -68,8 +68,9 @@ AOI <- R6::R6Class("AOI",
       lat_vals <- seq(from = private$.minLat, by = private$.res[2L], length = dims[1L] + 1L)
       lat_vals <- rbind(lat_vals[1:dims[1L]], lat_vals[-1L])
 
-      list(lon = CFBounds$new("lon_bnds", values = lon_vals),
-           lat = CFBounds$new("lat_bnds", values = lat_vals))
+      grp <- CFGroup$new("", NULL)
+      list(lon = CFBounds$new("lon_bnds", group = grp, values = lon_vals),
+           lat = CFBounds$new("lat_bnds", group = grp, values = lat_vals))
     }
   ),
   active = list(

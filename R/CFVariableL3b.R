@@ -123,10 +123,10 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       # Latitude axis
       lat_rows <- which(private$.index$begin > 0)
       private$.file_rows <- as.integer(range(lat_rows))
-      lat <- CFAxisLatitude$new("latitude", values = (private$.file_rows[1L]:private$.file_rows[2L] - 0.5) * 180 / lat_len - 90)
+      lat <- CFAxisLatitude$new("latitude", grp, values = (private$.file_rows[1L]:private$.file_rows[2L] - 0.5) * 180 / lat_len - 90)
       len <- as.integer(private$.file_rows[2L] - private$.file_rows[1L]) + 1L
       bnds <- (private$.file_rows[1L] - 1):private$.file_rows[2L] * 180 / lat_len - 90
-      lat$bounds <- CFBounds$new("lat_bnds", values = rbind(bnds[-len], bnds[-1L]))
+      lat$bounds <- CFBounds$new("lat_bnds", grp, values = rbind(bnds[-len], bnds[-1L]))
 
       # Longitude axis
       lon_bins <- private$.index$max[lat_len * 0.5]
@@ -135,10 +135,10 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       expand <- lon_bins / private$.index$max[lat_rows]
       private$.file_bins[1L] <- min(floor(west * expand))
       private$.file_bins[2L] <- max(ceiling(east * expand))
-      lon <- CFAxisLongitude$new("longitude", values = (private$.file_bins[1L]:private$.file_bins[2L] - 0.5) * 360 / lon_bins - 180)
+      lon <- CFAxisLongitude$new("longitude", grp, values = (private$.file_bins[1L]:private$.file_bins[2L] - 0.5) * 360 / lon_bins - 180)
       bnds <- (private$.file_bins[1L]-1):private$.file_bins[2L] * 360 / lon_bins - 180
       len <- private$.file_bins[2L] - private$.file_bins[1L] + 1
-      lon$bounds <- CFBounds$new("lon_bnds", values = rbind(bnds[-len], bnds[-1L]))
+      lon$bounds <- CFBounds$new("lon_bnds", grp, values = rbind(bnds[-len], bnds[-1L]))
 
       axes <- list(
         latitude = lat,
@@ -154,20 +154,17 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
         cft <- CFtime::CFTime$new("seconds since 1970-01-01", "proleptic_gregorian")
         cft <- cft + CFtime::parse_timestamps(cft, sprintf("%04d-%02d-%02dT12:00:00", ymd$year, ymd$month, as.integer(ymd$day)))$offset
         cft$set_bounds(matrix(tc$offsets, nrow = 2))
-        axes[["time"]] <- CFAxisTime$new("time", cft)
+        axes[["time"]] <- CFAxisTime$new("time", grp, cft)
       }
 
-      grp$add_CF_object(axes)
-
       # CRS
-      gm <- CFGridMapping$new("geo", "latitude_longitude")
+      gm <- CFGridMapping$new("geo", grp, "latitude_longitude")
       gm$set_attribute("semi_major_axis", "NC_DOUBLE", 6378145)
       gm$set_attribute("inverse_flattening", "NC_DOUBLE", 0)
       gm$set_attribute("prime_meridian_name", "NC_CHAR", "Greenwich")
-      grp$add_CF_object(gm)
 
       # Construct the object
-      super$initialize(var, axes)
+      super$initialize(var, grp, axes)
       self$crs <- gm
       self$set_attribute("grid_mapping", "NC_CHAR", "geo")
       self$set_attribute("units", "NC_CHAR", units[2L])

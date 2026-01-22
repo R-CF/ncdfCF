@@ -4,7 +4,7 @@
 \alias{makeCharacterAxis}
 \title{Create a character axis}
 \usage{
-makeCharacterAxis(name, values, attributes = data.frame())
+makeCharacterAxis(name, values, attributes = data.frame(), group = NULL)
 }
 \arguments{
 \item{name}{Name of the axis.}
@@ -12,6 +12,9 @@ makeCharacterAxis(name, values, attributes = data.frame())
 \item{values}{The character coordinate values of the axis.}
 
 \item{attributes}{\code{data.frame} with the attributes of the axis to create.}
+
+\item{group}{\link{CFGroup} instance where the axis will be located. If \code{NULL}
+(default), a private group will be created for the axis.}
 }
 \value{
 A \link{CFAxisCharacter} instance.

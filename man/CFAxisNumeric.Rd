@@ -71,6 +71,7 @@ Creating a new axis is more easily done with the \code{\link[=makeAxis]{makeAxis
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$new(
   var,
+  group,
   values,
   start = 1L,
   count = NA,
@@ -84,6 +85,8 @@ Creating a new axis is more easily done with the \code{\link[=makeAxis]{makeAxis
 \describe{
 \item{\code{var}}{The name of the axis when creating a new axis. When reading an
 axis from file, the \link{NCVariable} object that describes this instance.}
+
+\item{\code{group}}{The \link{CFGroup} that this instance will live in.}
 
 \item{\code{values}}{Optional. The values of the axis in a vector. The values
 have to be numeric with the maximum value no larger than the minimum
@@ -223,7 +226,7 @@ Create a copy of this axis. The copy is completely separate
 from \code{self}, meaning that both \code{self} and all of its components are made
 from new instances.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$copy(name = "")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$copy(name = "", group)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -231,6 +234,8 @@ from new instances.
 \describe{
 \item{\code{name}}{The name for the new axis. If an empty string is passed, will
 use the name of this axis.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
 }
 \if{html}{\out{</div>}}
 }
@@ -250,7 +255,7 @@ After this operation the attributes of the newly created axes may not
 be accurate, except for the "actual_range" attribute. The calling code
 should set, modify or delete attributes as appropriate.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$copy_with_values(name = "", values)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$copy_with_values(name = "", group, values)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -258,6 +263,8 @@ should set, modify or delete attributes as appropriate.
 \describe{
 \item{\code{name}}{The name for the new axis. If an empty string is passed, will
 use the name of this axis.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
 
 \item{\code{values}}{The values to the used with the copy of this axis.}
 }
@@ -297,7 +304,7 @@ of the axis. Boundary values are appended as well but if either this
 axis or the \code{from} axis does not have boundary values, neither will the
 resulting axis.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$append(from)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$append(from, group)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -305,6 +312,8 @@ resulting axis.
 \describe{
 \item{\code{from}}{An instance of \code{CFAxisNumeric} whose values to append to the
 values of this axis.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
 }
 \if{html}{\out{</div>}}
 }
@@ -321,7 +330,7 @@ Return an axis spanning a smaller coordinate range. This
 method returns an axis which spans the range of indices given by the
 \code{rng} argument.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$subset(name = "", rng = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisNumeric$subset(name = "", group, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -329,6 +338,8 @@ method returns an axis which spans the range of indices given by the
 \describe{
 \item{\code{name}}{The name for the new axis. If an empty string is passed
 (default), will use the name of this axis.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
 
 \item{\code{rng}}{The range of indices whose values from this axis to include in
 the returned axis. If the value of the argument is \code{NULL}, return a

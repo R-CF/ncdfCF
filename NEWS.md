@@ -10,6 +10,7 @@
 - The `CFVariable::subset()` method now has an optional `.resolution` argument that can be specified when interpolation with auxiliary latitude-longitude coordinates is requested; otherwise it has no effect. This change does not break any existing code.
 - In `CFVariable$subset()` and `$profile()`, when selecting on auxiliary grid axes then both axes must be specified.
 - Function `create_ncdf()` creates a new netCDF resource on disk, as a container for persisting CF objects, or in memory.
+- Function `as_CF()` can now also convert a `terra::SpatRaster` to a `CFDataset` or a `CFVariable`, depending on the number of variables in the `SpatRaster`. This is a fragile process, mostly due to `terra` idiosyncrasies related to multi-dimensional data.
 - Documentation updated.
 
 #### Code

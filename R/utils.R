@@ -9,9 +9,9 @@ netcdf_data_types <- c("NC_BYTE", "NC_UBYTE", "NC_CHAR", "NC_SHORT",
 .compatible_type <- function(storage_mode, nc_data) {
   switch(storage_mode,
          "character" = nc_data %in% c("NC_CHAR", "NC_STRING"),
-         "double"    = nc_data %in% c("NC_DOUBLE", "NC_FLOAT"),
+         "double"    = nc_data %in% c("NC_DOUBLE", "NC_FLOAT", "NC_INT64", "NCUINT64"),
          "integer"   = nc_data %in% c("NC_BYTE", "NC_UBYTE", "NC_SHORT", "NC_USHORT", "NC_INT", "NC_UINT"),
-         "integer64" = nc_data %in% c("NC_INT64", "NCUINT64"),
+        # "integer64" = nc_data %in% c("NC_INT64", "NCUINT64"), NOT SUPPORTED (YET)
          "logical"   = nc_data == "NC_SHORT",
          FALSE)
 }
@@ -128,10 +128,10 @@ netcdf_data_types <- c("NC_BYTE", "NC_UBYTE", "NC_CHAR", "NC_SHORT",
 #'
 #' @param nm A vector of names of variables, groups or attributes to test. Group
 #' names should be plain, i.e. no preceding path.
-#' @return `TRUE` if all `nm` are valid, `FALSE` otherwise.
+#' @return Logical vector with `TRUE` for valid `nm` elements, `FALSE` otherwise.
 #' @noRd
 .is_valid_name <- function(nm) {
-  is.character(nm) & nzchar(nm) & all(grepl("^[a-zA-Z][a-zA-Z0-9_]{0,254}$", nm))
+  is.character(nm) & nzchar(nm) & grepl("^[a-zA-Z][a-zA-Z0-9_]{0,254}$", nm)
 }
 
 #' Convert regular character strings to valid CF names. Non-permitted characters

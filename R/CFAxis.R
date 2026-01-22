@@ -58,7 +58,7 @@ CFAxis <- R6::R6Class("CFAxis",
     # ax will receive the auxiliary coordinates subsetted by argument rng.
     subset_coordinates = function(ax, rng) {
       if (length(private$.aux)) {
-        lapply(private$.aux, function(x) ax$auxiliary <- x$subset(x$name, rng))
+        lapply(private$.aux, function(x) ax$auxiliary <- x$subset(x$name, group = ax$group, rng))
       }
     },
 
@@ -71,7 +71,7 @@ CFAxis <- R6::R6Class("CFAxis",
       ax$unlimited <- private$.unlimited
 
       if (inherits(private$.bounds, "CFBounds"))
-        ax$bounds <- private$.bounds$subset(rng)
+        ax$bounds <- private$.bounds$subset(group = ax$group, rng)
 
       private$subset_coordinates(ax, rng)
       ax$active_coordinates <- self$active_coordinates
@@ -88,6 +88,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   Creating a new axis is more easily done with the [makeAxis()] function.
     #' @param var The name of the axis when creating a new axis. When reading an
     #'   axis from file, the [NCVariable] object that describes this instance.
+    #' @param group The [CFGroup] that this instance will live in.
     #' @param values Optional. The values of the axis in a vector. Ignored when
     #'   argument `var` is a `NCVariable` object.
     #' @param start Optional. Integer index where to start reading axis data
@@ -101,7 +102,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   `NCVariable` instance, attributes of the axis will be taken from the
     #'   netCDF resource.
     #' @return A basic `CFAxis` object.
-    initialize = function(var, values, start = 1L, count = NA, orientation = "", attributes = data.frame()) {
+    initialize = function(var, group, values, start = 1L, count = NA, orientation = "", attributes = data.frame()) {
       orientation <- orientation[1L]
       if (!(orientation %in% c("X", "Y", "Z", "T", "")))
         stop("Invalid orientation for the axis.", call. = FALSE) # nocov
@@ -110,7 +111,7 @@ CFAxis <- R6::R6Class("CFAxis",
       if (is.null(start)) start <- 1L
       if (is.null(count)) count <- NA
 
-      super$initialize(var, values = values, start = start, count = count, attributes = attributes)
+      super$initialize(var, group = group, values = values, start = start, count = count, attributes = attributes)
       if (inherits(var, "NCVariable")) {
         private$.unlimited <- if (private$.NCobj$ndims) private$.NCobj$dimension(1L)$unlim else FALSE
         private$.dimid <- private$.NCobj$dimids[1L]
@@ -259,8 +260,9 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   `CFAxis` descendants that do not implement this method.
     #' @param name The name for the new axis. If an empty string is passed, will
     #'   use the name of this axis.
+    #' @param group The [CFGroup] where the copy of this axis will live.
     #' @return `NULL`
-    copy = function(name = "") {
+    copy = function(name = "", group) {
       NULL
     },
 
@@ -271,9 +273,10 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   implement this method.
     #' @param name The name for the new axis. If an empty string is passed, will
     #'   use the name of this axis.
+    #' @param group The [CFGroup] where the copy of this axis will live.
     #' @param values The values to the used with the copy of this axis.
     #' @return `NULL`
-    copy_with_values = function(name = "", values) {
+    copy_with_values = function(name = "", group, values) {
       NULL
     },
 
@@ -283,11 +286,12 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   succeed with no result for the  `CFAxis` descendants that do not
     #'   implement this method.
     #' @param name The name for the new axis if the `rng` argument is provided.
+    #' @param group The [CFGroup] where the copy of this axis will live.
     #' @param rng The range of indices whose values from this axis to include in
     #'   the returned axis. If the value of the argument is `NULL`, return a
     #'   copy of the axis.
     #' @return `NULL`
-    subset = function(name = "", rng = NULL) {
+    subset = function(name = "", group, rng = NULL) {
       NULL
     },
 
@@ -337,42 +341,55 @@ CFAxis <- R6::R6Class("CFAxis",
     },
 
     #' @description Write the axis to a netCDF file, including its attributes.
-    #' @param nc The handle of the netCDF file opened for writing or a group in
-    #'   the netCDF file. If `NULL`, write to the file or group where the axis
-    #'   was read from (the file must have been opened for writing).
     #' @return Self, invisibly.
-    write = function(nc = NULL) {
-      h <- if (inherits(nc, "NetCDF")) nc else private$.NCobj$handle
-
-      id <- try(if (self$length == 1L && !private$.unlimited)
-        RNetCDF::var.def.nc(h, self$name, private$.data_type, NA)
-      else {
-        # Write the dimension for the axis. Error will be thrown when trying to
-        # write a dimension that's already defined, such as when a dimension is
-        # shared between multiple objects. In that case, get the id.
-        did <- try(if (private$.unlimited)
-          RNetCDF::dim.def.nc(h, self$name, unlim = TRUE)
-          else
-            RNetCDF::dim.def.nc(h, self$name, self$length), silent = TRUE)
-        if (inherits(did, "try-error"))
-          did <- RNetCDF::dim.inq.nc(h, self$name)$id
-
-        RNetCDF::var.def.nc(h, self$name, private$.data_type, did)
-      }, silent = TRUE)
-      private$.id <- if (inherits(id, "try-error"))
-        RNetCDF::var.inq.nc(h, self$name)$id
-      else id
+    write = function() {
+      if (is.null(private$.NCobj)) {
+        # Try to find a NC variable and its associated dimension
+        ncobj <- private$.group$NC$find_by_name(self$name)
+        if (is.null(ncobj)) {
+          # Create a new NC dimension and variable on file.
+          if (self$length == 1L && !private$.unlimited)
+            private$.NCobj <- NCVariable$new(id = NA, name = self$name, group = private$.group$NC,
+                                             vtype = private$.data_type, dimids = NA)
+          else {
+            private$.dimid <- NCDimension$new(id = NA, name = self$name, length = self$length,
+                                              unlim = private$.unlimited, group = private$.group$NC)$id
+            private$.NCobj <- NCVariable$new(id = NA, name = self$name, group = private$.group$NC,
+                                             vtype = private$.data_type, dimids = private$.dimid)
+          }
+        } else if (inherits(ncobj, "NCDimension")) {
+          # NC dimension was found so NC variable does not exist
+          if (self$length == ncobj$length && private$.unlimited == ncobj$unlim) {
+            private$.dimid <- ncobj$id
+            private$.NCobj <- NCVariable$new(id = NA, name = self$name, group = private$.group$NC,
+                                             vtype = private$.data_type, dimids = private$.dimid)
+          } else
+            stop("Incompatible dimension by this name already exists.", call. = FALSE)
+        } else {
+          # NC variable was found
+          if (private$.data_type == ncobj$vtype && ncobj$ndims == 1L &&
+              self$length == ncobj$dimension(1L)$length &&
+              private$.unlimited == ncobj$dimension(1L)$unlim) {
+            private$.NCobj <- ncobj
+            private$.dimid <- ncobj$dimids
+          } else
+            stop("Incompatible object by this name already exists.", call. = FALSE)
+        }
+        private$.id <- private$.NCobj$id
+        private$.data_dirty <- TRUE
+        private$write_data()
+      }
 
       if (private$.orient %in% c("X", "Y", "Z", "T"))
         self$set_attribute("axis", "NC_CHAR", private$.orient)
-      self$write_attributes(h, self$name)
+      self$write_attributes()
 
-      RNetCDF::var.put.nc(h, self$name, self$values)
-
+      # Bounds
       if (!is.null(private$.bounds))
-        private$.bounds$write(h, self$name)
+        private$.bounds$write(self$name)
 
-      lapply(private$.aux, function(l) l$write(nc, did))
+      # Auxiliary coordinates
+      lapply(private$.aux, function(l) {l$dimid <- private$.dimid; l$write()})
 
       invisible(self)
     }
@@ -494,14 +511,14 @@ CFAxis <- R6::R6Class("CFAxis",
       }
     },
 
-    #' @field unlimited Logical to indicate if the axis is unlimited.
+    #' @field unlimited Logical to indicate if the axis is unlimited. The
+    #'   setting can only be changed if the axis has not yet been wriiten to
+    #'   file.
     unlimited = function(value) {
       if (missing(value))
         private$.unlimited
-      else if (is.logical(value[1L])) {
+      else if (is.null(private$.NCobj) && is.logical(value))
         private$.unlimited <- value[1L]
-      } else
-        stop("Must use single logical value to set or unset unlimited axis.", call. = FALSE) # nocov
     },
 
     #' @field time (read-only) Retrieve the `CFTime` object associated with the

@@ -21,13 +21,22 @@ CFObject <- R6::R6Class("CFObject",
     .id = -1L,
     .name = "",
 
-    # Flag to indicate if there are any unsaved edits to the object.
+    # The CFGroup that this object lives in.
+    .group = NULL,
+
+    # Flag to indicate if there are any unsaved edits to the object and
+    # separately for the attributes.
     .dirty = FALSE,
+    .attributes_dirty = FALSE,
 
     # The attributes of the CF object. Upon read from a netCDF resource they are
     # copied from the NC object. For a new CF object, just an empty data.frame
     # with the appropriate columns.
     .attributes = data.frame(name = character(0), type = character(0), length = integer(0), value = numeric(0)),
+
+    set_name = function(new_name) {
+      stop("CF classes must implement this method.", call. = FALSE) # nocov
+    },
 
     # Sanitize the attributes argument. Returns a safe data.frame to use.
     check_attributes = function(attributes) {
@@ -49,10 +58,11 @@ CFObject <- R6::R6Class("CFObject",
     }
   ),
   public = list(
-    #' @description Create a new `CFobject` instance from an object in a netCDF
-    #'   resource. This method is called upon opening a netCDF resource. It is
-    #'   rarely, if ever, useful to call this constructor directly. Instead, use
-    #'   the methods from higher-level classes such as [CFVariable].
+    #' @description Create a new `CFobject` instance in memory or from an object
+    #'   in a netCDF resource when this method is called upon opening a netCDF
+    #'   resource. It is rarely, if ever, useful to call this constructor
+    #'   directly. Instead, use the methods from higher-level classes such as
+    #'   [CFVariable].
     #' @param obj The [NCObject] instance upon which this CF object is based
     #'   when read from a netCDF resource, or the name for the new CF object to
     #'   be created.
@@ -60,8 +70,10 @@ CFObject <- R6::R6Class("CFObject",
     #'   object. When argument `obj` is an `NCGroup` instance and this argument
     #'   is an empty `data.frame` (default), arguments will be read from the
     #'   resource.
+    #' @param group The [CFGroup] instance that this object will live in. The
+    #'   default is `NULL` but this is only useful for `CFGroup` instance.
     #' @return A `CFObject` instance.
-    initialize = function(obj, attributes = data.frame()) {
+    initialize = function(obj, attributes = data.frame(), group = NULL) {
       atts <- private$check_attributes(attributes)
 
       if (is.character(obj)) {
@@ -71,6 +83,7 @@ CFObject <- R6::R6Class("CFObject",
         private$.id <- CF$newVarId()
         private$.attributes <- atts
         private$.dirty <- TRUE
+        private$.attributes_dirty <- nrow(atts) > 0L
       } else {
         obj$CF <- self
         private$.NCobj <- obj
@@ -80,6 +93,9 @@ CFObject <- R6::R6Class("CFObject",
                                else obj$attributes[-1L]
         self$delete_attribute(c("_ChunkSizes", "coordinates"))
       }
+      private$.group <- group
+      if (!is.null(group))
+        group$add_CF_object(self)
     },
 
     #' @description Attach this CF object to a group. If there is another object
@@ -99,6 +115,8 @@ CFObject <- R6::R6Class("CFObject",
     attach_to_group = function(grp, locations = list()) {
       g <- grp$find_by_name(locations[[self$name]]) %||% grp
       g$add_CF_object(self)
+      private$.group <- grp
+      private$.dirty <- TRUE
       invisible(self)
     },
 
@@ -108,6 +126,8 @@ CFObject <- R6::R6Class("CFObject",
       if (!is.null(private$.NCobj)) {
         private$.NCobj$detach(self)
         private$.NCobj <- NULL
+        private$.dirty <- TRUE
+        private$.attributes_dirty <- TRUE
       }
     },
 
@@ -197,6 +217,7 @@ CFObject <- R6::R6Class("CFObject",
         df$value <- value # Preserve lists
         private$.attributes <- rbind(private$.attributes, df)
       }
+      private$.attributes_dirty <- TRUE
       invisible(self)
     },
 
@@ -259,6 +280,7 @@ CFObject <- R6::R6Class("CFObject",
           self$set_attribute(name, "NC_STRING", value)
       }
 
+      private$.attributes_dirty <- TRUE
       invisible(self)
     },
 
@@ -268,18 +290,18 @@ CFObject <- R6::R6Class("CFObject",
     #' @return Self, invisibly.
     delete_attribute = function(name) {
       private$.attributes <- private$.attributes[!private$.attributes$name %in% name, ]
+      private$.attributes_dirty <- TRUE
       invisible(self)
     },
 
     #' @description Write the attributes of this object to a netCDF file.
-    #' @param nc The handle to the netCDF file opened for writing.
-    #' @param nm The NC variable name or "NC_GLOBAL" to write the attributes to.
     #' @return Self, invisibly.
-    write_attributes = function(nc, nm) {
-      if ((num_atts <- nrow(private$.attributes)) > 0L)
-        for (a in 1L:num_atts) {
-          attr <- private$.attributes[a,]
-          RNetCDF::att.put.nc(nc, nm, attr$name, attr$type, unlist(attr$value, use.names = FALSE))
+    write_attributes = function() {
+      if (private$.attributes_dirty)
+        if (inherits(private$.NCobj, "NCObject")) {
+          nm <- if (inherits(self, "CFGroup")) "NC_GLOBAL" else self$name
+          private$.NCobj$write_attributes(nm, private$.attributes)
+          private$.attributes_dirty <- FALSE
         }
       invisible(self)
     }
@@ -303,10 +325,8 @@ CFObject <- R6::R6Class("CFObject",
     name = function(value) {
       if (missing(value))
         private$.name
-      else if (.is_valid_name(value))
-        private$.name <- value
       else
-        stop("Invalid name for a CF object.", call. = FALSE) # nocov
+        private$set_name(value)
     },
 
     #' @field fullname (read-only) The fully-qualified name of the CF object.
@@ -325,13 +345,13 @@ CFObject <- R6::R6Class("CFObject",
       }
     },
 
-    #' @field group (read-only) Retrieve the [NCGroup] that this object is
-    #'   located in.
+    #' @field group Set or retrieve the [CFGroup] that this object is
+    #'   located in, possibly `NULL`.
     group = function(value) {
-      if (missing(value) && self$has_resource)
-        private$.NCobj$group
-      else
-        NULL
+      if (missing(value))
+        private$.group
+      else if (inherits(value, "CFGroup"))
+        self$attach_to_group(value)
     },
 
     #' @field attributes (read-only) Retrieve a `data.frame` with the attributes

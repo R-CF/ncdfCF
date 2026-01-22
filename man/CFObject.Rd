@@ -21,8 +21,8 @@ and the underscore, and be at most 255 characters long.}
 
 \item{\code{fullname}}{(read-only) The fully-qualified name of the CF object.}
 
-\item{\code{group}}{(read-only) Retrieve the \link{NCGroup} that this object is
-located in.}
+\item{\code{group}}{Set or retrieve the \link{CFGroup} that this object is
+located in, possibly \code{NULL}.}
 
 \item{\code{attributes}}{(read-only) Retrieve a \code{data.frame} with the attributes
 of the CF object.}
@@ -57,12 +57,13 @@ resource, or \code{NULL} if not linked.}
 \if{html}{\out{<a id="method-CFObject-new"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-new}{}}}
 \subsection{Method \code{new()}}{
-Create a new \code{CFobject} instance from an object in a netCDF
-resource. This method is called upon opening a netCDF resource. It is
-rarely, if ever, useful to call this constructor directly. Instead, use
-the methods from higher-level classes such as \link{CFVariable}.
+Create a new \code{CFobject} instance in memory or from an object
+in a netCDF resource when this method is called upon opening a netCDF
+resource. It is rarely, if ever, useful to call this constructor
+directly. Instead, use the methods from higher-level classes such as
+\link{CFVariable}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$new(obj, attributes = data.frame())}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFObject$new(obj, attributes = data.frame(), group = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -76,6 +77,9 @@ be created.}
 object. When argument \code{obj} is an \code{NCGroup} instance and this argument
 is an empty \code{data.frame} (default), arguments will be read from the
 resource.}
+
+\item{\code{group}}{The \link{CFGroup} instance that this object will live in. The
+default is \code{NULL} but this is only useful for \code{CFGroup} instance.}
 }
 \if{html}{\out{</div>}}
 }
@@ -291,18 +295,9 @@ Self, invisibly.
 \subsection{Method \code{write_attributes()}}{
 Write the attributes of this object to a netCDF file.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$write_attributes(nc, nm)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFObject$write_attributes()}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{nc}}{The handle to the netCDF file opened for writing.}
-
-\item{\code{nm}}{The NC variable name or "NC_GLOBAL" to write the attributes to.}
-}
-\if{html}{\out{</div>}}
-}
 \subsection{Returns}{
 Self, invisibly.
 }

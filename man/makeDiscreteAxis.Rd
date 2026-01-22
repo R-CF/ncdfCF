@@ -4,12 +4,15 @@
 \alias{makeDiscreteAxis}
 \title{Create a discrete axis}
 \usage{
-makeDiscreteAxis(name, length)
+makeDiscreteAxis(name, length, group = NULL)
 }
 \arguments{
 \item{name}{Name of the axis.}
 
 \item{length}{The length of the axis.}
+
+\item{group}{\link{CFGroup} instance where the axis will be located. If \code{NULL}
+(default), a private group will be created for the axis.}
 }
 \value{
 A \link{CFAxisDiscrete} instance. The values will be a sequence of size

@@ -68,6 +68,7 @@ NC group.}
 \item \href{#method-NCGroup-find_by_name}{\code{NCGroup$find_by_name()}}
 \item \href{#method-NCGroup-find_dim_by_id}{\code{NCGroup$find_dim_by_id()}}
 \item \href{#method-NCGroup-has_name}{\code{NCGroup$has_name()}}
+\item \href{#method-NCGroup-set_name}{\code{NCGroup$set_name()}}
 \item \href{#method-NCGroup-unused}{\code{NCGroup$unused()}}
 \item \href{#method-NCGroup-create_group}{\code{NCGroup$create_group()}}
 \item \href{#method-NCGroup-append}{\code{NCGroup$append()}}
@@ -99,7 +100,7 @@ Create a new instance of this class.
 \describe{
 \item{\code{id}}{The identifier of the group. If \code{NA}, the new group will be
 created in the netCDF resource, unless argument \code{parent == NULL}, i.e.
-the root group.}
+the root group which already exists.}
 
 \item{\code{name}}{The name of the group.}
 
@@ -144,8 +145,7 @@ of an enclosing object (\code{FALSE}).}
 \subsection{Method \code{find_by_name()}}{
 Find an object by its name. Given the name of an object,
 possibly preceded by an absolute or relative group path, return the
-object to the caller. Typically, this method is called
-programmatically.
+object to the caller. Usually this method is called programmatically.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{NCGroup$find_by_name(name)}\if{html}{\out{</div>}}
 }
@@ -193,7 +193,7 @@ argument. If the object is not found, returns \code{NULL}.
 \subsection{Method \code{has_name()}}{
 Has a given name been defined in this group already?
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$has_name(name, scope = "both")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$has_name(name)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -201,14 +201,32 @@ Has a given name been defined in this group already?
 \describe{
 \item{\code{name}}{Character string. The name will be searched for, regardless
 of case.}
-
-\item{\code{scope}}{Either "CF" for a CF construct, "NC" for a
-netCDF variable, or "both" (default) to test both scopes.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
 \code{TRUE} if \code{name} is present in the group, \code{FALSE} otherwise.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-set_name"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-set_name}{}}}
+\subsection{Method \code{set_name()}}{
+Change the name of the NC group. The new name must be
+valid and should not duplicate a sibling group.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCGroup$set_name(new_name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{new_name}}{The new name for the NC group.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

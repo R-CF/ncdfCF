@@ -2,23 +2,31 @@
 % Please edit documentation in R/makeCFObjects.R
 \name{as_CF}
 \alias{as_CF}
-\title{Create a \code{CFVariable} instance from an R object}
+\alias{as_CF.default}
+\alias{as_CF.SpatRaster}
+\title{Create a \code{CFDataset} or \code{CFVariable} instance from an R object}
 \usage{
-as_CF(name, values)
+as_CF(name, obj)
+
+\method{as_CF}{default}(name, obj)
+
+\method{as_CF}{SpatRaster}(name, obj)
 }
 \arguments{
-\item{name}{The name of the \code{CFVariable} to create.}
+\item{name}{The name of the \code{CFDataset} or \code{CFVariable} to create.}
 
-\item{values}{The data of this object. This can be an array, matrix or vector
-of type \code{logical}, \code{integer}, \code{numeric} or \code{character.}}
+\item{obj}{The object to convert. This can be an array, matrix or vector of
+type \code{logical}, \code{integer}, \code{numeric} or \code{character}, or a
+\code{terra::SpatRaster}.}
 }
 \value{
-An instance of class \link{CFVariable}.
+An instance of class \link{CFDataset} or \link{CFVariable}.
 }
 \description{
-With this function you can convert an R object into a \link{CFVariable}. This can
-be an array, matrix or vector of type \code{logical}, \code{integer}, \code{numeric} or
-\code{character.}
+With this function you can convert an R object into a \link{CFDataset} or
+\link{CFVariable}, depending on the characteristics of the argument \code{obj}. The
+object to convert can be an array, matrix or vector of type \code{logical},
+\code{integer}, \code{numeric} or \code{character}, or a \code{terra::SpatRaster}.
 }
 \details{
 Dimnames on the R object will be converted to instances of a \link{CFAxis}
@@ -29,11 +37,11 @@ is made to create a \link{CFAxisTime} (i.e. the dimnames have to represent
 timestamps), failing that a \link{CFAxisCharacter} will be created. If no dimnames
 are set, an instance of \link{CFAxisDiscrete} is generated.
 
-The axes of the \code{CFVariable} are oriented as in the R object. Note that this
-is different from standard practice in the netCDF community and the
-portability of saved datasets is thus limited. You can improve this situation
-by setting the orientation of the axes and by adding attributes.
+The axes of the \code{CFVariable} instance(s) are oriented as in the object. Note
+that this is different from standard practice in the netCDF community and the
+portability of saved data sets is thus limited. You can improve this
+situation by setting the orientation of the axes and by adding attributes.
 
-After creation of the \code{CFVariable}, it is recommended to set other
-properties, such as attributes or a coordinate reference system.
+After creation of the \code{CFDataset} or \code{CFVariable}, it is recommended to set
+other properties, such as attributes or a coordinate reference system.
 }

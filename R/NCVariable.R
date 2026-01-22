@@ -1,3 +1,27 @@
+# A NCVariable maps 1 variable from a netCDF resource. It is always synchronized
+# with the resource. It is mostly immutable so any changes made to a referencing
+# CF object should lead to a detach of the latter from this NCVariable.
+#
+# Properties:
+# var.def.nc    - NCVariable - Comments
+# return value  - .id        - NetCDF assigned, immutable
+# ncfile        - .group     - The .group has a handle which is same as ncfile
+# varname       - .name      - May be changed with var.rename.nc()
+# vartype       - .vtype     - Immutable
+# dimensions    - .dimids    - Immutable
+# chunking      - .ncdf4     - Not used
+# chunksizes    - .ncdf4     - Not used
+# deflate       - .ncdf4     - Not used
+# shuffle       - .ncdf4     - Not used
+# big_endian    - .ncdf4     - Not used
+# fletcher32    - .ncdf4     - Not used
+# filter_id     - .ncdf4     - Not used
+# filter_params - .ncdf4     - Not used
+#
+# The NCVariable class operates in the background and therefore does minimal to
+# no verification of method arguments. It does not generate its own errors but
+# will propagate errors from the RNetCDF package.
+
 #' NetCDF variable
 #'
 #' @description This class represents a netCDF variable, the object that holds
@@ -48,6 +72,14 @@ NCVariable <- R6::R6Class("NCVariable",
     #'   RNetCDF.
     #' @return An instance of this class.
     initialize = function(id, name, group, vtype, dimids, attributes = data.frame(), netcdf4 = list()) {
+      if (is.na(id)) {
+        # Create the NC variable in the group on file
+        h <- group$handle
+        id <- try(RNetCDF::var.def.nc(h, name, vtype, dimids), silent = TRUE) # FIXME netcdf4 attributes
+        if (inherits(id, "try-error"))
+          id <- RNetCDF::var.inq.nc(h, name)
+      }
+
       super$initialize(id, name, attributes)
       private$.group <- group
       private$.vtype <- vtype
@@ -111,6 +143,36 @@ NCVariable <- R6::R6Class("NCVariable",
       d
     },
 
+    #' @description Write (a chunk of) data to the netCDF file.
+    #' @param d The data to write. This must have appropriate dimensions.
+    #' @param start A vector of indices specifying the element where writing
+    #'   starts along each dimension of the data. When `NA`, all data are
+    #'   written from the start of the array.
+    #' @param count An integer vector specifying the number of values to write
+    #'   along each dimension of the data. Any `NA` value in vector count
+    #'   indicates that the corresponding dimension should be written from the
+    #'   start index to the end of the dimension.
+    #' @param ... Other parameters passed on to `RNetCDF::var.put.nc()`.
+    #' @return Self, invisibly.
+    write_data = function(d, start = NA, count = NA, ...) {
+      RNetCDF::var.put.nc(private$.group$handle, private$.name, d, start, count, ...)
+      invisible(self)
+    },
+
+    #' @description Change the name of the NC variable. The new name must be
+    #'   valid in the indicated group, it can not already exist in the group.
+    #'   The netCDF file must be open for writing to change the name.
+    #' @param new_name The new name for the NC variable
+    #' @return Self, invisibly.
+    set_name = function(new_name) {
+      if (new_name != private$.name && is.null(group$find_by_name(new_name)) &&
+          private$.resource$can_write) {
+        RNetCDF::var.rename.nc(private$.resource$handle, private$.name, new_name)
+        private$.name <- new_name
+      }
+      invisible(self)
+    },
+
     #' @description Get the [NCDimension] object(s) that this variable uses.
     #' @param id The index of the dimension. If missing, all dimensions of this
     #'   variable are returned.
@@ -140,9 +202,13 @@ NCVariable <- R6::R6Class("NCVariable",
     group = function(value) {
       if (missing(value))
         private$.group
-      else {
-        stop("Cannot set the group of a NC object.", call. = FALSE) # nocov
-      }
+    },
+
+    #' @field handle (read-only) Get the handle to the netCDF resource for the
+    #'   variable.
+    handle = function(value) {
+      if (missing(value))
+        private$.group$handle
     },
 
     #' @field vtype (read-only) The netCDF data type of this variable. This could be the
@@ -151,16 +217,12 @@ NCVariable <- R6::R6Class("NCVariable",
     vtype = function(value) {
       if (missing(value))
         private$.vtype
-      else
-        stop("Cannot set the data type of a NC object.", call. = FALSE) # nocov
     },
 
     #' @field ndims (read-only) Number of dimensions that this variable uses.
     ndims = function(value) {
       if (missing(value))
         length(private$.dimids)
-      else
-        stop("Cannot set the number of dimensions of a NC object.", call. = FALSE) # nocov
     },
 
     #' @field dimids (read-only) Vector of dimension identifiers that this
@@ -168,16 +230,12 @@ NCVariable <- R6::R6Class("NCVariable",
     dimids  = function(value) {
       if (missing(value))
         private$.dimids
-      else
-        stop("Cannot set the dimids of a NC object.", call. = FALSE) # nocov
     },
 
     #' @field netcdf4 (read-only) Additional properties for a `netcdf4` resource.
     netcdf4 = function(value) {
       if (missing(value))
         private$.ncdf4
-      else
-        stop("Cannot set the netcdf4 properties of a NC object.", call. = FALSE) # nocov
     },
 
     #' @field CF Register CF objects that use this netCDF variable, or retrieve
@@ -198,6 +256,14 @@ NCVariable <- R6::R6Class("NCVariable",
         g <- private$.group$fullname
         if (g == "/") paste0("/", self$name)
         else paste0(g, "/", self$name)
+      }
+    },
+
+    #' @field is_packed (read-only) Flag that indicates if the data on file is
+    #'   packed.
+    is_packed = function(value) {
+      if (missing(value)) {
+        !is.na(self$attribute("scale_factor")) || !is.na(self$attribute("add_offset"))
       }
     }
   )

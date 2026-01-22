@@ -18,6 +18,7 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
     #'   [makeLongitudeAxis()] function.
     #' @param var The name of the axis when creating a new axis. When reading an
     #'   axis from file, the [NCVariable] object that describes this instance.
+    #' @param group The [CFGroup] that this instance will live in.
     #' @param values Optional. The values of the axis in a vector. The values
     #'   have to be numeric with the maximum value no larger than the minimum
     #'   value + 360, and monotonic. Ignored when argument `var` is a NCVariable
@@ -30,8 +31,8 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
     #'   axis. When an empty `data.frame` (default) and argument `var` is an
     #'   NCVariable instance, attributes of the axis will be taken from the
     #'   netCDF resource.
-    initialize = function(var, values, start = 1L, count = NA, attributes = data.frame()) {
-      super$initialize(var, values = values, start = start, count = count, orientation =  "X", attributes = attributes)
+    initialize = function(var, group, values, start = 1L, count = NA, attributes = data.frame()) {
+      super$initialize(var, group, values = values, start = start, count = count, orientation =  "X", attributes = attributes)
       self$set_attribute("standard_name", "NC_CHAR", "longitude")
       self$set_attribute("units", "NC_CHAR", "degrees_east")
 
@@ -44,17 +45,18 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
     #' from new instances.
     #' @param name The name for the new axis. If an empty string is passed, will
     #'   use the name of this axis.
+    #' @param group The [CFGroup] where the copy of this axis will live.
     #' @return The newly created axis.
-    copy = function(name = "") {
+    copy = function(name = "", group) {
       if (self$has_resource) {
-        ax <- CFAxisLongitude$new(self$NC, values = self$values, start = private$.NC_map$start,
+        ax <- CFAxisLongitude$new(self$NC, group = group, values = self$values, start = private$.NC_map$start,
                                   count = private$.NC_map$count, attributes = self$attributes)
         if (nzchar(name))
           ax$name <- name
       } else {
         if (!nzchar(name))
           name <- self$name
-        ax <- CFAxisLongitude$new(name, values = self$values, attributes = self$attributes)
+        ax <- CFAxisLongitude$new(name, group = group, values = self$values, attributes = self$attributes)
       }
       private$copy_properties_into(ax)
     },
@@ -68,12 +70,13 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
     #'   should set, modify or delete attributes as appropriate.
     #' @param name The name for the new axis. If an empty string is passed, will
     #'   use the name of this axis.
+    #' @param group The [CFGroup] where the copy of this axis will live.
     #' @param values The values to the used with the copy of this axis.
     #' @return The newly created axis.
-    copy_with_values = function(name = "", values) {
+    copy_with_values = function(name = "", group, values) {
       if (!nzchar(name))
         name <- self$name
-      CFAxisLongitude$new(name, values = values, attributes = self$attributes)
+      CFAxisLongitude$new(name, group = group, values = values, attributes = self$attributes)
     },
 
     #' @description Return a longitude axis spanning a smaller coordinate range.
@@ -81,26 +84,27 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
     #'   the `rng` argument.
     #' @param name The name for the new axis. If an empty string is passed
     #'   (default), will use the name of this axis.
+    #' @param group The [CFGroup] where the copy of this axis will live.
     #' @param rng The range of indices whose values from this axis to include in
     #'   the returned axis. If the value of the argument is `NULL`, return a
     #'   copy of the axis.
     #' @return A new `CFAxisLongitude` instance covering the indicated range of
     #'   indices. If the value of the argument `rng` is `NULL`, return a copy of
     #'   `self` as the new axis.
-    subset = function(name = "", rng = NULL) {
+    subset = function(name = "", group, rng = NULL) {
       if (is.null(rng))
-        self$copy(name)
+        self$copy(name, group)
       else {
         rng <- range(rng)
         if (self$has_resource) {
-          ax <- CFAxisLongitude$new(private$.NCobj, start = private$.NC_map$start + rng[1L] - 1L,
+          ax <- CFAxisLongitude$new(private$.NCobj, group = group, start = private$.NC_map$start + rng[1L] - 1L,
                                     count = rng[2L] - rng[1L] + 1L, attributes = self$attributes)
           if (nzchar(name))
             ax$name <- name
         } else {
           if (!nzchar(name))
             name <- self$name
-          ax <- CFAxisLongitude$new(name, values = self$values[rng[1L]:rng[2L]], attributes = self$attributes)
+          ax <- CFAxisLongitude$new(name, group = group, values = self$values[rng[1L]:rng[2L]], attributes = self$attributes)
         }
         private$copy_properties_into(ax, rng)
       }
@@ -112,15 +116,16 @@ CFAxisLongitude <- R6::R6Class("CFAxisLongitude",
     #'   resulting axis.
     #' @param from An instance of `CFAxisLongitude` whose values to append to
     #'   the values of this axis.
+    #' @param group The [CFGroup] where the copy of this axis will live.
     #' @return A new `CFAxisLongitude` instance with values from this axis and
     #'   the `from` axis appended.
     append = function(from) {
       if (super$can_append(from) && .c_is_monotonic(self$values, from$values)) {
-        ax <- CFAxisLongitude$new(self$name, values = c(private$values, from$values),
+        ax <- CFAxisLongitude$new(self$name, group = group, values = c(private$values, from$values),
                                   attributes = self$attributes)
 
         if (!is.null(private$.bounds)) {
-          new_bnds <- private$.bounds$append(from$bounds)
+          new_bnds <- private$.bounds$append(from$bounds, group)
           if (!is.null(new_bnds))
             ax$bounds <- new_bnds
         }

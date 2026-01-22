@@ -21,6 +21,9 @@ properties are thus made accessible.
 \describe{
 \item{\code{group}}{(read-only) NetCDF group where this variable is located.}
 
+\item{\code{handle}}{(read-only) Get the handle to the netCDF resource for the
+variable.}
+
 \item{\code{vtype}}{(read-only) The netCDF data type of this variable. This could be the
 packed type. Don't check this field but use the appropriate method in the
 class of the object whose data type you are looking for.}
@@ -37,6 +40,9 @@ the list of registered CF objects.}
 
 \item{\code{fullname}}{(read-only) Name of this netCDF variable including the
 group path from the root group.}
+
+\item{\code{is_packed}}{(read-only) Flag that indicates if the data on file is
+packed.}
 }
 \if{html}{\out{</div>}}
 }
@@ -48,6 +54,8 @@ group path from the root group.}
 \item \href{#method-NCVariable-shard}{\code{NCVariable$shard()}}
 \item \href{#method-NCVariable-detach}{\code{NCVariable$detach()}}
 \item \href{#method-NCVariable-get_data}{\code{NCVariable$get_data()}}
+\item \href{#method-NCVariable-write_data}{\code{NCVariable$write_data()}}
+\item \href{#method-NCVariable-set_name}{\code{NCVariable$set_name()}}
 \item \href{#method-NCVariable-dimension}{\code{NCVariable$dimension()}}
 \item \href{#method-NCVariable-dim}{\code{NCVariable$dim()}}
 \item \href{#method-NCVariable-clone}{\code{NCVariable$clone()}}
@@ -186,6 +194,59 @@ start index to the end of the dimension.}
 \subsection{Returns}{
 An array, matrix or vector with the requested data, or an error
 object.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCVariable-write_data"></a>}}
+\if{latex}{\out{\hypertarget{method-NCVariable-write_data}{}}}
+\subsection{Method \code{write_data()}}{
+Write (a chunk of) data to the netCDF file.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCVariable$write_data(d, start = NA, count = NA, ...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{d}}{The data to write. This must have appropriate dimensions.}
+
+\item{\code{start}}{A vector of indices specifying the element where writing
+starts along each dimension of the data. When \code{NA}, all data are
+written from the start of the array.}
+
+\item{\code{count}}{An integer vector specifying the number of values to write
+along each dimension of the data. Any \code{NA} value in vector count
+indicates that the corresponding dimension should be written from the
+start index to the end of the dimension.}
+
+\item{\code{...}}{Other parameters passed on to \code{RNetCDF::var.put.nc()}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCVariable-set_name"></a>}}
+\if{latex}{\out{\hypertarget{method-NCVariable-set_name}{}}}
+\subsection{Method \code{set_name()}}{
+Change the name of the NC variable. The new name must be
+valid in the indicated group, it can not already exist in the group.
+The netCDF file must be open for writing to change the name.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{NCVariable$set_name(new_name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{new_name}}{The new name for the NC variable}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

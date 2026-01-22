@@ -85,7 +85,7 @@ CFStandardNames <- R6::R6Class("CFStandardNames",
       if (is.null(private$names))
         cat("(not loaded)\n")
       else
-        cat("version", xml2::xml_text(xml2::xml_find_first(snx, "/standard_name_table/version_number"), "\n"))
+        cat("version", xml2::xml_text(xml2::xml_find_first(private$names, "/standard_name_table/version_number"), "\n"))
     },
 
     #' @description Retrieve the information on the specified names.

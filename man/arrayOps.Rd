@@ -34,7 +34,8 @@ functions.
 The functions always return a new \code{CFVariable} object. Functions can thus be
 concatenated to create more complex expressions. The data type of the new
 object is determined by the base R function; its name is concatenated from
-the names in the argument object(s).
+the names in the argument object(s). The result will be assigned to a private
+group and is thus completely disjoint from other CF objects.
 
 For the Ops functions with two arguments, if both arguments are a
 \code{CFVariable} object they have to be compatible: same shape, axis coordinate

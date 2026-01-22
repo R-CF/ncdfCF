@@ -54,13 +54,20 @@ list is empty if this object is not backed by a netCDF resource.}
 \if{html}{\out{<a id="method-CFData-new"></a>}}
 \if{latex}{\out{\hypertarget{method-CFData-new}{}}}
 \subsection{Method \code{new()}}{
-Create a new \code{CFData} instance from a variable in a netCDF
-resource. This method is called upon creating CF objects, such as when
-opening a netCDF resource or creating a new CF object. It is rarely, if
-ever, useful to call this constructor directly. Instead, use the
-methods from higher-level classes such as \link{CFVariable}.
+Create a new \code{CFData} instance. This method is called upon
+creating CF objects, such as when opening a netCDF resource or creating
+a new CF object. It is rarely, if ever, useful to call this constructor
+directly. Instead, use the methods from higher-level classes such as
+\link{CFVariable}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFData$new(obj, values, start = 1L, count = NA, attributes = data.frame())}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFData$new(
+  obj,
+  group,
+  values,
+  start = 1L,
+  count = NA,
+  attributes = data.frame()
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -69,6 +76,8 @@ methods from higher-level classes such as \link{CFVariable}.
 \item{\code{obj}}{The \link{NCVariable} instance upon which this CF object is based
 when read from a netCDF resource, or the name for the new CF object to
 be created.}
+
+\item{\code{group}}{The \link{CFGroup} that this instance will live in.}
 
 \item{\code{values}}{Optional. The values of the object in an array. Ignored
 when argument \code{obj} is an \code{NCVariable} instance.}

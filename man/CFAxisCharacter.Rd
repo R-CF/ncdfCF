@@ -73,6 +73,7 @@ Creating a new character axis is more easily done with the
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$new(
   var,
+  group,
   values,
   start = 1L,
   count = NA,
@@ -85,6 +86,8 @@ Creating a new character axis is more easily done with the
 \describe{
 \item{\code{var}}{The name of the axis when creating a new axis. When reading an
 axis from file, the \link{NCVariable} object that describes this instance.}
+
+\item{\code{group}}{The \link{CFGroup} that this instance will live in.}
 
 \item{\code{values}}{Optional. The values of the axis in a vector. These must be
 character values. Ignored when argument \code{var} is a NCVariable object.}
@@ -125,7 +128,7 @@ from this axis, meaning that the new axis and all of its components are
 made from new instances. If this axis is backed by a netCDF resource,
 the copy will retain the reference to the resource.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$copy(name = "")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$copy(name = "", group)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -133,6 +136,8 @@ the copy will retain the reference to the resource.
 \describe{
 \item{\code{name}}{The name for the new axis. If an empty string is passed, will
 use the name of this axis.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
 }
 \if{html}{\out{</div>}}
 }
@@ -152,7 +157,7 @@ After this operation the attributes of the newly created axes may not
 be accurate, except for the "actual_range" attribute. The calling code
 should set, modify or delete attributes as appropriate.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$copy_with_values(name = "", values)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$copy_with_values(name = "", group, values)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -160,6 +165,8 @@ should set, modify or delete attributes as appropriate.
 \describe{
 \item{\code{name}}{The name for the new axis. If an empty string is passed, will
 use the name of this axis.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
 
 \item{\code{values}}{The values to the used with the copy of this axis.}
 }
@@ -202,7 +209,7 @@ Return an axis spanning a smaller coordinate range. This
 method returns an axis which spans the range of indices given by the
 \code{rng} argument.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$subset(name = "", rng = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$subset(name = "", group, rng = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -210,6 +217,8 @@ method returns an axis which spans the range of indices given by the
 \describe{
 \item{\code{name}}{The name for the new axis. If an empty string is passed
 (default), will use the name of this axis.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
 
 \item{\code{rng}}{The range of indices whose values from this axis to include in
 the returned axis. If the value of the argument is \code{NULL}, return a
@@ -251,7 +260,7 @@ Tests if the axis passed to this method is identical to
 Append a vector of values at the end of the current values
 of the axis.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$append(from)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisCharacter$append(from, group)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -259,6 +268,8 @@ of the axis.
 \describe{
 \item{\code{from}}{An instance of \code{CFAxisCharacter} whose values to append to
 the values of \code{self}.}
+
+\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
 }
 \if{html}{\out{</div>}}
 }

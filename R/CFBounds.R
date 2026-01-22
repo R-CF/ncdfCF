@@ -19,6 +19,7 @@ CFBounds <- R6::R6Class("CFBounds",
     #' @param var The name of the boundary variable when creating a new boundary
     #'   variable. When reading a boundary variable from file, the [NCVariable]
     #'   object that describes this instance.
+    #' @param group The [CFGroup] that this instance will live in.
     #' @param values Optional. The values of the boundary variable. This must be
     #'   a numeric matrix whose first dimension has a length equal to the number
     #'   of vertices for each boundary, and the second dimension is as long as
@@ -39,9 +40,9 @@ CFBounds <- R6::R6Class("CFBounds",
     #' @param owner_dims Optional, the number of dimensions of the object that
     #'   these boundary values pertain to. Default is 1.
     #' @return A new instance of this class.
-    initialize = function(var, values, start = NA, count = NA, attributes = data.frame(), owner_dims = 1L) {
+    initialize = function(var, group, values, start = NA, count = NA, attributes = data.frame(), owner_dims = 1L) {
       private$.owner_dims <- owner_dims
-      super$initialize(var, values, start, count, attributes)
+      super$initialize(var, group, values, start, count, attributes)
 
       if (length(private$.NC_map$count) > owner_dims + 1L) {
         private$.NC_map$count[owner_dims + 2L] <- 1L
@@ -97,17 +98,18 @@ CFBounds <- R6::R6Class("CFBounds",
     #'   components are made from new instances.
     #' @param name The name for the new bounds object. If an empty string is
     #'   passed, will use the name of this bounds object.
+    #' @param group The [CFGroup] where the copy of this axis will live.
     #' @return The newly created bounds object.
-    copy = function(name = "") {
+    copy = function(name = "", group) {
       if (self$has_resource) {
-        b <- CFBounds$new(private$.NCobj, start = private$.NC_map$start,
+        b <- CFBounds$new(private$.NCobj, group = group, start = private$.NC_map$start,
                           count = private$.NC_map$count, attributes = self$attributes)
         if (nzchar(name))
           b$name <- name
       } else {
         if (!nzchar(name))
           name <- self$name
-        b <- CFBounds$new(name, values = self$values, attributes = self$attributes)
+        b <- CFBounds$new(name, group = group, values = self$values, attributes = self$attributes)
       }
       b
     },
@@ -119,20 +121,19 @@ CFBounds <- R6::R6Class("CFBounds",
     #'
     #'   This method returns boundary values which span the range of indices
     #'   given by the `rng` argument.
-    #'
+    #' @param group The [CFGroup] where the copy of these bounds will live.
     #' @param rng The range of values from this bounds object to include in the
     #'   returned object.
-    #'
     #' @return A `CFBounds` instance covering the indicated range of indices.
-    subset = function(rng) {
+    subset = function(group, rng) {
       if (is.null(rng))
-        return(self$copy())
+        return(self$copy(group = group))
 
       vals <- if (is.null(self$values)) NULL
               else vals <- self$values[, rng[1L]:rng[2L]]
 
       if (is.null(private$.NCobj))
-        CFBounds$new(private$.name, values = vals, attributes = self$attributes)
+        CFBounds$new(private$.name, group = group, values = vals, attributes = self$attributes)
       else {
         # The rng argument applies to anything but the first dimension (= # of vertices)
         # of the values. Apply any subsets in self before making the new boundary variable.
@@ -150,7 +151,8 @@ CFBounds <- R6::R6Class("CFBounds",
           vals <- NULL
         }
 
-        CFBounds$new(private$.NCobj, values = vals, start = start, count = count, attributes = self$attributes)
+        CFBounds$new(private$.NCobj, group = group, values = vals,
+                     start = start, count = count, attributes = self$attributes)
       }
     },
 
@@ -158,41 +160,38 @@ CFBounds <- R6::R6Class("CFBounds",
     #'   the boundary variable.
     #' @param from An instance of `CFBounds` whose values to append to the
     #'   values of this boundary variable.
+    #' @param group The [CFGroup] where the copy of these bounds will live.
     #' @return A new `CFBounds` instance with values from this boundary variable
     #'   and the `from` boundary variable appended. If argument `from` is
     #'   `NULL`, return `NULL`.
-    append = function(from) {
+    append = function(from, group) {
       if (is.null(from))
         NULL
       else
-        CFBounds$new(self$name, values = cbind(self$values, from$values), attributes = self$attributes)
+        CFBounds$new(self$name, group = group, values = cbind(self$values, from$values), attributes = self$attributes)
     },
 
     #' @description Write the boundary variable to a netCDF file. This method
-    #'   should not be called directly; instead, `CFVariable::save()` will call
+    #'   should not be called directly; instead, `CFVariable$save()` will call
     #'   this method automatically.
-    #' @param h The handle to a netCDF file open for writing.
     #' @param object_name The name of the object that uses these boundary
     #'   values, usually an axis but could also be an auxiliary CV or a
     #'   parametric Z axis.
-    write = function(h, object_name) {
+    write = function(object_name) {
       v <- self$values
       nv <- dim(v)[1L]
 
-      # Write the vertex dimension for the axis. Error will be thrown when
-      # trying to write a dimension that's already defined, such as when a
-      # vertex dimension is shared between multiple objects. In that case, get
-      # the id.
-      nm <- paste0("nv", nv)
-      did <- try(RNetCDF::dim.def.nc(h, nm, nv), silent = TRUE)
-      if (inherits(did, "try-error"))
-        did <- RNetCDF::dim.inq.nc(h, nv)$id
+      if (is.null(private$.NCobj)) {
+        # Bounds do not yet exist on file so write dimensions and variable, axis dimension exists
+        nm <- paste0("nv", nv)
+        dim <- NCDimension$new(NA, nm, nv, FALSE, self$group$NC)
+        private$.NCobj <- NCVariable$new(NA, self$name, self$group$NC, private$.data_type, c(nm, object_name))
+        private$.id <- private$.NCobj$id
+        private$.NCobj$CF <- self
+      }
 
-      private$.id <- try(RNetCDF::var.def.nc(h, self$name, private$.data_type, c(nm, object_name)), silent = TRUE)
-      if (inherits(private$.id, "try-error"))
-        private$.id <- RNetCDF::var.inq.nc(h, self$name)$id
-      self$write_attributes(h, self$name)
-      RNetCDF::var.put.nc(h, self$name, v)
+      self$write_attributes()
+      private$write_data()
     }
   ),
   active = list(

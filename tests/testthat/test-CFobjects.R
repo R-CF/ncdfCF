@@ -1,5 +1,6 @@
 test_that("numeric axes", {
-  ax <- CFAxisNumeric$new("test", values = 0:9)
+  grp <- CFGroup$new("", NULL)
+  ax <- CFAxisNumeric$new("test", group = grp, values = 0:9)
   expect_equal(ax$name, "test")
   expect_equal(ax$length, 10)
   expect_false(ax$has_resource)
@@ -14,32 +15,32 @@ test_that("numeric axes", {
   expect_equal(ax$indexOf(c(3.1, 3.7, 4.0, 20, 1.7, 4.3), method = "constant"), c(4, 4, 5, NA, 2, 5))
 
   # Selecting values on axis with decreasing values
-  ax <- CFAxisNumeric$new("test", values = 19:3)
+  ax <- CFAxisNumeric$new("test2", group = grp, values = 19:3)
   expect_equal(ax$indexOf(c(3.1, 3.7, 4.0, 20, 1.7, 4.3), method = "linear"), c(16.9, 16.3, 16.0, NA, NA, 15.7))
   expect_equal(ax$indexOf(c(3.1, 3.7, 4.0, 20, 1.7, 4.3), method = "constant"), c(17, 17, 16, NA, NA, 16))
 
   # Selecting values on an axis with 1 value
-  ax <- CFAxisNumeric$new("test", values = 19)
+  ax <- CFAxisNumeric$new("test3", group = grp, values = 19)
   expect_equal(ax$indexOf(c(3.1, 3.7, 4.0, 19, 18.7, 4.3), method = "constant"), c(NA, NA, NA, 1, NA, NA))
   expect_equal(ax$indexOf(c(3.1, 3.7, 4.0, 19, 18.7, 4.3), method = "linear"), c(NA, NA, NA, 1, NA, NA))
 
   # Selecting on an axis without values
-  ax <- CFAxisNumeric$new("test")
+  ax <- CFAxisNumeric$new("test4", group = grp)
   expect_equal(ax$indexOf(c(3.1, 3.7, 20.0, 19, 18.7, 4.3), method = "constant"), c(NA, NA, NA, NA, NA, NA))
 
   # Slicing axis without values
   expect_null(ax$slice(c(3.2, 5.7)))
 
   # Slicing axis with one value, no bounds
-  ax <- CFAxisNumeric$new("test", values = 7)
+  ax <- CFAxisNumeric$new("test5", group = grp, values = 7)
   expect_null(ax$slice(c(3.2, 5.7)))
 
   # Slicing axis with one value, with bounds
-  ax$bounds <- CFBounds$new("bnds", values = matrix(c(5, 9), nrow = 2))
+  ax$bounds <- CFBounds$new("bnds", group = grp, values = matrix(c(5, 9), nrow = 2))
   expect_equal(ax$slice(c(3.2, 5.7)), c(1L, 1L))
 
   # Slicing axis with increasing values, no bounds
-  ax <- CFAxisNumeric$new("test", values = 0:9)
+  ax <- CFAxisNumeric$new("test6", group = grp, values = 0:9)
   expect_equal(ax$slice(3:5), c(4L, 6L))
   expect_null(ax$slice(-5:-0.05))            # All below
   expect_null(ax$slice(50:55))               # All above
@@ -47,7 +48,7 @@ test_that("numeric axes", {
   expect_equal(ax$slice(8:55), c(9L, 10L))   # Part above
 
   # Slicing axis with increasing values, with partially non-contiguous bounds
-  ax$bounds <- CFBounds$new("bnds", values = matrix(c(0:4 - 0.5, 5:9 - 0.25, 0:4 + 0.5, 5:9 + 0.25), nrow = 2, byrow = TRUE))
+  ax$bounds <- CFBounds$new("bnds2", group = grp, values = matrix(c(0:4 - 0.5, 5:9 - 0.25, 0:4 + 0.5, 5:9 + 0.25), nrow = 2, byrow = TRUE))
   expect_equal(ax$slice(3:5), c(4L, 6L))
   expect_equal(ax$slice(c(-5, -0.05)), c(1L, 1L))   # -0.05 is within lowest boundary value
   expect_null(ax$slice(50:55))                      # All above
@@ -57,8 +58,8 @@ test_that("numeric axes", {
   expect_equal(ax$slice(c(6.6, 8.5)), c(8L, 9L))    # range in between boundary values
 
   # Slicing axis with decreasing values, with partially non-contiguous bounds
-  ax <- CFAxisNumeric$new("test", values = 9:0)
-  ax$bounds <- CFBounds$new("bnds", values = matrix(c(9:4 + 0.5, 3:0 + 0.25, 9:4 - 0.5, 3:0 - 0.25), nrow = 2, byrow = TRUE))
+  ax <- CFAxisNumeric$new("test7", group = grp, values = 9:0)
+  ax$bounds <- CFBounds$new("bnds3", group = grp, values = matrix(c(9:4 + 0.5, 3:0 + 0.25, 9:4 - 0.5, 3:0 - 0.25), nrow = 2, byrow = TRUE))
   expect_equal(ax$slice(3:5), c(5L, 7L))
   expect_equal(ax$slice(c(-5, -0.05)), c(10L, 10L)) # -0.05 is within highest boundary value
   expect_null(ax$slice(50:55))                      # All below
@@ -69,7 +70,8 @@ test_that("numeric axes", {
 })
 
 test_that("discrete axes", {
-  ax <- CFAxisDiscrete$new("disc", count = 13)
+  grp <- CFGroup$new("", NULL)
+  ax <- CFAxisDiscrete$new("disc", group = grp, count = 13)
   expect_equal(ax$values, 1:13)
 
   # Slicing a discrete axis
@@ -97,7 +99,7 @@ test_that("Create from scratch", {
   t <- taxis$time
   expect_true(inherits(t, "CFTime"))
   t$bounds <- TRUE
-  taxis$bounds <- CFBounds$new("time_bnds", values = t$bounds)
+  taxis$bounds <- CFBounds$new("time_bnds", group = da$group, values = t$bounds)
   expect_equal(t$range(bounds = TRUE), c("2025-06-30T12:00:00", "2025-07-04T12:00:00"))
 
   # Write to file and read back in
@@ -122,7 +124,8 @@ test_that("Create from scratch", {
   dimnames(arr) <- list(latitude = c(40, 41, 42, 43, 44, 45), longitude = c(0, 1, 2, 3, 4),
                         time = c("2025-07-01", "2025-07-02", "2025-07-03", "2025-07-04"))
   da <- as_CF("compliant_CF_object", arr)
-  ap7_a9 <- CFLabel$new("ap7_a9", c("Castellon-de-la-Plana", "L-Hospitalet-de-l-Infant", "Girona", "Sigean", "Avignon", "Pont-de-l-Isere"))
+  ap7_a9 <- CFLabel$new("ap7_a9", group = da$group,
+                        values = c("Castellon-de-la-Plana", "L-Hospitalet-de-l-Infant", "Girona", "Sigean", "Avignon", "Pont-de-l-Isere"))
   da$add_auxiliary_coordinate(ap7_a9, da$axes[["latitude"]])
   fn <- tempfile(fileext = ".nc")
   da$save(fn)

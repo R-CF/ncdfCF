@@ -1,6 +1,6 @@
 #' NetCDF dimension object
 #'
-#' @description This class represents an netCDF dimensions. It contains the
+#' @description This class represents an netCDF dimension. It contains the
 #'   information on a dimension that is stored in an netCDF file. Consequently,
 #'   the properties of this class are all read-only. The length of the dimension
 #'   may change if data is written to an unlimited dimension, but that is
@@ -27,11 +27,18 @@ NCDimension <- R6::R6Class("NCDimension",
     #'
     #' @param id Numeric identifier of the netCDF dimension.
     #' @param name Character string with the name of the netCDF dimension.
-    #' @param length Length of the dimension.
-    #' @param unlim Is the dimension unlimited?
-    #' @param group The group where the dimension is located.
+    #' @param length Length of the dimension. Default is 1.
+    #' @param unlim Is the dimension unlimited? Default is `FALSE`.
+    #' @param group The NC group where the dimension is located.
     #' @return A `NCDimension` instance.
-    initialize = function(id, name, length, unlim, group) {
+    initialize = function(id, name, length = 1L, unlim = FALSE, group) {
+      if (is.na(id)) {
+        h <- group$handle
+        id <- try(RNetCDF::dim.def.nc(h, name, length, unlim), silent = TRUE)
+        if (inherits(id, "try-error"))
+          id <- RNetCDF::dim.inq.nc(h, name)$id
+      }
+
       super$initialize(id, name)
       private$.length <- length
       private$.unlim <- unlim

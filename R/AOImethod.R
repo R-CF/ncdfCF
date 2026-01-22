@@ -96,7 +96,7 @@ dim.AOI <- function(x) {
 
 .aoi_check_resolution <- function(res) {
   if (res[1L] < 0.01 || res[1L] > 10 || res[2L] < 0.01 || res[2L] > 10)
-    stop("Argument 'resolution' is outside of the permitted range of [0.01 ... 10]", call. = FALSE)
+    warning("Argument 'resolution' is outside of the safe range of [0.01 ... 10]", call. = FALSE)
 }
 
 .aoi_check_longitude <- function(min, max) {

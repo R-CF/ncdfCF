@@ -4,7 +4,14 @@
 \alias{makeAxis}
 \title{Create an axis}
 \usage{
-makeAxis(name, orientation, values, bounds = NULL, attributes = NULL)
+makeAxis(
+  name,
+  orientation,
+  values,
+  bounds = NULL,
+  attributes = data.frame(),
+  group = NULL
+)
 }
 \arguments{
 \item{name}{Name of the axis.}
@@ -21,6 +28,9 @@ available.}
 \item{attributes}{\code{data.frame} with the attributes of the axis to create.
 Depending on which axis is created one or more attributes may be added or
 amended.}
+
+\item{group}{\link{CFGroup} instance where the axis will be located. If \code{NULL}
+(default), a private group will be created for the axis.}
 }
 \value{
 An instance of a class descending from \link{CFAxis}.
