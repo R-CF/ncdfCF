@@ -3,12 +3,10 @@
 \docType{class}
 \name{CFGroup}
 \alias{CFGroup}
-\title{NetCDF group}
+\title{Group for CF objects}
 \description{
-This class represents a netCDF group, the object that holds
-elements like dimensions and variables of a netCDF file. This class also
-holds references to any CF objects based on the netCDF elements held by the
-group.
+This class represents a CF group, the object that holds
+elements like dimensions and variables of a \link{CFDataset}.
 
 Direct access to groups is usually not necessary. The principal objects
 held by the group, CF data variables and axes, are accessible via other
@@ -54,6 +52,7 @@ current group.}
 \item \href{#method-CFGroup-new}{\code{CFGroup$new()}}
 \item \href{#method-CFGroup-print}{\code{CFGroup$print()}}
 \item \href{#method-CFGroup-hierarchy}{\code{CFGroup$hierarchy()}}
+\item \href{#method-CFGroup-subgroup_names}{\code{CFGroup$subgroup_names()}}
 \item \href{#method-CFGroup-create_subgroup}{\code{CFGroup$create_subgroup()}}
 \item \href{#method-CFGroup-add_subgroups}{\code{CFGroup$add_subgroups()}}
 \item \href{#method-CFGroup-add_CF_object}{\code{CFGroup$add_CF_object()}}
@@ -146,6 +145,29 @@ default) when called interactively. The values will be updated during
 recursion when there are groups below the current group.}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFGroup-subgroup_names"></a>}}
+\if{latex}{\out{\hypertarget{method-CFGroup-subgroup_names}{}}}
+\subsection{Method \code{subgroup_names()}}{
+Retrieve the names of the subgroups of the current group.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFGroup$subgroup_names(recursive = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{recursive}}{Logical, default is \code{TRUE}. If \code{TRUE}, include names of
+recursively through the group hierarchy.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A character vector with the names of the subgroups of the current
+group. If \code{recursive = TRUE}, the names will be fully qualified with
+their path.
 }
 }
 \if{html}{\out{<hr>}}

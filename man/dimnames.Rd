@@ -2,16 +2,10 @@
 % Please edit documentation in R/CFDataset.R, R/CFObject.R
 \name{names.CFDataset}
 \alias{names.CFDataset}
-\alias{groups}
-\alias{groups.CFDataset}
 \alias{dimnames}
 \title{Names or axis values of an CF object}
 \usage{
 \method{names}{CFDataset}(x)
-
-groups(x)
-
-\method{groups}{CFDataset}(x)
 }
 \arguments{
 \item{x}{An \code{CFObject} whose axis names to retrieve. This could be

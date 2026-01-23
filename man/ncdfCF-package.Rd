@@ -65,6 +65,7 @@ inferences can be made about a netCDF resource.
 A \link{CFDataset} is the object that contains a netCDF resource. This is the main
 class that you need to access netCDF data from a file or an online resource.
 \itemize{
+\item \code{create_ncdf()}: Create a new CF data set.
 \item \code{show()}: Print information about the data set to the console. This will
 print some information on the resource, as well as all identified data
 variables and the global attributes.
@@ -92,6 +93,7 @@ group.
 \itemize{
 \item \code{\link[=names]{names()}}: Vector of names of the data variables in the data set.
 \item \code{\link[=dimnames]{dimnames()}}: Vector of names of the axes in the data set.
+\item \code{\link[=group]{group()}}: Vector of groups defined in the data set.
 }
 
 \strong{Data variable}
@@ -145,8 +147,8 @@ of the axis values and a final data value.
 \emph{\strong{New data variables}}
 
 New \code{CFVariable} objects can be constructed from R vectors, matrices or
-arrays, optionally creating axes from dimnames on the R object, using the
-\code{\link[=as_CF]{as_CF()}} function.
+arrays, optionally creating axes from dimnames on the R object, or a
+\code{terra::SpatRaster} using the \code{\link[=as_CF]{as_CF()}} function.
 
 \emph{\strong{S3 methods for CFVariable}}
 \itemize{

@@ -355,6 +355,7 @@ CFDataset <- R6::R6Class("CFDataset",
 #' @param object A `CFDataset` instance.
 #' @param ... Ignored.
 #' @export
+#' @keywords internal
 str.CFDataset <- function(object, ...) {
   len <- length(names(object))
   plural <- if (len != 1L) "s" else ""
@@ -384,16 +385,23 @@ dimnames.CFDataset <- function(x) {
     unique(x$axis_names)
 }
 
-#' @rdname dimnames
+#' List the groups in the CF object, recursively.
+#' @return A character vector with group names in the object.
 #' @export
+#' @docType methods
+#' @examples
+#' fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
+#' ds <- open_ncdf(fn)
+#' groups(ds)
 groups <- function(x) {
   UseMethod("groups")
 }
 
-#' @rdname dimnames
+#' @rdname groups
+#' @param x A `CFDataset` instance.
 #' @export
 groups.CFDataset <- function(x) {
-  nm <- x$root$fullnames()
+  nm <- c("/", unlist(x$root$subgroup_names()))
   names(nm) <- NULL
   nm
 }

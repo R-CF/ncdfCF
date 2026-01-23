@@ -1,8 +1,8 @@
 ---
-title: "1. Using ncdfCF"
+title: "Using ncdfCF"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{1. Using ncdfCF}
+  %\VignetteIndexEntry{Using ncdfCF}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -14,3 +14,4 @@
 \description{
 Compact display of a CFDataset
 }
+\keyword{internal}

@@ -57,6 +57,7 @@
 #' A [CFDataset] is the object that contains a netCDF resource. This is the main
 #' class that you need to access netCDF data from a file or an online resource.
 #'
+#' * `create_ncdf()`: Create a new CF data set.
 #' * `show()`: Print information about the data set to the console. This will
 #' print some information on the resource, as well as all identified data
 #' variables and the global attributes.
@@ -83,6 +84,7 @@
 #'
 #' * [names()]: Vector of names of the data variables in the data set.
 #' * [dimnames()]: Vector of names of the axes in the data set.
+#' * [group()]: Vector of groups defined in the data set.
 #'
 #' **Data variable**
 #'
@@ -133,8 +135,8 @@
 #' ***New data variables***
 #'
 #' New `CFVariable` objects can be constructed from R vectors, matrices or
-#' arrays, optionally creating axes from dimnames on the R object, using the
-#' [as_CF()] function.
+#' arrays, optionally creating axes from dimnames on the R object, or a
+#' `terra::SpatRaster` using the [as_CF()] function.
 #'
 #' ***S3 methods for CFVariable***
 #'

@@ -26,39 +26,7 @@ intuitive user interface. Package `ncdfCF` provides a high-level
 interface using functions and methods that are familiar to the R user.
 It reads the structural metadata and also the attributes upon opening
 the resource. In the process, the `ncdfCF` package also applies CF
-Metadata Conventions to interpret the data. This currently applies to:
-
-- The **axis designation**. The three mechanisms to identify the axis
-  each dimension represents are applied until an axis is determined.
-- The **time coordinate**. Time is usually encoded as an offset from an
-  origin. Using the `CFtime` package these offsets can be turned into
-  intelligible dates and times, for all defined calendars.
-- **Bounds** information. When present, bounds are read and used in
-  analyses.
-- **Discrete coordinates**, optionally with character labels. When
-  labels are provided, these will be used as `dimnames` for the axis.
-  (Note that this also applies to generic numeric axes with labels
-  defined.)
-- **Parametric vertical coordinates** are computed using the
-  `formula_terms` attribute, for two ocean formulations.
-- **Auxiliary coordinates** are identified and read. This applies also
-  to **scalar axes** and **auxiliary longitude-latitude grids**.
-  Auxiliary coordinates can be activated by the user and then used in
-  display, selection and processing. Data on non-Cartesian grids can be
-  automatically rectified to a longitude-latitude grid if an auxiliary
-  grid is present in the resource.
-- The **cell measure variables** are read and linked to any data
-  variables referencing them. Cell measure variables that are external
-  to the netCDF resource with the referring data variable can be linked
-  to the data set and then they are immediately available to the
-  referring data variables.
-- **Labels**, as separate variables identified through the `coordinates`
-  attribute of axes, are read, including when multiple sets of labels
-  are defined for a single axis. Users can select which set of labels to
-  make active for display, selection and processing.
-- The **grid_mapping** variables, providing the coordinate reference
-  system (CRS) of the data, with support for all defined objects in the
-  latest EPSG database as well as “manual” construction of CRSs.
+Metadata Conventions to interpret the data.
 
 ## Basic usage
 
@@ -213,7 +181,7 @@ resource:
 - **`array()`:** Like `raw()`, this extracts all the (subsetted) data,
   but now the data will be oriented in the standard R way of
   column-major order. Y coordinates will run from the top to the bottom
-  (so latitude values, for instance, will be decresing).
+  (so latitude values, for instance, will be decreasing).
 - **`subset()`:** The `subset()` method lets you specify what you want
   to extract from each dimension in real-world coordinates and
   timestamps, in whichever order. This can also rectify non-Cartesian
@@ -516,7 +484,7 @@ arr <- array(rnorm(120), dim = c(6, 5, 4))
 as_CF("my_first_CF_object", arr)
 #> <Variable> my_first_CF_object 
 #> 
-#> Values: [-2.058679 ... 2.65144] 
+#> Values: [-2.205896 ... 3.076744] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -526,8 +494,8 @@ as_CF("my_first_CF_object", arr)
 #>  axis_3 4      [1 ... 4]
 #> 
 #> Attributes:
-#>  name         type      length value             
-#>  actual_range NC_DOUBLE 2      -2.058679, 2.65144
+#>  name         type      length value              
+#>  actual_range NC_DOUBLE 2      -2.205896, 3.076744
 ```
 
 Usable but not very impressive. The axes have dull names without any
@@ -549,7 +517,7 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 (obj <- as_CF("a_better_CF_object", arr))
 #> <Variable> a_better_CF_object 
 #> 
-#> Values: [-2.058679 ... 2.65144] 
+#> Values: [-2.205896 ... 3.076744] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -559,8 +527,8 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 #>  T    time 4      [2025-07-01 ... 2025-07-04] days since 1970-01-01T00:00:00
 #> 
 #> Attributes:
-#>  name         type      length value             
-#>  actual_range NC_DOUBLE 2      -2.058679, 2.65144
+#>  name         type      length value              
+#>  actual_range NC_DOUBLE 2      -2.205896, 3.076744
 
 # Axes are of a specific type and have basic attributes set
 obj$axes[["lat"]]
@@ -668,30 +636,13 @@ stored in row-major order with increasing Y values).
 stats[["diurnal_range"]]$save("~/path/file.nc")
 ```
 
-##### A note on Discrete Sampling Geometries
-
-Discrete Sampling Geometries (DSG) map almost directly to the venerable
-`data.frame` in R (with several exceptions). In that sense, they are
-rather distinct from array-based data sets. At the moment there is no
-specific code for DSG, but the simplest layouts can currently already be
-read (without any warranty). Various methods, such as
-`CFVariable::subset()` or `CFVariable::array()` will fail miserably, and
-you are well-advised to try no more than the empty array indexing
-operator `CFVariable::[]` which will yield the full data variable with
-column and row names set as an array, of `CFVariable::data.table` for a
-format that matches the structure of a typical table closest. You can
-identify a DSG data set by the `featureType` attribute of the
-`CFDataset`.
-
-More comprehensive support for DSG is in the development plan.
-
 ## Development plan
 
 Package `ncdfCF` is still being developed. It supports reading of all
 data objects from netCDF resources in “classic” and “netcdf4” formats;
-and can write single data variables back to a netCDF file. From the CF
-Metadata Conventions it supports identification of axes, interpretation
-of the “time” axis, name resolution when using groups, cell boundary
+and can write data variables back to a netCDF file. From the CF Metadata
+Conventions it supports identification of axes, interpretation of the
+“time” axis, name resolution when using groups, cell boundary
 information, auxiliary coordinate variables, labels, cell measures,
 attributes and grid mapping information, among others.
 
@@ -700,14 +651,12 @@ features:
 
 ##### netCDF
 
-- Support for writing of complex data sets (single `CFVariable`
-  instances can already be written to file).
 - Writing data to an unlimited dimension of a data variable.
 
 ##### CF Metadata Conventions
 
-- Cell methods
-- Aggregation, using the CFA convention.
+- Cell methods.
+- Aggregation.
 - Support for discrete sampling geometries.
 - Compliance with CMIP5 / CMIP6 requirements.
 

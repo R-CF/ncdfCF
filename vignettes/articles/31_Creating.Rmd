@@ -1,0 +1,74 @@
+---
+title: "1. Creating new data sets and variables"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{1. Creating new data sets and variables}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Creating a new CF data set
+
+Creating a new CF data set is as easy as `my_ds <- create_ncdf()`. This will create an empty data set (duh!) but it will have a root group and some basic attributes:
+
+```{r create_virtual}        
+library(ncdfCF)
+
+(my_ds <- create_ncdf())
+```
+
+The data set is created in memory (`Resource : (virtual)`) and you can save it to disk when you are done adding data variables to it with `my_ds$save(fn = "~/path/to/netcdf/data/my_data.nc")`. If you prefer, you can also provide the file name to `create_ncdf(fn = "~/path/to/netcdf/data/my_data.nc")` and then save your edits with `my_ds$save()`. This alternative pattern is easier and less error-prone when you add many objects to the data set and want to do intermediate saving of your work to the netCDF file.
+
+## Creating a new CF data variable
+
+There are different ways that you can create a CFVariable:
+- Convert a suitable R object such as an array or a matrix.
+- Process data from existing netCDF resources into a new CFVariable.
+
+### Vector, matrix, array
+
+Any vector, matrix or array of a suitable type (numeric, integer, logical, character) can be converted to a `CFVariable` with the `as_CF()` generic S3 method.
+
+```{r create_basic}
+arr <- array(rnorm(120), dim = c(6, 5, 4))
+as_CF("my_first_CF_object", arr)
+```
+
+Usable but not very impressive. The axes have dull names without any meaning and the coordinates are just a sequence along the axis.
+
+If the R object has `dimnames` set, these will be used to create more informed axes. More interestingly, if your array represents some spatial data you can give your `dimnames` appropriate names ("lat", "lon", "latitude", "longitude", case-insensitive) and the corresponding axis will be created (if the coordinate values in the `dimnames` are within the domain of the axis type). For "time" coordinates, these are automatically detected irrespective of the name.
+
+```{r create_dimnames}
+# Note the use of named dimnames here - these will become the names of the axes
+dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4), 
+                      time = c("2025-07-01", "2025-07-02", "2025-07-03", "2025-07-04"))
+
+(obj <- as_CF("a_better_CF_object", arr))
+
+# Axes are of a specific type and have basic attributes set
+obj$axes[["lat"]]
+
+obj$axes[["time"]]
+```
+
+You can use the `as_CF()` generic method also to convert a `terra::SpatRaster` into a `CFVariable`. Keep in mind, though, that `terra` has limited support for multi-dimensional data and very limited support specifically for vertical dimensions (`depth` in `terra`) and calendars other than `standard` or `proleptic_gregorian`. You are therefore advised to carefully review the properties of the data variable derived from a `terra::SpatRaster`.
+
+### Processing data
+
+The `ncdfCF` package support processing of data through extraction of subsets or profiles of the data in the netCDF resource, or summarising data over the "time" axis of a data variable. All of these operations return a `CFVariable` instance to the caller. You can also perform arithmetical and mathematical operations on a `CFVariable` which also returns a new `CFVariable` to the caller.
+
+```{r process_data}
+
+```
+
+### Managing your new CFVariables

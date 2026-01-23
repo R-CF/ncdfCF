@@ -11,7 +11,7 @@
 - In `CFVariable$subset()` and `$profile()`, when selecting on auxiliary grid axes then both axes must be specified.
 - Function `create_ncdf()` creates a new netCDF resource on disk, as a container for persisting CF objects, or in memory.
 - Function `as_CF()` can now also convert a `terra::SpatRaster` to a `CFDataset` or a `CFVariable`, depending on the number of variables in the `SpatRaster`. This is a fragile process, mostly due to `terra` idiosyncrasies related to multi-dimensional data.
-- Documentation updated.
+- Documentation updated, now available online.
 
 #### Code
 - Access to data values is now consistently using the public field `values` for "standard" objects. Only objects that require special values management use private fields and expose the data values in another, more appropriate form.

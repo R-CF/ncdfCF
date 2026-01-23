@@ -568,6 +568,7 @@ dimnames.CFAxis <- function(x) {
 #' @param object A `CFAxis` instance or any descendant.
 #' @param ... Ignored.
 #' @export
+#' @keywords internal
 str.CFAxis <- function(object, ...) {
   cat(paste0("<", object$friendlyClassName, "> ", object$shard(), "\n"))
 }

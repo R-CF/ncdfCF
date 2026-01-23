@@ -1,5 +1,10 @@
 ---
-title: "3. How to open and visualise Copernicus Marine Data in R"
+title: "Example 1. How to open and visualise Copernicus Marine Data in R"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Example 1. How to open and visualise Copernicus Marine Data in R}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -41,7 +46,7 @@ There are two variables in the data set: `bottomT` and `thetao.` We'll work here
 (thetao <- ds[["thetao"]])
 ```
 
-(Coming back to the warnings at the beginning: In the "coordinates" attribute you see the value "time depth lat lon". If you look at the axes, however, you can see that the first two are called "longitude" and "latitude", rather than their short versions "lon" and "lat": a warning will be generated.)
+(Coming back to the warnings at the beginning: The "coordinates" attribute has the value "time depth lat lon". If you look at the axes, however, you can see that the first two are called "longitude" and "latitude", rather than their short versions "lon" and "lat": a warning will be generated.)
 
 From looking at the properties of the data set we already knew that data variable thetao has 4 axes. Now that we drill down to the details of the data variable you can see the range of values and their physical unit. You can also inspect the coordinates along the axes quite easily:
 

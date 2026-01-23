@@ -1,9 +1,7 @@
-#' NetCDF group
+#' Group for CF objects
 #'
-#' @description This class represents a netCDF group, the object that holds
-#'   elements like dimensions and variables of a netCDF file. This class also
-#'   holds references to any CF objects based on the netCDF elements held by the
-#'   group.
+#' @description This class represents a CF group, the object that holds
+#'   elements like dimensions and variables of a [CFDataset].
 #'
 #'   Direct access to groups is usually not necessary. The principal objects
 #'   held by the group, CF data variables and axes, are accessible via other
@@ -120,6 +118,23 @@ CFGroup <- R6::R6Class("CFGroup",
         hier <- c(hier, paste0(sep, sg))
       }
       hier
+    },
+
+    #' @description Retrieve the names of the subgroups of the current group.
+    #' @param recursive Logical, default is `TRUE`. If `TRUE`, include names of
+    #'   recursively through the group hierarchy.
+    #' @return A character vector with the names of the subgroups of the current
+    #'   group. If `recursive = TRUE`, the names will be fully qualified with
+    #'   their path.
+    subgroup_names = function(recursive = TRUE) {
+      nms <- if (recursive) sapply(private$.subgroups, function(g) g$fullname)
+             else names(private$.subgroups)
+
+      if (recursive && self$has_subgroups) {
+        subs <- lapply(private$.subgroups, function(g) g$subgroup_names(TRUE))
+        c(nms, unlist(subs))
+      } else
+        nms
     },
 
     #' @description Create a new group as a subgroup of the current group.

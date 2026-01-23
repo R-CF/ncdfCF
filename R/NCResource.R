@@ -26,7 +26,7 @@ NCResource <- R6::R6Class("NCResource",
 
       err <- try(private$.handle <- RNetCDF::open.nc(private$.uri, write = private$.write), silent = TRUE)
       if (inherits(err, "try-error")) {
-        self$error <- "Error opening netCDF resource"
+        self$error <- paste("Error opening netCDF resource:", private$.uri)
         private$.handle <- NULL
       } else
         self$error <- ""

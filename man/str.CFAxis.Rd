@@ -14,3 +14,4 @@
 \description{
 Compact display of an axis.
 }
+\keyword{internal}

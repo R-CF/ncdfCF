@@ -21,13 +21,13 @@ knitr::opts_chunk$set(
 
 The CF Metadata Conventions ("CF" henceforth) are being developed by academics and practitioners in the climate and forecasting field, with the objective to facilitate interoperability between data producers and data consumers (whether human or computer systems).
 
-Reading the CF documentation can be a daunting task because it is written as a standards document, and not as a guideline or tutorial for people who want to understand the concept and the structure but who are not looking for all of the low-level detail.
+Reading the CF documentation can be a daunting task because it is written as a conventions document, and not as a guideline or tutorial for people who want to understand the concept and the structure but who are not looking for all of the low-level detail.
 
-This vignette presents a view of CF from the perspective of R. The main elements of CF are introduced in terms that should be easily understood by anyone who has worked with matrices and arrays in R.
+This article presents a view of CF from the perspective of R. The main elements of CF are introduced in terms that should be easily understood by anyone who has worked with matrices and arrays in R.
 
 By definition, a CF-compliant data set is stored in a netCDF file. The CF elements and their relationship to the building blocks of the netCDF file are given in the figure below:
 
-![*Figure 1: Elements of a netCDF file and the CF constructs built on them. Source: CF Conventions, Appendix I.*](datamodel-0.4.svg){width="680"}
+![*Figure 1: Elements of a netCDF file and the CF constructs built on them. Source: CF Conventions, Appendix I.*](../datamodel-0.4.svg){width="680"}
 
 If you've worked with netCDF data in R before, probably using package `ncdf4` (but what follows is equally true when you use package `RNetCDF`), you should be familiar with the yellow boxes in the above figure, especially "NC::Variable" (the specific notation used in the figure is not important here), corresponding to the `ncvar4` class in
 `ncdf4`. CF, however, recognizes 11 different objects that are each based on an "NC::Variable". This ranges from axes, or *generic coordinate variables* in the white box in the figure, to *grid mapping variables* (that define the coordinate reference system of your data) to the actual data array in a *data variable*. This is the source of all those surprising "variables" that you see when you do `names(nc$var)`:
@@ -85,7 +85,7 @@ Ok, that's a lot more information. Let's focus on a few important things:
 
 It should be obvious that correctly interpreting a netCDF file requires a package that not only provides easy access to the attributes of the file, but that also applies the CF conventions to put all the pieces together in such a way that the data set is presented to the user of the data - that would be you - as the data producers intended.
 
-The issues arising from the pecularities of CF on top of the netCDF format are presented and discussed in the remainder of this document, seen from the perspective of the R user, with examples using the `ncdfCF` package. At the end of this vignette is a feature matrix that indicates the support for each CF element in package `ncdfCF`.
+The issues arising from the pecularities of CF on top of the netCDF format are presented and discussed in the remainder of this document, seen from the perspective of the R user, with examples using the `ncdfCF` package. At the end of this article is a feature matrix that indicates the support for each CF element in package `ncdfCF`.
 
 > Please note that I have nothing against `ncdf4` or `RNetCDF` packages. In fact, package `ncdfCF` is built on top of `RNetCDF`. My point is merely to demonstrate how CF-compliant netCDF files, of which there are *very* many out there on the internet, require you to look beyond the basic netCDF building blocks and use the attributes. If your netCDF files do not use the CF conventions, then by all means use `ncdf4` if you prefer. I would suggest, though, to read the next section to understand better how data structures in netCDF differ from R standard practices.
 
@@ -132,11 +132,11 @@ Note how in the `array()` version the `x` and `y` axes are reversed and the `y` 
 
 The netCDF file format is very flexible, as well as CF, and the `ncdfCF` package uses a layered structure to capture it all. This structure enables a full support of the features provided by the `netcdf` library and the CF Conventions.
 
-![Figure 2: Core ncdfCF data model](ncdfCF-datamodel-0.7.png){width="680"}
+![Figure 2: Core ncdfCF data model](../ncdfCF-datamodel-0.7.png){width="680"}
 
 Each of the building blocks may have other objects associated with it, such as axes for `CFVariable`. Package `ncdfCF` is built using the `R6` OOP framework and uses class hierarchies throughout. The crucial but humble "virtual" class `CFAxis` is not used directly, instead you'll work with its seven descendant classes. `CFVariable` has several specialised sub-classes, such as `CFVariableL3b` for NASA level-3 binned data used for MODIS imagery, or `CFVerticalParametricTerm` which you will encounter when using *formula terms* for a parametric vertical axis.
 
-![Figure 3: Condensed ncdfCF axis class hierarchy](ncdfCF-hierarchy-0.7.png){width="680"}
+![Figure 3: Condensed ncdfCF axis class hierarchy](../ncdfCF-hierarchy-0.7.png){width="680"}
 
 ## Feature matrix
 

@@ -1,4 +1,76 @@
-url: ~
+url: https://r-cf.github.io/ncdfCF/
 template:
   bootstrap: 5
+reference:
+- title: Main ncdfCF classes and operations
+- subtitle: Opening and inspecting netCDF resources
+  desc: |
+    NetCDF resources can be accessed on local (or networked) file systems, or on THREDDS server on the internet. NetCDF resources are opened by default for read-only access but local resources may be opened for writing as well (THREDDS servers do not support writing).
+  contents:
+  - open_ncdf
+  - peek_ncdf
+- subtitle: Data set
+  desc: |
+    The main object that the ncdfCF package presents to the R user is a `CFDataset`. When opening an existing netCDF resource, the `CFDataset` will provide access to all data variables and associated objects in the resource, including its attributes, in a ready-made way for usage. The CF Conventions will have been applied and the objects within the `CFDataset` are thus fully formed and linked.
+  contents:
+  - create_ncdf
+  - as_CF
+  - CFDataset
+  - CFGroup
+  - names.CFDataset
+  - groups
+  - '[[.CFDataset'
+- subtitle: Data variable
+  desc: >
+    A data set can hold one or more data variables. A data variable is the object that holds the data and descriptive metadata for a variable of interest, such as daily maximum temperature. In R you can operate directly on a data variable but it can also be subsetted, profiled and summarised over the "time" dimension. It can be saved to a new netCDF resource or exported to some other format.
+  contents:
+  - CFVariable
+  - CFVariableL3b
+  - CFGridMapping
+  - CFCellMeasure
+  - CFAuxiliaryLongLat
+  - '[.CFVariable'
+  - '[.CFVariableL3b'
+  - aoi
+  - dim.AOI
+  - Ops.CFVariable
+- subtitle: Axes
+  desc: |
+    The shape of a data variable is described by the set of axes that it links to. There are specialised axes for specific types of axes, such as for longitude and latitude, or more generic types, each having their own class inheriting from the "virtual" `CFAxis` class.
+  contents:
+  - makeAxis
+  - makeCharacterAxis
+  - makeDiscreteAxis
+  - makeLongitudeAxis
+  - makeLatitudeAxis
+  - makeTimeAxis
+  - makeVerticalAxis
+  - CFAxis
+  - CFAxisCharacter
+  - CFAxisDiscrete
+  - CFAxisNumeric
+  - CFAxisLongitude
+  - CFAxisLatitude
+  - CFAxisTime
+  - CFAxisVertical
+  - CFVerticalParametricTerm
+  - CFLabel
+  - dim.CFAxis
+- subtitle: ncdfCF objects
+  desc: |
+    This package uses many base classes to "glue" all the objects together. In typical use of the package these classes are not very useful, the higher-level objects encapsulate these low-level objects. For developers it could be useful to study or directly access these classes.
+  contents:
+  - CFObject
+  - CFBounds
+  - CFData
+  - CFStandardNames
+- subtitle: NetCDF objects
+  desc: |
+    When opening an existing netCDF resource, or after writing a new netCDF file, the contents of the netCDF resource are captured in a hierarchy of NC objects. These objects are immutable for the R user because they reflect what is in the resource.
+  contents:
+  - NCResource
+  - NCObject
+  - NCGroup
+  - NCDimension
+  - NCVariable
 

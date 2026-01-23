@@ -438,8 +438,8 @@ peek_ncdf <- function(resource) {
             dname <- varLon$group$find_dim_by_id(did)$name
             varLon$group$find_by_name(dname)$CF[[1L]]
           })
-          lon <- CFVariable$new(varLon, grp, ax)
-          lat <- CFVariable$new(varLat, grp, ax)
+          lon <- CFVariable$new(varLon, NULL, ax) # Don't add the auxiliary grids to the output
+          lat <- CFVariable$new(varLat, NULL, ax) # group else they'll be considered data variables
           ll <- CFAuxiliaryLongLat$new(lon, lat, bndsLon, bndsLat)
           varLon$group$CF$add_CF_object(ll)
         }
