@@ -1,4 +1,4 @@
-# ncdfCF (development version)
+# ncdfCF 0.8.0
 
 #### Conventions
 - Ancillary variables are now associated with the data variables that reference them. They can be added with the `CFVariable::add_ancillary_variable()` method and the list of registered ancillary variables can be retrieved with the `CFVariable$ancillary_variables` field. Ancillary variables are `CFVariable` instances themselves and can have bounds and other data variable properties, and be processed like regular data variables.
