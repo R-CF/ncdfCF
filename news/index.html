@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ncdfCF</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,14 +39,14 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="ncdfcf-development-version">ncdfCF (development version)<a class="anchor" aria-label="anchor" href="#ncdfcf-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.8.0" id="ncdfcf-080">ncdfCF 0.8.0<a class="anchor" aria-label="anchor" href="#ncdfcf-080"></a></h2>
 <div class="section level5">
-<h5 id="conventions-development-version">Conventions<a class="anchor" aria-label="anchor" href="#conventions-development-version"></a></h5>
+<h5 id="conventions-0-8-0">Conventions<a class="anchor" aria-label="anchor" href="#conventions-0-8-0"></a></h5>
 <ul><li>Ancillary variables are now associated with the data variables that reference them. They can be added with the <code>CFVariable::add_ancillary_variable()</code> method and the list of registered ancillary variables can be retrieved with the <code>CFVariable$ancillary_variables</code> field. Ancillary variables are <code>CFVariable</code> instances themselves and can have bounds and other data variable properties, and be processed like regular data variables.</li>
 <li>Vertical parametric coordinate “Atmosphere hybrid sigma pressure coordinate” added. This supports both the layer mid-point formulation of CF and the layer top and bottom formulation often found in satellite observations of the atmosphere.</li>
 </ul></div>
 <div class="section level5">
-<h5 id="api-development-version">API<a class="anchor" aria-label="anchor" href="#api-development-version"></a></h5>
+<h5 id="api-0-8-0">API<a class="anchor" aria-label="anchor" href="#api-0-8-0"></a></h5>
 <ul><li>
 <code>CFGroup</code> is now the main hierarchy from the user perspective, maintaining all CF objects. The <code>CFGroup$add_variable()</code> method places a <code>CFVariable</code> somewhere in the hierarchy, with owned CF objects (like axes, boundary values, CRS, etc) automatically attached to the same group or some other specified group.</li>
 <li>All <code>[]</code> indexing and selection operations must include axes of length 1. This means that the indexing always has as many elements as there are axes in the CF variable. Reported dimensions include degenerate dimensions.</li>
@@ -57,7 +57,7 @@
 <li>Documentation updated, now available online.</li>
 </ul></div>
 <div class="section level5">
-<h5 id="code-development-version">Code<a class="anchor" aria-label="anchor" href="#code-development-version"></a></h5>
+<h5 id="code-0-8-0">Code<a class="anchor" aria-label="anchor" href="#code-0-8-0"></a></h5>
 <ul><li>Access to data values is now consistently using the public field <code>values</code> for “standard” objects. Only objects that require special values management use private fields and expose the data values in another, more appropriate form.</li>
 <li>
 <code>CFGroup</code> hierarchy maintains all CF objects. 1:1 alignment with the <code>NCGroup</code> hierarchy for NC objects backed by a netCDF resource.</li>
