@@ -1,0 +1,637 @@
+# 2. R and CF Metadata Conventions
+
+## The CF Metadata Conventions
+
+The CF Metadata Conventions (“CF” henceforth) are being developed by
+academics and practitioners in the climate and forecasting field, with
+the objective to facilitate interoperability between data producers and
+data consumers (whether human or computer systems).
+
+Reading the CF documentation can be a daunting task because it is
+written as a conventions document, and not as a guideline or tutorial
+for people who want to understand the concept and the structure but who
+are not looking for all of the low-level detail.
+
+This article presents a view of CF from the perspective of R. The main
+elements of CF are introduced in terms that should be easily understood
+by anyone who has worked with matrices and arrays in R.
+
+By definition, a CF-compliant data set is stored in a netCDF file. The
+CF elements and their relationship to the building blocks of the netCDF
+file are given in the figure below:
+
+![Figure 1: Elements of a netCDF file and the CF constructs built on
+them. Source: CF Conventions, Appendix I.](../datamodel-0.4.svg)
+
+*Figure 1: Elements of a netCDF file and the CF constructs built on
+them. Source: CF Conventions, Appendix I.*
+
+If you’ve worked with netCDF data in R before, probably using package
+`ncdf4` (but what follows is equally true when you use package
+`RNetCDF`), you should be familiar with the yellow boxes in the above
+figure, especially “NC::Variable” (the specific notation used in the
+figure is not important here), corresponding to the `ncvar4` class in
+`ncdf4`. CF, however, recognizes 11 different objects that are each
+based on an “NC::Variable”. This ranges from axes, or *generic
+coordinate variables* in the white box in the figure, to *grid mapping
+variables* (that define the coordinate reference system of your data) to
+the actual data array in a *data variable*. This is the source of all
+those surprising “variables” that you see when you do `names(nc$var)`:
+
+    library(ncdf4)
+
+    fn <- system.file("extdata", "tasmax_NAM-44_day_20410701-vncdfCF.nc", package = "ncdfCF")
+    nc <- nc_open(fn)
+
+    # The "variables"
+    names(nc$var)
+    #> [1] "time_bnds"         "lon"               "lat"              
+    #> [4] "Lambert_Conformal" "height"            "tasmax"
+
+    # The dimensions
+    names(nc$dim)
+    #> [1] "time" "bnds" "x"    "y"
+
+So which of these variables is the one that holds your data? And how do
+you tell it apart from the other “variables”? And why are there `x` and
+`y` dimensions and `lon` and `lat` “variables”?
+
+### Enter the attributes
+
+You may not be as familiar with the attributes in the netCDF file, the
+“NC::Attribute” object in the above figure, as `ncdf4` does not make
+these as easily accessible as the other information in the file. That is
+a shame because attributes are the thing that makes netCDF stand apart
+from pretty much any other gridded data format. CF is actually all about
+attributes, with some of them organized in “NC::Variable” objects that
+do not hold any other data! (Such as the *grid mapping variables*
+mentioned above.) Put the other way around, you are not really using a
+CF-compliant netCDF data set unless you read the proper attributes. Even
+stronger: there are things in netCDF data sets that you cannot do unless
+you have inspect the attributes (such as determining the coordinate
+reference system, or calculating the parametric coordinates of a
+vertical axis).
+
+Looking at the same netCDF file as above, but now using the `ncdfCF`
+package:
+
+``` r
+library(ncdfCF)
+
+fn <- system.file("extdata", "tasmax_NAM-44_day_20410701-vncdfCF.nc", package = "ncdfCF")
+ds <- open_ncdf(fn)
+
+# The data variable
+names(ds)
+#> [1] "tasmax"
+
+# The details of the data variable
+tmax <- ds[["tasmax"]]
+tmax$print(width = 25)
+#> <Variable> tasmax 
+#> Long name: Daily Maximum Near-Surface Air Temperature 
+#> 
+#> Values: (not loaded)
+#> 
+#> Coordinate reference system:
+#>  name              grid_mapping           
+#>  Lambert_Conformal lambert_conformal_conic
+#> 
+#> Axes:
+#>  axis name   long_name                 length values               
+#>  X    x      x-coordinate in Cartes... 148    [0 ... 7350000]      
+#>  Y    y      y-coordinate in Cartes... 140    [0 ... 6950000]      
+#>  T    time                             1-U    [2041-07-01T12:00:00]
+#>  Z    height                           1      [2]                  
+#>  unit                     
+#>  m                        
+#>  m                        
+#>  days since 1949-12-1 0...
+#>  m                        
+#> 
+#> Auxiliary longitude-latitude grid:
+#>  axis name extent                 unit         
+#>  X    lon  [-174.382 ... -19.618] degrees_east 
+#>  Y    lat  [10.154 ... 76.459]    degrees_north
+#> 
+#> Attributes:
+#>  name          type    length value                    
+#>  standard_name NC_CHAR 15     air_temperature          
+#>  long_name     NC_CHAR 42     Daily Maximum Near-Sur...
+#>  units         NC_CHAR  1     K                        
+#>  grid_mapping  NC_CHAR 17     Lambert_Conformal        
+#>  original_name NC_CHAR 11     TEMP at 2 M              
+#>  cell_methods  NC_CHAR 13     time: maximum            
+#>  FieldType     NC_INT   1     104                      
+#>  MemoryOrder   NC_CHAR  3     XY
+
+# The "time" axis
+ds[["time"]]
+#> <Time axis> [0] time
+#> Length     : 1 (unlimited)
+#> Axis       : T 
+#> Calendar   : 365_day 
+#> Range      : 2041-07-01T12:00:00 (days) 
+#> Bounds     : 2041-07-01 ... 2041-07-02 
+#> 
+#> Attributes:
+#>  name          type      length value                        
+#>  standard_name NC_CHAR    4     time                         
+#>  long_name     NC_CHAR    4     time                         
+#>  bounds        NC_CHAR    9     time_bnds                    
+#>  units         NC_CHAR   29     days since 1949-12-1 00:00:00
+#>  calendar      NC_CHAR    7     365_day                      
+#>  axis          NC_CHAR    1     T                            
+#>  actual_range  NC_DOUBLE  2     33427.5, 33427.5
+
+# Parameters in the grid mapping variable
+ds[["Lambert_Conformal"]]
+#> <Grid mapping> Lambert_Conformal 
+#> Grid mapping name: lambert_conformal_conic 
+#> 
+#> Attributes:
+#>  name                          type      length value                  
+#>  grid_mapping_name             NC_CHAR   23     lambert_conformal_conic
+#>  longitude_of_central_meridian NC_DOUBLE  1     -97                    
+#>  latitude_of_projection_origin NC_DOUBLE  1     46.0000038146973       
+#>  standard_parallel             NC_DOUBLE  2     35, 60                 
+#>  false_easting                 NC_DOUBLE  1     3675000                
+#>  false_northing                NC_DOUBLE  1     3475000
+```
+
+Ok, that’s a lot more information. Let’s focus on a few important
+things:
+
+1.  There is only one *data variable*, called “tasmax”. If we examine
+    it’s details we can see that it’s coordinate space uses four axes
+    `x`, `y`, `time` and `height`. That is not all clear from the
+    `ncdf4` output which lists the first three dimensions and excludes
+    `height`, but includes `bnds` instead.
+2.  The data set has a *grid mapping variable* called
+    `Lambert_Conformal` that, by definition, applies to the `X` and `Y`
+    axes of the *data variable* `tasmax`. As suggested by CF, the data
+    set also includes two *auxilliary coordinate variables* `lat` and
+    `lon`, each a matrix with the same dimension as the length of the
+    `Y` and `X` axes of the *data variable* they are associated with,
+    where each cell gives the latitude and longitude, respectively, of
+    the corresponding cell in the *data variable* (whose axes have
+    coordinates in the Lambert Conformal coordinate reference system).
+    You can identify these two aspects by looking at the attributes of
+    `tasmax`: attribute `grid_mapping` points to the *grid mapping
+    variable* `Lambert_Conformal`, attribute `coordinates` lists both
+    the *scalar coordinate variable* `height` and the *auxiliary
+    coordinate variables* `lat` and `lon`.
+3.  The `time` axis has an attribute `bounds` which points to
+    `time_bnds`, a *boundary variable* that indicates for each
+    coordinate along the axis its lower and higher values. For the
+    `time` axis there is just one coordinate at `2041-07-01 12:00:00`
+    with range values `2041-07-01 ... 2041-07-02` (midnight to
+    midnight). (It is the `time_bnds` *boundary variable* that uses the
+    `bnds` dimension that `ncdf4` reports.) The `calendar` used by this
+    axis is `365_day`, meaning that no year uses the leap day of 29
+    February. This is a so-called “model calendar” and the standard
+    date-time functions will not work properly with this data; use the
+    built-in time methods instead.
+
+It should be obvious that correctly interpreting a netCDF file requires
+a package that not only provides easy access to the attributes of the
+file, but that also applies the CF conventions to put all the pieces
+together in such a way that the data set is presented to the user of the
+data - that would be you - as the data producers intended.
+
+The issues arising from the pecularities of CF on top of the netCDF
+format are presented and discussed in the remainder of this document,
+seen from the perspective of the R user, with examples using the
+`ncdfCF` package. At the end of this article is a feature matrix that
+indicates the support for each CF element in package `ncdfCF`.
+
+> Please note that I have nothing against `ncdf4` or `RNetCDF` packages.
+> In fact, package `ncdfCF` is built on top of `RNetCDF`. My point is
+> merely to demonstrate how CF-compliant netCDF files, of which there
+> are *very* many out there on the internet, require you to look beyond
+> the basic netCDF building blocks and use the attributes. If your
+> netCDF files do not use the CF conventions, then by all means use
+> `ncdf4` if you prefer. I would suggest, though, to read the next
+> section to understand better how data structures in netCDF differ from
+> R standard practices.
+
+## Arrays in R versus netCDF files
+
+In R, matrices and arrays are stored in column-major ordering, meaning
+that successive values go from the top-left down down the column, then
+across the columns to the bottom-right. This is easily seen when
+printing a matrix to the console:
+
+``` r
+matrix(1:12, nrow = 3, ncol = 4)
+#>      [,1] [,2] [,3] [,4]
+#> [1,]    1    4    7   10
+#> [2,]    2    5    8   11
+#> [3,]    3    6    9   12
+```
+
+In netCDF files matrices and arrays are stored in row-major ordering,
+starting from the left, progressing to the end of the row and then to
+the next row. This can be performed in R with the `byrow` argument of
+the [`matrix()`](https://rdrr.io/r/base/matrix.html) function, with data
+starting from the top-left:
+
+``` r
+matrix(1:12, nrow = 3, ncol = 4, byrow = TRUE)
+#>      [,1] [,2] [,3] [,4]
+#> [1,]    1    2    3    4
+#> [2,]    5    6    7    8
+#> [3,]    9   10   11   12
+```
+
+CF-compliant data sets, however, are free to store the data in any
+possible organization of the axes, although the recommendation is to use
+the longitude - latitude - vertical - time - others ordering. But even
+when that recommendation is followed, the latitude coordinates in the
+row are often stored in ascending order from South to North, that is
+from the bottom-left working upwards. That looks like this:
+
+``` r
+matrix(c(9, 5, 1, 10, 6, 2, 11, 7, 3, 12, 8, 4), nrow = 3, ncol = 4)
+#>      [,1] [,2] [,3] [,4]
+#> [1,]    9   10   11   12
+#> [2,]    5    6    7    8
+#> [3,]    1    2    3    4
+```
+
+This is the cause of lots of headaches and “patches” involving
+[`t()`](https://rspatial.github.io/terra/reference/transpose.html) and
+[`rev()`](https://rspatial.github.io/terra/reference/flip.html) in
+*some* order and general exasperation (*“why does it have to be so
+complicated?”*).
+
+The bottom line is that there is no guarantee that the data are stored
+in a particular ordering. So how can you make sure that you get the data
+from the netCDF file in a predictable format so that you can use your
+favourite analysis routines with peace of mind? The answer should be
+obvious: read the attributes of the netCDF file and apply them following
+CF guidelines.
+
+Lucky for you package `ncdfCF` does all the dirty work behind the scene
+to give you easy access to either the raw array data, in the ordering
+found in the netCDF file, or an oriented array that follows the standard
+R array layout:
+
+``` r
+# The raw data using the ordering in the netCDF file (or as modified by
+# a processing method such as `summarise()`)
+tmax_raw <- tmax$raw()
+str(tmax_raw)
+#>  num [1:148, 1:140, 1, 1] 301 301 301 301 301 ...
+#>  - attr(*, "dimnames")=List of 4
+#>   ..$ x     : chr [1:148] "0" "50000" "1e+05" "150000" ...
+#>   ..$ y     : chr [1:140] "0" "50000" "1e+05" "150000" ...
+#>   ..$ time  : chr "2041-07-01T12:00:00"
+#>   ..$ height: chr "2"
+
+# The same data but now in standard R ordering
+tmax_R <- tmax$array()
+str(tmax_R)
+#>  num [1:140, 1:148, 1, 1] 277 277 277 277 277 ...
+#>  - attr(*, "dimnames")=List of 4
+#>   ..$ y     : chr [1:140] "6950000" "6900000" "6850000" "6800000" ...
+#>   ..$ x     : chr [1:148] "0" "50000" "1e+05" "150000" ...
+#>   ..$ height: chr "2"
+#>   ..$ time  : chr "2041-07-01T12:00:00"
+```
+
+Note how in the [`array()`](https://rdrr.io/r/base/array.html) version
+the `x` and `y` axes are reversed and the `y` values decrease,
+i.e. working from the top-left down to the bottom-right, just like a
+standard R array.
+
+## ncdfCF data model in a nutshell
+
+The netCDF file format is very flexible, as well as CF, and the `ncdfCF`
+package uses a layered structure to capture it all. This structure
+enables a full support of the features provided by the `netcdf` library
+and the CF Conventions.
+
+![Figure 2: Core ncdfCF data model](../ncdfCF-datamodel-0.7.png)
+
+Figure 2: Core ncdfCF data model
+
+Each of the building blocks may have other objects associated with it,
+such as axes for `CFVariable`. Package `ncdfCF` is built using the `R6`
+OOP framework and uses class hierarchies throughout. The crucial but
+humble “virtual” class `CFAxis` is not used directly, instead you’ll
+work with its seven descendant classes. `CFVariable` has several
+specialised sub-classes, such as `CFVariableL3b` for NASA level-3 binned
+data used for MODIS imagery, or `CFVerticalParametricTerm` which you
+will encounter when using *formula terms* for a parametric vertical
+axis.
+
+![Figure 3: Condensed ncdfCF axis class
+hierarchy](../ncdfCF-hierarchy-0.7.png)
+
+Figure 3: Condensed ncdfCF axis class hierarchy
+
+## Feature matrix
+
+This section provides an overview of how this package implements the
+various elements of the CF Conventions.
+
+#### 2. NetCDF files and components
+
+##### 2.1. Filename
+
+Any filename extension is allowed.
+
+##### 2.2. Data types
+
+Any allowable data type can be read to and written from a netCDF file.
+In R, only the standard data types are used.
+
+##### 2.3. Naming conventions
+
+It is *required* that variable, dimension, attribute and group names
+begin with a letter and be composed of letters, digits, and underscores.
+The maximum length of a name is 255 characters.
+
+Names of NC variables - thus the names of CF objects built on top of
+them as well - must be unique, disregarding the case of the name,
+*within the group* in which the NC variable is defined. Scoping at group
+level is not mentioned in the CF conventions and this is thus an
+extension of the conventions.
+
+##### 2.4. Dimensions
+
+Fully implemented. Scalar coordinate variables are supported in reading
+and writing, but internally represented as an axis with length 1.
+
+##### 2.5. Variables
+
+The `actual_range` attribute is determined when a `CFVariable` is
+created from a netCDF resource or its values modified in code. The
+attribute is also attached to all axes and their boundaries.
+
+Upon saving a `CFVariable` to a netCDF file, data may be packed and the
+appropriate attributes will be written along with the data.
+
+##### 2.6. Attributes
+
+This package only interprets attributes that are defined by CF to have a
+special meaning that is relevant to reading, processing or writing data.
+Other attributes are read and presented to the user.
+
+The attribute `Conventions` is written to file with value “CF-1.13”.
+
+The attribute `history` is created in the group of the data variable or
+prepended with information on any processing that has been applied to
+the data.
+
+Other global, group or data variable attributes are not written to file
+automatically; the user has to add to amend these attributes explicitly.
+
+##### 2.7. Groups
+
+Fully implemented. This includes lateral search *for all objects*, which
+is allowed but discouraged by CF for regular coordinate variables only.
+Lateral search is included because some important data collections,
+particularly in the field of earth observation, depend on it to locate
+related objects over complex group hierarchies.
+
+##### 2.8. Aggregation variables
+
+Not implemented.
+
+#### 3. Description of the data
+
+##### 3.1. Units
+
+The package optionally uses the `units` package which provides access to
+the UDUNITS library to manage units or convert between them.
+
+The `units` attribute is interpreted for axes and effectively required
+for the dimensions “that receive special treatment” (see sections 4.1 -
+4.4) or they will not be recognized as such. Otherwise presence or
+contents of the attribute is not tested.
+
+The `units_metadata` attribute is not managed by this package. It is the
+responsibility of the user to set the appropriate value.
+
+Attributes `scale_factor` and `add_offset` are only used for packing
+data (section 8.1).
+
+##### 3.2 Long name
+
+Supported for all objects that have this attribute.
+
+##### 3.3 Standard name
+
+The standard names table can optionally (and automatically) be accessed
+through the `CF$standard_names` object. Management of the XML is
+automatic, including periodic checks to see if an update is available.
+
+The `standard_name` attribute is read but not checked against the
+standard name table. Objects with a `standard_name` attribute can be
+identified with the `CFDataset$objects_by_standard_name()` method,
+either for presence of the attribute or using a specific standard name.
+
+##### 3.4. Ancillary data
+
+Fully implemented.
+
+##### 3.5. Flags
+
+Not implemented directly but using the `flag_values` and `flag_meanings`
+attributes is trivial on the user side.
+
+#### 4. Coordinate types
+
+When opening a netCDF resource, axes are scanned for using the `units`
+or `axis` attribute, then the `standard_name`, and finally, as an
+extension to CF, by its `name` attribute.
+
+Upon writing, the `axis` attribute is added, if defined and not already
+present.
+
+##### 4.1. Latitude coordinate
+
+Fully implemented.
+
+##### 4.2. Longitude coordinate
+
+Fully implemented.
+
+##### 4.3. Vertical (heigth or depth) coordinate
+
+Fully implemented for dimensional vertical axes. If the `units` library
+is available, a unit of pressure will be identified.
+
+Parametric vertical coordinates are partially supported. Of the nine
+available formulations, the “Ocean s-coordinate, generic form 1”, “Ocean
+s-coordinate, generic form 2” and “Atmosphere hybrid sigma pressure
+coordinate” are implemented. Other formulations will be implemented as
+sample data is made available for testing the code.
+
+##### 4.4. Time coordinate
+
+The time coordinate is managed by the
+[CFtime](https://cran.r-project.org/package=CFtime) package. All defined
+calendars, including the recently added `utc` and `tai` calendars, are
+supported. Leap seconds are fully supported in notation and arithmetic
+when using the `utc` calendar.
+
+When encountered upon opening a netCDF resource, the deprecated
+`gregorian` calendar is replaced by the equivalent `standard` calendar
+in the user-facing code.
+
+Time coordinates with an explicitly defined calendar is not supported.
+
+##### 4.5. Discrete axis
+
+Fully supported.
+
+#### 5. Coordinate systems and domain
+
+The `coordinates` attribute is interpreted, both for *coordinate
+variables* and *auxiliary coordinate variables*.
+
+In `ncdfCF`, *auxiliary coordinate variables* will have axis
+orientations attached to them for ease-of-use and identification. This
+orientation will not be written to file as an `axis` attribute.
+
+##### 5.1. Independent latitude, longitude, vertical, and time axes
+
+Fully supported.
+
+##### 5.2. Two-dimensional latitude, longitude, coordinate variables
+
+Fully supported. When higher-dimension arrays are found that are used in
+this context (such as an additional “time” coordinate variable) those
+higher dimensions are silently dropped both from the auxiliary
+coordinate variable and its bounds, if present.
+
+##### 5.3. Reduced horizontal grid
+
+Not supported. But do note that one significant data collection of
+netCDF files using a reduced horizontal grid, MODIS level-3 binned
+format, uses a different format than the CF arrangement. `ncdfCF` does
+read this format without problem (extending CF by also supporting netCDF
+user-defined types).
+
+##### 5.6. Horizontal coordinate reference systems, grid mappings, and projections
+
+The simple `grid_mapping` format is fully supported. The extended,
+second format is not supported. The `standard_name` on coordinate
+variables is not used; instead use is made of the axis orientation
+(either through the `axis` attribute or through another supported
+mechanism; see section 4.).
+
+`ncdfCF` uses OGC WKT2 strings to report on coordinate reference
+systems, rather than the stock-old and obsolete PROJ format as is
+suggested by CF.
+
+The `crs_wkt` attribute is used when found.
+
+##### 5.7. Scalar coordinate variables
+
+Fully supported but internally represented as a regular axis of length
+1.
+
+##### 5.8. Domain variables
+
+Not implemented.
+
+##### 5.9. Mesh topology variables
+
+Not implemented.
+
+#### 6. Labels and alternative coordinates
+
+##### 6.1. Labels
+
+Generic labels are supported. This includes multiple sets of labels per
+axis. Labels can be used for display as well as in selection.
+
+Geographic regions are also supported but not referenced against the
+list of *standardized region names*, as that list is severely
+restrictive, and neither is the `standard_name` attribute referenced in
+this context.
+
+Taxon names and identifiers and their specific attributes are not
+specifically interpreted.
+
+##### 6.2. Alternative coordinates
+
+These are not specifically supported but they will be read correctly.
+
+#### 7. Data representative of cells
+
+##### 7.1. Cell boundaries
+
+Fully supported for 1D and 2D coordinate variables. More strictly than
+the conventions, the coordinate value must fall on or between its two
+boundary values (which the conventions merely recommend).
+
+Higher dimension boundaries on coordinate variables are not yet
+supported.
+
+##### 7.2. Cell measures
+
+Fully supported.
+
+External variables can be linked to the `CFCellMeasure` instances that
+are created upon reading a netCDF resource and will then automatically
+be available to any referring data variables.
+
+##### 7.3. Cell methods
+
+The `cell_methods` attribute is read, as all other attributes are, but
+it is not parsed or interpreted.
+
+Interactive users and packages built on top of `ncdfCF` should update
+the attribute after applying an operation to any data variable as the
+package does not have enough information to do so programmatically. A
+case in point is the `CFVariable::summarise()` method: the function to
+apply in summarising is user-supplied and this package has no knowledge
+of what that function does or results in: apart from built-in functions
+like
+[`mean()`](https://rspatial.github.io/terra/reference/summarize-generics.html)
+or [`max()`](https://rdrr.io/r/base/Extremes.html), users can supply a
+custom-made function with multiple results and thus multiple resulting
+`CFVariable` instances that each need a specific update to the
+`cell_methods` attribute copied from the data variable being summarised.
+
+##### 7.4. Climatological statistics
+
+Climatological time series and their `climatology` bounds can be read
+from file.
+
+Climatological statistics are generated when using the
+`CFVariable::summarise()` method and written to file, including their
+bounds.
+
+The corresponding `cell_methods` are not yet supported.
+
+##### 7.5. Geometries
+
+Not implemented.
+
+#### 8. Reduction of dataset size
+
+##### 8.1. Packed data
+
+Fully supported on reading and writing.
+
+##### 8.2. Lossless compression by gathering
+
+Not implemented.
+
+##### 8.3. Lossy compression by coordinate subsampling
+
+Not implemented.
+
+##### 8.4. Lossy compression via quantization
+
+Not implemented.
+
+#### 9. Discrete sampling geometries
+
+Not implemented.
