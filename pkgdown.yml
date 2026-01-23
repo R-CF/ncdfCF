@@ -5,7 +5,7 @@ articles:
   articles/31_Creating: 31_Creating.html
   articles/32_R-CF: 32_R-CF.html
   ncdfCF: ncdfCF.html
-last_built: 2026-01-23T15:41Z
+last_built: 2026-01-23T20:10Z
 urls:
   reference: https://r-cf.github.io/ncdfCF/reference
   article: https://r-cf.github.io/ncdfCF/articles

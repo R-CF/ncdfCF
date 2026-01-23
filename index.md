@@ -36,11 +36,9 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 #>  tp   Total precipitation   m     NC_DOUBLE longitude, latitude, time
 #> 
 #> Attributes:
-#>  name        type    length value                         
-#>  CDI         NC_CHAR  64    Climate Data Interface vers...
-#>  Conventions NC_CHAR   6    CF-1.6                        
-#>  history     NC_CHAR 482    Tue May 28 18:39:12 2024: c...
-#>  CDO         NC_CHAR  64    Climate Data Operators vers...
+#>  name        type    length value                             
+#>  Conventions NC_CHAR  6     CF-1.6                            
+#>  history     NC_CHAR 34     Attributes simplified for example.
 
 # ...or very brief details
 ds$var_names
@@ -136,16 +134,9 @@ peek_ncdf(fn)
 #> latitude                1
 #> 
 #> $attributes
-#>          name    type length
-#> 1         CDI NC_CHAR     64
-#> 2 Conventions NC_CHAR      6
-#> 3     history NC_CHAR    482
-#> 4         CDO NC_CHAR     64
-#>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 value
-#> 1                                                                                                                                                                                                                                                                                                                                                                                                                                    Climate Data Interface version 2.4.1 (https://mpimet.mpg.de/cdi)
-#> 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              CF-1.6
-#> 3 Tue May 28 18:39:12 2024: cdo seldate,2016-01-01,2016-01-01 /Users/patrickvanlaake/CC/ERA5land/Rwanda/ERA5land_Rwanda_t2m-pev-tp_2016-2018.nc ERA5land_Rwanda_20160101.nc\n2021-12-22 07:00:24 GMT by grib_to_netcdf-2.23.0: /opt/ecmwf/mars-client/bin/grib_to_netcdf -S param -o /cache/data5/adaptor.mars.internal-1640155821.967082-25565-12-0b19757d-da4e-4ea4-b8aa-d08ec89caf2c.nc /cache/tmp/0b19757d-da4e-4ea4-b8aa-d08ec89caf2c-adaptor.mars.internal-1640142203.3196251-25565-10-tmp.grib
-#> 4                                                                                                                                                                                                                                                                                                                                                                                                                                    Climate Data Operators version 2.4.1 (https://mpimet.mpg.de/cdo)
+#>          name    type length                              value
+#> 1 Conventions NC_CHAR      6                             CF-1.6
+#> 2     history NC_CHAR     34 Attributes simplified for example.
 ```
 
 ## Extracting data
@@ -346,11 +337,10 @@ latitudinal transect, for instance, provide only a longitude coordinate:
 #>  hours since 1900-01-01 00:00:00.0
 #> 
 #> Attributes:
-#>  name         type      length value                  
-#>  long_name    NC_CHAR   19     2 metre temperature    
-#>  units        NC_CHAR    1     K                      
-#>  actual_range NC_DOUBLE  2     286.539447, 298.96298  
-#>  coordinates  NC_CHAR   23     longitude latitude time
+#>  name         type      length value                
+#>  long_name    NC_CHAR   19     2 metre temperature  
+#>  units        NC_CHAR    1     K                    
+#>  actual_range NC_DOUBLE  2     286.539447, 298.96298
 ```
 
 Note that there is only a single longitude coordinate left, at exactly
@@ -374,9 +364,9 @@ t2m$summarise("tmax", max, "day")
 #> 
 #> Axes:
 #>  axis name      length values                unit                             
+#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
 #>  X    longitude 31     [28 ... 31]           degrees_east                     
 #>  Y    latitude  21     [-1 ... -3]           degrees_north                    
-#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
 #> 
 #> Attributes:
 #>  name         type      length value                
@@ -415,9 +405,9 @@ daily_stats <- function(x, na.rm = TRUE) {
 #> 
 #> Axes:
 #>  axis name      length values                unit                             
+#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
 #>  X    longitude 31     [28 ... 31]           degrees_east                     
 #>  Y    latitude  21     [-1 ... -3]           degrees_north                    
-#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
 #> 
 #> Attributes:
 #>  name         type      length value                 
@@ -434,9 +424,9 @@ daily_stats <- function(x, na.rm = TRUE) {
 #> 
 #> Axes:
 #>  axis name      length values                unit                             
+#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
 #>  X    longitude 31     [28 ... 31]           degrees_east                     
 #>  Y    latitude  21     [-1 ... -3]           degrees_north                    
-#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
 #> 
 #> Attributes:
 #>  name         type      length value                
@@ -453,9 +443,9 @@ daily_stats <- function(x, na.rm = TRUE) {
 #> 
 #> Axes:
 #>  axis name      length values                unit                             
+#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
 #>  X    longitude 31     [28 ... 31]           degrees_east                     
 #>  Y    latitude  21     [-1 ... -3]           degrees_north                    
-#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
 #> 
 #> Attributes:
 #>  name         type      length value              
@@ -479,7 +469,7 @@ arr <- array(rnorm(120), dim = c(6, 5, 4))
 as_CF("my_first_CF_object", arr)
 #> <Variable> my_first_CF_object 
 #> 
-#> Values: [-2.205896 ... 3.076744] 
+#> Values: [-1.845046 ... 2.907942] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -490,7 +480,7 @@ as_CF("my_first_CF_object", arr)
 #> 
 #> Attributes:
 #>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -2.205896, 3.076744
+#>  actual_range NC_DOUBLE 2      -1.845046, 2.907942
 ```
 
 Usable but not very impressive. The axes have dull names without any
@@ -512,7 +502,7 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 (obj <- as_CF("a_better_CF_object", arr))
 #> <Variable> a_better_CF_object 
 #> 
-#> Values: [-2.205896 ... 3.076744] 
+#> Values: [-1.845046 ... 2.907942] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -523,11 +513,11 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 #> 
 #> Attributes:
 #>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -2.205896, 3.076744
+#>  actual_range NC_DOUBLE 2      -1.845046, 2.907942
 
 # Axes are of a specific type and have basic attributes set
 obj$axes[["lat"]]
-#> <Latitude axis> [-22] lat
+#> <Latitude axis> [-32] lat
 #> Length     : 6
 #> Axis       : Y 
 #> Coordinates: 45, 44, 43, 42, 41, 40 (degrees_north)
@@ -541,7 +531,7 @@ obj$axes[["lat"]]
 #>  units         NC_CHAR   13     degrees_north
 
 obj$axes[["time"]]
-#> <Time axis> [-24] time
+#> <Time axis> [-34] time
 #> Length     : 4
 #> Axis       : T 
 #> Calendar   : standard 
@@ -592,10 +582,9 @@ suppressMessages(library(terra))
 #> extent      : 27.95, 31.05, -3.05, -0.95  (xmin, xmax, ymin, ymax)
 #> coord. ref. :  
 #> source(s)   : memory
-#> name        :     lyr.1 
-#> min value   :  1.819982 
-#> max value   : 11.273690 
-#> time        : 2016-01-01 UTC
+#> name        : 2016-01-01T12:00:00 
+#> min value   :            1.819982 
+#> max value   :           11.273690
 terra::plot(r)
 ```
 

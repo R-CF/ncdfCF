@@ -34,9 +34,10 @@ do intermediate saving of your work to the netCDF file.
 
 ## Creating a new CF data variable
 
-There are different ways that you can create a CFVariable: - Convert a
-suitable R object such as an array or a matrix. - Process data from
-existing netCDF resources into a new CFVariable.
+There are different ways that you can create a CFVariable:
+
+- Convert a suitable R object such as an array or a matrix.
+- Process data from existing netCDF resources into a new CFVariable.
 
 ### Vector, matrix, array
 
@@ -148,4 +149,84 @@ return a `CFVariable` instance to the caller. You can also perform
 arithmetical and mathematical operations on a `CFVariable` which also
 returns a new `CFVariable` to the caller.
 
-### Managing your new CFVariables
+``` r
+# Open an existing netCDF resource for reading
+fn <- system.file("extdata", "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20230101-20231231_vncdfCF.nc", package = "ncdfCF")
+ds <- open_ncdf(fn)
+ds$var_names
+#> [1] "pr"
+
+# The precipitation data variable is linked to the existing dataset but after an
+# arithmetical operation, such as unit conversion to mm/day, it is no longer 
+# linked.
+pr <- ds[["pr"]] * 86400
+pr$set_attribute("units", "NC_CHAR", "mm")
+pr$group
+#> <CF Group> [-13] / (virtual)
+#> Path      : /
+
+# Can operate on "virtual" CFVariables. Summarise the daily precipitation data 
+# to monthly means: the result is a new CFVariable in a new group.
+pr_mon <- pr$summarise("pr_month", sum, "month")
+pr_mon$group
+#> <CF Group> [-14] / (virtual)
+#> Path      : /
+
+# Add pr_mon to the new data set
+my_ds$add_variable(pr_mon)
+my_ds$variables()
+#> $pr_month
+#> <Variable> pr_month 
+#> 
+#> Values: [8.9e-05 ... 513.1605] mm
+#>     NA: 0 (0.0%)
+#> 
+#> Axes:
+#>  axis name long_name length values                                       
+#>  T    time           12     [2023-01-16T12:00:00 ... 2023-12-16T12:00:00]
+#>  X    lon  Longitude 14     [5.625 ... 14.765625]                        
+#>  Y    lat  Latitude  14     [40.35078 ... 49.47356]                      
+#>  unit                 
+#>  days since 1850-01-01
+#>  degrees_east         
+#>  degrees_north        
+#> 
+#> Attributes:
+#>  name         type      length value              
+#>  actual_range NC_DOUBLE 2      8.9e-05, 513.160452
+#>  units        NC_CHAR   2      mm
+```
+
+### Managing your new CFVariables in a single CFDataset
+
+If you have only one or a few related data variables, then adding them
+all to the root group of the data set is the easiest solution. The
+keyword here is “related”: the data variables have the same axes (name,
+type, length, values). If, on the other you want to place many disparate
+data variables in a single netCDF file, you should consider organising
+the netCDF file such that “like” data variables are placed together in a
+group, while other data variables are placed in different groups.
+
+A CF data set can have multiple groups, organised in a hierarchy to
+match the characteristics of the data variables. A `CFDataset` has a
+root group by the name of “/” and a subgroup can be added with the
+`create_subgroup("new_subgroup")` method. That returns the new subgroup,
+to which new subgroups can be added, etc, etc, etc. As with a
+`CFDataset`, `CFVariable` objects can be added to any group. That
+provides for a very flexible arrangement.
+
+``` r
+complex_ds <- create_ncdf()
+subgroup <- complex_ds$root$create_subgroup("sub1")
+subsubgroup1 <- subgroup$create_subgroup("subsub1")
+subsubgroup2 <- subgroup$create_subgroup("subsub2")
+subsubgroup1$add_variable(pr_mon)
+complex_ds$hierarchy()
+#> <NetCDF objects> CF_dataset 
+#> * /
+#>    * sub1
+#>       * subsub1
+#>       |  Axes     : [time (12): 2023-01-16T12:00:00 ... 2023-12-16T12:00:00], [lon (14): 5.625 ... 14.765625], [lat (14): 40.35078 ... 49.47356]
+#>       |  Variables: [-17: pr_month]
+#>       * subsub2
+```
