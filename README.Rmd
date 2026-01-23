@@ -161,7 +161,7 @@ as_CF("my_first_CF_object", arr)
 ```
 
 Usable but not very impressive. The axes have dull names without any meaning and the coordinates are just a sequence along the axis.
-
+ 
 If the R object has `dimnames` set, these will be used to create more informed axes. More interestingly, if your array represents some spatial data you can give your `dimnames` appropriate names ("lat", "lon", "latitude", "longitude", case-insensitive) and the corresponding axis will be created (if the coordinate values in the `dimnames` are within the domain of the axis type). For "time" coordinates, these are automatically detected irrespective of the name.
 
 ```{r create_dimnames}

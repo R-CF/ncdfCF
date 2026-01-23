@@ -1,6 +1,4 @@
-## Resubmission
-
-Fixed faulty cross-reference from one package vignette to another.
+This is a minor release with significant code enhancements and stability improvements.
 
 ## R CMD check results
 
@@ -12,15 +10,6 @@ Fixed faulty cross-reference from one package vignette to another.
 
 We checked 1 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
 
- * We saw 1 new problems
+ * We saw 0 new problems
  * We failed to check 0 packages
 
-Issues with CRAN packages are summarised below.
-
-### New problems
-(This reports the first line of each new failure)
-
-* CFtime
-  checking running R code from vignettes ...
-
-This is a known failure due to a mutual dependency. A patch for CFtime is ready and will be applied and submitted to CRAN as soon as this ncdfCF package release is available to build against.

@@ -369,10 +369,9 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @description The information returned by this method is very concise
     #'   and most useful when combined with similar information from other
     #'   variables.
-    #'
     #' @return Character string with very basic variable information.
     shard = function() {
-      self$NC$shard()
+      paste0("[", self$id, ": ", self$name, "]")
     },
 
     #' @description Retrieve interesting details of the data variable.
