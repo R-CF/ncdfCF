@@ -1,0 +1,129 @@
+# 3. Troubleshooting
+
+This page contains solutions for some of the more common problems
+encountered with the `ncdfCF` package and netCDF data.
+
+If you have a problem or are encountering an error and there is no
+solution to be found on this page, please open an
+[issue](https://github.com/R-CF/ncdfCF/issues).
+
+## Can’t assign a value to a CF object
+
+    ds <- open_ncdf("my_data.nc")
+    ds[["time"]]$orientation <- "T"
+    #> Error in `ds[["time"]]$orientation <- "T"`:
+    #> ! cannot add bindings to a locked environment
+
+This is an issue related to how R interprets the code. `ncdfCF` is built
+using the `R6` framework and the `ncdfCF` classes are thus environments.
+The sore point is assigning a value to an indirectly referenced object
+using the `[[` indexing operator. The solution is then to first take a
+reference to the object you’d like to assign a value to:
+
+    axT <- ds[["time"]]
+    axT$orientation <- "T"
+    axT
+    #> <Time axis> [0] time
+    #> Length     : 1800 (unlimited)
+    #> Axis       : T 
+    #> Calendar   : 360_day 
+    #> Range      : 2041-01-01T12:00:00 ... 2045-12-30T12:00:00 (days) 
+    #> Bounds     : 2041-01-01 ... 2046-01-01 
+    #> 
+    #> Attributes:
+    #>  ...
+
+## Axes are not specified properly
+
+Sometimes when you open a netCDF file you find that the axes are
+incompletely specified. While this may not generate an error or a
+warning and the data will still be usable, certain operations on the
+data are not possible, such as automatically orienting the data in a
+certain way or exporting the data variables to a different format.
+
+    (ds <- open_ncdf("~/METEO_DATA_202003120000.NC"))
+    #> <Dataset> METEO_DATA_202003120000.NC 
+    #> Resource   : ~/METEO_DATA_202003120000.NC 
+    #> Format     : classic4 
+    #> Collection : Generic netCDF data 
+    #> Conventions: (not indicated) 
+    #> Keep open  : FALSE 
+    #> 
+    #> Variables:
+    #>  name long_name                              units data_type  axes
+    #>  lwrc Incoming longwave radiation            W m-2 NC_DOUBLE  time, northing, easting
+    #>  sdri Incoming direct shortwave radiation... W m-2 NC_DOUBLE  time, northing, easting
+    #>  sdfd Incoming diffuse shortwave radiation   W m-2 NC_DOUBLE  time, northing, easting
+    #>  tais Air temperature at 10 m above ground   K     NC_DOUBLE  time, northing, easting
+    #>  rhus Relative humidity at 10 m above ground %     NC_DOUBLE  time, northing, easting
+    #>  pail Air pressure                           Pa    NC_DOUBLE  time, northing, easting
+    #>  wnsd Wind speed at 10 m above ground        m/s   NC_DOUBLE  time, northing, easting
+    #>  wndd Wind direction at 10 m above ground    deg   NC_DOUBLE  time, northing, easting
+    #>  proi Precipitation                          mm/hr NC_DOUBLE  time, northing, easting
+    #> 
+    #> Attributes:
+    #>  name               type      length value 
+    #>  title              NC_CHAR   108    High-resolution hydrometeorological data for th...
+    #>  summary            NC_CHAR   244    This dataset contains high-resolution meteorolo...
+    #>  ...
+
+    # Open a data variable
+    (lwrc <- ds[["lwrc"]])
+    #> <Variable> lwrc 
+    #> Long name: Incoming longwave radiation 
+    #> 
+    #> Axes:
+    #>  axis name     long_name length values                                        unit
+    #>  T    time                24    [2020-03-12T00:00:00 ... 2020-03-12T23:00:00] days since 2020-03-12T00:00:00+01:00
+    #>       northing Northing  180    [189950 ... 172050]                           m
+    #>       easting  Easting   185    [776050 ... 794450]                           m
+    #> 
+    #> Attributes:
+    #>  name                  type      length value                           
+    #>  _FillValue            NC_DOUBLE  1     -9999                           
+    #>  standard_name         NC_CHAR   32     downwelling_longwave_flux_in_air
+    #>  long_name             NC_CHAR   27     Incoming longwave radiation     
+    #>  coverage_content_type NC_CHAR   11     modelResult                     
+    #>  units                 NC_CHAR    5     W m-2
+
+This all looks ok but the `northing` and `easting` axes are not
+recognised as `Y` and `X`. You can remedy that manually:
+
+    ax <- lwrc$axes[["northing"]]
+    ax$orientation <- "Y"
+    ax <- lwrc$axes[["easting"]]
+    ax$orientation <- "X"
+    lwrc
+    #> <Variable> lwrc 
+    #> Long name: Incoming longwave radiation 
+    #> 
+    #> Axes:
+    #>  axis name     long_name length values                                        unit
+    #>  T    time                24    [2020-03-12T00:00:00 ... 2020-03-12T23:00:00] days since 2020-03-12T00:00:00+01:00
+    #>  Y    northing Northing  180    [189950 ... 172050]                           m
+    #>  X    easting  Easting   185    [776050 ... 794450]                           m
+    #> 
+    #> Attributes:
+    #>  name                  type      length value                           
+    #>  _FillValue            NC_DOUBLE  1     -9999                           
+    #>  standard_name         NC_CHAR   32     downwelling_longwave_flux_in_air
+    #>  long_name             NC_CHAR   27     Incoming longwave radiation     
+    #>  coverage_content_type NC_CHAR   11     modelResult                     
+    #>  units                 NC_CHAR    5     W m-2
+
+Note that you have to do this only once: all nine data variables share
+the same instance of the `northing` and `easting` axes and it is those
+objects that the `$orientation` field applies to.
+
+The above procedure solves the issue for the currently loaded data. If
+you want to fix the netCDF file permanently, you should open it for
+writing, set the appropriate attributes and save the edits:
+
+    ds <- open_ncdf("~/METEO_DATA_202003120000.NC", write = TRUE)
+    northing <- ds[["northing"]]
+    northing$set_attribute("standard_name", "NC_CHAR", "projected_y_coordinate")
+    northing$set_attribute("axis", "NC_CHAR", "Y")
+    easting <- ds[["easting"]]
+    easting$set_attribute("standard_name", "NC_CHAR", "projected_x_coordinate")
+    easting$set_attribute("axis", "NC_CHAR", "X")
+    ds$save()

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ncdfCF</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/31_Creating.html">1. Creating new data sets and variables</a></li>
     <li><a class="dropdown-item" href="../articles/32_R-CF.html">2. R and CF Metadata Conventions</a></li>
+    <li><a class="dropdown-item" href="../articles/33_Troubleshooting.html">3. Troubleshooting</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -61,7 +62,7 @@
       <h1>1. Creating new data sets and variables</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/R-CF/ncdfCF/blob/v0.8.0/vignettes/articles/31_Creating.Rmd" class="external-link"><code>vignettes/articles/31_Creating.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/R-CF/ncdfCF/blob/main/vignettes/articles/31_Creating.Rmd" class="external-link"><code>vignettes/articles/31_Creating.Rmd</code></a></small>
       <div class="d-none name"><code>31_Creating.Rmd</code></div>
     </div>
 
@@ -87,7 +88,7 @@ set (duh!) but it will have a root group and some basic attributes:</p>
 <span><span class="co">#&gt; Attributes:</span></span>
 <span><span class="co">#&gt;  name        type    length value                                             </span></span>
 <span><span class="co">#&gt;  Conventions NC_CHAR  7     CF-1.13                                           </span></span>
-<span><span class="co">#&gt;  history     NC_CHAR 62     Created with R package ncdfCF 0.8.0 on 2026-01-...</span></span></code></pre></div>
+<span><span class="co">#&gt;  history     NC_CHAR 67     Created with R package ncdfCF 0.8.0.9000 on 202...</span></span></code></pre></div>
 <p>The data set is created in memory (<code>Resource : (virtual)</code>)
 and you can save it to disk when you are done adding data variables to
 it with
