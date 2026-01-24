@@ -2,6 +2,8 @@
 
 ## ncdfCF 0.8.0
 
+CRAN release: 2026-01-23
+
 ##### Conventions
 
 - Ancillary variables are now associated with the data variables that
