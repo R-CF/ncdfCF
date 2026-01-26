@@ -71,31 +71,49 @@ NCObject <- R6::R6Class("NCObject",
     #'   and add missing attributes from the passed in argument.
     #' @param nm The NC variable name or "NC_GLOBAL" to write the attributes to.
     #' @param new_atts The attributes to write.
+    #' @param force Force overwrite of existing attributes. Default is `FALSE`.
     #' @return Self, invisibly.
-    write_attributes = function(nm, new_atts) {
+    write_attributes = function(nm, new_atts, force = FALSE) {
       old_atts <- private$.attributes
       h <- self$handle
 
-      # Delete attributes
-      names <- old_atts$name[!(old_atts$name %in% new_atts$name)]
-      names <- names[!(names %in% c("_FillValue", "missing_value", "add_offset",
-                                    "scale_factor", "coordinates",
-                                    "valid_range", "valid_min", "valid_max",
-                                    "external_variables"))]
-      for (a in seq_along(names))
-        RNetCDF::att.delete.nc(h, nm, names[a])
-
-      # Changed and new attributes
-      names <- old_atts$name[old_atts$name %in% new_atts$name]
-      names <- unlist(sapply(names, function(n) {
-        if (!identical(old_atts[old_atts$name == n, "value"], new_atts[new_atts$name == n, "value"])) n else ""
-      }))
-      names <- c(names, new_atts$name[!(new_atts$name %in% old_atts$name)])
-      for (a in seq_along(names))
-        if (nzchar(n <- names[a])) {
-          att <- new_atts[new_atts$name == n,]
-          RNetCDF::att.put.nc(h, nm, n, att$type, unlist(att$value, use.names = FALSE))
+      if (force) {
+        # Delete all existing attributes
+        if (nrow(old_atts)) {
+          names <- old_atts$name
+          for (a in seq_along(names))
+            try(RNetCDF::att.delete.nc(h, nm, names[a]), silent = TRUE)
         }
+
+        # Write all new attributes
+        if (nrow(new_atts)) {
+          names <- new_atts$name
+          for (a in seq_along(names))
+            att <- new_atts[new_atts$name == names[a],]
+            RNetCDF::att.put.nc(h, nm, names[a], att$type, unlist(att$value, use.names = FALSE))
+        }
+      } else {
+        # Delete attributes
+        names <- old_atts$name[!(old_atts$name %in% new_atts$name)]
+        names <- names[!(names %in% c("_FillValue", "missing_value", "add_offset",
+                                      "scale_factor", "coordinates",
+                                      "valid_range", "valid_min", "valid_max",
+                                      "external_variables"))]
+        for (a in seq_along(names))
+          RNetCDF::att.delete.nc(h, nm, names[a])
+
+        # Changed and new attributes
+        names <- old_atts$name[old_atts$name %in% new_atts$name]
+        names <- unlist(sapply(names, function(n) {
+          if (!identical(old_atts[old_atts$name == n, "value"], new_atts[new_atts$name == n, "value"])) n else ""
+        }))
+        names <- c(names, new_atts$name[!(new_atts$name %in% old_atts$name)])
+        for (a in seq_along(names))
+          if (nzchar(n <- names[a])) {
+            att <- new_atts[new_atts$name == n,]
+            RNetCDF::att.put.nc(h, nm, n, att$type, unlist(att$value, use.names = FALSE))
+          }
+      }
       private$.attributes <- new_atts
       invisible(self)
     }

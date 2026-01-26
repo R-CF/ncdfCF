@@ -972,6 +972,91 @@ CFVariable <- R6::R6Class("CFVariable",
       invisible(self)
     },
 
+    #' @description Tests if the `other` object is coincident with this data
+    #'   variable: identical axes.
+    #' @param other A `CFVariable` instance to compare to this data variable.
+    #' @return `TRUE` if the data variables are coincident, `FALSE` otherwise.
+    is_coincident = function(other) {
+      if (!inherits(other, "CFVariable")) return(FALSE)
+      other_axes <- other$axes
+      if (length(other_axes) != length(self$axes)) return(FALSE)
+      for (ax in seq_along(self$axes))
+        if (!self$axes[[ax]]$identical(other_axes[[ax]]))
+          return(FALSE)
+      TRUE
+    },
+
+    #' @description Add a cell measure variable to this variable.
+    #' @param cm An instance of [CFCellMeasure].
+    #' @return Self, invisibly.
+    add_cell_measure = function(cm) {
+      if (inherits(cm, "CFCellMeasure"))
+        private$.cell_measures <- append(private$.cell_measures, setNames(list(cm), cm$name))
+    },
+
+    #' @description Add an auxiliary coordinate to the appropriate axis of this
+    #'   variable. The length of the axis must be the same as the length of the
+    #'   auxiliary labels.
+    #' @param aux An instance of [CFLabel] or [CFAxis].
+    #' @param axis An instance of `CFAxis` that these auxiliary coordinates are
+    #'   for.
+    #' @return Self, invisibly.
+    add_auxiliary_coordinate = function(aux, axis) {
+      if (inherits(aux, c("CFLabel", "CFAxis"))) {
+        axis$auxiliary <- aux
+        #if (aux$name %in% axis$coordinate_names)
+        #  self$update_coordinates_attribute(aux$name)
+      }
+    },
+
+    #' @description Add an ancillary variable to this variable.
+    #' @param var An instance of [CFVariable].
+    #' @return Self, invisibly.
+    add_ancillary_variable = function(var) {
+      if (inherits(var, "CFVariable")) {
+        private$.ancillary[[var$name]] <- var
+        #if (aux$name %in% axis$coordinate_names)
+        #  self$update_coordinates_attribute(aux$name)
+      }
+    },
+
+    #' @description Attach this variable to a group. If there is another object
+    #'   with the same name in this group an error is thrown. For associated
+    #'   objects (such as axes, CRS, boundary variables, etc), if another object
+    #'   with the same name is otherwise identical to the associated object then
+    #'   that object will be linked from the variable, otherwise an error is
+    #'   thrown.
+    #' @param grp An instance of [CFGroup].
+    #' @param locations Optional. A `list` whose named elements correspond to
+    #'   the names of objects associated with this variable (but not the
+    #'   variable itself). Each list element has a single character string
+    #'   indicating the group in the hierarchy where the object should be
+    #'   stored. As an example, if the variable has axes "lon" and "lat" and
+    #'   they should be stored in the parent group of `grp`, then specify
+    #'   `locations = list(lon = "..", lat = "..")`. Locations can use absolute
+    #'   paths or relative paths from the group. Associated objects that are not
+    #'   in the list will be stored in group `grp`. If the argument `locations`
+    #'   is not provided, all associated objects will be stored in this group.
+    #' @return Self, invisibly.
+    attach_to_group = function(grp, locations = list()) {
+      if (self$name %in% names(grp$objects))
+        stop("CF object '", self$name, "' already exists in group ", grp$fullname, ".", call. = FALSE)
+
+      # FIXME: All objects that are added must be registered so that they can be
+      # removed if there is an error later on. General process: every object
+      # type has an attach_to_group method to handle its own attachment. If
+      # an error occurs, clean up and cascade the error to the caller.
+      lapply(private$.axes, function(ax) ax$attach_to_group(grp, locations))
+      if (!is.null(private$.llgrid))
+        private$.llgrid$attach_to_group(grp, locations)
+      if (!is.null(private$.crs))
+        private$.crs$attach_to_group(grp, locations)
+      lapply(private$.cell_measures, function(cm) cm$attach_to_group(grp, locations))
+      lapply(private$.ancillary, function(anc) anc$attach_to_group(grp, locations))
+
+      super$attach_to_group(grp, locations)
+    },
+
     #' @description Convert the data to a `terra::SpatRaster` (3D) or a
     #'   `terra::SpatRasterDataset` (4D) object. The data will be oriented to
     #'   North-up. The 3rd dimension in the data will become layers in the
@@ -1063,91 +1148,6 @@ CFVariable <- R6::R6Class("CFVariable",
       if (is.na(units)) units <- ""
       data.table::setattr(dt, "value", list(name = long_name, units = units))
       dt
-    },
-
-    #' @description Tests if the `other` object is coincident with this data
-    #'   variable: identical axes.
-    #' @param other A `CFVariable` instance to compare to this data variable.
-    #' @return `TRUE` if the data variables are coincident, `FALSE` otherwise.
-    is_coincident = function(other) {
-      if (!inherits(other, "CFVariable")) return(FALSE)
-      other_axes <- other$axes
-      if (length(other_axes) != length(self$axes)) return(FALSE)
-      for (ax in seq_along(self$axes))
-        if (!self$axes[[ax]]$identical(other_axes[[ax]]))
-          return(FALSE)
-      TRUE
-    },
-
-    #' @description Add a cell measure variable to this variable.
-    #' @param cm An instance of [CFCellMeasure].
-    #' @return Self, invisibly.
-    add_cell_measure = function(cm) {
-      if (inherits(cm, "CFCellMeasure"))
-        private$.cell_measures <- append(private$.cell_measures, setNames(list(cm), cm$name))
-    },
-
-    #' @description Add an auxiliary coordinate to the appropriate axis of this
-    #'   variable. The length of the axis must be the same as the length of the
-    #'   auxiliary labels.
-    #' @param aux An instance of [CFLabel] or [CFAxis].
-    #' @param axis An instance of `CFAxis` that these auxiliary coordinates are
-    #'   for.
-    #' @return Self, invisibly.
-    add_auxiliary_coordinate = function(aux, axis) {
-      if (inherits(aux, c("CFLabel", "CFAxis"))) {
-        axis$auxiliary <- aux
-        #if (aux$name %in% axis$coordinate_names)
-        #  self$update_coordinates_attribute(aux$name)
-      }
-    },
-
-    #' @description Add an ancillary variable to this variable.
-    #' @param var An instance of [CFVariable].
-    #' @return Self, invisibly.
-    add_ancillary_variable = function(var) {
-      if (inherits(var, "CFVariable")) {
-        private$.ancillary[[var$name]] <- var
-        #if (aux$name %in% axis$coordinate_names)
-        #  self$update_coordinates_attribute(aux$name)
-      }
-    },
-
-    #' @description Attach this variable to a group. If there is another object
-    #'   with the same name in this group an error is thrown. For associated
-    #'   objects (such as axes, CRS, boundary variables, etc), if another object
-    #'   with the same name is otherwise identical to the associated object then
-    #'   that object will be linked from the variable, otherwise an error is
-    #'   thrown.
-    #' @param grp An instance of [CFGroup].
-    #' @param locations Optional. A `list` whose named elements correspond to
-    #'   the names of objects associated with this variable (but not the
-    #'   variable itself). Each list element has a single character string
-    #'   indicating the group in the hierarchy where the object should be
-    #'   stored. As an example, if the variable has axes "lon" and "lat" and
-    #'   they should be stored in the parent group of `grp`, then specify
-    #'   `locations = list(lon = "..", lat = "..")`. Locations can use absolute
-    #'   paths or relative paths from the group. Associated objects that are not
-    #'   in the list will be stored in group `grp`. If the argument `locations`
-    #'   is not provided, all associated objects will be stored in this group.
-    #' @return Self, invisibly.
-    attach_to_group = function(grp, locations = list()) {
-      if (self$name %in% names(grp$objects))
-        stop("CF object '", self$name, "' already exists in group ", grp$fullname, ".", call. = FALSE)
-
-      # FIXME: All objects that are added must be registered so that they can be
-      # removed if there is an error later on. General process: every object
-      # type has an attach_to_group method to handle its own attachment. If
-      # an error occurs, clean up and cascade the error to the caller.
-      lapply(private$.axes, function(ax) ax$attach_to_group(grp, locations))
-      if (!is.null(private$.llgrid))
-        private$.llgrid$attach_to_group(grp, locations)
-      if (!is.null(private$.crs))
-        private$.crs$attach_to_group(grp, locations)
-      lapply(private$.cell_measures, function(cm) cm$attach_to_group(grp, locations))
-      lapply(private$.ancillary, function(anc) anc$attach_to_group(grp, locations))
-
-      super$attach_to_group(grp, locations)
     },
 
     #' @description Write the data variable to a netCDF file, including all of
