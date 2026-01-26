@@ -184,7 +184,7 @@ Tests if the axis passed to this method is identical to `self`.
 
 ------------------------------------------------------------------------
 
-### Method [`copy()`](https://rdatatable.gitlab.io/data.table/reference/copy.html)
+### Method [`copy()`](https://rdrr.io/pkg/data.table/man/copy.html)
 
 Create a copy of this axis. The copy is completely separate from `self`,
 meaning that both `self` and all of its components are made from new

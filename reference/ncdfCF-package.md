@@ -182,7 +182,7 @@ data, with different selection methods.
   [`terra::SpatRasterDataset`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
   (4 dimensions), with all relevant properties set.
 
-- [`data.table()`](https://rdatatable.gitlab.io/data.table/reference/data.table.html):
+- [`data.table()`](https://rdrr.io/pkg/data.table/man/data.table.html):
   (requires the `data.table` package) The data values from the data
   object as a `data.table` where every row consists of the permutation
   of the axis values and a final data value.

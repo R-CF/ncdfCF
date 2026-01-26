@@ -404,7 +404,7 @@ with further assessment done in sub-classes.
 
 ------------------------------------------------------------------------
 
-### Method [`copy()`](https://rdatatable.gitlab.io/data.table/reference/copy.html)
+### Method [`copy()`](https://rdrr.io/pkg/data.table/man/copy.html)
 
 Create a copy of this axis. This method is "virtual" in the sense that
 it does not do anything other than return `NULL`. This stub is here to

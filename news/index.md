@@ -119,10 +119,9 @@ CF objects.
   supported. This means that expressions can be written directly on
   `CFVariable` instances.
 - All `CFAxis` descendant classes now have a
-  [`copy()`](https://rdatatable.gitlab.io/data.table/reference/copy.html)
-  method which creates a deep copy of the axis and a
-  `copy_with_values()` method that makes a copy of the current axis but
-  with new values.
+  [`copy()`](https://rdrr.io/pkg/data.table/man/copy.html) method which
+  creates a deep copy of the axis and a `copy_with_values()` method that
+  makes a copy of the current axis but with new values.
 - All CF objects that derive from a CF object read from file have access
   to the file as long as the data is not modified. Thus in statement
   `axisB <- axisA$copy()`, the new `axisB` instance will have file

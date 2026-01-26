@@ -647,7 +647,7 @@ instance.
 
 ------------------------------------------------------------------------
 
-### Method [`data.table()`](https://rdatatable.gitlab.io/data.table/reference/data.table.html)
+### Method [`data.table()`](https://rdrr.io/pkg/data.table/man/data.table.html)
 
 Retrieve the data variable in the object in the form of a `data.table`.
 The `data.table` package needs to be installed for this method to work.

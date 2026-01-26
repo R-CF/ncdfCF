@@ -214,7 +214,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method [`copy()`](https://rdatatable.gitlab.io/data.table/reference/copy.html)
+### Method [`copy()`](https://rdrr.io/pkg/data.table/man/copy.html)
 
 Create a copy of this axis. The copy is completely separate from this
 instance, meaning that the copies of both this instance and all of its
