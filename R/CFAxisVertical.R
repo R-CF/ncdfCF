@@ -12,7 +12,7 @@ Z_parametric_standard_names <-
 #'   A regular vertical axis behaves like any other numeric axis. A parametric
 #'   vertical axis, on the other hand, is defined through an index value that is
 #'   contained in the axis coordinates, with additional data variables that hold
-#'   ancillary "formula terms" with which to calculate dimensional axis
+#'   ancillary "formula terms" with which to calculate physical axis
 #'   coordinates. It is used in atmosphere and ocean data sets.
 #'
 #'   Parametric vertical axes can only be read from file, not created from
@@ -61,7 +61,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
       }
     },
 
-    # This function computes the actual dimensional axis values from the terms.
+    # This function computes the actual physical axis coordinates from the terms.
     compute = function() {
       if (is.null(private$.computed_values))
         switch(private$.parameter_name,

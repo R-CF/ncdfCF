@@ -529,7 +529,7 @@ CFAxis <- R6::R6Class("CFAxis",
     },
 
     #' @field is_parametric (read-only) Logical flag that indicates if the axis
-    #'   has dimensional coordinates. Always `FALSE` for all axes except for
+    #'   has parametric coordinates. Always `FALSE` for all axes except for
     #'   [CFAxisVertical] which overrides this method.
     is_parametric = function(value) {
       if (missing(value))

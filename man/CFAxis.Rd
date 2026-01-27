@@ -71,7 +71,7 @@ file.}
 axis. Always returns \code{NULL} but \code{CFAxisTime} overrides this field.}
 
 \item{\code{is_parametric}}{(read-only) Logical flag that indicates if the axis
-has dimensional coordinates. Always \code{FALSE} for all axes except for
+has parametric coordinates. Always \code{FALSE} for all axes except for
 \link{CFAxisVertical} which overrides this method.}
 }
 \if{html}{\out{</div>}}

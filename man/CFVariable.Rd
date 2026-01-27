@@ -73,13 +73,13 @@ description of the variable as a WKT2 string.}
 \item \href{#method-CFVariable-summarise}{\code{CFVariable$summarise()}}
 \item \href{#method-CFVariable-profile}{\code{CFVariable$profile()}}
 \item \href{#method-CFVariable-append}{\code{CFVariable$append()}}
-\item \href{#method-CFVariable-terra}{\code{CFVariable$terra()}}
-\item \href{#method-CFVariable-data.table}{\code{CFVariable$data.table()}}
 \item \href{#method-CFVariable-is_coincident}{\code{CFVariable$is_coincident()}}
 \item \href{#method-CFVariable-add_cell_measure}{\code{CFVariable$add_cell_measure()}}
 \item \href{#method-CFVariable-add_auxiliary_coordinate}{\code{CFVariable$add_auxiliary_coordinate()}}
 \item \href{#method-CFVariable-add_ancillary_variable}{\code{CFVariable$add_ancillary_variable()}}
 \item \href{#method-CFVariable-attach_to_group}{\code{CFVariable$attach_to_group()}}
+\item \href{#method-CFVariable-terra}{\code{CFVariable$terra()}}
+\item \href{#method-CFVariable-data.table}{\code{CFVariable$data.table()}}
 \item \href{#method-CFVariable-write}{\code{CFVariable$write()}}
 \item \href{#method-CFVariable-save}{\code{CFVariable$save()}}
 }
@@ -541,56 +541,6 @@ Self, invisibly, with the arrays from this data variable and
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFVariable-terra"></a>}}
-\if{latex}{\out{\hypertarget{method-CFVariable-terra}{}}}
-\subsection{Method \code{terra()}}{
-Convert the data to a \code{terra::SpatRaster} (3D) or a
-\code{terra::SpatRasterDataset} (4D) object. The data will be oriented to
-North-up. The 3rd dimension in the data will become layers in the
-resulting \code{SpatRaster}, any 4th dimension the data sets. The \code{terra}
-package needs to be installed for this method to work.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$terra()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-A \code{terra::SpatRaster} or \code{terra::SpatRasterDataset} instance.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFVariable-data.table"></a>}}
-\if{latex}{\out{\hypertarget{method-CFVariable-data.table}{}}}
-\subsection{Method \code{data.table()}}{
-Retrieve the data variable in the object in the form of a
-\code{data.table}. The \code{data.table} package needs to be installed for this
-method to work.
-
-The attributes associated with this data variable will be mostly lost.
-If present, attributes 'long_name' and 'units' are attached to the
-\code{data.table} as attributes, but all others are lost.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFVariable$data.table(var_as_column = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{var_as_column}}{Logical to flag if the name of the variable should
-become a column (\code{TRUE}) or be used as the name of the column with the
-data values (\code{FALSE}, default). Including the name of the variable as a
-column is useful when multiple \code{data.table}s are merged by rows into
-one.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A \code{data.table} with all data points in individual rows. All axes
-will become columns. Two attributes are added: \code{name} indicates the
-long name of this data variable, \code{units} indicates the physical unit of
-the data values.
-}
-}
-\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFVariable-is_coincident"></a>}}
 \if{latex}{\out{\hypertarget{method-CFVariable-is_coincident}{}}}
 \subsection{Method \code{is_coincident()}}{
@@ -710,6 +660,56 @@ is not provided, all associated objects will be stored in this group.}
 }
 \subsection{Returns}{
 Self, invisibly.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-terra"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-terra}{}}}
+\subsection{Method \code{terra()}}{
+Convert the data to a \code{terra::SpatRaster} (3D) or a
+\code{terra::SpatRasterDataset} (4D) object. The data will be oriented to
+North-up. The 3rd dimension in the data will become layers in the
+resulting \code{SpatRaster}, any 4th dimension the data sets. The \code{terra}
+package needs to be installed for this method to work.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$terra()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A \code{terra::SpatRaster} or \code{terra::SpatRasterDataset} instance.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFVariable-data.table"></a>}}
+\if{latex}{\out{\hypertarget{method-CFVariable-data.table}{}}}
+\subsection{Method \code{data.table()}}{
+Retrieve the data variable in the object in the form of a
+\code{data.table}. The \code{data.table} package needs to be installed for this
+method to work.
+
+The attributes associated with this data variable will be mostly lost.
+If present, attributes 'long_name' and 'units' are attached to the
+\code{data.table} as attributes, but all others are lost.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFVariable$data.table(var_as_column = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{var_as_column}}{Logical to flag if the name of the variable should
+become a column (\code{TRUE}) or be used as the name of the column with the
+data values (\code{FALSE}, default). Including the name of the variable as a
+column is useful when multiple \code{data.table}s are merged by rows into
+one.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A \code{data.table} with all data points in individual rows. All axes
+will become columns. Two attributes are added: \code{name} indicates the
+long name of this data variable, \code{units} indicates the physical unit of
+the data values.
 }
 }
 \if{html}{\out{<hr>}}

@@ -93,7 +93,7 @@ group.
 \itemize{
 \item \code{\link[=names]{names()}}: Vector of names of the data variables in the data set.
 \item \code{\link[=dimnames]{dimnames()}}: Vector of names of the axes in the data set.
-\item \code{\link[=group]{group()}}: Vector of groups defined in the data set.
+\item \code{\link[ggplot2:aes_group_order]{ggplot2::group()}}: Vector of groups defined in the data set.
 }
 
 \strong{Data variable}

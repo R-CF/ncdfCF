@@ -89,7 +89,7 @@ CFVariable <- R6::R6Class("CFVariable",
     # axis order will be Y-X-Z-T-others and Y values will go from the top to the
     # bottom. Alternatively, order data values in the CF canonical order.
     # Argument data is the array to order, argument ordering must be "R" or
-    # "CF". Returns a new array with an attribute "axes" that lists dimensional
+    # "CF". Returns a new array with an attribute "axes" that lists
     # axis names in the order of the new array.
     orient = function(data, ordering = "R") {
       dim_names <- names(private$.axes)[seq_along(dim(data))]

@@ -378,7 +378,7 @@ peek_ncdf <- function(resource) {
   vars <- grp$NC$NCvars
   if (length(vars) > 0L) {
     # Scan each unused NCVariable for the "coordinates" attribute and process.
-    # The NCVariable must have dimensional axes.
+    # The NCVariable must have dimensions.
     for (refid in seq_along(vars)) {
       v <- vars[[refid]]
       if (length(vdimids <- v$dimids) &&
@@ -493,9 +493,9 @@ peek_ncdf <- function(resource) {
 #' @description Configure the formula terms of a parametric vertical axis. If
 #'   the vertical axis has a `formula_terms` attribute it has a parametric
 #'   coordinate space that is calculated from the formula terms. This method
-#'   sets up the axis instance to calculate the dimensional coordinate space
+#'   sets up the axis instance to calculate the physical coordinate space
 #'   (but it does not do the actual calculation; access the
-#'   `parametric_coordinates` field of the vertical axis to get the dimensional
+#'   `parametric_coordinates` field of the vertical axis to get the physical
 #'   coordinates).
 #' @param axes List of `CFAxis` instances to use with the formula term objects.
 #' @return Nothing. Any parametric vertical axes in the argument `axes` will be
@@ -723,8 +723,8 @@ peek_ncdf <- function(resource) {
   vars
 }
 
-#' Build a list of axes that a NC variable references. These are the dimensional
-#' axes, being referenced by a dimid from the NC variable
+#' Build a list of axes that a NC variable references. These are being
+#' referenced by a dimid from the NC variable
 #'
 #' @param ncvar The NC variable to build the axis list for.
 #' @param axes List of available CF axes to use with the CF variables.

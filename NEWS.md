@@ -1,5 +1,11 @@
 # ncdfCF (development version)
 
+#### API
+- 
+
+#### Code
+- Fixed writing attributes for groups
+
 # ncdfCF 0.8.0
 
 #### Conventions

@@ -65,14 +65,15 @@ NCGroup <- R6::R6Class("NCGroup",
           private$.resource$sync()
           id <- as.integer(nc)
         }
-        new_grp <- TRUE
-      } else new_grp = FALSE
+      }
 
-      super$initialize(id, "group", attributes)
+      super$initialize(id, "group") # Attributes are set later
       private$.name <- name
       self$parent <- parent
-      if (new_grp)
-        self$write_attributes("NC_GLOBAL", attributes, force = TRUE)
+      if (resource$can_write)
+        self$write_attributes("NC_GLOBAL", attributes)
+      else
+        private$.attributes <- attributes
     },
 
     #' @description Summary of the group printed to the console.

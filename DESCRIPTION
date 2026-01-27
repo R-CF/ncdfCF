@@ -53,12 +53,14 @@ Collate:
     'makeCFObjects.R'
     'ncdfCF-package.R'
     'ops.R'
+    'plot.R'
     'readCF.R'
     'utils.R'
     'wkt2.R'
     'zzz.R'
 Suggests: 
     data.table,
+    ggplot2,
     knitr,
     rmarkdown,
     terra,
