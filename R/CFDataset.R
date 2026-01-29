@@ -273,25 +273,30 @@ CFDataset <- R6::R6Class("CFDataset",
 
     #' @description Save the data set to file, including its subordinate objects
     #'   such as attributes, data variables, axes, CRS, etc.
-    #' @param fn Fully-qualified file name indicating where to save the data set
-    #'   to. This argument must be provided if the data set is virtual. If the
-    #'   argument is provided on a data set that was read from a netCDF file, a
-    #'   new netCDF file will be written to the indicated location. If the
-    #'   argument is missing, the existing netCDF file will be updated.
+    #' @param fn Optional. Fully-qualified file name indicating where to save
+    #'   the data set to. This argument must be provided if the data set is
+    #'   virtual. If the argument is provided on a data set that was read from a
+    #'   netCDF file and it does not point to that netCDF file, a new netCDF
+    #'   file will be written to the indicated location. If the argument is the
+    #'   same file name as before, the existing netCDF file will be updated.
     #' @param pack Optional. Logical to indicate if the data should be packed;
     #'   default is `FALSE`. Packing is only useful for numeric data; packing is
     #'   not performed on integer values. Packing is always to the "NC_SHORT"
     #'   data type, i.e. 16-bits per value.
     #' @return Self, invisibly.
-    save = function(fn, pack = FALSE) {
-      # Create the netCDF file, if necessary
-      if (missing(fn)) {
+    save = function(fn = NULL, pack = FALSE) {
+      if (is.null(fn)) {
+        # Use the current connection
         if (!inherits(private$.res, "NCResource"))
           stop("Must supply file name to save the data set.", call. = FALSE)
-      } else {
+      } else if (is.null(private$.res) || fn != private$.res$uri) {
+        # Create a new netCDF file
         res <- NCResource$new(fn, write = TRUE)
         res$create()
         private$.res <- res
+
+        # Detach all data variables from old connection
+        lapply(self$variables(), function(v) v$detach())
       }
 
       self$root$write(recursive = TRUE)

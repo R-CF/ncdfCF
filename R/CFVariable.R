@@ -394,6 +394,7 @@ CFVariable <- R6::R6Class("CFVariable",
       if (!is.null(private$.crs)) private$.crs$detach()
       if (!is.null(private$.llgrid)) private$.llgrid$detach()
       lapply(private$.axes, function(ax) ax$detach())
+      private$.dirty <- TRUE
       super$detach()
       invisible(self)
     },
@@ -1226,9 +1227,9 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   value.
     #' @return The newly create `CFDataset`, invisibly.
     save = function(fn, pack = FALSE) {
-      ds <- create_ncdf(fn)
+      ds <- create_ncdf()
       ds$add_variable(self)
-      ds$save(pack = pack)
+      ds$save(fn, pack = pack)
       invisible(ds)
     }
   ),

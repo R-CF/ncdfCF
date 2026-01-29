@@ -411,17 +411,18 @@ Argument \code{var}, invisibly.
 Save the data set to file, including its subordinate objects
 such as attributes, data variables, axes, CRS, etc.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$save(fn, pack = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFDataset$save(fn = NULL, pack = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{fn}}{Fully-qualified file name indicating where to save the data set
-to. This argument must be provided if the data set is virtual. If the
-argument is provided on a data set that was read from a netCDF file, a
-new netCDF file will be written to the indicated location. If the
-argument is missing, the existing netCDF file will be updated.}
+\item{\code{fn}}{Optional. Fully-qualified file name indicating where to save
+the data set to. This argument must be provided if the data set is
+virtual. If the argument is provided on a data set that was read from a
+netCDF file and it does not point to that netCDF file, a new netCDF
+file will be written to the indicated location. If the argument is the
+same file name as before, the existing netCDF file will be updated.}
 
 \item{\code{pack}}{Optional. Logical to indicate if the data should be packed;
 default is \code{FALSE}. Packing is only useful for numeric data; packing is

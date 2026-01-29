@@ -156,8 +156,12 @@ CFData <- R6::R6Class("CFData",
     #   `count` values used to create this object. If the object is not backed
     #   by a netCDF resource, returns `NULL`.
     read_data = function(refresh = FALSE) {
-      if ((!is.null(private$.NCobj)) && (is.null(private$.values) || refresh))
-        private$set_values(private$.NCobj$get_data(private$.NC_map$start, private$.NC_map$count))
+      if ((!is.null(private$.NCobj)) && (is.null(private$.values) || refresh)) {
+        if (!length(private$.NC_map))
+          private$set_values(private$.NCobj$get_data())
+        else
+          private$set_values(private$.NCobj$get_data(private$.NC_map$start, private$.NC_map$count))
+      }
       invisible(private$.values)
     },
 
@@ -279,6 +283,7 @@ CFData <- R6::R6Class("CFData",
       if (!is.null(private$.NCobj) && is.null(private$.values))
         private$read_data()
       private$.NC_map <- list()
+      private$.data_dirty <- TRUE
       super$detach()
     },
 

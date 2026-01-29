@@ -34,6 +34,90 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         paste0("[", crds[1L], "]")
       else
         sprintf("[%s ... %s]", crds[1L], crds[nv])
+    },
+
+    # Timestamps in argument ts may be a single one, abbreviated, a range, by
+    # season/quarter/dekad, etc so rework to two proper timestamps.
+    expand_timestamps = function(ts) {
+      # Year as numeric: YYYY or YYYY:YYYY
+      if (is.numeric(ts)) {
+        ts <- range(as.integer(ts))
+        return(c(paste0(ts[1L], "-01-01"), paste0(ts[2L] + 1L, "-01-01")))
+      }
+
+      if (!is.character(ts))
+        stop("Bad format for timestamps.", call. = FALSE)
+
+      if (length(ts) == 1L)
+        ts <- c(ts, ts)
+      else if (length(ts) != 2L)
+        stop("Bad format for timestamps.", call. = FALSE)
+
+      # Year as character string
+      if (all(grepl("^[0-9]{4}$", ts)))
+        return(c(paste0(ts[1L], "-01-01"), paste0(as.integer(ts[2L]) + 1L, "-01-01")))
+
+      # Year-month as character string
+      ym <- utils::strcapture("^([0-9]{4})-(0[1-9]|1[0-2])$", ts, data.frame(year = integer(), month = integer()))
+      if (!any(is.na(ym))) {
+        if (ym$month[2L] == 12L) {
+          ym$year[2L] <- ym$year[2L] + 1L
+          ym$month[2L] <- 1L
+        }
+        return(sprintf("%04d-%02d-01", ym$year, ym$month))
+      }
+
+      # Year-season as character string
+      ys <- utils::strcapture("^([0-9]{4})-S([1-4])$", ts, data.frame(year = integer(), season = integer()))
+      if (!any(is.na(ys))) {
+        if (ys$season[1L] == 1L) {
+          ys$year[1L] <- ys$year[1L] - 1L
+          ys$season[1L] <- 5L
+        }
+        ys$season[2L] <- ys$season[2L] + 1L
+        return(sprintf("%04d-%02d-01", ys$year, (ys$season - 1L) * 3L))
+      }
+
+      # Year-quarter as character string
+      yq <- utils::strcapture("^([0-9]{4})-Q([1-4])$", ts, data.frame(year = integer(), quarter = integer()))
+      if (!any(is.na(yq))) {
+        if (yq$quarter[2L] == 4L) {
+          yq$year[2L] <- yq$year[2L] + 1L
+          yq$quarter[2L] <- 1L
+        } else
+          yq$quarter[2L] <- yq$quarter[2L] + 1L
+        return(sprintf("%04d-%02d-01", yq$year, (yq$quarter - 1L) * 3L + 1L))
+      }
+
+      # Year-dekad as character string
+      yk <- utils::strcapture("^([0-9]{4})-D([0-2][1-9]|3[0-6])$", ts, data.frame(year = integer(), dekad = integer()))
+      if (!any(is.na(yk))) {
+        mod <- yk$dekad %% 3L # which dekad in the month: 1, 2, 0
+        if (yk$dekad[2L] == 36L) {
+          yk$year[2L] <- yk$year[2L] + 1L
+          yk$dekad[2L] <- 1L
+        } else if (mod[2L] == 0L) {
+          yk$dekad[2L] <- yk$dekad[2L] + 1L
+          mod[2L] <- 1L
+        } else {
+          yk$dekad[2L] <- yk$dekad[2L] + 1L
+          mod[2L] <- mod[2L] + 1L
+        }
+        d <- ifelse(mod == 0L, 21L, (mod - 1L) * 10L + 1L)
+        return(sprintf("%04d-%02d-%02d", yk$year, (yk$dekad - 1L) %/% 3L + 1L, d))
+      }
+
+      # Year-month-day - only if both dates are identical (so only a single day was specified)
+      if (ts[1L] == ts[2L]) {
+        ymd <- private$.tm$calendar$parse(ts[1L])
+        if (is.na(ymd$year))
+          stop("Bad format for timestamps.", call. = FALSE)
+        ymd <- rbind(ymd, private$.tm$calendar$add_day(ymd))
+        return(sprintf("%04d-%02d-%02d", ymd$year, ymd$month, ymd$day))
+      }
+
+      # If all else fails, just return the passed-in argument
+      ts
     }
   ),
   public = list(
@@ -278,6 +362,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @return An integer vector giving the indices in the time axis between
     #'   values in `x`, or `integer(0)` if none of the values are valid.
     slice = function(x, rightmost.closed = FALSE) {
+      x <- private$expand_timestamps(x)
       time <- private$.tm
       idx <- time$slice(x, rightmost.closed)
       range((1L:length(time))[idx])

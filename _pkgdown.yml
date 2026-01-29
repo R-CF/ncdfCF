@@ -34,6 +34,7 @@ reference:
   - aoi
   - dim.AOI
   - Ops.CFVariable
+  - geom_ncdf
 - subtitle: Axes
   desc: |
     The shape of a data variable is described by the set of axes that it links to. There are specialised axes for specific types of axes, such as for longitude and latitude, or more generic types, each having their own class inheriting from the "virtual" `CFAxis` class.

@@ -1,30 +1,13 @@
 #' Create a new data set
 #'
-#' This function creates a new, empty data set with an associated netCDF file in
-#' "netcdf4" format.
-#' @param fn Optional. The fully qualified file name of the netCDF file if that
-#'   should be created. The file cannot already exist. It is recommended that
-#'   the filename uses an extension of ".nc". If the argument is not provided, a
-#'   virtual data set will be created.
+#' This function creates a new, empty data set in memory. You can add groups,
+#' data variables and attributes to this data set as appropriate. The data set
+#' can be saved with `CFDataset$save()`, if so desired.
 #' @export
-create_ncdf <- function(fn) {
-  if (missing(fn)) {
-    # Create virtual data set
-    ds <- CFDataset$new("CF_dataset")
-    root <- CFGroup$new("", parent = ds)
-  } else {
-    # Create the netCDF file on disk
-    res <- NCResource$new(fn, write = TRUE)
-    res$create()
-
-    # Create the CFDataset and associate it with the new netCDF file
-    ds <- CFDataset$new(res, "netcdf4")
-
-    # Fetch the root group and add it to the CFDataset
-    g <- RNetCDF::grp.inq.nc(res$handle)
-    grp <- NCGroup$new(id = as.integer(g$self), name = g$name, parent = ds, resource = res)
-    root <- CFGroup$new(grp, parent = ds)
-  }
+create_ncdf <- function() {
+  # Create virtual data set
+  ds <- CFDataset$new("CF_dataset")
+  root <- CFGroup$new("", parent = ds)
 
   # Minimal attributes
   root$set_attribute("Conventions", "NC_CHAR", "CF-1.13")
