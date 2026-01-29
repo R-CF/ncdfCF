@@ -143,13 +143,13 @@ description of the variable as a WKT2 string.</p></dd>
 <li><p><a href="#method-CFVariable-summarise"><code>CFVariable$summarise()</code></a></p></li>
 <li><p><a href="#method-CFVariable-profile"><code>CFVariable$profile()</code></a></p></li>
 <li><p><a href="#method-CFVariable-append"><code>CFVariable$append()</code></a></p></li>
-<li><p><a href="#method-CFVariable-terra"><code>CFVariable$terra()</code></a></p></li>
-<li><p><a href="#method-CFVariable-data.table"><code>CFVariable$data.table()</code></a></p></li>
 <li><p><a href="#method-CFVariable-is_coincident"><code>CFVariable$is_coincident()</code></a></p></li>
 <li><p><a href="#method-CFVariable-add_cell_measure"><code>CFVariable$add_cell_measure()</code></a></p></li>
 <li><p><a href="#method-CFVariable-add_auxiliary_coordinate"><code>CFVariable$add_auxiliary_coordinate()</code></a></p></li>
 <li><p><a href="#method-CFVariable-add_ancillary_variable"><code>CFVariable$add_ancillary_variable()</code></a></p></li>
 <li><p><a href="#method-CFVariable-attach_to_group"><code>CFVariable$attach_to_group()</code></a></p></li>
+<li><p><a href="#method-CFVariable-terra"><code>CFVariable$terra()</code></a></p></li>
+<li><p><a href="#method-CFVariable-data.table"><code>CFVariable$data.table()</code></a></p></li>
 <li><p><a href="#method-CFVariable-write"><code>CFVariable$write()</code></a></p></li>
 <li><p><a href="#method-CFVariable-save"><code>CFVariable$save()</code></a></p></li>
 </ul></div><p><details><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href="CFObject.html#method-append_attribute"><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
@@ -626,64 +626,16 @@ variable and in the <code>CFVariable</code> instance in argument <code>from</cod
 <code>from</code> appended, in a new private group.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFVariable-terra"></a><div class="section">
-<h3 id="method-terra-">Method <code>terra()</code><a class="anchor" aria-label="anchor" href="#method-terra-"></a></h3>
-<p>Convert the data to a <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRaster</a></code> (3D) or a
-<code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRasterDataset</a></code> (4D) object. The data will be oriented to
-North-up. The 3rd dimension in the data will become layers in the
-resulting <code>SpatRaster</code>, any 4th dimension the data sets. The <code>terra</code>
-package needs to be installed for this method to work.</p><div class="section">
-<h4 id="usage-13">Usage<a class="anchor" aria-label="anchor" href="#usage-13"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFVariable</span><span class="op">$</span><span class="fu">terra</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
-<h4 id="returns-12">Returns<a class="anchor" aria-label="anchor" href="#returns-12"></a></h4>
-<p>A <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRaster</a></code> or <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRasterDataset</a></code> instance.</p>
-</div>
-
-</div><p></p><hr><a id="method-CFVariable-data.table"></a><div class="section">
-<h3 id="method-data-table-">Method <code><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table()</a></code><a class="anchor" aria-label="anchor" href="#method-data-table-"></a></h3>
-<p>Retrieve the data variable in the object in the form of a
-<code>data.table</code>. The <code>data.table</code> package needs to be installed for this
-method to work.</p>
-<p>The attributes associated with this data variable will be mostly lost.
-If present, attributes 'long_name' and 'units' are attached to the
-<code>data.table</code> as attributes, but all others are lost.</p><div class="section">
-<h4 id="usage-14">Usage<a class="anchor" aria-label="anchor" href="#usage-14"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFVariable</span><span class="op">$</span><span class="fu">data.table</span><span class="op">(</span>var_as_column <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
-<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>var_as_column</code></dt>
-<dd><p>Logical to flag if the name of the variable should
-become a column (<code>TRUE</code>) or be used as the name of the column with the
-data values (<code>FALSE</code>, default). Including the name of the variable as a
-column is useful when multiple <code>data.table</code>s are merged by rows into
-one.</p></dd>
-
-
-</dl><p></p></div>
-</div>
-<div class="section">
-<h4 id="returns-13">Returns<a class="anchor" aria-label="anchor" href="#returns-13"></a></h4>
-<p>A <code>data.table</code> with all data points in individual rows. All axes
-will become columns. Two attributes are added: <code>name</code> indicates the
-long name of this data variable, <code>units</code> indicates the physical unit of
-the data values.</p>
-</div>
-
 </div><p></p><hr><a id="method-CFVariable-is_coincident"></a><div class="section">
 <h3 id="method-is-coincident-">Method <code>is_coincident()</code><a class="anchor" aria-label="anchor" href="#method-is-coincident-"></a></h3>
 <p>Tests if the <code>other</code> object is coincident with this data
 variable: identical axes.</p><div class="section">
-<h4 id="usage-15">Usage<a class="anchor" aria-label="anchor" href="#usage-15"></a></h4>
+<h4 id="usage-13">Usage<a class="anchor" aria-label="anchor" href="#usage-13"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFVariable</span><span class="op">$</span><span class="fu">is_coincident</span><span class="op">(</span><span class="va">other</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
+<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>other</code></dt>
 <dd><p>A <code>CFVariable</code> instance to compare to this data variable.</p></dd>
 
@@ -691,19 +643,19 @@ variable: identical axes.</p><div class="section">
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-14">Returns<a class="anchor" aria-label="anchor" href="#returns-14"></a></h4>
+<h4 id="returns-12">Returns<a class="anchor" aria-label="anchor" href="#returns-12"></a></h4>
 <p><code>TRUE</code> if the data variables are coincident, <code>FALSE</code> otherwise.</p>
 </div>
 
 </div><p></p><hr><a id="method-CFVariable-add_cell_measure"></a><div class="section">
 <h3 id="method-add-cell-measure-">Method <code>add_cell_measure()</code><a class="anchor" aria-label="anchor" href="#method-add-cell-measure-"></a></h3>
 <p>Add a cell measure variable to this variable.</p><div class="section">
-<h4 id="usage-16">Usage<a class="anchor" aria-label="anchor" href="#usage-16"></a></h4>
+<h4 id="usage-14">Usage<a class="anchor" aria-label="anchor" href="#usage-14"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFVariable</span><span class="op">$</span><span class="fu">add_cell_measure</span><span class="op">(</span><span class="va">cm</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-9">Arguments<a class="anchor" aria-label="anchor" href="#arguments-9"></a></h4>
+<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>cm</code></dt>
 <dd><p>An instance of <a href="CFCellMeasure.html">CFCellMeasure</a>.</p></dd>
 
@@ -711,7 +663,7 @@ variable: identical axes.</p><div class="section">
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-15">Returns<a class="anchor" aria-label="anchor" href="#returns-15"></a></h4>
+<h4 id="returns-13">Returns<a class="anchor" aria-label="anchor" href="#returns-13"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 
@@ -720,12 +672,12 @@ variable: identical axes.</p><div class="section">
 <p>Add an auxiliary coordinate to the appropriate axis of this
 variable. The length of the axis must be the same as the length of the
 auxiliary labels.</p><div class="section">
-<h4 id="usage-17">Usage<a class="anchor" aria-label="anchor" href="#usage-17"></a></h4>
+<h4 id="usage-15">Usage<a class="anchor" aria-label="anchor" href="#usage-15"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFVariable</span><span class="op">$</span><span class="fu">add_auxiliary_coordinate</span><span class="op">(</span><span class="va">aux</span>, <span class="va">axis</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-10">Arguments<a class="anchor" aria-label="anchor" href="#arguments-10"></a></h4>
+<h4 id="arguments-9">Arguments<a class="anchor" aria-label="anchor" href="#arguments-9"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>aux</code></dt>
 <dd><p>An instance of <a href="CFLabel.html">CFLabel</a> or <a href="CFAxis.html">CFAxis</a>.</p></dd>
 
@@ -738,19 +690,19 @@ for.</p></dd>
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-16">Returns<a class="anchor" aria-label="anchor" href="#returns-16"></a></h4>
+<h4 id="returns-14">Returns<a class="anchor" aria-label="anchor" href="#returns-14"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 
 </div><p></p><hr><a id="method-CFVariable-add_ancillary_variable"></a><div class="section">
 <h3 id="method-add-ancillary-variable-">Method <code>add_ancillary_variable()</code><a class="anchor" aria-label="anchor" href="#method-add-ancillary-variable-"></a></h3>
 <p>Add an ancillary variable to this variable.</p><div class="section">
-<h4 id="usage-18">Usage<a class="anchor" aria-label="anchor" href="#usage-18"></a></h4>
+<h4 id="usage-16">Usage<a class="anchor" aria-label="anchor" href="#usage-16"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFVariable</span><span class="op">$</span><span class="fu">add_ancillary_variable</span><span class="op">(</span><span class="va">var</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-11">Arguments<a class="anchor" aria-label="anchor" href="#arguments-11"></a></h4>
+<h4 id="arguments-10">Arguments<a class="anchor" aria-label="anchor" href="#arguments-10"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>var</code></dt>
 <dd><p>An instance of CFVariable.</p></dd>
 
@@ -758,7 +710,7 @@ for.</p></dd>
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-17">Returns<a class="anchor" aria-label="anchor" href="#returns-17"></a></h4>
+<h4 id="returns-15">Returns<a class="anchor" aria-label="anchor" href="#returns-15"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 
@@ -770,12 +722,12 @@ objects (such as axes, CRS, boundary variables, etc), if another object
 with the same name is otherwise identical to the associated object then
 that object will be linked from the variable, otherwise an error is
 thrown.</p><div class="section">
-<h4 id="usage-19">Usage<a class="anchor" aria-label="anchor" href="#usage-19"></a></h4>
+<h4 id="usage-17">Usage<a class="anchor" aria-label="anchor" href="#usage-17"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFVariable</span><span class="op">$</span><span class="fu">attach_to_group</span><span class="op">(</span><span class="va">grp</span>, locations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-12">Arguments<a class="anchor" aria-label="anchor" href="#arguments-12"></a></h4>
+<h4 id="arguments-11">Arguments<a class="anchor" aria-label="anchor" href="#arguments-11"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>grp</code></dt>
 <dd><p>An instance of <a href="CFGroup.html">CFGroup</a>.</p></dd>
 
@@ -796,8 +748,56 @@ is not provided, all associated objects will be stored in this group.</p></dd>
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-18">Returns<a class="anchor" aria-label="anchor" href="#returns-18"></a></h4>
+<h4 id="returns-16">Returns<a class="anchor" aria-label="anchor" href="#returns-16"></a></h4>
 <p>Self, invisibly.</p>
+</div>
+
+</div><p></p><hr><a id="method-CFVariable-terra"></a><div class="section">
+<h3 id="method-terra-">Method <code>terra()</code><a class="anchor" aria-label="anchor" href="#method-terra-"></a></h3>
+<p>Convert the data to a <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRaster</a></code> (3D) or a
+<code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRasterDataset</a></code> (4D) object. The data will be oriented to
+North-up. The 3rd dimension in the data will become layers in the
+resulting <code>SpatRaster</code>, any 4th dimension the data sets. The <code>terra</code>
+package needs to be installed for this method to work.</p><div class="section">
+<h4 id="usage-18">Usage<a class="anchor" aria-label="anchor" href="#usage-18"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFVariable</span><span class="op">$</span><span class="fu">terra</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="returns-17">Returns<a class="anchor" aria-label="anchor" href="#returns-17"></a></h4>
+<p>A <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRaster</a></code> or <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRasterDataset</a></code> instance.</p>
+</div>
+
+</div><p></p><hr><a id="method-CFVariable-data.table"></a><div class="section">
+<h3 id="method-data-table-">Method <code><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table()</a></code><a class="anchor" aria-label="anchor" href="#method-data-table-"></a></h3>
+<p>Retrieve the data variable in the object in the form of a
+<code>data.table</code>. The <code>data.table</code> package needs to be installed for this
+method to work.</p>
+<p>The attributes associated with this data variable will be mostly lost.
+If present, attributes 'long_name' and 'units' are attached to the
+<code>data.table</code> as attributes, but all others are lost.</p><div class="section">
+<h4 id="usage-19">Usage<a class="anchor" aria-label="anchor" href="#usage-19"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFVariable</span><span class="op">$</span><span class="fu">data.table</span><span class="op">(</span>var_as_column <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-12">Arguments<a class="anchor" aria-label="anchor" href="#arguments-12"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>var_as_column</code></dt>
+<dd><p>Logical to flag if the name of the variable should
+become a column (<code>TRUE</code>) or be used as the name of the column with the
+data values (<code>FALSE</code>, default). Including the name of the variable as a
+column is useful when multiple <code>data.table</code>s are merged by rows into
+one.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-18">Returns<a class="anchor" aria-label="anchor" href="#returns-18"></a></h4>
+<p>A <code>data.table</code> with all data points in individual rows. All axes
+will become columns. Two attributes are added: <code>name</code> indicates the
+long name of this data variable, <code>units</code> indicates the physical unit of
+the data values.</p>
 </div>
 
 </div><p></p><hr><a id="method-CFVariable-write"></a><div class="section">

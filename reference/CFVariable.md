@@ -107,10 +107,6 @@ grid mapping parameters, etc.
 
 - [`CFVariable$append()`](#method-CFVariable-append)
 
-- [`CFVariable$terra()`](#method-CFVariable-terra)
-
-- [`CFVariable$data.table()`](#method-CFVariable-data.table)
-
 - [`CFVariable$is_coincident()`](#method-CFVariable-is_coincident)
 
 - [`CFVariable$add_cell_measure()`](#method-CFVariable-add_cell_measure)
@@ -120,6 +116,10 @@ grid mapping parameters, etc.
 - [`CFVariable$add_ancillary_variable()`](#method-CFVariable-add_ancillary_variable)
 
 - [`CFVariable$attach_to_group()`](#method-CFVariable-attach_to_group)
+
+- [`CFVariable$terra()`](#method-CFVariable-terra)
+
+- [`CFVariable$data.table()`](#method-CFVariable-data.table)
 
 - [`CFVariable$write()`](#method-CFVariable-write)
 
@@ -622,62 +622,6 @@ appended, in a new private group.
 
 ------------------------------------------------------------------------
 
-### Method `terra()`
-
-Convert the data to a
-[`terra::SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
-(3D) or a
-[`terra::SpatRasterDataset`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
-(4D) object. The data will be oriented to North-up. The 3rd dimension in
-the data will become layers in the resulting `SpatRaster`, any 4th
-dimension the data sets. The `terra` package needs to be installed for
-this method to work.
-
-#### Usage
-
-    CFVariable$terra()
-
-#### Returns
-
-A
-[`terra::SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
-or
-[`terra::SpatRasterDataset`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
-instance.
-
-------------------------------------------------------------------------
-
-### Method [`data.table()`](https://rdrr.io/pkg/data.table/man/data.table.html)
-
-Retrieve the data variable in the object in the form of a `data.table`.
-The `data.table` package needs to be installed for this method to work.
-
-The attributes associated with this data variable will be mostly lost.
-If present, attributes 'long_name' and 'units' are attached to the
-`data.table` as attributes, but all others are lost.
-
-#### Usage
-
-    CFVariable$data.table(var_as_column = FALSE)
-
-#### Arguments
-
-- `var_as_column`:
-
-  Logical to flag if the name of the variable should become a column
-  (`TRUE`) or be used as the name of the column with the data values
-  (`FALSE`, default). Including the name of the variable as a column is
-  useful when multiple `data.table`s are merged by rows into one.
-
-#### Returns
-
-A `data.table` with all data points in individual rows. All axes will
-become columns. Two attributes are added: `name` indicates the long name
-of this data variable, `units` indicates the physical unit of the data
-values.
-
-------------------------------------------------------------------------
-
 ### Method `is_coincident()`
 
 Tests if the `other` object is coincident with this data variable:
@@ -804,6 +748,62 @@ will be linked from the variable, otherwise an error is thrown.
 #### Returns
 
 Self, invisibly.
+
+------------------------------------------------------------------------
+
+### Method `terra()`
+
+Convert the data to a
+[`terra::SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
+(3D) or a
+[`terra::SpatRasterDataset`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
+(4D) object. The data will be oriented to North-up. The 3rd dimension in
+the data will become layers in the resulting `SpatRaster`, any 4th
+dimension the data sets. The `terra` package needs to be installed for
+this method to work.
+
+#### Usage
+
+    CFVariable$terra()
+
+#### Returns
+
+A
+[`terra::SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
+or
+[`terra::SpatRasterDataset`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
+instance.
+
+------------------------------------------------------------------------
+
+### Method [`data.table()`](https://rdrr.io/pkg/data.table/man/data.table.html)
+
+Retrieve the data variable in the object in the form of a `data.table`.
+The `data.table` package needs to be installed for this method to work.
+
+The attributes associated with this data variable will be mostly lost.
+If present, attributes 'long_name' and 'units' are attached to the
+`data.table` as attributes, but all others are lost.
+
+#### Usage
+
+    CFVariable$data.table(var_as_column = FALSE)
+
+#### Arguments
+
+- `var_as_column`:
+
+  Logical to flag if the name of the variable should become a column
+  (`TRUE`) or be used as the name of the column with the data values
+  (`FALSE`, default). Including the name of the variable as a column is
+  useful when multiple `data.table`s are merged by rows into one.
+
+#### Returns
+
+A `data.table` with all data points in individual rows. All axes will
+become columns. Two attributes are added: `name` indicates the long name
+of this data variable, `units` indicates the physical unit of the data
+values.
 
 ------------------------------------------------------------------------
 

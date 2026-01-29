@@ -114,8 +114,8 @@ you need to access netCDF data from a file or an online resource.
 - [`dimnames()`](https://r-cf.github.io/ncdfCF/reference/dimnames.md):
   Vector of names of the axes in the data set.
 
-- [`group()`](https://rdrr.io/r/grDevices/plotmath.html): Vector of
-  groups defined in the data set.
+- [`ggplot2::group()`](https://ggplot2.tidyverse.org/reference/aes_group_order.html):
+  Vector of groups defined in the data set.
 
 **Data variable**
 

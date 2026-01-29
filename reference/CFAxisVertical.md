@@ -4,7 +4,7 @@ This class represents a vertical axis, which may be parametric. A
 regular vertical axis behaves like any other numeric axis. A parametric
 vertical axis, on the other hand, is defined through an index value that
 is contained in the axis coordinates, with additional data variables
-that hold ancillary "formula terms" with which to calculate dimensional
+that hold ancillary "formula terms" with which to calculate physical
 axis coordinates. It is used in atmosphere and ocean data sets.
 
 Parametric vertical axes can only be read from file, not created from

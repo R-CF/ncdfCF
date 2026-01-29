@@ -98,7 +98,7 @@ selectable through methods and fields in this class.
 
 - `is_parametric`:
 
-  (read-only) Logical flag that indicates if the axis has dimensional
+  (read-only) Logical flag that indicates if the axis has parametric
   coordinates. Always `FALSE` for all axes except for
   [CFAxisVertical](https://r-cf.github.io/ncdfCF/reference/CFAxisVertical.md)
   which overrides this method.

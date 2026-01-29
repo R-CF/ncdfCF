@@ -25,12 +25,7 @@ library(ncdfCF)
 
 The data set is created in memory (`Resource : (virtual)`) and you can
 save it to disk when you are done adding data variables to it with
-`my_ds$save(fn = "~/path/to/netcdf/data/my_data.nc")`. If you prefer,
-you can also provide the file name to
-`create_ncdf(fn = "~/path/to/netcdf/data/my_data.nc")` and then save
-your edits with `my_ds$save()`. This alternative pattern is easier and
-less error-prone when you add many objects to the data set and want to
-do intermediate saving of your work to the netCDF file.
+`my_ds$save(fn = "~/path/to/netcdf/data/my_data.nc")`.
 
 ## Creating a new CF data variable
 
