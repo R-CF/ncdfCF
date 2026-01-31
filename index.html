@@ -88,376 +88,19 @@
 <span><span class="co">#&gt; Attributes:</span></span>
 <span><span class="co">#&gt;  name        type    length value                             </span></span>
 <span><span class="co">#&gt;  Conventions NC_CHAR  6     CF-1.6                            </span></span>
-<span><span class="co">#&gt;  history     NC_CHAR 34     Attributes simplified for example.</span></span>
-<span></span>
-<span><span class="co"># ...or very brief details</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="va">var_names</span></span>
-<span><span class="co">#&gt; [1] "t2m" "pev" "tp"</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="va">axis_names</span></span>
-<span><span class="co">#&gt; [1] "time"      "longitude" "latitude"</span></span>
-<span></span>
-<span><span class="co"># Variables and axes can be accessed through standard list-type extraction syntax</span></span>
-<span><span class="op">(</span><span class="va">t2m</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">[[</span><span class="st">"t2m"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;Variable&gt; t2m </span></span>
-<span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Values: (not loaded)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name      length values                                       </span></span>
-<span><span class="co">#&gt;  X    longitude 31     [28 ... 31]                                  </span></span>
-<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]                                  </span></span>
-<span><span class="co">#&gt;  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]</span></span>
-<span><span class="co">#&gt;  unit                             </span></span>
-<span><span class="co">#&gt;  degrees_east                     </span></span>
-<span><span class="co">#&gt;  degrees_north                    </span></span>
-<span><span class="co">#&gt;  hours since 1900-01-01 00:00:00.0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attributes:</span></span>
-<span><span class="co">#&gt;  name      type    length value              </span></span>
-<span><span class="co">#&gt;  long_name NC_CHAR 19     2 metre temperature</span></span>
-<span><span class="co">#&gt;  units     NC_CHAR  1     K</span></span>
-<span></span>
-<span><span class="va">ds</span><span class="op">[[</span><span class="st">"longitude"</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="co">#&gt; &lt;Longitude axis&gt; [1] longitude</span></span>
-<span><span class="co">#&gt; Length     : 31</span></span>
-<span><span class="co">#&gt; Axis       : X </span></span>
-<span><span class="co">#&gt; Coordinates: 28, 28.1, 28.2 ... 30.8, 30.9, 31 (degrees_east)</span></span>
-<span><span class="co">#&gt; Bounds     : (not set)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attributes:</span></span>
-<span><span class="co">#&gt;  name          type     length value       </span></span>
-<span><span class="co">#&gt;  standard_name NC_CHAR   9     longitude   </span></span>
-<span><span class="co">#&gt;  long_name     NC_CHAR   9     longitude   </span></span>
-<span><span class="co">#&gt;  units         NC_CHAR  12     degrees_east</span></span>
-<span><span class="co">#&gt;  axis          NC_CHAR   1     X           </span></span>
-<span><span class="co">#&gt;  actual_range  NC_FLOAT  2     28, 31</span></span>
-<span></span>
-<span><span class="co"># Regular base R operations simplify life further</span></span>
-<span><span class="fu"><a href="reference/dimnames.html">dimnames</a></span><span class="op">(</span><span class="va">ds</span><span class="op">[[</span><span class="st">"pev"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="co"># A variable: list of axis names</span></span>
-<span><span class="co">#&gt; [1] "longitude" "latitude"  "time"</span></span>
-<span><span class="fu"><a href="reference/dimnames.html">dimnames</a></span><span class="op">(</span><span class="va">ds</span><span class="op">[[</span><span class="st">"longitude"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="co"># An axis: vector of axis coordinate values</span></span>
-<span><span class="co">#&gt;  [1] 28.0 28.1 28.2 28.3 28.4 28.5 28.6 28.7 28.8 28.9 29.0 29.1 29.2 29.3 29.4</span></span>
-<span><span class="co">#&gt; [16] 29.5 29.6 29.7 29.8 29.9 30.0 30.1 30.2 30.3 30.4 30.5 30.6 30.7 30.8 30.9</span></span>
-<span><span class="co">#&gt; [31] 31.0</span></span>
-<span></span>
-<span><span class="co"># Access attributes</span></span>
-<span><span class="va">ds</span><span class="op">[[</span><span class="st">"pev"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">attribute</span><span class="op">(</span><span class="st">"long_name"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Potential evaporation"</span></span></code></pre></div>
-<p>If you just want to inspect what data is included in the netCDF resource, use the <code><a href="reference/peek_ncdf.html">peek_ncdf()</a></code> function:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/peek_ncdf.html">peek_ncdf</a></span><span class="op">(</span><span class="va">fn</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $uri</span></span>
-<span><span class="co">#&gt; [1] "/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $type</span></span>
-<span><span class="co">#&gt; [1] "Generic netCDF data"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $variables</span></span>
-<span><span class="co">#&gt;     id name             long_name standard_name units                      axes</span></span>
-<span><span class="co">#&gt; t2m  3  t2m   2 metre temperature            NA     K longitude, latitude, time</span></span>
-<span><span class="co">#&gt; pev  4  pev Potential evaporation            NA     m longitude, latitude, time</span></span>
-<span><span class="co">#&gt; tp   5   tp   Total precipitation            NA     m longitude, latitude, time</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $axes</span></span>
-<span><span class="co">#&gt;                     class id axis      name long_name standard_name</span></span>
-<span><span class="co">#&gt; time           CFAxisTime  0    T      time      time          time</span></span>
-<span><span class="co">#&gt; longitude CFAxisLongitude  1    X longitude longitude     longitude</span></span>
-<span><span class="co">#&gt; latitude   CFAxisLatitude  2    Y  latitude  latitude      latitude</span></span>
-<span><span class="co">#&gt;                                       units length unlimited</span></span>
-<span><span class="co">#&gt; time      hours since 1900-01-01 00:00:00.0     24      TRUE</span></span>
-<span><span class="co">#&gt; longitude                      degrees_east     31     FALSE</span></span>
-<span><span class="co">#&gt; latitude                      degrees_north     21     FALSE</span></span>
-<span><span class="co">#&gt;                                                  values has_bounds</span></span>
-<span><span class="co">#&gt; time      [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]      FALSE</span></span>
-<span><span class="co">#&gt; longitude                                   [28 ... 31]      FALSE</span></span>
-<span><span class="co">#&gt; latitude                                    [-1 ... -3]      FALSE</span></span>
-<span><span class="co">#&gt;           coordinate_sets</span></span>
-<span><span class="co">#&gt; time                    1</span></span>
-<span><span class="co">#&gt; longitude               1</span></span>
-<span><span class="co">#&gt; latitude                1</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $attributes</span></span>
-<span><span class="co">#&gt;          name    type length                              value</span></span>
-<span><span class="co">#&gt; 1 Conventions NC_CHAR      6                             CF-1.6</span></span>
-<span><span class="co">#&gt; 2     history NC_CHAR     34 Attributes simplified for example.</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="extracting-data">Extracting data<a class="anchor" aria-label="anchor" href="#extracting-data"></a>
-</h2>
-<p>There are various ways to read data for a data variable from the resource:</p>
-<ul>
-<li>
-<strong><code>[]</code>:</strong> The usual R array operator gives you access to the raw, non-interpreted data in the netCDF resource. This uses index values into the dimensions and requires you to know the order in which the dimensions are specified for the variable. With a bit of tinkering and some helper functions in <code>ncdfCF</code> this is still very easy to do.</li>
-<li>
-<strong><code><a href="https://rdrr.io/r/base/raw.html" class="external-link">raw()</a></code>:</strong> This also gets the data in the layout of the file (or the data set) but with dimnames set. Importantly, you can call this after calling <code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code> and you will get the raw data for the specific spatial and temporal domain that you are interested in.</li>
-<li>
-<strong><code><a href="https://rdrr.io/r/base/array.html" class="external-link">array()</a></code>:</strong> Like <code><a href="https://rdrr.io/r/base/raw.html" class="external-link">raw()</a></code>, this extracts all the (subsetted) data, but now the data will be oriented in the standard R way of column-major order. Y coordinates will run from the top to the bottom (so latitude values, for instance, will be decreasing).</li>
-<li>
-<strong><code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code>:</strong> The <code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code> method lets you specify what you want to extract from each dimension in real-world coordinates and timestamps, in whichever order. This can also rectify non-Cartesian grids to regular longitude-latitude grids. Subsetting is lazy: data is not loaded so long as a direct relationship to the data in the netCDF resource is maintained.</li>
-<li>
-<strong><code><a href="https://rdrr.io/r/stats/profile.html" class="external-link">profile()</a></code>:</strong> Extract “profiles” from the data variable. This can take different forms, such as a temporal or depth profile for a single location, but it could also be a zonal field (such as a transect in latitude - atmospheric depth for a given longitude) or some other profile in the physical space of the data variable.</li>
-</ul>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Extract a timeseries for a specific location - see also the `profile()` method</span></span>
-<span><span class="va">ts</span> <span class="op">&lt;-</span> <span class="va">t2m</span><span class="op">[</span><span class="fl">5</span>, <span class="fl">4</span>, <span class="op">]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ts</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  num [1, 1, 1:24] 293 292 292 291 291 ...</span></span>
-<span><span class="co">#&gt;  - attr(*, "dimnames")=List of 3</span></span>
-<span><span class="co">#&gt;   ..$ longitude: chr "28.4"</span></span>
-<span><span class="co">#&gt;   ..$ latitude : chr "-1.3"</span></span>
-<span><span class="co">#&gt;   ..$ time     : chr [1:24] "2016-01-01T00:00:00" "2016-01-01T01:00:00" "2016-01-01T02:00:00" "2016-01-01T03:00:00" ...</span></span>
-<span><span class="co">#&gt;  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"</span></span>
-<span><span class="co">#&gt;   ..- attr(*, "names")= chr [1:3] "longitude" "latitude" "time"</span></span>
-<span><span class="co">#&gt;  - attr(*, "time")=List of 1</span></span>
-<span><span class="co">#&gt;   ..$ time:CFTime with origin [hours since 1900-01-01 00:00:00.0] using calendar [standard] having 24 offset values</span></span>
-<span></span>
-<span><span class="co"># Extract the full spatial extent for one time step</span></span>
-<span><span class="va">ts</span> <span class="op">&lt;-</span> <span class="va">t2m</span><span class="op">[</span>, , <span class="fl">12</span><span class="op">]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ts</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  num [1:31, 1:21, 1] 300 300 300 300 300 ...</span></span>
-<span><span class="co">#&gt;  - attr(*, "dimnames")=List of 3</span></span>
-<span><span class="co">#&gt;   ..$ longitude: chr [1:31] "28" "28.1" "28.200001" "28.299999" ...</span></span>
-<span><span class="co">#&gt;   ..$ latitude : chr [1:21] "-1" "-1.1" "-1.2" "-1.3" ...</span></span>
-<span><span class="co">#&gt;   ..$ time     : chr "2016-01-01T11:00:00"</span></span>
-<span><span class="co">#&gt;  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"</span></span>
-<span><span class="co">#&gt;   ..- attr(*, "names")= chr [1:3] "longitude" "latitude" "time"</span></span>
-<span><span class="co">#&gt;  - attr(*, "time")=List of 1</span></span>
-<span><span class="co">#&gt;   ..$ time:CFTime with origin [hours since 1900-01-01 00:00:00.0] using calendar [standard] having 1 offset values</span></span></code></pre></div>
-<p>Note that the results contain degenerate dimensions (of length 1). This by design when using basic <code>[]</code> data access because it allows attributes to be attached in a consistent manner. When using the <code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code> method, the data is returned as an instance of <code>CFVariable</code>, including axes and attributes:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Extract a specific region, full time dimension</span></span>
-<span><span class="op">(</span><span class="va">ts</span> <span class="op">&lt;-</span> <span class="va">t2m</span><span class="op">$</span><span class="fu">subset</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>X <span class="op">=</span> <span class="fl">29</span><span class="op">:</span><span class="fl">30</span>, Y <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">:</span><span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;Variable&gt; t2m </span></span>
-<span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Values: (not loaded)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name      length values                                       </span></span>
-<span><span class="co">#&gt;  X    longitude 11     [29 ... 30]                                  </span></span>
-<span><span class="co">#&gt;  Y    latitude  11     [-1 ... -2]                                  </span></span>
-<span><span class="co">#&gt;  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]</span></span>
-<span><span class="co">#&gt;  unit                             </span></span>
-<span><span class="co">#&gt;  degrees_east                     </span></span>
-<span><span class="co">#&gt;  degrees_north                    </span></span>
-<span><span class="co">#&gt;  hours since 1900-01-01 00:00:00.0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attributes:</span></span>
-<span><span class="co">#&gt;  name      type    length value              </span></span>
-<span><span class="co">#&gt;  long_name NC_CHAR 19     2 metre temperature</span></span>
-<span><span class="co">#&gt;  units     NC_CHAR  1     K</span></span>
-<span></span>
-<span><span class="co"># Extract specific time slices for a specific region</span></span>
-<span><span class="co"># Note that the dimensions are specified out of order and using alternative</span></span>
-<span><span class="co"># specifications: only the extreme values are used.</span></span>
-<span><span class="op">(</span><span class="va">ts</span> <span class="op">&lt;-</span> <span class="va">t2m</span><span class="op">$</span><span class="fu">subset</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>T <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2016-01-01 09:00"</span>, <span class="st">"2016-01-01 15:00"</span><span class="op">)</span>,</span>
-<span>                       X <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">29.6</span>, <span class="fl">28.8</span><span class="op">)</span>,</span>
-<span>                       Y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>, <span class="op">-</span><span class="fl">1</span>, by <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;Variable&gt; t2m </span></span>
-<span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Values: (not loaded)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name      length values                                       </span></span>
-<span><span class="co">#&gt;  X    longitude 7      [28.9 ... 29.5]                              </span></span>
-<span><span class="co">#&gt;  Y    latitude  11     [-1 ... -2]                                  </span></span>
-<span><span class="co">#&gt;  T    time      6-U    [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]</span></span>
-<span><span class="co">#&gt;  unit                             </span></span>
-<span><span class="co">#&gt;  degrees_east                     </span></span>
-<span><span class="co">#&gt;  degrees_north                    </span></span>
-<span><span class="co">#&gt;  hours since 1900-01-01 00:00:00.0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attributes:</span></span>
-<span><span class="co">#&gt;  name      type    length value              </span></span>
-<span><span class="co">#&gt;  long_name NC_CHAR 19     2 metre temperature</span></span>
-<span><span class="co">#&gt;  units     NC_CHAR  1     K</span></span></code></pre></div>
-<p>Data loading is lazy. In the examples above, you can see that data did not yet get loaded. This is intentional: you can subset your data in multiple ways before actually reading the data from the resource. This is particularly important when getting data from an online location, such as a remote THREDDS server. Use <code><a href="https://rdrr.io/r/base/raw.html" class="external-link">raw()</a></code> or <code><a href="https://rdrr.io/r/base/array.html" class="external-link">array()</a></code> to get the arrays.</p>
-<div class="section level5">
-<h5 id="make-a-profile-of-data">Make a profile of data<a class="anchor" aria-label="anchor" href="#make-a-profile-of-data"></a>
-</h5>
-<p>It is often useful to extract a “profile” of data for a given location or zone, such as a timeseries of data. The <code><a href="https://rdrr.io/r/stats/profile.html" class="external-link">profile()</a></code> method has some flexible options to support this:</p>
-<ul>
-<li>Profile specific locations, with multiple locations specified per call, returning the data as a (set of) <code>CFVariable</code> instance(s) or as a single <code>data.table</code>.</li>
-<li>Profile zones, such as a latitude band or an atmospheric level. Data is returned as a new <code>CFVariable</code> instance(s).</li>
-</ul>
-<p>In all cases, you can profile over any of the axes and over any number of axes.</p>
-<p>Note that the <code><a href="https://rdrr.io/r/stats/profile.html" class="external-link">profile()</a></code> method returns data for the grid cells closest to the specified location. That is different from the <code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code> method, which will return data as it is recorded in the netCDF resource.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rwa</span> <span class="op">&lt;-</span> <span class="va">t2m</span><span class="op">$</span><span class="fu">profile</span><span class="op">(</span>longitude <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30.07</span>, <span class="fl">30.07</span>, <span class="fl">29.74</span><span class="op">)</span>, latitude <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1.94</span>, <span class="op">-</span><span class="fl">1.58</span>, <span class="op">-</span><span class="fl">2.60</span><span class="op">)</span>, </span>
-<span>                   .names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Kigali"</span>, <span class="st">"Byumba"</span>, <span class="st">"Butare"</span><span class="op">)</span>, .as_table <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rwa</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    longitude latitude                time .variable   .value</span></span>
-<span><span class="co">#&gt;        &lt;num&gt;    &lt;num&gt;              &lt;char&gt;    &lt;char&gt;    &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:     30.07    -1.94 2016-01-01T00:00:00    Kigali 290.4055</span></span>
-<span><span class="co">#&gt; 2:     30.07    -1.94 2016-01-01T01:00:00    Kigali 290.0088</span></span>
-<span><span class="co">#&gt; 3:     30.07    -1.94 2016-01-01T02:00:00    Kigali 289.3608</span></span>
-<span><span class="co">#&gt; 4:     30.07    -1.94 2016-01-01T03:00:00    Kigali 288.8414</span></span>
-<span><span class="co">#&gt; 5:     30.07    -1.94 2016-01-01T04:00:00    Kigali 288.4713</span></span>
-<span><span class="co">#&gt; 6:     30.07    -1.94 2016-01-01T05:00:00    Kigali 289.9276</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">rwa</span>, <span class="st">"value"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $name</span></span>
-<span><span class="co">#&gt; [1] "2 metre temperature"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $units</span></span>
-<span><span class="co">#&gt; [1] "K"</span></span></code></pre></div>
-<p>Some critical metadata is recorded in the “value” attribute: original long name and the physical unit.</p>
-<p>When you provide coordinates for all axes but one, you get a profile of values along the remaining axis, as shown above. If you provide fewer axis coordinates you get progressively higher-order results. To get a latitudinal transect, for instance, provide only a longitude coordinate:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">(</span><span class="va">trans29_74</span> <span class="op">&lt;-</span> <span class="va">t2m</span><span class="op">$</span><span class="fu">profile</span><span class="op">(</span>longitude <span class="op">=</span> <span class="fl">29.74</span>, .names <span class="op">=</span> <span class="st">"lon_29_74"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;Variable&gt; lon_29_74 </span></span>
-<span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Values: [286.5394 ... 298.963] K</span></span>
-<span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name      length values                                       </span></span>
-<span><span class="co">#&gt;  X    longitude 1      [29.74]                                      </span></span>
-<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]                                  </span></span>
-<span><span class="co">#&gt;  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]</span></span>
-<span><span class="co">#&gt;  unit                             </span></span>
-<span><span class="co">#&gt;  degrees_east                     </span></span>
-<span><span class="co">#&gt;  degrees_north                    </span></span>
-<span><span class="co">#&gt;  hours since 1900-01-01 00:00:00.0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attributes:</span></span>
-<span><span class="co">#&gt;  name         type      length value                </span></span>
-<span><span class="co">#&gt;  long_name    NC_CHAR   19     2 metre temperature  </span></span>
-<span><span class="co">#&gt;  units        NC_CHAR    1     K                    </span></span>
-<span><span class="co">#&gt;  actual_range NC_DOUBLE  2     286.539447, 298.96298</span></span></code></pre></div>
-<p>Note that there is only a single longitude coordinate left, at exactly the specified longitude.</p>
-</div>
-</div>
-<div class="section level2">
-<h2 id="summarising-data-over-time">Summarising data over time<a class="anchor" aria-label="anchor" href="#summarising-data-over-time"></a>
-</h2>
-<p>With the <code>summarise()</code> method you can apply a function over the data to generate summaries. You could, for instance, summarise daily data to monthly means. These methods use the specific calendar of the “time” axis. The return value is a new <code>CFVariable</code> object.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Summarising hourly temperature data to calculate the daily maximum temperature</span></span>
-<span><span class="va">t2m</span><span class="op">$</span><span class="fu">summarise</span><span class="op">(</span><span class="st">"tmax"</span>, <span class="va">max</span>, <span class="st">"day"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;Variable&gt; tmax </span></span>
-<span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Values: [290.0364 ... 302.0447] K</span></span>
-<span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name      length values                unit                             </span></span>
-<span><span class="co">#&gt;  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0</span></span>
-<span><span class="co">#&gt;  X    longitude 31     [28 ... 31]           degrees_east                     </span></span>
-<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]           degrees_north                    </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attributes:</span></span>
-<span><span class="co">#&gt;  name         type      length value                </span></span>
-<span><span class="co">#&gt;  long_name    NC_CHAR   19     2 metre temperature  </span></span>
-<span><span class="co">#&gt;  units        NC_CHAR    1     K                    </span></span>
-<span><span class="co">#&gt;  actual_range NC_DOUBLE  2     290.036358, 302.04472</span></span></code></pre></div>
-<p>A function may also return a vector of multiple values, in which case a list is returned with a new <code>CFVariable</code> object for each return value of the function. This allows you to calculate multiple results with a single call. You could write your own function to tailor the calculations to your needs. Rather than just calculating the daily maximum, you could get the daily maximum, minimum and diurnal range in one go:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Function to calculate multiple daily stats</span></span>
-<span><span class="co"># It is good practice to include a `na.rm` argument in all your functions</span></span>
-<span><span class="va">daily_stats</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">na.rm</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="co"># x is the vector of values for one day</span></span>
-<span>  <span class="va">minmax</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="va">na.rm</span><span class="op">)</span></span>
-<span>  <span class="va">diurnal</span> <span class="op">&lt;-</span> <span class="va">minmax</span><span class="op">[</span><span class="fl">2L</span><span class="op">]</span> <span class="op">-</span> <span class="va">minmax</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">minmax</span>, <span class="va">diurnal</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># Call summarise() with your own function</span></span>
-<span><span class="co"># The `name` argument should have as many names as the function returns results</span></span>
-<span><span class="op">(</span><span class="va">stats</span> <span class="op">&lt;-</span> <span class="va">t2m</span><span class="op">$</span><span class="fu">summarise</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tmin"</span>, <span class="st">"tmax"</span>, <span class="st">"diurnal_range"</span><span class="op">)</span>, <span class="va">daily_stats</span>, <span class="st">"day"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $tmin</span></span>
-<span><span class="co">#&gt; &lt;Variable&gt; tmin </span></span>
-<span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Values: [283.0182 ... 293.8659] K</span></span>
-<span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name      length values                unit                             </span></span>
-<span><span class="co">#&gt;  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0</span></span>
-<span><span class="co">#&gt;  X    longitude 31     [28 ... 31]           degrees_east                     </span></span>
-<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]           degrees_north                    </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attributes:</span></span>
-<span><span class="co">#&gt;  name         type      length value                 </span></span>
-<span><span class="co">#&gt;  long_name    NC_CHAR   19     2 metre temperature   </span></span>
-<span><span class="co">#&gt;  units        NC_CHAR    1     K                     </span></span>
-<span><span class="co">#&gt;  actual_range NC_DOUBLE  2     283.018168, 293.865857</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $tmax</span></span>
-<span><span class="co">#&gt; &lt;Variable&gt; tmax </span></span>
-<span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Values: [290.0364 ... 302.0447] K</span></span>
-<span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name      length values                unit                             </span></span>
-<span><span class="co">#&gt;  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0</span></span>
-<span><span class="co">#&gt;  X    longitude 31     [28 ... 31]           degrees_east                     </span></span>
-<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]           degrees_north                    </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attributes:</span></span>
-<span><span class="co">#&gt;  name         type      length value                </span></span>
-<span><span class="co">#&gt;  long_name    NC_CHAR   19     2 metre temperature  </span></span>
-<span><span class="co">#&gt;  units        NC_CHAR    1     K                    </span></span>
-<span><span class="co">#&gt;  actual_range NC_DOUBLE  2     290.036358, 302.04472</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $diurnal_range</span></span>
-<span><span class="co">#&gt; &lt;Variable&gt; diurnal_range </span></span>
-<span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Values: [1.819982 ... 11.27369] K</span></span>
-<span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name      length values                unit                             </span></span>
-<span><span class="co">#&gt;  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0</span></span>
-<span><span class="co">#&gt;  X    longitude 31     [28 ... 31]           degrees_east                     </span></span>
-<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]           degrees_north                    </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attributes:</span></span>
-<span><span class="co">#&gt;  name         type      length value              </span></span>
-<span><span class="co">#&gt;  long_name    NC_CHAR   19     2 metre temperature</span></span>
-<span><span class="co">#&gt;  units        NC_CHAR    1     K                  </span></span>
-<span><span class="co">#&gt;  actual_range NC_DOUBLE  2     1.819982, 11.27369</span></span></code></pre></div>
-<p>Note that you may have to update some attributes after calling <code>summarise()</code>. You can use the <code>set_attribute()</code> method on the <code>CFVariable</code> objects to do that.</p>
-</div>
-<div class="section level2">
-<h2 id="create-new-netcdf-objects">Create new netCDF objects<a class="anchor" aria-label="anchor" href="#create-new-netcdf-objects"></a>
-</h2>
+<span><span class="co">#&gt;  history     NC_CHAR 34     Attributes simplified for example.</span></span></code></pre></div>
 <p>You can convert a suitable R object into a <code>CFVariable</code> instance quite easily. R objects that are supported include arrays, matrices and vectors of type logical, integer, numeric or logical.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">arr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">120</span><span class="op">)</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">5</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/as_CF.html">as_CF</a></span><span class="op">(</span><span class="st">"my_first_CF_object"</span>, <span class="va">arr</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;Variable&gt; my_first_CF_object </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Values: [-1.845046 ... 2.907942] </span></span>
-<span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  name   length values   </span></span>
-<span><span class="co">#&gt;  axis_1 6      [1 ... 6]</span></span>
-<span><span class="co">#&gt;  axis_2 5      [1 ... 5]</span></span>
-<span><span class="co">#&gt;  axis_3 4      [1 ... 4]</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attributes:</span></span>
-<span><span class="co">#&gt;  name         type      length value              </span></span>
-<span><span class="co">#&gt;  actual_range NC_DOUBLE 2      -1.845046, 2.907942</span></span></code></pre></div>
-<p>Usable but not very impressive. The axes have dull names without any meaning and the coordinates are just a sequence along the axis.</p>
 <p>If the R object has <code>dimnames</code> set, these will be used to create more informed axes. More interestingly, if your array represents some spatial data you can give your <code>dimnames</code> appropriate names (“lat”, “lon”, “latitude”, “longitude”, case-insensitive) and the corresponding axis will be created (if the coordinate values in the <code>dimnames</code> are within the domain of the axis type). For “time” coordinates, these are automatically detected irrespective of the name.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Note the use of named dimnames here - these will become the names of the axes</span></span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Note the use of named dimnames: these will become the names of the axes</span></span>
+<span><span class="va">arr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">120</span><span class="op">)</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">5</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/dimnames.html">dimnames</a></span><span class="op">(</span><span class="va">arr</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>lat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">45</span>, <span class="fl">44</span>, <span class="fl">43</span>, <span class="fl">42</span>, <span class="fl">41</span>, <span class="fl">40</span><span class="op">)</span>, lon <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span>, </span>
 <span>                      time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2025-07-01"</span>, <span class="st">"2025-07-02"</span>, <span class="st">"2025-07-03"</span>, <span class="st">"2025-07-04"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="op">(</span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/as_CF.html">as_CF</a></span><span class="op">(</span><span class="st">"a_better_CF_object"</span>, <span class="va">arr</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; &lt;Variable&gt; a_better_CF_object </span></span>
+<span><span class="op">(</span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/as_CF.html">as_CF</a></span><span class="op">(</span><span class="st">"a_new_CF_object"</span>, <span class="va">arr</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;Variable&gt; a_new_CF_object </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Values: [-1.845046 ... 2.907942] </span></span>
+<span><span class="co">#&gt; Values: [-2.686543 ... 2.342778] </span></span>
 <span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Axes:</span></span>
@@ -468,11 +111,11 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attributes:</span></span>
 <span><span class="co">#&gt;  name         type      length value              </span></span>
-<span><span class="co">#&gt;  actual_range NC_DOUBLE 2      -1.845046, 2.907942</span></span>
+<span><span class="co">#&gt;  actual_range NC_DOUBLE 2      -2.686543, 2.342778</span></span>
 <span></span>
 <span><span class="co"># Axes are of a specific type and have basic attributes set</span></span>
 <span><span class="va">obj</span><span class="op">$</span><span class="va">axes</span><span class="op">[[</span><span class="st">"lat"</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="co">#&gt; &lt;Latitude axis&gt; [-32] lat</span></span>
+<span><span class="co">#&gt; &lt;Latitude axis&gt; [-2] lat</span></span>
 <span><span class="co">#&gt; Length     : 6</span></span>
 <span><span class="co">#&gt; Axis       : Y </span></span>
 <span><span class="co">#&gt; Coordinates: 45, 44, 43, 42, 41, 40 (degrees_north)</span></span>
@@ -486,7 +129,7 @@
 <span><span class="co">#&gt;  units         NC_CHAR   13     degrees_north</span></span>
 <span></span>
 <span><span class="va">obj</span><span class="op">$</span><span class="va">axes</span><span class="op">[[</span><span class="st">"time"</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="co">#&gt; &lt;Time axis&gt; [-34] time</span></span>
+<span><span class="co">#&gt; &lt;Time axis&gt; [-4] time</span></span>
 <span><span class="co">#&gt; Length     : 4</span></span>
 <span><span class="co">#&gt; Axis       : T </span></span>
 <span><span class="co">#&gt; Calendar   : standard </span></span>
@@ -501,58 +144,7 @@
 <span><span class="co">#&gt;  units         NC_CHAR   30     days since 1970-01-01T00:00:00</span></span>
 <span><span class="co">#&gt;  calendar      NC_CHAR    8     standard</span></span></code></pre></div>
 <p>You can further modify the resulting <code>CFVariable</code> by setting other properties, such as attributes or a coordinate reference system. Once the object is complete, you can export or save it.</p>
-</div>
-<div class="section level2">
-<h2 id="exporting-and-saving-data">Exporting and saving data<a class="anchor" aria-label="anchor" href="#exporting-and-saving-data"></a>
-</h2>
-<p>A <code>CFVariable</code> object can be exported to a <code>data.table</code> or to a <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRaster</a></code> (3D) or <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRasterDataset</a></code> (4D) for further processing. Obviously, these packages need to be installed to utilise these methods.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("data.table")</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dt</span> <span class="op">&lt;-</span> <span class="va">ts</span><span class="op">$</span><span class="fu">data.table</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    longitude latitude                time      t2m</span></span>
-<span><span class="co">#&gt;        &lt;num&gt;    &lt;num&gt;              &lt;char&gt;    &lt;num&gt;</span></span>
-<span><span class="co">#&gt; 1:      28.9       -1 2016-01-01T09:00:00 295.7120</span></span>
-<span><span class="co">#&gt; 2:      29.0       -1 2016-01-01T09:00:00 296.1809</span></span>
-<span><span class="co">#&gt; 3:      29.1       -1 2016-01-01T09:00:00 297.6046</span></span>
-<span><span class="co">#&gt; 4:      29.2       -1 2016-01-01T09:00:00 298.8195</span></span>
-<span><span class="co">#&gt; 5:      29.3       -1 2016-01-01T09:00:00 300.1376</span></span>
-<span><span class="co">#&gt; 6:      29.4       -1 2016-01-01T09:00:00 300.8583</span></span>
-<span></span>
-<span><span class="co">#install.packages("terra")</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">(</span><span class="va">r</span> <span class="op">&lt;-</span> <span class="va">stats</span><span class="op">[[</span><span class="st">"diurnal_range"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">terra</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; class       : SpatRaster </span></span>
-<span><span class="co">#&gt; size        : 21, 31, 1  (nrow, ncol, nlyr)</span></span>
-<span><span class="co">#&gt; resolution  : 0.1, 0.1  (x, y)</span></span>
-<span><span class="co">#&gt; extent      : 27.95, 31.05, -3.05, -0.95  (xmin, xmax, ymin, ymax)</span></span>
-<span><span class="co">#&gt; coord. ref. :  </span></span>
-<span><span class="co">#&gt; source(s)   : memory</span></span>
-<span><span class="co">#&gt; name        : 2016-01-01T12:00:00 </span></span>
-<span><span class="co">#&gt; min value   :            1.819982 </span></span>
-<span><span class="co">#&gt; max value   :           11.273690</span></span>
-<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-export-1.png" alt="" width="100%"></p>
-<p>A <code>stars</code> object can be created from a <code>CFVariable</code> or a <code>CFDataset</code> with multiple variables with the function <code>stars::st_as_stars()</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/" class="external-link">stars</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: abind</span></span>
-<span><span class="co">#&gt; Loading required package: sf</span></span>
-<span><span class="co">#&gt; Linking to GEOS 3.13.0, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE</span></span>
-<span><span class="op">(</span><span class="va">st</span> <span class="op">&lt;-</span> <span class="fu">st_as_stars</span><span class="op">(</span><span class="va">ts</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; stars object with 3 dimensions and 1 attribute</span></span>
-<span><span class="co">#&gt; attribute(s):</span></span>
-<span><span class="co">#&gt;             Min.  1st Qu.   Median     Mean  3rd Qu.     Max.</span></span>
-<span><span class="co">#&gt; t2m [K] 288.2335 293.2838 294.7573 294.9324 296.6282 301.2081</span></span>
-<span><span class="co">#&gt; dimension(s):</span></span>
-<span><span class="co">#&gt;           from to                  offset   delta    refsys x/y</span></span>
-<span><span class="co">#&gt; longitude    1  7                   28.85     0.1 OGC:CRS84 [x]</span></span>
-<span><span class="co">#&gt; latitude     1 11                   -0.95    -0.1 OGC:CRS84 [y]</span></span>
-<span><span class="co">#&gt; time         1  6 2016-01-01 09:00:00 UTC 1 hours   POSIXct</span></span></code></pre></div>
-<p>A <code>CFVariable</code> object can also be written back to a netCDF file. The object will have all its relevant attributes and properties written together with the actual data: axes, bounds, attributes, CRS. The netCDF file is of version “netcdf4” and will have the axes oriented in such a way that the file has maximum portability (specifically, data will be stored in row-major order with increasing Y values).</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Save a CFVariable instance to a netCDF file on disk</span></span>
-<span><span class="va">stats</span><span class="op">[[</span><span class="st">"diurnal_range"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span><span class="st">"~/path/file.nc"</span><span class="op">)</span></span></code></pre></div>
+<p>More detailed operations and options are given on the <a href="https://r-cf.github.io/ncdfCF/">package web site</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="development-plan">Development plan<a class="anchor" aria-label="anchor" href="#development-plan"></a>
@@ -582,10 +174,10 @@
 </h2>
 <p>Package <code>ncdfCF</code> is still being developed. While extensively tested on multiple well-structured data sets, errors may still occur, particularly in data sets that do not adhere to the CF Metadata Conventions. The API may still change and although care is taken not to make breaking changes, sometimes this is unavoidable.</p>
 <p>Installation from CRAN of the latest release:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"ncdfCF"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"ncdfCF"</span>)</span></code></pre></div>
 <p>You can install the development version of <code>ncdfCF</code> from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># install.packages("devtools")</span></span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"R-CF/ncdfCF"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># install.packages("devtools")</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"R-CF/ncdfCF"</span>)</span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

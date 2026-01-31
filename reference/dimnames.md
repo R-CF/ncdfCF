@@ -1,10 +1,10 @@
 # Names or axis values of an CF object
 
 Retrieve the variable or axis names of an `ncdfCF` object. The
-[`names()`](https://rspatial.github.io/terra/reference/names.html)
-function gives the names of the variables in the data set, preceded by
-the path to the group if the resource uses groups. The return value of
-the `dimnames()` function differs depending on the type of object:
+[`names()`](https://rdrr.io/r/base/names.html) function gives the names
+of the variables in the data set, preceded by the path to the group if
+the resource uses groups. The return value of the `dimnames()` function
+differs depending on the type of object:
 
 - `CFDataset`, `CFVariable`: The dimnames are returned as a vector of
   the names of the axes of the data set or variable, preceded with the

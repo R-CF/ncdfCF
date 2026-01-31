@@ -131,7 +131,7 @@ the sub-type of the axis.</p></dd>
 <dt><code>active_coordinates</code></dt>
 <dd><p>Set or retrieve the name of the coordinate set
 to use with the axis for printing to the console as well as for
-processing methods such as <code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code>.</p></dd>
+processing methods such as <code><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset()</a></code>.</p></dd>
 
 
 <dt><code>unlimited</code></dt>
@@ -184,10 +184,10 @@ has parametric coordinates. Always <code>FALSE</code> for all axes except for
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href="CFObject.html#method-write_attributes"><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href="CFData.html#method-dim"><code>ncdfCF::CFData$dim()</code></a></span></li>
 </ul></details></p><hr><a id="method-CFAxis-new"></a><div class="section">
-<h3 id="method-new-">Method <code><a href="https://rdrr.io/r/methods/new.html" class="external-link">new()</a></code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
+<h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create a new CF axis instance from a dimension and a
 variable in a netCDF resource. This method is called upon opening a
-netCDF resource by the <code><a href="https://rdrr.io/r/methods/new.html" class="external-link">initialize()</a></code> method of a descendant class
+netCDF resource by the <code>initialize()</code> method of a descendant class
 suitable for the type of axis.</p>
 <p>Creating a new axis is more easily done with the <code><a href="makeAxis.html">makeAxis()</a></code> function.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
@@ -378,7 +378,7 @@ method succeed with no result for the other descendant classes.</p><div class="s
 </div>
 
 </div><p></p><hr><a id="method-CFAxis-identical"></a><div class="section">
-<h3 id="method-identical-">Method <code><a href="https://rspatial.github.io/terra/reference/identical.html" class="external-link">identical()</a></code><a class="anchor" aria-label="anchor" href="#method-identical-"></a></h3>
+<h3 id="method-identical-">Method <code><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical()</a></code><a class="anchor" aria-label="anchor" href="#method-identical-"></a></h3>
 <p>Tests if the axis passed to this method is identical to
 <code>self</code>. This only tests for generic properties - class, length, name
 and attributes - with further assessment done in sub-classes.</p><div class="section">
@@ -423,7 +423,7 @@ not.</p>
 </div>
 
 </div><p></p><hr><a id="method-CFAxis-copy"></a><div class="section">
-<h3 id="method-copy-">Method <code><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy()</a></code><a class="anchor" aria-label="anchor" href="#method-copy-"></a></h3>
+<h3 id="method-copy-">Method <code>copy()</code><a class="anchor" aria-label="anchor" href="#method-copy-"></a></h3>
 <p>Create a copy of this axis. This method is "virtual" in the
 sense that it does not do anything other than return <code>NULL</code>. This stub
 is here to make the call to this method succeed with no result for the
@@ -484,7 +484,7 @@ use the name of this axis.</p></dd>
 </div>
 
 </div><p></p><hr><a id="method-CFAxis-subset"></a><div class="section">
-<h3 id="method-subset-">Method <code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code><a class="anchor" aria-label="anchor" href="#method-subset-"></a></h3>
+<h3 id="method-subset-">Method <code><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset()</a></code><a class="anchor" aria-label="anchor" href="#method-subset-"></a></h3>
 <p>Return an axis spanning a smaller coordinate range. This
 method is "virtual" in the sense that it does not do anything other
 than return <code>self</code>. This stub is here to make the call to this method

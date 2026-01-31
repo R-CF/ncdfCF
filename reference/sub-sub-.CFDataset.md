@@ -31,7 +31,7 @@ if the name is not found.
 If the data set has groups, the name `i` of the variable or axis should
 be fully qualified with the path to the group where the object is
 located. This fully qualified name can be retrieved with the
-[`names()`](https://rspatial.github.io/terra/reference/names.html) and
+[`names()`](https://rdrr.io/r/base/names.html) and
 [`dimnames()`](https://r-cf.github.io/ncdfCF/reference/dimnames.md)
 functions, respectively.
 

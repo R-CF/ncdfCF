@@ -107,7 +107,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a new instance of this class.
 
@@ -214,7 +214,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method [`copy()`](https://rdrr.io/pkg/data.table/man/copy.html)
+### Method `copy()`
 
 Create a copy of this axis. The copy is completely separate from this
 instance, meaning that the copies of both this instance and all of its
@@ -342,7 +342,7 @@ A new `CFAxisVertical` instance with values from this axis and the
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
+### Method [`subset()`](https://rdrr.io/r/base/subset.html)
 
 Return an axis spanning a smaller coordinate range. This method returns
 an axis which spans the range of indices given by the `rng` argument. If

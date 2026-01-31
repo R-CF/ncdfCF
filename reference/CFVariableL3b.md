@@ -58,7 +58,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create an instance of this class.
 
@@ -84,7 +84,7 @@ An instance of this class.
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
+### Method [`subset()`](https://rdrr.io/r/base/subset.html)
 
 This method extracts a subset of values from the data of the variable,
 with the range along both axes expressed in decimal degrees.

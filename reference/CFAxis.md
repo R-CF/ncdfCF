@@ -84,7 +84,7 @@ selectable through methods and fields in this class.
 
   Set or retrieve the name of the coordinate set to use with the axis
   for printing to the console as well as for processing methods such as
-  [`subset()`](https://rspatial.github.io/terra/reference/subset.html).
+  [`subset()`](https://rdrr.io/r/base/subset.html).
 
 - `unlimited`:
 
@@ -152,12 +152,12 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a new CF axis instance from a dimension and a variable in a
 netCDF resource. This method is called upon opening a netCDF resource by
-the [`initialize()`](https://rdrr.io/r/methods/new.html) method of a
-descendant class suitable for the type of axis.
+the `initialize()` method of a descendant class suitable for the type of
+axis.
 
 Creating a new axis is more easily done with the
 [`makeAxis()`](https://r-cf.github.io/ncdfCF/reference/makeAxis.md)
@@ -360,7 +360,7 @@ with no result for the other descendant classes.
 
 ------------------------------------------------------------------------
 
-### Method [`identical()`](https://rspatial.github.io/terra/reference/identical.html)
+### Method [`identical()`](https://rdrr.io/r/base/identical.html)
 
 Tests if the axis passed to this method is identical to `self`. This
 only tests for generic properties - class, length, name and attributes -
@@ -404,7 +404,7 @@ with further assessment done in sub-classes.
 
 ------------------------------------------------------------------------
 
-### Method [`copy()`](https://rdrr.io/pkg/data.table/man/copy.html)
+### Method `copy()`
 
 Create a copy of this axis. This method is "virtual" in the sense that
 it does not do anything other than return `NULL`. This stub is here to
@@ -467,7 +467,7 @@ method.
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
+### Method [`subset()`](https://rdrr.io/r/base/subset.html)
 
 Return an axis spanning a smaller coordinate range. This method is
 "virtual" in the sense that it does not do anything other than return

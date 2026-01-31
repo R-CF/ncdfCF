@@ -108,7 +108,7 @@ inferences can be made about a netCDF resource.</p></li>
 </ul><p><strong>Data set</strong></p>
 <p>A <a href="CFDataset.html">CFDataset</a> is the object that contains a netCDF resource. This is the main
 class that you need to access netCDF data from a file or an online resource.</p><ul><li><p><code><a href="create_ncdf.html">create_ncdf()</a></code>: Create a new CF data set.</p></li>
-<li><p><code><a href="https://rdrr.io/r/methods/show.html" class="external-link">show()</a></code>: Print information about the data set to the console. This will
+<li><p><code>show()</code>: Print information about the data set to the console. This will
 print some information on the resource, as well as all identified data
 variables and the global attributes.</p></li>
 <li><p><code>name</code>: The name of the data set.</p></li>
@@ -129,14 +129,14 @@ the "standard_name" attribute, or return all objects that have such the
 <li><p><code>has_subgroups()</code>: Indicates if the data set has subgroups below the root
 group.</p></li>
 <li><p><code>hierarchy()</code>: Prints the group hierarchy in the data set to the console.</p></li>
-</ul><p><em><strong>S3 methods for CFDataset</strong></em></p><ul><li><p><code><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names()</a></code>: Vector of names of the data variables in the data set.</p></li>
+</ul><p><em><strong>S3 methods for CFDataset</strong></em></p><ul><li><p><code><a href="https://rdrr.io/r/base/names.html" class="external-link">names()</a></code>: Vector of names of the data variables in the data set.</p></li>
 <li><p><code><a href="dimnames.html">dimnames()</a></code>: Vector of names of the axes in the data set.</p></li>
 <li><p><code><a href="https://ggplot2.tidyverse.org/reference/aes_group_order.html" class="external-link">ggplot2::group()</a></code>: Vector of groups defined in the data set.</p></li>
 </ul><p><strong>Data variable</strong></p>
 <p>A <a href="CFVariable.html">CFVariable</a> contains a single data variable from a data set. It contains
 detailed information on the data variable and there are functions to access
 the data, with different selection methods.</p>
-<p><em><strong>Properties</strong></em></p><ul><li><p><code><a href="https://rdrr.io/r/methods/show.html" class="external-link">show()</a></code>, <code>brief()</code>, and <code>shard()</code>: Print to the console or return to the
+<p><em><strong>Properties</strong></em></p><ul><li><p><code>show()</code>, <code>brief()</code>, and <code>shard()</code>: Print to the console or return to the
 caller (increasingly more compact) information on a data variable.</p></li>
 <li><p><code>name</code>, <code>id</code>: Basic properties of the data variable.</p></li>
 <li><p><code>axes()</code>: List of <code>CFAxis</code> objects representing the axes that the data
@@ -147,7 +147,7 @@ variable uses.</p></li>
 on the coordinate reference system (CRS) of the data variable.</p></li>
 <li><p><code>crs_wkt2</code>: The CRS of the data variable, in WKT2 format. This is derived
 from the data in the grid-mapping object.</p></li>
-</ul><p><em><strong>Data extraction</strong></em></p><ul><li><p><code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code>: Select a subset of data from a variable by specifying extents
+</ul><p><em><strong>Data extraction</strong></em></p><ul><li><p><code><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset()</a></code>: Select a subset of data from a variable by specifying extents
 in real-world coordinates for the axes into a <code>CFVariable</code> object. This can
 also process "auxiliary coordinate variables", if present, to warp data from
 its native CRS to latitude-longitude.</p></li>
@@ -167,14 +167,14 @@ standard R arrangement.</p></li>
 <li><p><code>terra()</code>: (requires the <code>terra</code> package) The data values from the data
 object as a <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRaster</a></code> (2 or 3 dimensions) or
 <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRasterDataset</a></code> (4 dimensions), with all relevant properties set.</p></li>
-<li><p><code><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table()</a></code>: (requires the <code>data.table</code> package) The data values from
+<li><p><code>data.table()</code>: (requires the <code>data.table</code> package) The data values from
 the data object as a <code>data.table</code> where every row consists of the permutation
 of the axis values and a final data value.</p></li>
 </ul><p><em><strong>New data variables</strong></em></p>
 <p>New <code>CFVariable</code> objects can be constructed from R vectors, matrices or
 arrays, optionally creating axes from dimnames on the R object, or a
 <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRaster</a></code> using the <code><a href="as_CF.html">as_CF()</a></code> function.</p>
-<p><em><strong>S3 methods for CFVariable</strong></em></p><ul><li><p><code><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">dim()</a></code>, <code><a href="dimnames.html">dimnames()</a></code>: Vector of the lengths and coordinate values of the
+<p><em><strong>S3 methods for CFVariable</strong></em></p><ul><li><p><code><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim()</a></code>, <code><a href="dimnames.html">dimnames()</a></code>: Vector of the lengths and coordinate values of the
 axes of the data variable.</p></li>
 <li><p><code>[]</code> (<a href="sub-.CFVariable.html">bracket_select</a>): Select the entire data variable or a part thereof
 using index values, returning an array of data values.</p></li>
@@ -201,12 +201,12 @@ them. This is most useful for <code>CFAxisDiscrete</code>. Labels of the active
 coordinate set are used for display of axis properties, as well as for
 selection in e.g. <code>CFVariable$subset()</code>.</p>
 <p>Methods for <code>CFAxis</code> instances:</p>
-<p><em><strong>Properties</strong></em></p><ul><li><p><code><a href="https://rdrr.io/r/methods/show.html" class="external-link">show()</a></code>, <code>brief()</code>, and <code>shard()</code>: Print to the console or return to the
+<p><em><strong>Properties</strong></em></p><ul><li><p><code>show()</code>, <code>brief()</code>, and <code>shard()</code>: Print to the console or return to the
 caller (increasingly more compact) information on an axis.</p></li>
 <li><p><code>name</code>, <code>id</code>: Basic properties of the axis.</p></li>
 </ul><p><em><strong>Extraction</strong></em></p><ul><li><p><code>indexOf()</code>: Retrieve the sub-range of the axis that encompasses the
 physical values passed.</p></li>
-<li><p><code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code>: Create a new <code>CFAxis</code> instance that spans a sub-range of the
+<li><p><code><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset()</a></code>: Create a new <code>CFAxis</code> instance that spans a sub-range of the
 axis.</p></li>
 <li><p><code>time</code>: Retrieve the <code>CFTime</code> instance of the axis.</p></li>
 </ul><p><em><strong>Coordinates</strong></em></p><ul><li><p><code>coordinate_names</code>: Set or retrieve the names of the coordinate sets (not the
@@ -219,7 +219,7 @@ either an instance of <a href="CFLabel.html">CFLabel</a> or an <a href="CFAxis.h
 be the coordinate values of the axis (say, longitude values) or a set of
 auxiliary coordinates associated with the axis.</p></li>
 <li><p><code>coordinate_range</code>: A vector with the extreme coordinate values of the axis.</p></li>
-</ul><p><em><strong>S3 methods for CFAxis</strong></em></p><ul><li><p><code><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">dim()</a></code>, <code><a href="dimnames.html">dimnames()</a></code>: The length and coordinate values of the axis.</p></li>
+</ul><p><em><strong>S3 methods for CFAxis</strong></em></p><ul><li><p><code><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim()</a></code>, <code><a href="dimnames.html">dimnames()</a></code>: The length and coordinate values of the axis.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

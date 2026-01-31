@@ -74,7 +74,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a new instance of this class.
 
@@ -139,7 +139,7 @@ Prints a summary of the labels to the console.
 
 ------------------------------------------------------------------------
 
-### Method [`identical()`](https://rspatial.github.io/terra/reference/identical.html)
+### Method [`identical()`](https://rdrr.io/r/base/identical.html)
 
 Tests if the object passed to this method is identical to `self`.
 
@@ -159,7 +159,7 @@ Tests if the object passed to this method is identical to `self`.
 
 ------------------------------------------------------------------------
 
-### Method [`copy()`](https://rdrr.io/pkg/data.table/man/copy.html)
+### Method `copy()`
 
 Create a copy of this label set. The copy is completely separate from
 `self`, meaning that both `self` and all of its components are made from
@@ -212,7 +212,7 @@ coordinates.
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
+### Method [`subset()`](https://rdrr.io/r/base/subset.html)
 
 Retrieve a subset of the labels.
 

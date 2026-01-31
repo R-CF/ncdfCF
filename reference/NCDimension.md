@@ -49,7 +49,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a new netCDF dimension. This class should not be instantiated
 directly, create CF objects instead. This class is instantiated when

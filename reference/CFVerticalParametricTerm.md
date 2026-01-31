@@ -68,7 +68,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create an instance of this class.
 
@@ -151,7 +151,7 @@ Prints a summary of the parametric formula term to the console.
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
+### Method [`subset()`](https://rdrr.io/r/base/subset.html)
 
 Subset the indices to read a smaller portion of the data from the netCDF
 file. The passed indices should be named after the axes that they refer

@@ -57,7 +57,7 @@ handled by higher-level methods.
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a connection to a netCDF resource. This is called by
 [`open_ncdf()`](https://r-cf.github.io/ncdfCF/reference/open_ncdf.md)

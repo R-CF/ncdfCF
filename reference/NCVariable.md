@@ -87,7 +87,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a new netCDF variable. This class should not be instantiated
 directly, they are created automatically when opening a netCDF resource.

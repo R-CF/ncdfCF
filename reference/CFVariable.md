@@ -138,7 +138,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create an instance of this class.
 
@@ -281,7 +281,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method [`time()`](https://rspatial.github.io/terra/reference/time.html)
+### Method [`time()`](https://rdrr.io/r/stats/time.html)
 
 Return the time object from the axis representing time.
 
@@ -336,7 +336,7 @@ has only a single dimension.
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
+### Method [`subset()`](https://rdrr.io/r/base/subset.html)
 
 This method extracts a subset of values from the array of the variable,
 with the range along each axis to extract expressed in coordinate values
@@ -461,12 +461,11 @@ resolution, using a user-supplied aggregation function.
   A function or a symbol or character string naming a function that will
   be applied to each grouping of data. The function must return an
   atomic value (such as [`sum()`](https://rdrr.io/r/base/sum.html) or
-  [`mean()`](https://rspatial.github.io/terra/reference/summarize-generics.html)),
-  or a vector of atomic values (such as
-  [`range()`](https://rdrr.io/r/base/range.html)). Lists and other
-  objects are not allowed and will throw an error that may be cryptic as
-  there is no way that this method can assert that `fun` behaves
-  properly so an error will pop up somewhere, most probably in
+  [`mean()`](https://rdrr.io/r/base/mean.html)), or a vector of atomic
+  values (such as [`range()`](https://rdrr.io/r/base/range.html)). Lists
+  and other objects are not allowed and will throw an error that may be
+  cryptic as there is no way that this method can assert that `fun`
+  behaves properly so an error will pop up somewhere, most probably in
   unexpected ways. The function may also be user-defined so you could
   write a wrapper around a function like
   [`lm()`](https://rdrr.io/r/stats/lm.html) to return values like the
@@ -776,7 +775,7 @@ instance.
 
 ------------------------------------------------------------------------
 
-### Method [`data.table()`](https://rdrr.io/pkg/data.table/man/data.table.html)
+### Method `data.table()`
 
 Retrieve the data variable in the object in the form of a `data.table`.
 The `data.table` package needs to be installed for this method to work.

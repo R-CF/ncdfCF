@@ -102,7 +102,7 @@ netCDF resource, organized in groups.
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create an instance of this class. Do not instantiate this class
 directly; instead, call

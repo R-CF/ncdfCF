@@ -71,7 +71,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a new instance of this class.
 
@@ -142,7 +142,7 @@ A 1-row `data.frame` with some details of the axis.
 
 ------------------------------------------------------------------------
 
-### Method [`copy()`](https://rdrr.io/pkg/data.table/man/copy.html)
+### Method `copy()`
 
 Create a copy of this axis. The copy is completely separate from this
 axis, meaning that the new axis and all of its components are made from
@@ -232,7 +232,7 @@ coordinates.
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
+### Method [`subset()`](https://rdrr.io/r/base/subset.html)
 
 Return an axis spanning a smaller coordinate range. This method returns
 an axis which spans the range of indices given by the `rng` argument.
@@ -267,7 +267,7 @@ this axis as the new axis.
 
 ------------------------------------------------------------------------
 
-### Method [`identical()`](https://rspatial.github.io/terra/reference/identical.html)
+### Method [`identical()`](https://rdrr.io/r/base/identical.html)
 
 Tests if the axis passed to this method is identical to `self`.
 

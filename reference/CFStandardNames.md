@@ -46,7 +46,7 @@ https://cfconventions.org/cf-conventions/cf-conventions.html#standard-name
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Initialize an instance of this class. This is done automatically when
 the package is loaded.

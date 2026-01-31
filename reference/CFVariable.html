@@ -161,7 +161,7 @@ description of the variable as a WKT2 string.</p></dd>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href="CFObject.html#method-write_attributes"><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href="CFData.html#method-dim"><code>ncdfCF::CFData$dim()</code></a></span></li>
 </ul></details></p><hr><a id="method-CFVariable-new"></a><div class="section">
-<h3 id="method-new-">Method <code><a href="https://rdrr.io/r/methods/new.html" class="external-link">new()</a></code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
+<h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create an instance of this class.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/CFVariable.html">CFVariable</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
@@ -294,7 +294,7 @@ underlying netCDF resource.</p><div class="section">
 </div>
 
 </div><p></p><hr><a id="method-CFVariable-time"></a><div class="section">
-<h3 id="method-time-">Method <code><a href="https://rspatial.github.io/terra/reference/time.html" class="external-link">time()</a></code><a class="anchor" aria-label="anchor" href="#method-time-"></a></h3>
+<h3 id="method-time-">Method <code><a href="https://rdrr.io/r/stats/time.html" class="external-link">time()</a></code><a class="anchor" aria-label="anchor" href="#method-time-"></a></h3>
 <p>Return the time object from the axis representing time.</p><div class="section">
 <h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFVariable</span><span class="op">$</span><span class="fu">time</span><span class="op">(</span>want <span class="op">=</span> <span class="st">"time"</span><span class="op">)</span></span></code></pre></div><p></p></div>
@@ -344,7 +344,7 @@ the data has only a single dimension.</p>
 </div>
 
 </div><p></p><hr><a id="method-CFVariable-subset"></a><div class="section">
-<h3 id="method-subset-">Method <code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code><a class="anchor" aria-label="anchor" href="#method-subset-"></a></h3>
+<h3 id="method-subset-">Method <code><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset()</a></code><a class="anchor" aria-label="anchor" href="#method-subset-"></a></h3>
 <p>This method extracts a subset of values from the array of
 the variable, with the range along each axis to extract expressed in
 coordinate values of the domain of each axis.</p><div class="section">
@@ -463,7 +463,7 @@ of length 2. Any missing values are assigned a default name of
 <dt><code>fun</code></dt>
 <dd><p>A function or a symbol or character string naming a function
 that will be applied to each grouping of data. The function must return
-an atomic value (such as <code><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum()</a></code> or <code><a href="https://rspatial.github.io/terra/reference/summarize-generics.html" class="external-link">mean()</a></code>), or a vector of atomic
+an atomic value (such as <code><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum()</a></code> or <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code>), or a vector of atomic
 values (such as <code><a href="https://rdrr.io/r/base/range.html" class="external-link">range()</a></code>). Lists and other objects are not allowed and
 will throw an error that may be cryptic as there is no way that this
 method can assert that <code>fun</code> behaves properly so an error will pop up
@@ -769,7 +769,7 @@ package needs to be installed for this method to work.</p><div class="section">
 </div>
 
 </div><p></p><hr><a id="method-CFVariable-data.table"></a><div class="section">
-<h3 id="method-data-table-">Method <code><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table()</a></code><a class="anchor" aria-label="anchor" href="#method-data-table-"></a></h3>
+<h3 id="method-data-table-">Method <code>data.table()</code><a class="anchor" aria-label="anchor" href="#method-data-table-"></a></h3>
 <p>Retrieve the data variable in the object in the form of a
 <code>data.table</code>. The <code>data.table</code> package needs to be installed for this
 method to work.</p>
