@@ -44,7 +44,7 @@ addition, this class manages the attributes for its descendent classes.
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a new netCDF object. This class should not be instantiated
 directly, create descendant objects instead.

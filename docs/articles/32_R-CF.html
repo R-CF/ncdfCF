@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ncdfCF</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/31_Creating.html">1. Creating new data sets and variables</a></li>
     <li><a class="dropdown-item" href="../articles/32_R-CF.html">2. R and CF Metadata Conventions</a></li>
-    <li><a class="dropdown-item" href="../articles/91_CMEMS.html">Example 1. How to open and visualise Copernicus Marine Data in R</a></li>
+    <li><a class="dropdown-item" href="../articles/33_Troubleshooting.html">3. Troubleshooting</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -108,12 +108,12 @@ coordinate reference system of your data) to the actual data array in a
 <span><span class="va">nc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ncdf4/man/nc_open.html" class="external-link">nc_open</a></span><span class="op">(</span><span class="va">fn</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># The "variables"</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">nc</span><span class="op">$</span><span class="va">var</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">nc</span><span class="op">$</span><span class="va">var</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "time_bnds"         "lon"               "lat"              </span></span>
 <span><span class="co">#&gt; [4] "Lambert_Conformal" "height"            "tasmax"</span></span>
 <span></span>
 <span><span class="co"># The dimensions</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">nc</span><span class="op">$</span><span class="va">dim</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">nc</span><span class="op">$</span><span class="va">dim</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "time" "bnds" "x"    "y"</span></span></code></pre>
 <p>So which of these variables is the one that holds your data? And how
 do you tell it apart from the other “variables”? And why are there
@@ -144,7 +144,7 @@ calculating the parametric coordinates of a vertical axis).</p>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/open_ncdf.html">open_ncdf</a></span><span class="op">(</span><span class="va">fn</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># The data variable</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "tasmax"</span></span>
 <span></span>
 <span><span class="co"># The details of the data variable</span></span>
@@ -320,7 +320,7 @@ from the bottom-left working upwards. That looks like this:</p>
 <span><span class="co">#&gt; [2,]    5    6    7    8</span></span>
 <span><span class="co">#&gt; [3,]    1    2    3    4</span></span></code></pre></div>
 <p>This is the cause of lots of headaches and “patches” involving
-<code><a href="https://rspatial.github.io/terra/reference/transpose.html" class="external-link">t()</a></code> and <code><a href="https://rspatial.github.io/terra/reference/flip.html" class="external-link">rev()</a></code> in <em>some</em> order and
+<code><a href="https://rdrr.io/r/base/t.html" class="external-link">t()</a></code> and <code><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev()</a></code> in <em>some</em> order and
 general exasperation (<em>“why does it have to be so
 complicated?”</em>).</p>
 <p>The bottom line is that there is no guarantee that the data are
@@ -681,7 +681,7 @@ programmatically. A case in point is the
 <code>CFVariable::summarise()</code> method: the function to apply in
 summarising is user-supplied and this package has no knowledge of what
 that function does or results in: apart from built-in functions like
-<code><a href="https://rspatial.github.io/terra/reference/summarize-generics.html" class="external-link">mean()</a></code> or <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max()</a></code>, users can supply a
+<code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code> or <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max()</a></code>, users can supply a
 custom-made function with multiple results and thus multiple resulting
 <code>CFVariable</code> instances that each need a specific update to
 the <code>cell_methods</code> attribute copied from the data variable

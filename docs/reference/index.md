@@ -56,25 +56,39 @@ resource or exported to some other format.
 
 - [`CFVariable`](https://r-cf.github.io/ncdfCF/reference/CFVariable.md)
   : CF data variable
+
 - [`CFVariableL3b`](https://r-cf.github.io/ncdfCF/reference/CFVariableL3b.md)
   : CF data variable for the NASA L3b format
+
 - [`CFGridMapping`](https://r-cf.github.io/ncdfCF/reference/CFGridMapping.md)
   : CF grid mapping object
+
 - [`CFCellMeasure`](https://r-cf.github.io/ncdfCF/reference/CFCellMeasure.md)
   : CF cell measure variable
+
 - [`CFAuxiliaryLongLat`](https://r-cf.github.io/ncdfCF/reference/CFAuxiliaryLongLat.md)
   : CF auxiliary longitude-latitude variable
+
 - [`` `[`( ``*`<CFVariable>`*`)`](https://r-cf.github.io/ncdfCF/reference/sub-.CFVariable.md)
   : Extract data for a variable
+
 - [`` `[`( ``*`<CFVariableL3b>`*`)`](https://r-cf.github.io/ncdfCF/reference/sub-.CFVariableL3b.md)
   : Extract data for a variable
+
 - [`aoi()`](https://r-cf.github.io/ncdfCF/reference/aoi.md) : Area of
   Interest
+
 - [`dim(`*`<AOI>`*`)`](https://r-cf.github.io/ncdfCF/reference/dim.AOI.md)
   : The dimensions of the grid of an AOI
+
 - [`Ops(`*`<CFVariable>`*`)`](https://r-cf.github.io/ncdfCF/reference/arrayOps.md)
   [`Math(`*`<CFVariable>`*`)`](https://r-cf.github.io/ncdfCF/reference/arrayOps.md)
   : Operations on CFVariable objects
+
+- [`geom_ncdf()`](https://r-cf.github.io/ncdfCF/reference/geom_ncdf.md)
+  :
+
+  Create a plot object for a `CFVariable`
 
 ### Axes
 

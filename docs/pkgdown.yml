@@ -4,9 +4,9 @@ pkgdown_sha: ~
 articles:
   articles/31_Creating: 31_Creating.html
   articles/32_R-CF: 32_R-CF.html
-  articles/91_CMEMS: 91_CMEMS.html
+  articles/33_Troubleshooting: 33_Troubleshooting.html
   ncdfCF: ncdfCF.html
-last_built: 2026-01-23T15:24Z
+last_built: 2026-01-31T18:07Z
 urls:
   reference: https://r-cf.github.io/ncdfCF/reference
   article: https://r-cf.github.io/ncdfCF/articles

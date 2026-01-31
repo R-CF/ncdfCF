@@ -143,7 +143,7 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 # Open the file, all metadata is read
 (ds <- open_ncdf(fn))
 #> <Dataset> ERA5land_Rwanda_20160101 
-#> Resource   : /private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpKHGYqX/temp_libpath39436db49ff5/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
+#> Resource   : /private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpBxdt42/temp_libpath12e464e36401/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
 #> Format     : offset64 
 #> Collection : Generic netCDF data 
 #> Conventions: CF-1.6 
@@ -263,34 +263,17 @@ for a variable:
   know the indices into the arrays but `ncdfCF` has some helper
   functions to get you those. Not specifying anything gets you the whole
   array: `d <- t2m[]`.
-- **[`subset()`](https://rspatial.github.io/terra/reference/subset.html)**:
-  The
+- **[`raw()`](https://rdrr.io/r/base/raw.html):** This also gets the
+  data in the layout of the file (or the data set) but with dimnames
+  set. Importantly, you can call this after calling
   [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
-  method is more flexible than `[]` because it requires less knowledge
-  of how the data in the variable is structured, particularly the order
-  of the axes. While many netCDF resources “behave” in their dimension
-  order, there is no guarantee. With
-  [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
-  you supply each axis you want to subset (by axis orientation or name,
-  in any order) and each item containing a vector of real-world
-  coordinates to extract. As an example, to extract values of a variable
-  `x` for Australia for the year 2020 you call
-  `x$subset(X = 112:154, Y = -9:-44, T = c("2020-01-01", "2021-01-01"))`.
-  The result is returned as a new `CFVariable` object.
-- **`summarise()`**: The `summarise()` method summarises the temporal
-  dimension of a data variable to a lower resolution and returns a
-  `CFVariable` object with the results. For instance, you can summarise
-  daily data to monthly summaries, which greatly reduces the size of the
-  data variable. The periods to which data can be summarised are “day”,
-  “dekad” (10-day periods), “month”, “quarter” (i.e. JFM, AMJ, JAS,
-  OND), “season” (the meteorological seasons: DJF, MAM, JJA, SON), and
-  “year”. The function to summarise on is user-supplied and can be a
-  simple built-in function, like
-  [`mean()`](https://rspatial.github.io/terra/reference/summarize-generics.html),
-  a function that results multiple results, like
-  [`range()`](https://rdrr.io/r/base/range.html), or a custom function.
-  A new `CFVariable` instance is returned for every result returned from
-  the function.
+  and you will get the raw data for the specific spatial and temporal
+  domain that you are interested in.
+- **[`array()`](https://rdrr.io/r/base/array.html):** Like
+  [`raw()`](https://rdrr.io/r/base/raw.html), this extracts all the
+  (subsetted) data, but now the data will be oriented in the standard R
+  way of column-major order. Y coordinates will run from the top to the
+  bottom (so latitude values, for instance, will be decreasing).
 
 ``` r
 # Extract a time series for a specific location
@@ -324,6 +307,46 @@ str(ts)
 Note that the results contain degenerate dimensions (of length 1). This
 by design because it allows attributes to be attached and then inspected
 by the user in a consistent manner.
+
+With the below `CFVariable` methods you have more control over what to
+extract, possibly processed:
+
+- **[`subset()`](https://rspatial.github.io/terra/reference/subset.html)**:
+  The
+  [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
+  method is more flexible than `[]` because it requires less knowledge
+  of how the data in the variable is structured, particularly the order
+  of the axes. While many netCDF resources “behave” in their dimension
+  order, there is no guarantee. With
+  [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
+  you supply each axis you want to subset (by axis orientation or name,
+  in any order) and each item containing a vector of real-world
+  coordinates to extract. As an example, to extract values of a variable
+  `x` for Australia for the year 2020 you call
+  `x$subset(X = 112:154, Y = -9:-44, T = "2020")`. The result is
+  returned as a new `CFVariable` object.
+- **`summarise()`**: The `summarise()` method summarises the temporal
+  dimension of a data variable to a lower resolution and returns a
+  `CFVariable` object with the results. For instance, you can summarise
+  daily data to monthly summaries, which greatly reduces the size of the
+  data variable. The periods to which data can be summarised are “day”,
+  “dekad” (10-day periods), “month”, “quarter” (i.e. JFM, AMJ, JAS,
+  OND), “season” (the meteorological seasons: DJF, MAM, JJA, SON), and
+  “year”. The function to summarise on is user-supplied and can be a
+  simple built-in function, like
+  [`mean()`](https://rspatial.github.io/terra/reference/summarize-generics.html),
+  a function that results multiple results, like
+  [`range()`](https://rdrr.io/r/base/range.html), or a custom function.
+  A new `CFVariable` instance is returned for every result returned from
+  the function.
+- **[`profile()`](https://rdrr.io/r/stats/profile.html):** Extract
+  “profiles” from the data variable. This can take different forms, such
+  as a temporal or depth profile for a single location, but it could
+  also be a zonal field (such as a transect in latitude - atmospheric
+  depth for a given longitude) or some other profile in the physical
+  space of the data variable.
+
+### Subsetting by axis range
 
 ``` r
 # Extract a specific region, full time dimension
@@ -375,22 +398,210 @@ by the user in a consistent manner.
 #>  units     NC_CHAR  1     K
 ```
 
-These methods will read data from the netCDF resource, but only as much
-as is requested.
+### Make a profile of data
 
-The approaches lend themselves well to the
+It is often useful to extract a “profile” of data for a given location
+or zone, such as a timeseries of data. The `CFVariable$profile()` method
+has some flexible options to support this:
+
+- Profile specific locations, with multiple locations specified per
+  call, returning the data as a (set of) `CFVariable` instance(s) or as
+  a single `data.table`.
+- Profile zones, such as a latitude band or an atmospheric level. Data
+  is returned as (a) new `CFVariable` instance(s).
+
+In all cases, you can profile over any of the axes and over any number
+of axes.
+
+Note that the [`profile()`](https://rdrr.io/r/stats/profile.html) method
+returns data for the grid cells closest to the specified location. That
+is different from the
+[`subset()`](https://rspatial.github.io/terra/reference/subset.html)
+method, which will return data as it is recorded in the netCDF resource.
+
+``` r
+rwa <- t2m$profile(longitude = c(30.07, 30.07, 29.74), latitude = c(-1.94, -1.58, -2.60), 
+                   .names = c("Kigali", "Byumba", "Butare"), .as_table = TRUE)
+head(rwa)
+#>    longitude latitude                time .variable   .value
+#>        <num>    <num>              <char>    <char>    <num>
+#> 1:     30.07    -1.94 2016-01-01T00:00:00    Kigali 290.4055
+#> 2:     30.07    -1.94 2016-01-01T01:00:00    Kigali 290.0088
+#> 3:     30.07    -1.94 2016-01-01T02:00:00    Kigali 289.3608
+#> 4:     30.07    -1.94 2016-01-01T03:00:00    Kigali 288.8414
+#> 5:     30.07    -1.94 2016-01-01T04:00:00    Kigali 288.4713
+#> 6:     30.07    -1.94 2016-01-01T05:00:00    Kigali 289.9276
+attr(rwa, "value")
+#> $name
+#> [1] "2 metre temperature"
+#> 
+#> $units
+#> [1] "K"
+```
+
+Some critical metadata is recorded in the “value” attribute: original
+long name and the physical unit.
+
+When you provide coordinates for all axes but one, you get a profile of
+values along the remaining axis, as shown above. If you provide fewer
+axis coordinates you get progressively higher-order results. To get a
+latitudinal transect, for instance, provide only a longitude coordinate:
+
+``` r
+(trans29_74 <- t2m$profile(longitude = 29.74, .names = "lon_29_74"))
+#> <Variable> lon_29_74 
+#> Long name: 2 metre temperature 
+#> 
+#> Values: [286.5394 ... 298.963] K
+#>     NA: 0 (0.0%)
+#> 
+#> Axes:
+#>  axis name      length values                                       
+#>  X    longitude 1      [29.74]                                      
+#>  Y    latitude  21     [-1 ... -3]                                  
+#>  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  unit                             
+#>  degrees_east                     
+#>  degrees_north                    
+#>  hours since 1900-01-01 00:00:00.0
+#> 
+#> Attributes:
+#>  name         type      length value                
+#>  long_name    NC_CHAR   19     2 metre temperature  
+#>  units        NC_CHAR    1     K                    
+#>  actual_range NC_DOUBLE  2     286.539447, 298.96298
+```
+
+Note that there is only a single longitude coordinate left, at exactly
+the specified longitude.
+
+### Summarising data over time
+
+With the `summarise()` method you can apply a function over the data to
+generate summaries. You could, for instance, summarise daily data to
+monthly means. These methods use the specific calendar of the “time”
+axis. The return value is a new `CFVariable` object.
+
+``` r
+# Summarising hourly temperature data to calculate the daily maximum temperature
+t2m$summarise("tmax", max, "day")
+#> <Variable> tmax 
+#> Long name: 2 metre temperature 
+#> 
+#> Values: [290.0364 ... 302.0447] K
+#>     NA: 0 (0.0%)
+#> 
+#> Axes:
+#>  axis name      length values                unit                             
+#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
+#>  X    longitude 31     [28 ... 31]           degrees_east                     
+#>  Y    latitude  21     [-1 ... -3]           degrees_north                    
+#> 
+#> Attributes:
+#>  name         type      length value                
+#>  long_name    NC_CHAR   19     2 metre temperature  
+#>  units        NC_CHAR    1     K                    
+#>  actual_range NC_DOUBLE  2     290.036358, 302.04472
+```
+
+A function may also return a vector of multiple values, in which case a
+list is returned with a new `CFVariable` object for each return value of
+the function. This allows you to calculate multiple results with a
+single call. You could write your own function to tailor the
+calculations to your needs. Rather than just calculating the daily
+maximum, you could get the daily maximum, minimum and diurnal range in
+one go:
+
+``` r
+# Function to calculate multiple daily stats
+# It is good practice to include a `na.rm` argument in all your functions
+daily_stats <- function(x, na.rm = TRUE) {
+  # x is the vector of values for one day
+  minmax <- range(x, na.rm = na.rm)
+  diurnal <- minmax[2L] - minmax[1L]
+  c(minmax, diurnal)
+}
+
+# Call summarise() with your own function
+# The `name` argument should have as many names as the function returns results
+(stats <- t2m$summarise(c("tmin", "tmax", "diurnal_range"), daily_stats, "day"))
+#> $tmin
+#> <Variable> tmin 
+#> Long name: 2 metre temperature 
+#> 
+#> Values: [283.0182 ... 293.8659] K
+#>     NA: 0 (0.0%)
+#> 
+#> Axes:
+#>  axis name      length values                unit                             
+#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
+#>  X    longitude 31     [28 ... 31]           degrees_east                     
+#>  Y    latitude  21     [-1 ... -3]           degrees_north                    
+#> 
+#> Attributes:
+#>  name         type      length value                 
+#>  long_name    NC_CHAR   19     2 metre temperature   
+#>  units        NC_CHAR    1     K                     
+#>  actual_range NC_DOUBLE  2     283.018168, 293.865857
+#> 
+#> $tmax
+#> <Variable> tmax 
+#> Long name: 2 metre temperature 
+#> 
+#> Values: [290.0364 ... 302.0447] K
+#>     NA: 0 (0.0%)
+#> 
+#> Axes:
+#>  axis name      length values                unit                             
+#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
+#>  X    longitude 31     [28 ... 31]           degrees_east                     
+#>  Y    latitude  21     [-1 ... -3]           degrees_north                    
+#> 
+#> Attributes:
+#>  name         type      length value                
+#>  long_name    NC_CHAR   19     2 metre temperature  
+#>  units        NC_CHAR    1     K                    
+#>  actual_range NC_DOUBLE  2     290.036358, 302.04472
+#> 
+#> $diurnal_range
+#> <Variable> diurnal_range 
+#> Long name: 2 metre temperature 
+#> 
+#> Values: [1.819982 ... 11.27369] K
+#>     NA: 0 (0.0%)
+#> 
+#> Axes:
+#>  axis name      length values                unit                             
+#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
+#>  X    longitude 31     [28 ... 31]           degrees_east                     
+#>  Y    latitude  21     [-1 ... -3]           degrees_north                    
+#> 
+#> Attributes:
+#>  name         type      length value              
+#>  long_name    NC_CHAR   19     2 metre temperature
+#>  units        NC_CHAR    1     K                  
+#>  actual_range NC_DOUBLE  2     1.819982, 11.27369
+```
+
+Note that you may have to update some attributes after calling
+`summarise()`. You can use the `set_attribute()` method on the
+`CFVariable` objects to do that. Data loading is lazy. In the examples
+above, you can see that data did not yet get loaded. This is
+intentional: you can subset your data in multiple ways before actually
+reading the data from the resource. This is particularly important when
+getting data from an online location, such as a remote THREDDS server.
+When you want to get a hold of the raw data in an R array, use
+`CFVariable$raw()` or `CFvariable$array()` to get the array with
+`dimnames` set.
+
+All of the above methods will read data from the netCDF resource, but
+only as much as is requested. The approaches lend themselves well to the
 [`apply()`](https://rdrr.io/r/base/apply.html) family of functions for
 processing. Importantly, these functions give access to data from the
 netCDF resource so you can tweak the size of your request to the
 capacity of the computer, without exhausting RAM.
 
 ## Working with the data
-
-The [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
-and `summarise()` methods return data from a variable as a new
-`CFVariable` instance, including all important metadata of the data,
-such as its axes, the coordinate reference system, and the attributes,
-among others.
 
 ### Processing data
 
@@ -468,12 +679,12 @@ of `tsHot`) but you likely have a better description (like,
 
 ### Orienting the data
 
-The `CFVariable` instance also lets you manipulate the data in a way
-that is informed by the metadata. This overcomes a typical issue when
-working with netCDF data that adheres to the CF Metadata Conventions.
-The ordering of the axes in a typical netCDF resource is different from
-the way that R orders its data. That leads to surprising results if you
-are not aware of this issue:
+The `CFVariable` instance lets you manipulate the data in a way that is
+informed by the metadata. This overcomes a typical issue when working
+with netCDF data that adheres to the CF Metadata Conventions. The
+ordering of the axes in a typical netCDF resource is different from the
+way that R orders its data. That leads to surprising results if you are
+not aware of this issue.
 
 ``` r
 # Open a file and read the data from a variable into a CFVariable instance
@@ -481,12 +692,7 @@ fn <- system.file("extdata", "tasmax_NAM-44_day_20410701-vncdfCF.nc", package = 
 ds <- open_ncdf(fn)
 tx <- ds[["tasmax"]]
 
-# Use the terra package for plotting
-# install.packages("terra")
-library(terra)
-#> terra 1.8.86
-
-# Get the data in exactly the way it is stored in the file, using `raw()`
+# Get the raw data as an R array
 tx_raw <- tx$raw()
 str(tx_raw)
 #>  num [1:148, 1:140, 1, 1] 301 301 301 301 301 ...
@@ -495,28 +701,15 @@ str(tx_raw)
 #>   ..$ y     : chr [1:140] "0" "50000" "1e+05" "150000" ...
 #>   ..$ time  : chr "2041-07-01T12:00:00"
 #>   ..$ height: chr "2"
-
-# Plot the data
-(r <- rast(tx_raw))
-#> class       : SpatRaster 
-#> size        : 148, 140, 1  (nrow, ncol, nlyr)
-#> resolution  : 1, 1  (x, y)
-#> extent      : 0, 140, 0, 148  (xmin, xmax, ymin, ymax)
-#> coord. ref. :  
-#> source(s)   : memory
-#> name        :    lyr.1 
-#> min value   : 263.4697 
-#> max value   : 313.2861
-plot(r)
 ```
 
-![](ncdfCF_files/figure-html/orienting-1.png)
-
-North America is lying on its side. This is because the data is stored
-differently in the netCDF resource than R expects. There is, in fact,
-not a single way of storing data in a netCDF resources, the dimensions
-may be stored in any order. The CF Metadata Conventions add metadata to
-interpret the file storage. The
+The data is stored differently in the netCDF resource than usually in R:
+the first dimension is for `x` coordinates, followed by `y` coordinates
+in increasing order (meaning going from the bottom to the top), followed
+by two degenerate dimensions. This happens to be a common arrangement in
+netCDF data. There is, however, not a single way of storing data in a
+netCDF resources, the dimensions may be stored in any order. The CF
+Metadata Conventions add metadata to interpret the file storage. The
 [`array()`](https://rdrr.io/r/base/array.html) method uses that to
 produce an array in the familiar R storage arrangement:
 
@@ -529,56 +722,94 @@ str(tx_array)
 #>   ..$ x     : chr [1:148] "0" "50000" "1e+05" "150000" ...
 #>   ..$ height: chr "2"
 #>   ..$ time  : chr "2041-07-01T12:00:00"
-r <- rast(tx_array)
-plot(r)
 ```
 
-![](ncdfCF_files/figure-html/array-1.png)
+The data has been oriented in the familiar R way: from the top-left down
+and then across. Behind the scenes that may have involved transposing
+and flipping the data, depending on the data storage arrangement in the
+netCDF resource.
 
-Ok, so now we got North America looking pretty ok again. The data has
-been oriented in the right way. Behind the scenes that may have involved
-transposing and flipping the data, depending on the data storage
-arrangement in the netCDF resource.
+## Plotting netCDF data
 
-But the coordinate system is still not right. These are just ordinal
-values along both axes. The
-[`terra::SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
-object also does not show a CRS. All of the above steps can be fixed by
-simply calling the `terra()` method on the data object. This will return
-a
-[`terra::SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
-for a data object with three axes and a
-[`terra::SpatRasterDataset`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
-for a data object with four axes:
+Package `ncdfCF` includes the function
+[`geom_ncdf()`](https://r-cf.github.io/ncdfCF/reference/geom_ncdf.md)
+which can be used to compose maps with `ggplot2`:
 
 ``` r
-(r <- tx$terra())
-#> class       : SpatRasterDataset 
-#> subdatasets : 1 
-#> dimensions  : 140, 148 (nrow, ncol)
-#> nlyr        : 1 
-#> resolution  : 50000, 50000  (x, y)
-#> extent      : -25000, 7375000, -25000, 6975000  (xmin, xmax, ymin, ymax)
-#> coord. ref. : +proj=lcc +lat_0=46.0000038146973 +lon_0=-97 +lat_1=35 +lat_2=60 +x_0=3675000 +y_0=3475000 +datum=WGS84 +units=m +no_defs 
-#> source(s)   : memory 
-#> names       : 2041-07-01T12:00:00
-plot(r[[1]])
+library(ggplot2)
+ggplot() + geom_ncdf(data = tx) + coord_equal() + scale_fill_viridis_c()
 ```
 
-![](ncdfCF_files/figure-html/terra-1.png)
+![](ncdfCF_files/figure-html/ggplot-1.png)
 
-So that’s a fully specified
+It is advisable to subset or summarize the data variable to exactly the
+data you want to map to avoid exhausting your computer resources.
+
+You can further compose this map as you would with any `ggplot2` map
+composition: set sizes, labels, ticks, title, modify the legend, etc.
+
+## Saving and exporting data
+
+A `CFVariable` object can be saved to a netCDF file. The object will
+have all its relevant attributes and properties written together with
+the actual data: axes, bounds, attributes, CRS. The netCDF file is of
+version “netcdf4” and will have the axes oriented in such a way that the
+file has maximum portability (specifically, data will be stored in
+row-major order with increasing Y values).
+
+``` r
+# Save a CFVariable instance to a netCDF file on disk
+stats[["diurnal_range"]]$save("~/path/file.nc")
+```
+
+A `CFVariable` object can also be exported to a `data.table` or to a
 [`terra::SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
-from netCDF data.
+(3D) or
+[`terra::SpatRasterDataset`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
+(4D) for further processing. Obviously, these packages need to be
+installed to utilise these methods.
 
-(**Disclaimer:** Package `terra` can do this too with simply
-`terra::rast(fn)` and then selecting a layer to plot (which is not
-always trivial if you are looking for a specific layer; e.g. what does
-“lyr.1” represent?). The whole point of the above examples is to
-demonstrate the different steps in processing netCDF data. There are
-also some subtle differences such as the names of the layers.
-Furthermore, `ncdfCF` doesn’t insert the attributes of the variable into
-the `SpatRaster`. `terra` can only handle netCDF resources that “behave”
-properly (especially the axis order) and it has no particular
-consideration for the different calendars that can be used with CF
-data.)
+``` r
+# install.packages("data.table")
+library(data.table)
+head(dt <- ts$data.table())
+#>    longitude latitude                time      t2m
+#>        <num>    <num>              <char>    <num>
+#> 1:      28.9       -1 2016-01-01T09:00:00 295.7120
+#> 2:      29.0       -1 2016-01-01T09:00:00 296.1809
+#> 3:      29.1       -1 2016-01-01T09:00:00 297.6046
+#> 4:      29.2       -1 2016-01-01T09:00:00 298.8195
+#> 5:      29.3       -1 2016-01-01T09:00:00 300.1376
+#> 6:      29.4       -1 2016-01-01T09:00:00 300.8583
+
+#install.packages("terra")
+suppressMessages(library(terra))
+(r <- stats[["diurnal_range"]]$terra())
+#> class       : SpatRaster 
+#> size        : 21, 31, 1  (nrow, ncol, nlyr)
+#> resolution  : 0.1, 0.1  (x, y)
+#> extent      : 27.95, 31.05, -3.05, -0.95  (xmin, xmax, ymin, ymax)
+#> coord. ref. :  
+#> source(s)   : memory
+#> name        : 2016-01-01T12:00:00 
+#> min value   :            1.819982 
+#> max value   :           11.273690
+```
+
+A `stars` object can be created from a `CFVariable` or a `CFDataset`
+with multiple variables with the function
+[`stars::st_as_stars()`](https://r-spatial.github.io/stars/reference/st_as_stars.html).
+
+``` r
+suppressMessages(library(stars))
+(st <- st_as_stars(ts))
+#> stars object with 3 dimensions and 1 attribute
+#> attribute(s):
+#>             Min.  1st Qu.   Median     Mean  3rd Qu.     Max.
+#> t2m [K] 288.2335 293.2838 294.7573 294.9324 296.6282 301.2081
+#> dimension(s):
+#>           from to                  offset   delta    refsys x/y
+#> longitude    1  7                   28.85     0.1 OGC:CRS84 [x]
+#> latitude     1 11                   -0.95    -0.1 OGC:CRS84 [y]
+#> time         1  6 2016-01-01 09:00:00 UTC 1 hours   POSIXct
+```

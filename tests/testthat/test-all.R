@@ -132,6 +132,22 @@ test_that("CRU data", {
     expect_equal(range(as.numeric(dn$lon)), c(-64.75, -45.25))
     expect_equal(range(dn$time), c("2011-01-16", "2020-12-16"))
 
+    # Subset with abbreviated time specification
+    sub <- tmp$subset(time = 2016:2018)
+    expect_equal(sub$axes[["time"]]$coordinate_range, c("2016-01-16", "2018-12-16"))
+    sub <- tmp$subset(time = 2016)
+    expect_equal(sub$axes[["time"]]$coordinate_range, c("2016-01-16", "2016-12-16"))
+    sub <- tmp$subset(time = c("2016", "2018"))
+    expect_equal(sub$axes[["time"]]$coordinate_range, c("2016-01-16", "2018-12-16"))
+    sub <- tmp$subset(time = "2016-08")
+    expect_equal(sub$axes[["time"]]$coordinate_range, c("2016-08-16", "2016-08-16"))
+    expect_equal(sub$axes[["time"]]$length, 1L)
+    sub <- tmp$subset(time = "2016-S3")
+    expect_equal(sub$axes[["time"]]$coordinate_range, c("2016-06-16", "2016-08-16"))
+    sub <- tmp$subset(time = c("2016-S3", "2019-S4"))
+    expect_equal(sub$axes[["time"]]$coordinate_range, c("2016-06-16", "2019-11-16"))
+    expect_null(tmp$subset(time = c("2016-S3", "2019-Q4")))
+
     # Profile data
     prof <- tmp$profile(lon = 5, lat = 50)
     expect_true(inherits(prof, "CFVariable"))
@@ -161,6 +177,7 @@ test_that("CRU data", {
     expect_equal(summ$axes[["time"]]$length, 10)
     expect_length(summ$attribute("actual_range"), 2)
 
+    sub <- tmp$subset(lon = -65:-45, lat = -40:-30)
     summ <- sub$summarise("Tmean", mean, "season")
     expect_equal(summ$name, "Tmean")
     expect_equal(summ$axes[["time"]]$length, 41)
@@ -250,7 +267,7 @@ test_that("Auxiliary grids", {
     ds <- open_ncdf(aux)
     pr <- ds[["pr"]]
     expect_equal(pr$attribute("grid_mapping"), "rotated_latitude_longitude")
-    sel <- pr$subset(lon = -10:5, lat = 45:60, time = c("2009-01-01", "2010-01-01"))
+    sel <- pr$subset(lon = -10:5, lat = 45:60, time = 2009)
     expect_true(is.na(sel$attribute("grid_mapping")))
     lon_crds <- sel$axes[["lon"]]$coordinates
     lon_res <- diff(lon_crds[1:2])
@@ -267,6 +284,15 @@ test_that("Auxiliary grids", {
     bnds <- sel$axes[["lat"]]$bounds
     expect_equal(bnds$values[1, 1], 45)
     # expect_equal(bnds$values[2, 75], 60)
+
+    # Subset by abbreviated day and dekad time specification
+    sub <- pr$subset(time = "2007-01-30")
+    expect_equal(sub$axes[["time"]]$coordinate_range, c("2007-01-30T12:00:00", "2007-01-30T12:00:00"))
+    expect_error(pr$subset(time = "2007-01-31")) # 360_day calendar
+    sub <- pr$subset(time = "2007-D03")
+    expect_equal(sub$axes[["time"]]$coordinate_range, c("2007-01-21T12:00:00", "2007-01-30T12:00:00"))
+    sub <- pr$subset(time = c("2007-D33", "2008-D04"))
+    expect_equal(sub$axes[["time"]]$coordinate_range, c("2007-11-21T12:00:00", "2008-02-10T12:00:00"))
   }
 })
 

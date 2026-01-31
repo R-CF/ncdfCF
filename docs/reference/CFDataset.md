@@ -102,7 +102,7 @@ netCDF resource, organized in groups.
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create an instance of this class. Do not instantiate this class
 directly; instead, call
@@ -459,17 +459,18 @@ attributes, data variables, axes, CRS, etc.
 
 #### Usage
 
-    CFDataset$save(fn, pack = FALSE)
+    CFDataset$save(fn = NULL, pack = FALSE)
 
 #### Arguments
 
 - `fn`:
 
-  Fully-qualified file name indicating where to save the data set to.
-  This argument must be provided if the data set is virtual. If the
-  argument is provided on a data set that was read from a netCDF file, a
-  new netCDF file will be written to the indicated location. If the
-  argument is missing, the existing netCDF file will be updated.
+  Optional. Fully-qualified file name indicating where to save the data
+  set to. This argument must be provided if the data set is virtual. If
+  the argument is provided on a data set that was read from a netCDF
+  file and it does not point to that netCDF file, a new netCDF file will
+  be written to the indicated location. If the argument is the same file
+  name as before, the existing netCDF file will be updated.
 
 - `pack`:
 

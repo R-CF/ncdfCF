@@ -40,7 +40,7 @@ to this instance before it can be used in analysis.
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create an instance of this class.
 

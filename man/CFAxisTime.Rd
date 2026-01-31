@@ -298,7 +298,7 @@ Default is \code{FALSE}.}
 }
 \subsection{Returns}{
 An integer vector giving the indices in the time axis between
-values in \code{x}, or \code{integer(0)} if none of the values are valid.
+values in \code{x}, or \code{NULL} if none of the values are valid.
 }
 }
 \if{html}{\out{<hr>}}

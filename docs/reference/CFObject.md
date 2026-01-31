@@ -76,7 +76,7 @@ More useful classes use this class as ancestor.
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a new `CFobject` instance in memory or from an object in a netCDF
 resource when this method is called upon opening a netCDF resource. It

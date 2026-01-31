@@ -68,7 +68,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a new instance of this class. The values of this axis are always
 a sequence, but the sequence may start with any positive value such that
@@ -143,7 +143,7 @@ A 1-row `data.frame` with some details of the axis.
 
 ------------------------------------------------------------------------
 
-### Method [`copy()`](https://rdatatable.gitlab.io/data.table/reference/copy.html)
+### Method `copy()`
 
 Create a copy of this axis. The copy is completely separate from this
 axis, meaning that both this axis and all of its components are made
@@ -230,7 +230,7 @@ of coordinates.
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
+### Method [`subset()`](https://rdrr.io/r/base/subset.html)
 
 Return an axis spanning a smaller coordinate range. This method returns
 an axis which spans the range of indices given by the `rng` argument.

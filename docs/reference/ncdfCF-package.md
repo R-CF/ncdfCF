@@ -72,10 +72,9 @@ you need to access netCDF data from a file or an online resource.
 - [`create_ncdf()`](https://r-cf.github.io/ncdfCF/reference/create_ncdf.md):
   Create a new CF data set.
 
-- [`show()`](https://rdrr.io/r/methods/show.html): Print information
-  about the data set to the console. This will print some information on
-  the resource, as well as all identified data variables and the global
-  attributes.
+- `show()`: Print information about the data set to the console. This
+  will print some information on the resource, as well as all identified
+  data variables and the global attributes.
 
 - `name`: The name of the data set.
 
@@ -108,14 +107,14 @@ you need to access netCDF data from a file or an online resource.
 
 ***S3 methods for CFDataset***
 
-- [`names()`](https://rspatial.github.io/terra/reference/names.html):
-  Vector of names of the data variables in the data set.
+- [`names()`](https://rdrr.io/r/base/names.html): Vector of names of the
+  data variables in the data set.
 
 - [`dimnames()`](https://r-cf.github.io/ncdfCF/reference/dimnames.md):
   Vector of names of the axes in the data set.
 
-- [`group()`](https://rdrr.io/r/grDevices/plotmath.html): Vector of
-  groups defined in the data set.
+- [`ggplot2::group()`](https://ggplot2.tidyverse.org/reference/aes_group_order.html):
+  Vector of groups defined in the data set.
 
 **Data variable**
 
@@ -126,9 +125,8 @@ data, with different selection methods.
 
 ***Properties***
 
-- [`show()`](https://rdrr.io/r/methods/show.html), `brief()`, and
-  `shard()`: Print to the console or return to the caller (increasingly
-  more compact) information on a data variable.
+- `show()`, `brief()`, and `shard()`: Print to the console or return to
+  the caller (increasingly more compact) information on a data variable.
 
 - `name`, `id`: Basic properties of the data variable.
 
@@ -148,11 +146,11 @@ data, with different selection methods.
 
 ***Data extraction***
 
-- [`subset()`](https://rspatial.github.io/terra/reference/subset.html):
-  Select a subset of data from a variable by specifying extents in
-  real-world coordinates for the axes into a `CFVariable` object. This
-  can also process "auxiliary coordinate variables", if present, to warp
-  data from its native CRS to latitude-longitude.
+- [`subset()`](https://rdrr.io/r/base/subset.html): Select a subset of
+  data from a variable by specifying extents in real-world coordinates
+  for the axes into a `CFVariable` object. This can also process
+  "auxiliary coordinate variables", if present, to warp data from its
+  native CRS to latitude-longitude.
 
 - `summarise()`: Summarise the data in the data variable over the "time"
   axis, using a user-defined function, returning a `CFVariable` object.
@@ -182,10 +180,9 @@ data, with different selection methods.
   [`terra::SpatRasterDataset`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
   (4 dimensions), with all relevant properties set.
 
-- [`data.table()`](https://rdatatable.gitlab.io/data.table/reference/data.table.html):
-  (requires the `data.table` package) The data values from the data
-  object as a `data.table` where every row consists of the permutation
-  of the axis values and a final data value.
+- `data.table()`: (requires the `data.table` package) The data values
+  from the data object as a `data.table` where every row consists of the
+  permutation of the axis values and a final data value.
 
 ***New data variables***
 
@@ -197,7 +194,7 @@ function.
 
 ***S3 methods for CFVariable***
 
-- [`dim()`](https://rspatial.github.io/terra/reference/dimensions.html),
+- [`dim()`](https://rdrr.io/r/base/dim.html),
   [`dimnames()`](https://r-cf.github.io/ncdfCF/reference/dimnames.md):
   Vector of the lengths and coordinate values of the axes of the data
   variable.
@@ -249,9 +246,8 @@ Methods for `CFAxis` instances:
 
 ***Properties***
 
-- [`show()`](https://rdrr.io/r/methods/show.html), `brief()`, and
-  `shard()`: Print to the console or return to the caller (increasingly
-  more compact) information on an axis.
+- `show()`, `brief()`, and `shard()`: Print to the console or return to
+  the caller (increasingly more compact) information on an axis.
 
 - `name`, `id`: Basic properties of the axis.
 
@@ -260,8 +256,8 @@ Methods for `CFAxis` instances:
 - `indexOf()`: Retrieve the sub-range of the axis that encompasses the
   physical values passed.
 
-- [`subset()`](https://rspatial.github.io/terra/reference/subset.html):
-  Create a new `CFAxis` instance that spans a sub-range of the axis.
+- [`subset()`](https://rdrr.io/r/base/subset.html): Create a new
+  `CFAxis` instance that spans a sub-range of the axis.
 
 - `time`: Retrieve the `CFTime` instance of the axis.
 
@@ -288,7 +284,7 @@ Methods for `CFAxis` instances:
 
 ***S3 methods for CFAxis***
 
-- [`dim()`](https://rspatial.github.io/terra/reference/dimensions.html),
+- [`dim()`](https://rdrr.io/r/base/dim.html),
   [`dimnames()`](https://r-cf.github.io/ncdfCF/reference/dimnames.md):
   The length and coordinate values of the axis.
 

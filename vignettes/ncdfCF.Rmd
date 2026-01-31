@@ -111,9 +111,8 @@ But what if you are interested in only a small area or a month of data while the
 Enter `ncdfCF`. With `ncdfCF` you have several options to extract data for a variable:
 
  * **`[]`**: Using R's standard extraction operator `[` you work directly with the index values into the array dimensions: `d <- t2m[3:5, 1:4, 1:10]`. You can leave out dimensions to extract everything from that dimension (but you have to indicate the position, just like in regular arrays). So to get the first 5 "time" slices from `t2m`: `d <- t2m[, , 1:5]`. This works for any number of dimensions, you simply have to adjust the number of positions that you specify, including any degenerate dimensions. Effectively, you need to indicate as many positions as the data variable has axes. You still need to know the indices into the arrays but `ncdfCF` has some helper functions to get you those. Not specifying anything gets you the whole array: `d <- t2m[]`.
- * **`subset()`**: The `subset()` method is more flexible than `[]` because it requires less knowledge of how the data in the variable is structured, particularly the order of the axes. While many netCDF resources "behave" in their dimension order, there is no guarantee. With `subset()` you supply each axis you want to subset (by axis orientation or name, in any order) and each item containing a vector of real-world coordinates to extract. As an example, to extract values of a variable `x` for Australia for the year 2020 you call `x$subset(X = 112:154, Y = -9:-44, T = c("2020-01-01", "2021-01-01"))`. The result is returned as a new `CFVariable` object.
- * **`summarise()`**: The `summarise()` method summarises the temporal dimension of a data variable to a lower resolution and returns a `CFVariable` object with the results. For instance, you can summarise daily data to monthly summaries, which greatly reduces the size of the data variable. The periods to which data can be summarised are "day", "dekad" (10-day periods), "month", "quarter" (i.e. JFM, AMJ, JAS, OND), "season" (the meteorological seasons: DJF, MAM, JJA, SON), and "year". The function to summarise on is user-supplied and can be a simple built-in function, like `mean()`, a function that results multiple results, like `range()`, or a custom function. A new `CFVariable` instance is returned for every result returned from the function.
-  
+ * **`raw()`:** This also gets the data in the layout of the file (or the data set) but with dimnames set. Importantly, you can call this after calling `subset()` and you will get the raw data for the specific spatial and temporal domain that you are interested in.
+ * **`array()`:** Like `raw()`, this extracts all the (subsetted) data, but now the data will be oriented in the standard R way of column-major order. Y coordinates will run from the top to the bottom (so latitude values, for instance, will be decreasing).
 
 ```{r extract}
 # Extract a time series for a specific location
@@ -128,6 +127,14 @@ str(ts)
 
 Note that the results contain degenerate dimensions (of length 1). This by design because it allows attributes to be attached and then inspected by the user in a consistent manner.
 
+With the below `CFVariable` methods you have more control over what to extract, possibly processed:
+
+ * **`subset()`**: The `subset()` method is more flexible than `[]` because it requires less knowledge of how the data in the variable is structured, particularly the order of the axes. While many netCDF resources "behave" in their dimension order, there is no guarantee. With `subset()` you supply each axis you want to subset (by axis orientation or name, in any order) and each item containing a vector of real-world coordinates to extract. As an example, to extract values of a variable `x` for Australia for the year 2020 you call `x$subset(X = 112:154, Y = -9:-44, T = "2020")`. The result is returned as a new `CFVariable` object.
+ * **`summarise()`**: The `summarise()` method summarises the temporal dimension of a data variable to a lower resolution and returns a `CFVariable` object with the results. For instance, you can summarise daily data to monthly summaries, which greatly reduces the size of the data variable. The periods to which data can be summarised are "day", "dekad" (10-day periods), "month", "quarter" (i.e. JFM, AMJ, JAS, OND), "season" (the meteorological seasons: DJF, MAM, JJA, SON), and "year". The function to summarise on is user-supplied and can be a simple built-in function, like `mean()`, a function that results multiple results, like `range()`, or a custom function. A new `CFVariable` instance is returned for every result returned from the function.
+ * **`profile()`:** Extract "profiles" from the data variable. This can take different forms, such as a temporal or depth profile for a single location, but it could also be a zonal field (such as a transect in latitude - atmospheric depth for a given longitude) or some other profile in the physical space of the data variable.
+
+### Subsetting by axis range
+
 ```{r subset}
 # Extract a specific region, full time dimension
 (ts <- t2m$subset(X = 29:30, Y = -1:-2))
@@ -140,13 +147,66 @@ Note that the results contain degenerate dimensions (of length 1). This by desig
                   Y = seq(-2, -1, by = 0.05)))
 ```
 
-These methods will read data from the netCDF resource, but only as much as is requested.
+### Make a profile of data
 
-The approaches lend themselves well to the `apply()` family of functions for processing. Importantly, these functions give access to data from the netCDF resource so you can tweak the size of your request to the capacity of the computer, without exhausting RAM.
+It is often useful to extract a "profile" of data for a given location or zone, such as a timeseries of data. The `CFVariable$profile()` method has some flexible options to support this:
+
+ - Profile specific locations, with multiple locations specified per call, returning the data as a (set of) `CFVariable` instance(s) or as a single `data.table`.
+ - Profile zones, such as a latitude band or an atmospheric level. Data is returned as (a) new `CFVariable` instance(s).
+ 
+In all cases, you can profile over any of the axes and over any number of axes.
+
+Note that the `profile()` method returns data for the grid cells closest to the specified location. That is different from the `subset()` method, which will return data as it is recorded in the netCDF resource.
+
+```{r profile}
+rwa <- t2m$profile(longitude = c(30.07, 30.07, 29.74), latitude = c(-1.94, -1.58, -2.60), 
+                   .names = c("Kigali", "Byumba", "Butare"), .as_table = TRUE)
+head(rwa)
+attr(rwa, "value")
+```
+
+Some critical metadata is recorded in the "value" attribute: original long name and the physical unit.
+
+When you provide coordinates for all axes but one, you get a profile of values along the remaining axis, as shown above. If you provide fewer axis coordinates you get progressively higher-order results. To get a latitudinal transect, for instance, provide only a longitude coordinate:
+
+```{r transect}
+(trans29_74 <- t2m$profile(longitude = 29.74, .names = "lon_29_74"))
+```
+
+Note that there is only a single longitude coordinate left, at exactly the specified longitude.
+
+### Summarising data over time
+
+With the `summarise()` method you can apply a function over the data to generate summaries. You could, for instance, summarise daily data to monthly means. These methods use the specific calendar of the "time" axis. The return value is a new `CFVariable` object.
+
+```{r summarise}
+# Summarising hourly temperature data to calculate the daily maximum temperature
+t2m$summarise("tmax", max, "day")
+```
+
+A function may also return a vector of multiple values, in which case a list is returned with a new `CFVariable` object for each return value of the function. This allows you to calculate multiple results with a single call. You could write your own function to tailor the calculations to your needs. Rather than just calculating the daily maximum, you could get the daily maximum, minimum and diurnal range in one go:
+
+```{r summarise_multi}
+# Function to calculate multiple daily stats
+# It is good practice to include a `na.rm` argument in all your functions
+daily_stats <- function(x, na.rm = TRUE) {
+  # x is the vector of values for one day
+  minmax <- range(x, na.rm = na.rm)
+  diurnal <- minmax[2L] - minmax[1L]
+  c(minmax, diurnal)
+}
+
+# Call summarise() with your own function
+# The `name` argument should have as many names as the function returns results
+(stats <- t2m$summarise(c("tmin", "tmax", "diurnal_range"), daily_stats, "day"))
+```
+
+Note that you may have to update some attributes after calling `summarise()`. You can use the `set_attribute()` method on the `CFVariable` objects to do that.
+Data loading is lazy. In the examples above, you can see that data did not yet get loaded. This is intentional: you can subset your data in multiple ways before actually reading the data from the resource. This is particularly important when getting data from an online location, such as a remote THREDDS server. When you want to get a hold of the raw data in an R array, use `CFVariable$raw()` or `CFvariable$array()` to get the array with `dimnames` set.
+
+All of the above methods will read data from the netCDF resource, but only as much as is requested. The approaches lend themselves well to the `apply()` family of functions for processing. Importantly, these functions give access to data from the netCDF resource so you can tweak the size of your request to the capacity of the computer, without exhausting RAM.
 
 ## Working with the data
-
-The `subset()` and `summarise()` methods return data from a variable as a new `CFVariable` instance, including all important metadata of the data, such as its axes, the coordinate reference system, and the attributes, among others.
 
 ### Processing data
 
@@ -173,7 +233,7 @@ After processing `CFVariable` data like this, you should update the attributes o
 
 ### Orienting the data
 
-The `CFVariable` instance also lets you manipulate the data in a way that is informed by the metadata. This overcomes a typical issue when working with netCDF data that adheres to the CF Metadata Conventions. The ordering of the axes in a typical netCDF resource is different from the way that R orders its data. That leads to surprising results if you are not aware of this issue:
+The `CFVariable` instance lets you manipulate the data in a way that is informed by the metadata. This overcomes a typical issue when working with netCDF data that adheres to the CF Metadata Conventions. The ordering of the axes in a typical netCDF resource is different from the way that R orders its data. That leads to surprising results if you are not aware of this issue.
 
 ```{r orienting}
 # Open a file and read the data from a variable into a CFVariable instance
@@ -181,37 +241,56 @@ fn <- system.file("extdata", "tasmax_NAM-44_day_20410701-vncdfCF.nc", package = 
 ds <- open_ncdf(fn)
 tx <- ds[["tasmax"]]
 
-# Use the terra package for plotting
-# install.packages("terra")
-library(terra)
-
-# Get the data in exactly the way it is stored in the file, using `raw()`
+# Get the raw data as an R array
 tx_raw <- tx$raw()
 str(tx_raw)
-
-# Plot the data
-(r <- rast(tx_raw))
-plot(r)
 ```
 
-North America is lying on its side. This is because the data is stored differently in the netCDF resource than R expects. There is, in fact, not a single way of storing data in a netCDF resources, the dimensions may be stored in any order. The CF Metadata Conventions add metadata to interpret the file storage. The `array()` method uses that to produce an array in the familiar R storage arrangement:
+The data is stored differently in the netCDF resource than usually in R: the first dimension is for `x` coordinates, followed by `y` coordinates in increasing order (meaning going from the bottom to the top), followed by two degenerate dimensions. This happens to be a common arrangement in netCDF data. There is, however, not a single way of storing data in a netCDF resources, the dimensions may be stored in any order. The CF Metadata Conventions add metadata to interpret the file storage. The `array()` method uses that to produce an array in the familiar R storage arrangement:
 
 ```{r array}
 tx_array <- tx$array()
 str(tx_array)
-r <- rast(tx_array)
-plot(r)
 ```
 
-Ok, so now we got North America looking pretty ok again. The data has been oriented in the right way. Behind the scenes that may have involved transposing and flipping the data, depending on the data storage arrangement in the netCDF resource.
+The data has been oriented in the familiar R way: from the top-left down and then across. Behind the scenes that may have involved transposing and flipping the data, depending on the data storage arrangement in the netCDF resource.
 
-But the coordinate system is still not right. These are just ordinal values along both axes. The `terra::SpatRaster` object also does not show a CRS. All of the above steps can be fixed by simply calling the `terra()` method on the data object. This will return a `terra::SpatRaster` for a data object with three axes and a `terra::SpatRasterDataset` for a data object with four axes:
+## Plotting netCDF data
 
-```{r terra}
-(r <- tx$terra())
-plot(r[[1]])
+Package `ncdfCF` includes the function `geom_ncdf()` which can be used to compose maps with `ggplot2`:
+
+```{r ggplot}
+library(ggplot2)
+ggplot() + geom_ncdf(data = tx) + coord_equal() + scale_fill_viridis_c()
 ```
 
-So that's a fully specified `terra::SpatRaster` from netCDF data.
+It is advisable to subset or summarize the data variable to exactly the data you want to map to avoid exhausting your computer resources.
 
-(**Disclaimer:** Package `terra` can do this too with simply `terra::rast(fn)` and then selecting a layer to plot (which is not always trivial if you are looking for a specific layer; e.g. what does "lyr.1" represent?). The whole point of the above examples is to demonstrate the different steps in processing netCDF data. There are also some subtle differences such as the names of the layers. Furthermore, `ncdfCF` doesn't insert the attributes of the variable into the `SpatRaster`. `terra` can only handle netCDF resources that "behave" properly (especially the axis order) and it has no particular consideration for the different calendars that can be used with CF data.)
+You can further compose this map as you would with any `ggplot2` map composition: set sizes, labels, ticks, title, modify the legend, etc.
+
+## Saving and exporting data
+
+A `CFVariable` object can be saved to a netCDF file. The object will have all its relevant attributes and properties written together with the actual data: axes, bounds, attributes, CRS. The netCDF file is of version "netcdf4" and will have the axes oriented in such a way that the file has maximum portability (specifically, data will be stored in row-major order with increasing Y values).
+
+```{r save, eval=FALSE}
+# Save a CFVariable instance to a netCDF file on disk
+stats[["diurnal_range"]]$save("~/path/file.nc")
+```
+A `CFVariable` object can also be exported to a `data.table` or to a `terra::SpatRaster` (3D) or `terra::SpatRasterDataset` (4D) for further processing. Obviously, these packages need to be installed to utilise these methods.
+
+```{r export}
+# install.packages("data.table")
+library(data.table)
+head(dt <- ts$data.table())
+
+#install.packages("terra")
+suppressMessages(library(terra))
+(r <- stats[["diurnal_range"]]$terra())
+```
+
+A `stars` object can be created from a `CFVariable` or a `CFDataset` with multiple variables with the function `stars::st_as_stars()`.
+
+```{r stars}
+suppressMessages(library(stars))
+(st <- st_as_stars(ts))
+```

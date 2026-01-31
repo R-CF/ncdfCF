@@ -73,7 +73,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a new instance of this class, including its boundary values. A
 `CFTime` or `CFClimatology` instance will also be created to manage the
@@ -164,7 +164,7 @@ A 1-row `data.frame` with some details of the axis.
 
 ------------------------------------------------------------------------
 
-### Method [`identical()`](https://rspatial.github.io/terra/reference/identical.html)
+### Method [`identical()`](https://rdrr.io/r/base/identical.html)
 
 Tests if the axis passed to this method is identical to `self`.
 
@@ -184,7 +184,7 @@ Tests if the axis passed to this method is identical to `self`.
 
 ------------------------------------------------------------------------
 
-### Method [`copy()`](https://rdatatable.gitlab.io/data.table/reference/copy.html)
+### Method `copy()`
 
 Create a copy of this axis. The copy is completely separate from `self`,
 meaning that both `self` and all of its components are made from new
@@ -334,11 +334,11 @@ values.
 #### Returns
 
 An integer vector giving the indices in the time axis between values in
-`x`, or `integer(0)` if none of the values are valid.
+`x`, or `NULL` if none of the values are valid.
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
+### Method [`subset()`](https://rdrr.io/r/base/subset.html)
 
 Return an axis spanning a smaller coordinate range. This method returns
 an axis which spans the range of indices given by the `rng` argument.

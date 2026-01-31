@@ -6,10 +6,12 @@
 <url><loc>https://r-cf.github.io/ncdfCF/articles/31_Creating.html</loc></url>
 <url><loc>https://r-cf.github.io/ncdfCF/articles/31_R-CF.html</loc></url>
 <url><loc>https://r-cf.github.io/ncdfCF/articles/32_R-CF.html</loc></url>
+<url><loc>https://r-cf.github.io/ncdfCF/articles/33_Troubleshooting.html</loc></url>
 <url><loc>https://r-cf.github.io/ncdfCF/articles/91_CMEMS.html</loc></url>
 <url><loc>https://r-cf.github.io/ncdfCF/articles/R-CF.html</loc></url>
 <url><loc>https://r-cf.github.io/ncdfCF/articles/Using_ncdfCF.html</loc></url>
 <url><loc>https://r-cf.github.io/ncdfCF/articles/articles/31_R-CF.html</loc></url>
+<url><loc>https://r-cf.github.io/ncdfCF/articles/articles/91_CMEMS.html</loc></url>
 <url><loc>https://r-cf.github.io/ncdfCF/articles/index.html</loc></url>
 <url><loc>https://r-cf.github.io/ncdfCF/articles/ncdfCF.html</loc></url>
 <url><loc>https://r-cf.github.io/ncdfCF/authors.html</loc></url>
@@ -55,6 +57,7 @@
 <url><loc>https://r-cf.github.io/ncdfCF/reference/dim.AOI.html</loc></url>
 <url><loc>https://r-cf.github.io/ncdfCF/reference/dim.CFAxis.html</loc></url>
 <url><loc>https://r-cf.github.io/ncdfCF/reference/dimnames.html</loc></url>
+<url><loc>https://r-cf.github.io/ncdfCF/reference/geom_ncdf.html</loc></url>
 <url><loc>https://r-cf.github.io/ncdfCF/reference/groups.html</loc></url>
 <url><loc>https://r-cf.github.io/ncdfCF/reference/index.html</loc></url>
 <url><loc>https://r-cf.github.io/ncdfCF/reference/makeAxis.html</loc></url>

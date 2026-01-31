@@ -4,7 +4,7 @@ This class represents a vertical axis, which may be parametric. A
 regular vertical axis behaves like any other numeric axis. A parametric
 vertical axis, on the other hand, is defined through an index value that
 is contained in the axis coordinates, with additional data variables
-that hold ancillary "formula terms" with which to calculate dimensional
+that hold ancillary "formula terms" with which to calculate physical
 axis coordinates. It is used in atmosphere and ocean data sets.
 
 Parametric vertical axes can only be read from file, not created from
@@ -107,7 +107,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a new instance of this class.
 
@@ -214,7 +214,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method [`copy()`](https://rdatatable.gitlab.io/data.table/reference/copy.html)
+### Method `copy()`
 
 Create a copy of this axis. The copy is completely separate from this
 instance, meaning that the copies of both this instance and all of its
@@ -342,7 +342,7 @@ A new `CFAxisVertical` instance with values from this axis and the
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
+### Method [`subset()`](https://rdrr.io/r/base/subset.html)
 
 Return an axis spanning a smaller coordinate range. This method returns
 an axis which spans the range of indices given by the `rng` argument. If

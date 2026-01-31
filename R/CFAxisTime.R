@@ -63,7 +63,8 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         if (ym$month[2L] == 12L) {
           ym$year[2L] <- ym$year[2L] + 1L
           ym$month[2L] <- 1L
-        }
+        } else
+          ym$month[2L] <- ym$month[2L] + 1L
         return(sprintf("%04d-%02d-01", ym$year, ym$month))
       }
 
@@ -111,7 +112,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       if (ts[1L] == ts[2L]) {
         ymd <- private$.tm$calendar$parse(ts[1L])
         if (is.na(ymd$year))
-          stop("Bad format for timestamps.", call. = FALSE)
+          stop("Bad format for timestamps: Date not valid calendar.", call. = FALSE)
         ymd <- rbind(ymd, private$.tm$calendar$add_day(ymd))
         return(sprintf("%04d-%02d-%02d", ymd$year, ymd$month, ymd$day))
       }
@@ -360,12 +361,13 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @param rightmost.closed Whether or not to include the upper limit.
     #'   Default is `FALSE`.
     #' @return An integer vector giving the indices in the time axis between
-    #'   values in `x`, or `integer(0)` if none of the values are valid.
+    #'   values in `x`, or `NULL` if none of the values are valid.
     slice = function(x, rightmost.closed = FALSE) {
       x <- private$expand_timestamps(x)
       time <- private$.tm
-      idx <- time$slice(x, rightmost.closed)
-      range((1L:length(time))[idx])
+      idx <- suppressWarnings(time$slice(x, rightmost.closed))
+      if (all(!idx)) NULL
+      else range((1L:length(time))[idx])
     },
 
     #' @description Return an axis spanning a smaller coordinate range. This

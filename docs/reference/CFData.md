@@ -50,7 +50,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a new `CFData` instance. This method is called upon creating CF
 objects, such as when opening a netCDF resource or creating a new CF

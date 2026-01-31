@@ -2,6 +2,30 @@
 
 ## ncdfCF (development version)
 
+##### API
+
+- New
+  [`geom_ncdf()`](https://r-cf.github.io/ncdfCF/reference/geom_ncdf.md)
+  function to create a `geom` for use in map composition using package
+  `ggplot2`.
+- In `CFVariable$subset()` subsetting a “time” axis can now use
+  abbreviated specification such as `time = "2025-12"` to select all
+  data for December 2025, or `time = c("2020-S1", "2025-S4")` for all
+  meteorological season data from 2019-12-01 to 2025-11-30 (inclusive).
+  Abbreviation can be by year, month, meteorological season (S1 to S4),
+  quarter (Q1 to Q4) or dekad (D01 to D36).
+
+##### Code
+
+- Fixed writing attributes for groups.
+- Fixed reading of scalar variables following subsetting of a scalar
+  axis.
+- Documentation updates.
+
+## ncdfCF 0.8.0
+
+CRAN release: 2026-01-23
+
 ##### Conventions
 
 - Ancillary variables are now associated with the data variables that
@@ -115,10 +139,9 @@ CF objects.
   supported. This means that expressions can be written directly on
   `CFVariable` instances.
 - All `CFAxis` descendant classes now have a
-  [`copy()`](https://rdatatable.gitlab.io/data.table/reference/copy.html)
-  method which creates a deep copy of the axis and a
-  `copy_with_values()` method that makes a copy of the current axis but
-  with new values.
+  [`copy()`](https://rdrr.io/pkg/data.table/man/copy.html) method which
+  creates a deep copy of the axis and a `copy_with_values()` method that
+  makes a copy of the current axis but with new values.
 - All CF objects that derive from a CF object read from file have access
   to the file as long as the data is not modified. Thus in statement
   `axisB <- axisA$copy()`, the new `axisB` instance will have file

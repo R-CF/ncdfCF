@@ -13,7 +13,7 @@ element) or an auxiliary longitude-latitude grid (4 vertices per element)."></he
 
     <a class="navbar-brand me-2" href="../index.html">ncdfCF</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,7 +27,7 @@ element) or an auxiliary longitude-latitude grid (4 vertices per element)."></he
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/31_Creating.html">1. Creating new data sets and variables</a></li>
     <li><a class="dropdown-item" href="../articles/32_R-CF.html">2. R and CF Metadata Conventions</a></li>
-    <li><a class="dropdown-item" href="../articles/91_CMEMS.html">Example 1. How to open and visualise Copernicus Marine Data in R</a></li>
+    <li><a class="dropdown-item" href="../articles/33_Troubleshooting.html">3. Troubleshooting</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -107,7 +107,7 @@ is a linked netCDF resource, this object will be detached from it.</p></dd>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="detach"><a href="CFData.html#method-detach"><code>ncdfCF::CFData$detach()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href="CFData.html#method-dim"><code>ncdfCF::CFData$dim()</code></a></span></li>
 </ul></details></p><hr><a id="method-CFBounds-new"></a><div class="section">
-<h3 id="method-new-">Method <code><a href="https://rdrr.io/r/methods/new.html" class="external-link">new()</a></code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
+<h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create an instance of this class.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/CFBounds.html">CFBounds</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
@@ -205,7 +205,7 @@ is <code>width = </code> to indicate a maximum width of attribute columns.</p></
 
 
 </div><p></p><hr><a id="method-CFBounds-copy"></a><div class="section">
-<h3 id="method-copy-">Method <code><a href="https://rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy()</a></code><a class="anchor" aria-label="anchor" href="#method-copy-"></a></h3>
+<h3 id="method-copy-">Method <code>copy()</code><a class="anchor" aria-label="anchor" href="#method-copy-"></a></h3>
 <p>Create a copy of this bounds object The copy is completely
 separate from <code>self</code>, meaning that both <code>self</code> and all of its
 components are made from new instances.</p><div class="section">
@@ -232,7 +232,7 @@ passed, will use the name of this bounds object.</p></dd>
 </div>
 
 </div><p></p><hr><a id="method-CFBounds-subset"></a><div class="section">
-<h3 id="method-subset-">Method <code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code><a class="anchor" aria-label="anchor" href="#method-subset-"></a></h3>
+<h3 id="method-subset-">Method <code><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset()</a></code><a class="anchor" aria-label="anchor" href="#method-subset-"></a></h3>
 <p>Return a boundary variable spanning a smaller coordinate
 range. This currently only applies to 1-D axes.</p>
 <p>This method returns boundary values which span the range of indices

@@ -260,10 +260,9 @@ matrix(c(9, 5, 1, 10, 6, 2, 11, 7, 3, 12, 8, 4), nrow = 3, ncol = 4)
 ```
 
 This is the cause of lots of headaches and “patches” involving
-[`t()`](https://rspatial.github.io/terra/reference/transpose.html) and
-[`rev()`](https://rspatial.github.io/terra/reference/flip.html) in
-*some* order and general exasperation (*“why does it have to be so
-complicated?”*).
+[`t()`](https://rdrr.io/r/base/t.html) and
+[`rev()`](https://rdrr.io/r/base/rev.html) in *some* order and general
+exasperation (*“why does it have to be so complicated?”*).
 
 The bottom line is that there is no guarantee that the data are stored
 in a particular ordering. So how can you make sure that you get the data
@@ -592,9 +591,8 @@ package does not have enough information to do so programmatically. A
 case in point is the `CFVariable::summarise()` method: the function to
 apply in summarising is user-supplied and this package has no knowledge
 of what that function does or results in: apart from built-in functions
-like
-[`mean()`](https://rspatial.github.io/terra/reference/summarize-generics.html)
-or [`max()`](https://rdrr.io/r/base/Extremes.html), users can supply a
+like [`mean()`](https://rdrr.io/r/base/mean.html) or
+[`max()`](https://rdrr.io/r/base/Extremes.html), users can supply a
 custom-made function with multiple results and thus multiple resulting
 `CFVariable` instances that each need a specific update to the
 `cell_methods` attribute copied from the data variable being summarised.

@@ -70,7 +70,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create an instance of this class.
 
@@ -172,7 +172,7 @@ Retrieve the lowest and highest value in the bounds.
 
 ------------------------------------------------------------------------
 
-### Method [`copy()`](https://rdatatable.gitlab.io/data.table/reference/copy.html)
+### Method `copy()`
 
 Create a copy of this bounds object The copy is completely separate from
 `self`, meaning that both `self` and all of its components are made from
@@ -200,7 +200,7 @@ The newly created bounds object.
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
+### Method [`subset()`](https://rdrr.io/r/base/subset.html)
 
 Return a boundary variable spanning a smaller coordinate range. This
 currently only applies to 1-D axes.

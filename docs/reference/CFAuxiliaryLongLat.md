@@ -89,7 +89,7 @@ has no practical purpose.
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Creating a new instance. It should normally not be useful to create an
 instance of this class other than upon reading a netCDF resource.

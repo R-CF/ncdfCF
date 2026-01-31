@@ -62,7 +62,7 @@ Inherited methods
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a new instance of this class.
 
@@ -120,7 +120,7 @@ function.
 
 ------------------------------------------------------------------------
 
-### Method [`copy()`](https://rdatatable.gitlab.io/data.table/reference/copy.html)
+### Method `copy()`
 
 Create a copy of this axis. The copy is completely separate from `self`,
 meaning that both `self` and all of its components are made from new
@@ -184,7 +184,7 @@ The newly created axis.
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rspatial.github.io/terra/reference/subset.html)
+### Method [`subset()`](https://rdrr.io/r/base/subset.html)
 
 Return a latitude axis spanning a smaller coordinate range. This method
 returns an axis which spans the range of indices given by the `rng`

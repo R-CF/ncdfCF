@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ncdfCF</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,7 +21,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/31_Creating.html">1. Creating new data sets and variables</a></li>
     <li><a class="dropdown-item" href="../articles/32_R-CF.html">2. R and CF Metadata Conventions</a></li>
-    <li><a class="dropdown-item" href="../articles/91_CMEMS.html">Example 1. How to open and visualise Copernicus Marine Data in R</a></li>
+    <li><a class="dropdown-item" href="../articles/33_Troubleshooting.html">3. Troubleshooting</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -42,12 +42,26 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="ncdfcf-development-version">ncdfCF (development version)<a class="anchor" aria-label="anchor" href="#ncdfcf-development-version"></a></h2>
 <div class="section level5">
-<h5 id="conventions-development-version">Conventions<a class="anchor" aria-label="anchor" href="#conventions-development-version"></a></h5>
+<h5 id="api-development-version">API<a class="anchor" aria-label="anchor" href="#api-development-version"></a></h5>
+<ul><li>New <code><a href="../reference/geom_ncdf.html">geom_ncdf()</a></code> function to create a <code>geom</code> for use in map composition using package <code>ggplot2</code>.</li>
+<li>In <code>CFVariable$subset()</code> subsetting a “time” axis can now use abbreviated specification such as <code>time = "2025-12"</code> to select all data for December 2025, or <code>time = c("2020-S1", "2025-S4")</code> for all meteorological season data from 2019-12-01 to 2025-11-30 (inclusive). Abbreviation can be by year, month, meteorological season (S1 to S4), quarter (Q1 to Q4) or dekad (D01 to D36).</li>
+</ul></div>
+<div class="section level5">
+<h5 id="code-development-version">Code<a class="anchor" aria-label="anchor" href="#code-development-version"></a></h5>
+<ul><li>Fixed writing attributes for groups.</li>
+<li>Fixed reading of scalar variables following subsetting of a scalar axis.</li>
+<li>Documentation updates.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.8.0" id="ncdfcf-080">ncdfCF 0.8.0<a class="anchor" aria-label="anchor" href="#ncdfcf-080"></a></h2><p class="text-muted">CRAN release: 2026-01-23</p>
+<div class="section level5">
+<h5 id="conventions-0-8-0">Conventions<a class="anchor" aria-label="anchor" href="#conventions-0-8-0"></a></h5>
 <ul><li>Ancillary variables are now associated with the data variables that reference them. They can be added with the <code>CFVariable::add_ancillary_variable()</code> method and the list of registered ancillary variables can be retrieved with the <code>CFVariable$ancillary_variables</code> field. Ancillary variables are <code>CFVariable</code> instances themselves and can have bounds and other data variable properties, and be processed like regular data variables.</li>
 <li>Vertical parametric coordinate “Atmosphere hybrid sigma pressure coordinate” added. This supports both the layer mid-point formulation of CF and the layer top and bottom formulation often found in satellite observations of the atmosphere.</li>
 </ul></div>
 <div class="section level5">
-<h5 id="api-development-version">API<a class="anchor" aria-label="anchor" href="#api-development-version"></a></h5>
+<h5 id="api-0-8-0">API<a class="anchor" aria-label="anchor" href="#api-0-8-0"></a></h5>
 <ul><li>
 <code>CFGroup</code> is now the main hierarchy from the user perspective, maintaining all CF objects. The <code>CFGroup$add_variable()</code> method places a <code>CFVariable</code> somewhere in the hierarchy, with owned CF objects (like axes, boundary values, CRS, etc) automatically attached to the same group or some other specified group.</li>
 <li>All <code>[]</code> indexing and selection operations must include axes of length 1. This means that the indexing always has as many elements as there are axes in the CF variable. Reported dimensions include degenerate dimensions.</li>
@@ -58,7 +72,7 @@
 <li>Documentation updated, now available online.</li>
 </ul></div>
 <div class="section level5">
-<h5 id="code-development-version">Code<a class="anchor" aria-label="anchor" href="#code-development-version"></a></h5>
+<h5 id="code-0-8-0">Code<a class="anchor" aria-label="anchor" href="#code-0-8-0"></a></h5>
 <ul><li>Access to data values is now consistently using the public field <code>values</code> for “standard” objects. Only objects that require special values management use private fields and expose the data values in another, more appropriate form.</li>
 <li>
 <code>CFGroup</code> hierarchy maintains all CF objects. 1:1 alignment with the <code>NCGroup</code> hierarchy for NC objects backed by a netCDF resource.</li>
@@ -92,7 +106,7 @@
 <ul><li>The <code>CFArray</code> class has been merged with <code>CFVariable</code>. This makes for more concise code and easier combination of multiple operations on a single netCDF resource. All functionality remains.</li>
 <li>With the <code><a href="../reference/as_CF.html">as_CF()</a></code> function you can create a <code>CFVariable</code> instance from an R object such as a vector, matrix or array using logical, integer, double or character mode. Axes are created from dimnames, using names when set (such as in <code>dimnames(arr) &lt;- list(X = 40:43, Y = 50:54, Z = 60:65)</code>) and possibly with latitude, longitude and time axes generated.</li>
 <li>Functions from the Ops and Math groups of S3 generic functions are now supported. This means that expressions can be written directly on <code>CFVariable</code> instances.</li>
-<li>All <code>CFAxis</code> descendant classes now have a <code><a href="https://rdatatable.gitlab.io/data.table/reference/copy.html" class="external-link">copy()</a></code> method which creates a deep copy of the axis and a <code>copy_with_values()</code> method that makes a copy of the current axis but with new values.</li>
+<li>All <code>CFAxis</code> descendant classes now have a <code><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy()</a></code> method which creates a deep copy of the axis and a <code>copy_with_values()</code> method that makes a copy of the current axis but with new values.</li>
 <li>All CF objects that derive from a CF object read from file have access to the file as long as the data is not modified. Thus in statement <code>axisB &lt;- axisA$copy()</code>, the new <code>axisB</code> instance will have file access (assuming that <code>axisA</code> has it too). Same with <code>CFVariable$$subset()</code> and <code>$profile()</code>. <code>CFVariable$summarise()</code> does not retain access because the array values are modified. Math and Ops function results likewise do not retain file access.</li>
 <li>New <code>CFAxis$coordinate_range</code> field to retrieve the range of the coordinates of the axis.</li>
 <li>Names of CF objects (variables, axes, etc) can be modified. Strict checking of allowable names (i.e. only letters, numbers and underscores).</li>

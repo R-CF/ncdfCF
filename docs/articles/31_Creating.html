@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ncdfCF</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/31_Creating.html">1. Creating new data sets and variables</a></li>
     <li><a class="dropdown-item" href="../articles/32_R-CF.html">2. R and CF Metadata Conventions</a></li>
-    <li><a class="dropdown-item" href="../articles/91_CMEMS.html">Example 1. How to open and visualise Copernicus Marine Data in R</a></li>
+    <li><a class="dropdown-item" href="../articles/33_Troubleshooting.html">3. Troubleshooting</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -88,24 +88,21 @@ set (duh!) but it will have a root group and some basic attributes:</p>
 <span><span class="co">#&gt; Attributes:</span></span>
 <span><span class="co">#&gt;  name        type    length value                                             </span></span>
 <span><span class="co">#&gt;  Conventions NC_CHAR  7     CF-1.13                                           </span></span>
-<span><span class="co">#&gt;  history     NC_CHAR 67     Created with R package ncdfCF 0.7.0.9000 on 202...</span></span></code></pre></div>
+<span><span class="co">#&gt;  history     NC_CHAR 67     Created with R package ncdfCF 0.8.0.9000 on 202...</span></span></code></pre></div>
 <p>The data set is created in memory (<code>Resource : (virtual)</code>)
 and you can save it to disk when you are done adding data variables to
 it with
-<code>my_ds$save(fn = "~/path/to/netcdf/data/my_data.nc")</code>. If you
-prefer, you can also provide the file name to
-<code>create_ncdf(fn = "~/path/to/netcdf/data/my_data.nc")</code> and
-then save your edits with <code>my_ds$save()</code>. This alternative
-pattern is easier and less error-prone when you add many objects to the
-data set and want to do intermediate saving of your work to the netCDF
-file.</p>
+<code>my_ds$save(fn = "~/path/to/netcdf/data/my_data.nc")</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="creating-a-new-cf-data-variable">Creating a new CF data variable<a class="anchor" aria-label="anchor" href="#creating-a-new-cf-data-variable"></a>
 </h2>
-<p>There are different ways that you can create a CFVariable: - Convert
-a suitable R object such as an array or a matrix. - Process data from
-existing netCDF resources into a new CFVariable.</p>
+<p>There are different ways that you can create a CFVariable:</p>
+<ul>
+<li>Convert a suitable R object such as an array or a matrix.</li>
+<li>Process data from existing netCDF resources into a new
+CFVariable.</li>
+</ul>
 <div class="section level3">
 <h3 id="vector-matrix-array">Vector, matrix, array<a class="anchor" aria-label="anchor" href="#vector-matrix-array"></a>
 </h3>
@@ -210,10 +207,85 @@ operations return a <code>CFVariable</code> instance to the caller. You
 can also perform arithmetical and mathematical operations on a
 <code>CFVariable</code> which also returns a new <code>CFVariable</code>
 to the caller.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Open an existing netCDF resource for reading</span></span>
+<span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20230101-20231231_vncdfCF.nc"</span>, package <span class="op">=</span> <span class="st">"ncdfCF"</span><span class="op">)</span></span>
+<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/open_ncdf.html">open_ncdf</a></span><span class="op">(</span><span class="va">fn</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="va">var_names</span></span>
+<span><span class="co">#&gt; [1] "pr"</span></span>
+<span></span>
+<span><span class="co"># The precipitation data variable is linked to the existing dataset but after an</span></span>
+<span><span class="co"># arithmetical operation, such as unit conversion to mm/day, it is no longer </span></span>
+<span><span class="co"># linked.</span></span>
+<span><span class="va">pr</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">[[</span><span class="st">"pr"</span><span class="op">]</span><span class="op">]</span> <span class="op">*</span> <span class="fl">86400</span></span>
+<span><span class="va">pr</span><span class="op">$</span><span class="fu">set_attribute</span><span class="op">(</span><span class="st">"units"</span>, <span class="st">"NC_CHAR"</span>, <span class="st">"mm"</span><span class="op">)</span></span>
+<span><span class="va">pr</span><span class="op">$</span><span class="va">group</span></span>
+<span><span class="co">#&gt; &lt;CF Group&gt; [-13] / (virtual)</span></span>
+<span><span class="co">#&gt; Path      : /</span></span>
+<span></span>
+<span><span class="co"># Can operate on "virtual" CFVariables. Summarise the daily precipitation data </span></span>
+<span><span class="co"># to monthly means: the result is a new CFVariable in a new group.</span></span>
+<span><span class="va">pr_mon</span> <span class="op">&lt;-</span> <span class="va">pr</span><span class="op">$</span><span class="fu">summarise</span><span class="op">(</span><span class="st">"pr_month"</span>, <span class="va">sum</span>, <span class="st">"month"</span><span class="op">)</span></span>
+<span><span class="va">pr_mon</span><span class="op">$</span><span class="va">group</span></span>
+<span><span class="co">#&gt; &lt;CF Group&gt; [-14] / (virtual)</span></span>
+<span><span class="co">#&gt; Path      : /</span></span>
+<span></span>
+<span><span class="co"># Add pr_mon to the new data set</span></span>
+<span><span class="va">my_ds</span><span class="op">$</span><span class="fu">add_variable</span><span class="op">(</span><span class="va">pr_mon</span><span class="op">)</span></span>
+<span><span class="va">my_ds</span><span class="op">$</span><span class="fu">variables</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $pr_month</span></span>
+<span><span class="co">#&gt; &lt;Variable&gt; pr_month </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Values: [8.9e-05 ... 513.1605] mm</span></span>
+<span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Axes:</span></span>
+<span><span class="co">#&gt;  axis name long_name length values                                       </span></span>
+<span><span class="co">#&gt;  T    time           12     [2023-01-16T12:00:00 ... 2023-12-16T12:00:00]</span></span>
+<span><span class="co">#&gt;  X    lon  Longitude 14     [5.625 ... 14.765625]                        </span></span>
+<span><span class="co">#&gt;  Y    lat  Latitude  14     [40.35078 ... 49.47356]                      </span></span>
+<span><span class="co">#&gt;  unit                 </span></span>
+<span><span class="co">#&gt;  days since 1850-01-01</span></span>
+<span><span class="co">#&gt;  degrees_east         </span></span>
+<span><span class="co">#&gt;  degrees_north        </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attributes:</span></span>
+<span><span class="co">#&gt;  name         type      length value              </span></span>
+<span><span class="co">#&gt;  actual_range NC_DOUBLE 2      8.9e-05, 513.160452</span></span>
+<span><span class="co">#&gt;  units        NC_CHAR   2      mm</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="managing-your-new-cfvariables">Managing your new CFVariables<a class="anchor" aria-label="anchor" href="#managing-your-new-cfvariables"></a>
+<h3 id="managing-your-new-cfvariables-in-a-single-cfdataset">Managing your new CFVariables in a single CFDataset<a class="anchor" aria-label="anchor" href="#managing-your-new-cfvariables-in-a-single-cfdataset"></a>
 </h3>
+<p>If you have only one or a few related data variables, then adding
+them all to the root group of the data set is the easiest solution. The
+keyword here is “related”: the data variables have the same axes (name,
+type, length, values). If, on the other you want to place many disparate
+data variables in a single netCDF file, you should consider organising
+the netCDF file such that “like” data variables are placed together in a
+group, while other data variables are placed in different groups.</p>
+<p>A CF data set can have multiple groups, organised in a hierarchy to
+match the characteristics of the data variables. A
+<code>CFDataset</code> has a root group by the name of “/” and a
+subgroup can be added with the
+<code>create_subgroup("new_subgroup")</code> method. That returns the
+new subgroup, to which new subgroups can be added, etc, etc, etc. As
+with a <code>CFDataset</code>, <code>CFVariable</code> objects can be
+added to any group. That provides for a very flexible arrangement.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">complex_ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_ncdf.html">create_ncdf</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">subgroup</span> <span class="op">&lt;-</span> <span class="va">complex_ds</span><span class="op">$</span><span class="va">root</span><span class="op">$</span><span class="fu">create_subgroup</span><span class="op">(</span><span class="st">"sub1"</span><span class="op">)</span></span>
+<span><span class="va">subsubgroup1</span> <span class="op">&lt;-</span> <span class="va">subgroup</span><span class="op">$</span><span class="fu">create_subgroup</span><span class="op">(</span><span class="st">"subsub1"</span><span class="op">)</span></span>
+<span><span class="va">subsubgroup2</span> <span class="op">&lt;-</span> <span class="va">subgroup</span><span class="op">$</span><span class="fu">create_subgroup</span><span class="op">(</span><span class="st">"subsub2"</span><span class="op">)</span></span>
+<span><span class="va">subsubgroup1</span><span class="op">$</span><span class="fu">add_variable</span><span class="op">(</span><span class="va">pr_mon</span><span class="op">)</span></span>
+<span><span class="va">complex_ds</span><span class="op">$</span><span class="fu">hierarchy</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;NetCDF objects&gt; CF_dataset </span></span>
+<span><span class="co">#&gt; * /</span></span>
+<span><span class="co">#&gt;    * sub1</span></span>
+<span><span class="co">#&gt;       * subsub1</span></span>
+<span><span class="co">#&gt;       |  Axes     : [time (12): 2023-01-16T12:00:00 ... 2023-12-16T12:00:00], [lon (14): 5.625 ... 14.765625], [lat (14): 40.35078 ... 49.47356]</span></span>
+<span><span class="co">#&gt;       |  Variables: [-17: pr_month]</span></span>
+<span><span class="co">#&gt;       * subsub2</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

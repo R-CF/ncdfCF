@@ -63,6 +63,7 @@ Suggests:
     ggplot2,
     knitr,
     rmarkdown,
+    stars,
     terra,
     testthat (>= 3.0.0),
     units 

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ncdfCF</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/31_Creating.html">1. Creating new data sets and variables</a></li>
     <li><a class="dropdown-item" href="../articles/32_R-CF.html">2. R and CF Metadata Conventions</a></li>
-    <li><a class="dropdown-item" href="../articles/91_CMEMS.html">Example 1. How to open and visualise Copernicus Marine Data in R</a></li>
+    <li><a class="dropdown-item" href="../articles/33_Troubleshooting.html">3. Troubleshooting</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -224,7 +224,7 @@ straightforward:</p>
 <span><span class="co"># Open the file, all metadata is read</span></span>
 <span><span class="op">(</span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/open_ncdf.html">open_ncdf</a></span><span class="op">(</span><span class="va">fn</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;Dataset&gt; ERA5land_Rwanda_20160101 </span></span>
-<span><span class="co">#&gt; Resource   : /private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpKHGYqX/temp_libpath39436db49ff5/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc </span></span>
+<span><span class="co">#&gt; Resource   : /private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpBxdt42/temp_libpath12e464e36401/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc </span></span>
 <span><span class="co">#&gt; Format     : offset64 </span></span>
 <span><span class="co">#&gt; Collection : Generic netCDF data </span></span>
 <span><span class="co">#&gt; Conventions: CF-1.6 </span></span>
@@ -309,7 +309,7 @@ troublesome:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cirrus.ucsd.edu/~pierce/ncdf/" class="external-link">ncdf4</a></span><span class="op">)</span></span>
 <span><span class="va">nc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ncdf4/man/nc_open.html" class="external-link">nc_open</a></span><span class="op">(</span><span class="va">fn</span><span class="op">)</span></span>
-<span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">nc</span><span class="op">$</span><span class="va">var</span><span class="op">)</span></span>
+<span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">nc</span><span class="op">$</span><span class="va">var</span><span class="op">)</span></span>
 <span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ncdf4/man/ncvar_get.html" class="external-link">ncvar_get</a></span><span class="op">(</span><span class="va">nc</span>, <span class="va">vars</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p>But what if you are interested in only a small area or a month of
 data while the resource has global data spanning multiple years? In both
@@ -343,31 +343,17 @@ to know the indices into the arrays but <code>ncdfCF</code> has some
 helper functions to get you those. Not specifying anything gets you the
 whole array: <code>d &lt;- t2m[]</code>.</li>
 <li>
-<strong><code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code></strong>: The <code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code>
-method is more flexible than <code>[]</code> because it requires less
-knowledge of how the data in the variable is structured, particularly
-the order of the axes. While many netCDF resources “behave” in their
-dimension order, there is no guarantee. With <code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code> you
-supply each axis you want to subset (by axis orientation or name, in any
-order) and each item containing a vector of real-world coordinates to
-extract. As an example, to extract values of a variable <code>x</code>
-for Australia for the year 2020 you call
-<code>x$subset(X = 112:154, Y = -9:-44, T = c("2020-01-01", "2021-01-01"))</code>.
-The result is returned as a new <code>CFVariable</code> object.</li>
+<strong><code><a href="https://rdrr.io/r/base/raw.html" class="external-link">raw()</a></code>:</strong> This also gets the data in the
+layout of the file (or the data set) but with dimnames set. Importantly,
+you can call this after calling <code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code> and you will get
+the raw data for the specific spatial and temporal domain that you are
+interested in.</li>
 <li>
-<strong><code>summarise()</code></strong>: The
-<code>summarise()</code> method summarises the temporal dimension of a
-data variable to a lower resolution and returns a
-<code>CFVariable</code> object with the results. For instance, you can
-summarise daily data to monthly summaries, which greatly reduces the
-size of the data variable. The periods to which data can be summarised
-are “day”, “dekad” (10-day periods), “month”, “quarter” (i.e. JFM, AMJ,
-JAS, OND), “season” (the meteorological seasons: DJF, MAM, JJA, SON),
-and “year”. The function to summarise on is user-supplied and can be a
-simple built-in function, like <code><a href="https://rspatial.github.io/terra/reference/summarize-generics.html" class="external-link">mean()</a></code>, a function that
-results multiple results, like <code><a href="https://rdrr.io/r/base/range.html" class="external-link">range()</a></code>, or a custom
-function. A new <code>CFVariable</code> instance is returned for every
-result returned from the function.</li>
+<strong><code><a href="https://rdrr.io/r/base/array.html" class="external-link">array()</a></code>:</strong> Like <code><a href="https://rdrr.io/r/base/raw.html" class="external-link">raw()</a></code>, this
+extracts all the (subsetted) data, but now the data will be oriented in
+the standard R way of column-major order. Y coordinates will run from
+the top to the bottom (so latitude values, for instance, will be
+decreasing).</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract a time series for a specific location</span></span>
@@ -399,6 +385,46 @@ result returned from the function.</li>
 <p>Note that the results contain degenerate dimensions (of length 1).
 This by design because it allows attributes to be attached and then
 inspected by the user in a consistent manner.</p>
+<p>With the below <code>CFVariable</code> methods you have more control
+over what to extract, possibly processed:</p>
+<ul>
+<li>
+<strong><code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code></strong>: The <code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code>
+method is more flexible than <code>[]</code> because it requires less
+knowledge of how the data in the variable is structured, particularly
+the order of the axes. While many netCDF resources “behave” in their
+dimension order, there is no guarantee. With <code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code> you
+supply each axis you want to subset (by axis orientation or name, in any
+order) and each item containing a vector of real-world coordinates to
+extract. As an example, to extract values of a variable <code>x</code>
+for Australia for the year 2020 you call
+<code>x$subset(X = 112:154, Y = -9:-44, T = "2020")</code>. The result
+is returned as a new <code>CFVariable</code> object.</li>
+<li>
+<strong><code>summarise()</code></strong>: The
+<code>summarise()</code> method summarises the temporal dimension of a
+data variable to a lower resolution and returns a
+<code>CFVariable</code> object with the results. For instance, you can
+summarise daily data to monthly summaries, which greatly reduces the
+size of the data variable. The periods to which data can be summarised
+are “day”, “dekad” (10-day periods), “month”, “quarter” (i.e. JFM, AMJ,
+JAS, OND), “season” (the meteorological seasons: DJF, MAM, JJA, SON),
+and “year”. The function to summarise on is user-supplied and can be a
+simple built-in function, like <code><a href="https://rspatial.github.io/terra/reference/summarize-generics.html" class="external-link">mean()</a></code>, a function that
+results multiple results, like <code><a href="https://rdrr.io/r/base/range.html" class="external-link">range()</a></code>, or a custom
+function. A new <code>CFVariable</code> instance is returned for every
+result returned from the function.</li>
+<li>
+<strong><code><a href="https://rdrr.io/r/stats/profile.html" class="external-link">profile()</a></code>:</strong> Extract “profiles” from the
+data variable. This can take different forms, such as a temporal or
+depth profile for a single location, but it could also be a zonal field
+(such as a transect in latitude - atmospheric depth for a given
+longitude) or some other profile in the physical space of the data
+variable.</li>
+</ul>
+<div class="section level3">
+<h3 id="subsetting-by-axis-range">Subsetting by axis range<a class="anchor" aria-label="anchor" href="#subsetting-by-axis-range"></a>
+</h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract a specific region, full time dimension</span></span>
 <span><span class="op">(</span><span class="va">ts</span> <span class="op">&lt;-</span> <span class="va">t2m</span><span class="op">$</span><span class="fu">subset</span><span class="op">(</span>X <span class="op">=</span> <span class="fl">29</span><span class="op">:</span><span class="fl">30</span>, Y <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">:</span><span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
@@ -447,21 +473,204 @@ inspected by the user in a consistent manner.</p>
 <span><span class="co">#&gt;  name      type    length value              </span></span>
 <span><span class="co">#&gt;  long_name NC_CHAR 19     2 metre temperature</span></span>
 <span><span class="co">#&gt;  units     NC_CHAR  1     K</span></span></code></pre></div>
-<p>These methods will read data from the netCDF resource, but only as
-much as is requested.</p>
-<p>The approaches lend themselves well to the <code><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply()</a></code>
-family of functions for processing. Importantly, these functions give
-access to data from the netCDF resource so you can tweak the size of
-your request to the capacity of the computer, without exhausting
-RAM.</p>
+</div>
+<div class="section level3">
+<h3 id="make-a-profile-of-data">Make a profile of data<a class="anchor" aria-label="anchor" href="#make-a-profile-of-data"></a>
+</h3>
+<p>It is often useful to extract a “profile” of data for a given
+location or zone, such as a timeseries of data. The
+<code>CFVariable$profile()</code> method has some flexible options to
+support this:</p>
+<ul>
+<li>Profile specific locations, with multiple locations specified per
+call, returning the data as a (set of) <code>CFVariable</code>
+instance(s) or as a single <code>data.table</code>.</li>
+<li>Profile zones, such as a latitude band or an atmospheric level. Data
+is returned as (a) new <code>CFVariable</code> instance(s).</li>
+</ul>
+<p>In all cases, you can profile over any of the axes and over any
+number of axes.</p>
+<p>Note that the <code><a href="https://rdrr.io/r/stats/profile.html" class="external-link">profile()</a></code> method returns data for the grid
+cells closest to the specified location. That is different from the
+<code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code> method, which will return data as it is recorded
+in the netCDF resource.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rwa</span> <span class="op">&lt;-</span> <span class="va">t2m</span><span class="op">$</span><span class="fu">profile</span><span class="op">(</span>longitude <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30.07</span>, <span class="fl">30.07</span>, <span class="fl">29.74</span><span class="op">)</span>, latitude <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1.94</span>, <span class="op">-</span><span class="fl">1.58</span>, <span class="op">-</span><span class="fl">2.60</span><span class="op">)</span>, </span>
+<span>                   .names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Kigali"</span>, <span class="st">"Byumba"</span>, <span class="st">"Butare"</span><span class="op">)</span>, .as_table <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rwa</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    longitude latitude                time .variable   .value</span></span>
+<span><span class="co">#&gt;        &lt;num&gt;    &lt;num&gt;              &lt;char&gt;    &lt;char&gt;    &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:     30.07    -1.94 2016-01-01T00:00:00    Kigali 290.4055</span></span>
+<span><span class="co">#&gt; 2:     30.07    -1.94 2016-01-01T01:00:00    Kigali 290.0088</span></span>
+<span><span class="co">#&gt; 3:     30.07    -1.94 2016-01-01T02:00:00    Kigali 289.3608</span></span>
+<span><span class="co">#&gt; 4:     30.07    -1.94 2016-01-01T03:00:00    Kigali 288.8414</span></span>
+<span><span class="co">#&gt; 5:     30.07    -1.94 2016-01-01T04:00:00    Kigali 288.4713</span></span>
+<span><span class="co">#&gt; 6:     30.07    -1.94 2016-01-01T05:00:00    Kigali 289.9276</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">rwa</span>, <span class="st">"value"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $name</span></span>
+<span><span class="co">#&gt; [1] "2 metre temperature"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $units</span></span>
+<span><span class="co">#&gt; [1] "K"</span></span></code></pre></div>
+<p>Some critical metadata is recorded in the “value” attribute: original
+long name and the physical unit.</p>
+<p>When you provide coordinates for all axes but one, you get a profile
+of values along the remaining axis, as shown above. If you provide fewer
+axis coordinates you get progressively higher-order results. To get a
+latitudinal transect, for instance, provide only a longitude
+coordinate:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">trans29_74</span> <span class="op">&lt;-</span> <span class="va">t2m</span><span class="op">$</span><span class="fu">profile</span><span class="op">(</span>longitude <span class="op">=</span> <span class="fl">29.74</span>, .names <span class="op">=</span> <span class="st">"lon_29_74"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;Variable&gt; lon_29_74 </span></span>
+<span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Values: [286.5394 ... 298.963] K</span></span>
+<span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Axes:</span></span>
+<span><span class="co">#&gt;  axis name      length values                                       </span></span>
+<span><span class="co">#&gt;  X    longitude 1      [29.74]                                      </span></span>
+<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]                                  </span></span>
+<span><span class="co">#&gt;  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]</span></span>
+<span><span class="co">#&gt;  unit                             </span></span>
+<span><span class="co">#&gt;  degrees_east                     </span></span>
+<span><span class="co">#&gt;  degrees_north                    </span></span>
+<span><span class="co">#&gt;  hours since 1900-01-01 00:00:00.0</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attributes:</span></span>
+<span><span class="co">#&gt;  name         type      length value                </span></span>
+<span><span class="co">#&gt;  long_name    NC_CHAR   19     2 metre temperature  </span></span>
+<span><span class="co">#&gt;  units        NC_CHAR    1     K                    </span></span>
+<span><span class="co">#&gt;  actual_range NC_DOUBLE  2     286.539447, 298.96298</span></span></code></pre></div>
+<p>Note that there is only a single longitude coordinate left, at
+exactly the specified longitude.</p>
+</div>
+<div class="section level3">
+<h3 id="summarising-data-over-time">Summarising data over time<a class="anchor" aria-label="anchor" href="#summarising-data-over-time"></a>
+</h3>
+<p>With the <code>summarise()</code> method you can apply a function
+over the data to generate summaries. You could, for instance, summarise
+daily data to monthly means. These methods use the specific calendar of
+the “time” axis. The return value is a new <code>CFVariable</code>
+object.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Summarising hourly temperature data to calculate the daily maximum temperature</span></span>
+<span><span class="va">t2m</span><span class="op">$</span><span class="fu">summarise</span><span class="op">(</span><span class="st">"tmax"</span>, <span class="va">max</span>, <span class="st">"day"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;Variable&gt; tmax </span></span>
+<span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Values: [290.0364 ... 302.0447] K</span></span>
+<span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Axes:</span></span>
+<span><span class="co">#&gt;  axis name      length values                unit                             </span></span>
+<span><span class="co">#&gt;  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0</span></span>
+<span><span class="co">#&gt;  X    longitude 31     [28 ... 31]           degrees_east                     </span></span>
+<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]           degrees_north                    </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attributes:</span></span>
+<span><span class="co">#&gt;  name         type      length value                </span></span>
+<span><span class="co">#&gt;  long_name    NC_CHAR   19     2 metre temperature  </span></span>
+<span><span class="co">#&gt;  units        NC_CHAR    1     K                    </span></span>
+<span><span class="co">#&gt;  actual_range NC_DOUBLE  2     290.036358, 302.04472</span></span></code></pre></div>
+<p>A function may also return a vector of multiple values, in which case
+a list is returned with a new <code>CFVariable</code> object for each
+return value of the function. This allows you to calculate multiple
+results with a single call. You could write your own function to tailor
+the calculations to your needs. Rather than just calculating the daily
+maximum, you could get the daily maximum, minimum and diurnal range in
+one go:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Function to calculate multiple daily stats</span></span>
+<span><span class="co"># It is good practice to include a `na.rm` argument in all your functions</span></span>
+<span><span class="va">daily_stats</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">na.rm</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># x is the vector of values for one day</span></span>
+<span>  <span class="va">minmax</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="va">na.rm</span><span class="op">)</span></span>
+<span>  <span class="va">diurnal</span> <span class="op">&lt;-</span> <span class="va">minmax</span><span class="op">[</span><span class="fl">2L</span><span class="op">]</span> <span class="op">-</span> <span class="va">minmax</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">minmax</span>, <span class="va">diurnal</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Call summarise() with your own function</span></span>
+<span><span class="co"># The `name` argument should have as many names as the function returns results</span></span>
+<span><span class="op">(</span><span class="va">stats</span> <span class="op">&lt;-</span> <span class="va">t2m</span><span class="op">$</span><span class="fu">summarise</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tmin"</span>, <span class="st">"tmax"</span>, <span class="st">"diurnal_range"</span><span class="op">)</span>, <span class="va">daily_stats</span>, <span class="st">"day"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $tmin</span></span>
+<span><span class="co">#&gt; &lt;Variable&gt; tmin </span></span>
+<span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Values: [283.0182 ... 293.8659] K</span></span>
+<span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Axes:</span></span>
+<span><span class="co">#&gt;  axis name      length values                unit                             </span></span>
+<span><span class="co">#&gt;  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0</span></span>
+<span><span class="co">#&gt;  X    longitude 31     [28 ... 31]           degrees_east                     </span></span>
+<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]           degrees_north                    </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attributes:</span></span>
+<span><span class="co">#&gt;  name         type      length value                 </span></span>
+<span><span class="co">#&gt;  long_name    NC_CHAR   19     2 metre temperature   </span></span>
+<span><span class="co">#&gt;  units        NC_CHAR    1     K                     </span></span>
+<span><span class="co">#&gt;  actual_range NC_DOUBLE  2     283.018168, 293.865857</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $tmax</span></span>
+<span><span class="co">#&gt; &lt;Variable&gt; tmax </span></span>
+<span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Values: [290.0364 ... 302.0447] K</span></span>
+<span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Axes:</span></span>
+<span><span class="co">#&gt;  axis name      length values                unit                             </span></span>
+<span><span class="co">#&gt;  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0</span></span>
+<span><span class="co">#&gt;  X    longitude 31     [28 ... 31]           degrees_east                     </span></span>
+<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]           degrees_north                    </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attributes:</span></span>
+<span><span class="co">#&gt;  name         type      length value                </span></span>
+<span><span class="co">#&gt;  long_name    NC_CHAR   19     2 metre temperature  </span></span>
+<span><span class="co">#&gt;  units        NC_CHAR    1     K                    </span></span>
+<span><span class="co">#&gt;  actual_range NC_DOUBLE  2     290.036358, 302.04472</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $diurnal_range</span></span>
+<span><span class="co">#&gt; &lt;Variable&gt; diurnal_range </span></span>
+<span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Values: [1.819982 ... 11.27369] K</span></span>
+<span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Axes:</span></span>
+<span><span class="co">#&gt;  axis name      length values                unit                             </span></span>
+<span><span class="co">#&gt;  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0</span></span>
+<span><span class="co">#&gt;  X    longitude 31     [28 ... 31]           degrees_east                     </span></span>
+<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]           degrees_north                    </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attributes:</span></span>
+<span><span class="co">#&gt;  name         type      length value              </span></span>
+<span><span class="co">#&gt;  long_name    NC_CHAR   19     2 metre temperature</span></span>
+<span><span class="co">#&gt;  units        NC_CHAR    1     K                  </span></span>
+<span><span class="co">#&gt;  actual_range NC_DOUBLE  2     1.819982, 11.27369</span></span></code></pre></div>
+<p>Note that you may have to update some attributes after calling
+<code>summarise()</code>. You can use the <code>set_attribute()</code>
+method on the <code>CFVariable</code> objects to do that. Data loading
+is lazy. In the examples above, you can see that data did not yet get
+loaded. This is intentional: you can subset your data in multiple ways
+before actually reading the data from the resource. This is particularly
+important when getting data from an online location, such as a remote
+THREDDS server. When you want to get a hold of the raw data in an R
+array, use <code>CFVariable$raw()</code> or
+<code>CFvariable$array()</code> to get the array with
+<code>dimnames</code> set.</p>
+<p>All of the above methods will read data from the netCDF resource, but
+only as much as is requested. The approaches lend themselves well to the
+<code><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply()</a></code> family of functions for processing. Importantly,
+these functions give access to data from the netCDF resource so you can
+tweak the size of your request to the capacity of the computer, without
+exhausting RAM.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="working-with-the-data">Working with the data<a class="anchor" aria-label="anchor" href="#working-with-the-data"></a>
 </h2>
-<p>The <code><a href="https://rspatial.github.io/terra/reference/subset.html" class="external-link">subset()</a></code> and <code>summarise()</code> methods return
-data from a variable as a new <code>CFVariable</code> instance,
-including all important metadata of the data, such as its axes, the
-coordinate reference system, and the attributes, among others.</p>
 <div class="section level3">
 <h3 id="processing-data">Processing data<a class="anchor" aria-label="anchor" href="#processing-data"></a>
 </h3>
@@ -472,7 +681,7 @@ directly on the <code>CFVariable</code> instance, returning a new
 specifically: the functions in the S3 Ops and Math generic groups).
 Returning to the previous example, the temperature in units of Kelvin
 can be converted to degrees Celsius in the usual way:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tsC</span> <span class="op">&lt;-</span> <span class="va">ts</span> <span class="op">-</span> <span class="fl">273.15</span></span>
 <span><span class="va">tsC</span><span class="op">$</span><span class="fu">set_attribute</span><span class="op">(</span><span class="st">"units"</span>, <span class="st">"NC_CHAR"</span>, <span class="st">"degrees_Celsius"</span><span class="op">)</span></span>
 <span><span class="va">tsC</span></span>
@@ -496,7 +705,7 @@ can be converted to degrees Celsius in the usual way:</p>
 <span><span class="co">#&gt;  actual_range NC_DOUBLE  2     15.083524, 28.058061</span></span>
 <span><span class="co">#&gt;  units        NC_CHAR   15     degrees_Celsius</span></span></code></pre></div>
 <p>You can also apply logical and comparison operators:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># This produces a "logical" CFVariable: all values are 0 (FALSE) or 1 (TRUE)</span></span>
 <span><span class="va">tsHot</span> <span class="op">&lt;-</span> <span class="va">tsC</span> <span class="op">&gt;</span> <span class="fl">20</span></span>
 <span><span class="va">tsHot</span><span class="op">$</span><span class="fu">set_attribute</span><span class="op">(</span><span class="st">"units"</span>, <span class="st">"NC_CHAR"</span>, <span class="st">"1"</span><span class="op">)</span></span>
@@ -533,24 +742,19 @@ description (like, <code>tsHot$name &lt;- "toasty_places"</code>).</p>
 <div class="section level3">
 <h3 id="orienting-the-data">Orienting the data<a class="anchor" aria-label="anchor" href="#orienting-the-data"></a>
 </h3>
-<p>The <code>CFVariable</code> instance also lets you manipulate the
-data in a way that is informed by the metadata. This overcomes a typical
-issue when working with netCDF data that adheres to the CF Metadata
+<p>The <code>CFVariable</code> instance lets you manipulate the data in
+a way that is informed by the metadata. This overcomes a typical issue
+when working with netCDF data that adheres to the CF Metadata
 Conventions. The ordering of the axes in a typical netCDF resource is
 different from the way that R orders its data. That leads to surprising
-results if you are not aware of this issue:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+results if you are not aware of this issue.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Open a file and read the data from a variable into a CFVariable instance</span></span>
 <span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"tasmax_NAM-44_day_20410701-vncdfCF.nc"</span>, package <span class="op">=</span> <span class="st">"ncdfCF"</span><span class="op">)</span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/open_ncdf.html">open_ncdf</a></span><span class="op">(</span><span class="va">fn</span><span class="op">)</span></span>
 <span><span class="va">tx</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">[[</span><span class="st">"tasmax"</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
-<span><span class="co"># Use the terra package for plotting</span></span>
-<span><span class="co"># install.packages("terra")</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; terra 1.8.86</span></span>
-<span></span>
-<span><span class="co"># Get the data in exactly the way it is stored in the file, using `raw()`</span></span>
+<span><span class="co"># Get the raw data as an R array</span></span>
 <span><span class="va">tx_raw</span> <span class="op">&lt;-</span> <span class="va">tx</span><span class="op">$</span><span class="fu">raw</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">tx_raw</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  num [1:148, 1:140, 1, 1] 301 301 301 301 301 ...</span></span>
@@ -558,28 +762,17 @@ results if you are not aware of this issue:</p>
 <span><span class="co">#&gt;   ..$ x     : chr [1:148] "0" "50000" "1e+05" "150000" ...</span></span>
 <span><span class="co">#&gt;   ..$ y     : chr [1:140] "0" "50000" "1e+05" "150000" ...</span></span>
 <span><span class="co">#&gt;   ..$ time  : chr "2041-07-01T12:00:00"</span></span>
-<span><span class="co">#&gt;   ..$ height: chr "2"</span></span>
-<span></span>
-<span><span class="co"># Plot the data</span></span>
-<span><span class="op">(</span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">tx_raw</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; class       : SpatRaster </span></span>
-<span><span class="co">#&gt; size        : 148, 140, 1  (nrow, ncol, nlyr)</span></span>
-<span><span class="co">#&gt; resolution  : 1, 1  (x, y)</span></span>
-<span><span class="co">#&gt; extent      : 0, 140, 0, 148  (xmin, xmax, ymin, ymax)</span></span>
-<span><span class="co">#&gt; coord. ref. :  </span></span>
-<span><span class="co">#&gt; source(s)   : memory</span></span>
-<span><span class="co">#&gt; name        :    lyr.1 </span></span>
-<span><span class="co">#&gt; min value   : 263.4697 </span></span>
-<span><span class="co">#&gt; max value   : 313.2861</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ncdfCF_files/figure-html/orienting-1.png" class="r-plt" alt="" width="700"></p>
-<p>North America is lying on its side. This is because the data is
-stored differently in the netCDF resource than R expects. There is, in
-fact, not a single way of storing data in a netCDF resources, the
-dimensions may be stored in any order. The CF Metadata Conventions add
-metadata to interpret the file storage. The <code><a href="https://rdrr.io/r/base/array.html" class="external-link">array()</a></code> method
-uses that to produce an array in the familiar R storage arrangement:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<span><span class="co">#&gt;   ..$ height: chr "2"</span></span></code></pre></div>
+<p>The data is stored differently in the netCDF resource than usually in
+R: the first dimension is for <code>x</code> coordinates, followed by
+<code>y</code> coordinates in increasing order (meaning going from the
+bottom to the top), followed by two degenerate dimensions. This happens
+to be a common arrangement in netCDF data. There is, however, not a
+single way of storing data in a netCDF resources, the dimensions may be
+stored in any order. The CF Metadata Conventions add metadata to
+interpret the file storage. The <code><a href="https://rdrr.io/r/base/array.html" class="external-link">array()</a></code> method uses that to
+produce an array in the familiar R storage arrangement:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tx_array</span> <span class="op">&lt;-</span> <span class="va">tx</span><span class="op">$</span><span class="fu">array</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">tx_array</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  num [1:140, 1:148, 1, 1] 277 277 277 277 277 ...</span></span>
@@ -587,48 +780,87 @@ uses that to produce an array in the familiar R storage arrangement:</p>
 <span><span class="co">#&gt;   ..$ y     : chr [1:140] "6950000" "6900000" "6850000" "6800000" ...</span></span>
 <span><span class="co">#&gt;   ..$ x     : chr [1:148] "0" "50000" "1e+05" "150000" ...</span></span>
 <span><span class="co">#&gt;   ..$ height: chr "2"</span></span>
-<span><span class="co">#&gt;   ..$ time  : chr "2041-07-01T12:00:00"</span></span>
-<span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">tx_array</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ncdfCF_files/figure-html/array-1.png" class="r-plt" alt="" width="700"></p>
-<p>Ok, so now we got North America looking pretty ok again. The data has
-been oriented in the right way. Behind the scenes that may have involved
+<span><span class="co">#&gt;   ..$ time  : chr "2041-07-01T12:00:00"</span></span></code></pre></div>
+<p>The data has been oriented in the familiar R way: from the top-left
+down and then across. Behind the scenes that may have involved
 transposing and flipping the data, depending on the data storage
 arrangement in the netCDF resource.</p>
-<p>But the coordinate system is still not right. These are just ordinal
-values along both axes. The <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRaster</a></code> object also
-does not show a CRS. All of the above steps can be fixed by simply
-calling the <code>terra()</code> method on the data object. This will
-return a <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRaster</a></code> for a data object with three
-axes and a <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRasterDataset</a></code> for a data object with
-four axes:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">(</span><span class="va">r</span> <span class="op">&lt;-</span> <span class="va">tx</span><span class="op">$</span><span class="fu">terra</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; class       : SpatRasterDataset </span></span>
-<span><span class="co">#&gt; subdatasets : 1 </span></span>
-<span><span class="co">#&gt; dimensions  : 140, 148 (nrow, ncol)</span></span>
-<span><span class="co">#&gt; nlyr        : 1 </span></span>
-<span><span class="co">#&gt; resolution  : 50000, 50000  (x, y)</span></span>
-<span><span class="co">#&gt; extent      : -25000, 7375000, -25000, 6975000  (xmin, xmax, ymin, ymax)</span></span>
-<span><span class="co">#&gt; coord. ref. : +proj=lcc +lat_0=46.0000038146973 +lon_0=-97 +lat_1=35 +lat_2=60 +x_0=3675000 +y_0=3475000 +datum=WGS84 +units=m +no_defs </span></span>
-<span><span class="co">#&gt; source(s)   : memory </span></span>
-<span><span class="co">#&gt; names       : 2041-07-01T12:00:00</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">r</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ncdfCF_files/figure-html/terra-1.png" class="r-plt" alt="" width="700"></p>
-<p>So that’s a fully specified <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRaster</a></code> from
-netCDF data.</p>
-<p>(<strong>Disclaimer:</strong> Package <code>terra</code> can do this
-too with simply <code>terra::rast(fn)</code> and then selecting a layer
-to plot (which is not always trivial if you are looking for a specific
-layer; e.g. what does “lyr.1” represent?). The whole point of the above
-examples is to demonstrate the different steps in processing netCDF
-data. There are also some subtle differences such as the names of the
-layers. Furthermore, <code>ncdfCF</code> doesn’t insert the attributes
-of the variable into the <code>SpatRaster</code>. <code>terra</code> can
-only handle netCDF resources that “behave” properly (especially the axis
-order) and it has no particular consideration for the different
-calendars that can be used with CF data.)</p>
 </div>
+</div>
+<div class="section level2">
+<h2 id="plotting-netcdf-data">Plotting netCDF data<a class="anchor" aria-label="anchor" href="#plotting-netcdf-data"></a>
+</h2>
+<p>Package <code>ncdfCF</code> includes the function
+<code><a href="../reference/geom_ncdf.html">geom_ncdf()</a></code> which can be used to compose maps with
+<code>ggplot2</code>:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_ncdf.html">geom_ncdf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">tx</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_equal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="ncdfCF_files/figure-html/ggplot-1.png" class="r-plt" alt="" width="700"></p>
+<p>It is advisable to subset or summarize the data variable to exactly
+the data you want to map to avoid exhausting your computer
+resources.</p>
+<p>You can further compose this map as you would with any
+<code>ggplot2</code> map composition: set sizes, labels, ticks, title,
+modify the legend, etc.</p>
+</div>
+<div class="section level2">
+<h2 id="saving-and-exporting-data">Saving and exporting data<a class="anchor" aria-label="anchor" href="#saving-and-exporting-data"></a>
+</h2>
+<p>A <code>CFVariable</code> object can be saved to a netCDF file. The
+object will have all its relevant attributes and properties written
+together with the actual data: axes, bounds, attributes, CRS. The netCDF
+file is of version “netcdf4” and will have the axes oriented in such a
+way that the file has maximum portability (specifically, data will be
+stored in row-major order with increasing Y values).</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Save a CFVariable instance to a netCDF file on disk</span></span>
+<span><span class="va">stats</span><span class="op">[[</span><span class="st">"diurnal_range"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">save</span><span class="op">(</span><span class="st">"~/path/file.nc"</span><span class="op">)</span></span></code></pre></div>
+<p>A <code>CFVariable</code> object can also be exported to a
+<code>data.table</code> or to a <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRaster</a></code> (3D) or
+<code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRasterDataset</a></code> (4D) for further processing.
+Obviously, these packages need to be installed to utilise these
+methods.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("data.table")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dt</span> <span class="op">&lt;-</span> <span class="va">ts</span><span class="op">$</span><span class="fu">data.table</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    longitude latitude                time      t2m</span></span>
+<span><span class="co">#&gt;        &lt;num&gt;    &lt;num&gt;              &lt;char&gt;    &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:      28.9       -1 2016-01-01T09:00:00 295.7120</span></span>
+<span><span class="co">#&gt; 2:      29.0       -1 2016-01-01T09:00:00 296.1809</span></span>
+<span><span class="co">#&gt; 3:      29.1       -1 2016-01-01T09:00:00 297.6046</span></span>
+<span><span class="co">#&gt; 4:      29.2       -1 2016-01-01T09:00:00 298.8195</span></span>
+<span><span class="co">#&gt; 5:      29.3       -1 2016-01-01T09:00:00 300.1376</span></span>
+<span><span class="co">#&gt; 6:      29.4       -1 2016-01-01T09:00:00 300.8583</span></span>
+<span></span>
+<span><span class="co">#install.packages("terra")</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">(</span><span class="va">r</span> <span class="op">&lt;-</span> <span class="va">stats</span><span class="op">[[</span><span class="st">"diurnal_range"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="fu">terra</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; class       : SpatRaster </span></span>
+<span><span class="co">#&gt; size        : 21, 31, 1  (nrow, ncol, nlyr)</span></span>
+<span><span class="co">#&gt; resolution  : 0.1, 0.1  (x, y)</span></span>
+<span><span class="co">#&gt; extent      : 27.95, 31.05, -3.05, -0.95  (xmin, xmax, ymin, ymax)</span></span>
+<span><span class="co">#&gt; coord. ref. :  </span></span>
+<span><span class="co">#&gt; source(s)   : memory</span></span>
+<span><span class="co">#&gt; name        : 2016-01-01T12:00:00 </span></span>
+<span><span class="co">#&gt; min value   :            1.819982 </span></span>
+<span><span class="co">#&gt; max value   :           11.273690</span></span></code></pre></div>
+<p>A <code>stars</code> object can be created from a
+<code>CFVariable</code> or a <code>CFDataset</code> with multiple
+variables with the function <code><a href="https://r-spatial.github.io/stars/reference/st_as_stars.html" class="external-link">stars::st_as_stars()</a></code>.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/" class="external-link">stars</a></span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">(</span><span class="va">st</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_as_stars.html" class="external-link">st_as_stars</a></span><span class="op">(</span><span class="va">ts</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; stars object with 3 dimensions and 1 attribute</span></span>
+<span><span class="co">#&gt; attribute(s):</span></span>
+<span><span class="co">#&gt;             Min.  1st Qu.   Median     Mean  3rd Qu.     Max.</span></span>
+<span><span class="co">#&gt; t2m [K] 288.2335 293.2838 294.7573 294.9324 296.6282 301.2081</span></span>
+<span><span class="co">#&gt; dimension(s):</span></span>
+<span><span class="co">#&gt;           from to                  offset   delta    refsys x/y</span></span>
+<span><span class="co">#&gt; longitude    1  7                   28.85     0.1 OGC:CRS84 [x]</span></span>
+<span><span class="co">#&gt; latitude     1 11                   -0.95    -0.1 OGC:CRS84 [y]</span></span>
+<span><span class="co">#&gt; time         1  6 2016-01-01 09:00:00 UTC 1 hours   POSIXct</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
