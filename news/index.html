@@ -41,9 +41,10 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="ncdfcf-development-version">ncdfCF (development version)<a class="anchor" aria-label="anchor" href="#ncdfcf-development-version"></a></h2>
+<p>Patch release with bug fixes and some new functionality.</p>
 <div class="section level5">
 <h5 id="api-development-version">API<a class="anchor" aria-label="anchor" href="#api-development-version"></a></h5>
-<ul><li>New <code><a href="../reference/geom_ncdf.html">geom_ncdf()</a></code> function to create a <code>geom</code> for use in map composition using package <code>ggplot2</code>.</li>
+<ul><li>New <code><a href="../reference/geom_ncdf.html">geom_ncdf()</a></code> function to create a <code>geom</code> for use in map composition using package <code>ggplot2</code>. Functionality is currently limited and only basically tested.</li>
 <li>In <code>CFVariable$subset()</code> subsetting a “time” axis can now use abbreviated specification such as <code>time = "2025-12"</code> to select all data for December 2025, or <code>time = c("2020-S1", "2025-S4")</code> for all meteorological season data from 2019-12-01 to 2025-11-30 (inclusive). Abbreviation can be by year, month, meteorological season (S1 to S4), quarter (Q1 to Q4) or dekad (D01 to D36).</li>
 </ul></div>
 <div class="section level5">

@@ -2,12 +2,15 @@
 
 ## ncdfCF (development version)
 
+Patch release with bug fixes and some new functionality.
+
 ##### API
 
 - New
   [`geom_ncdf()`](https://r-cf.github.io/ncdfCF/reference/geom_ncdf.md)
   function to create a `geom` for use in map composition using package
-  `ggplot2`.
+  `ggplot2`. Functionality is currently limited and only basically
+  tested.
 - In `CFVariable$subset()` subsetting a “time” axis can now use
   abbreviated specification such as `time = "2025-12"` to select all
   data for December 2025, or `time = c("2020-S1", "2025-S4")` for all

@@ -21,7 +21,7 @@ CF elements and their relationship to the building blocks of the netCDF
 file are given in the figure below:
 
 ![Figure 1: Elements of a netCDF file and the CF constructs built on
-them. Source: CF Conventions, Appendix I.](datamodel-0.4.svg)
+them. Source: CF Conventions, Appendix I.](../datamodel-0.4.svg)
 
 *Figure 1: Elements of a netCDF file and the CF constructs built on
 them. Source: CF Conventions, Appendix I.*
@@ -311,7 +311,7 @@ package uses a layered structure to capture it all. This structure
 enables a full support of the features provided by the `netcdf` library
 and the CF Conventions.
 
-![Figure 2: Core ncdfCF data model](ncdfCF-datamodel-0.7.png)
+![Figure 2: Core ncdfCF data model](../ncdfCF-datamodel-0.7.png)
 
 Figure 2: Core ncdfCF data model
 
@@ -326,7 +326,7 @@ will encounter when using *formula terms* for a parametric vertical
 axis.
 
 ![Figure 3: Condensed ncdfCF axis class
-hierarchy](ncdfCF-hierarchy-0.7.png)
+hierarchy](../ncdfCF-hierarchy-0.7.png)
 
 Figure 3: Condensed ncdfCF axis class hierarchy
 
