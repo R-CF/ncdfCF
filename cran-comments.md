@@ -1,10 +1,8 @@
-This is a minor release with significant code enhancements and stability improvements.
+This is a patch release to fix two annoying bugs. Minor new functionality.
 
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes
-
-* This minor release has significant enhancements in code efficiency and logic and adds new features.
 
 ## revdepcheck results
 

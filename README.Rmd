@@ -55,7 +55,7 @@ obj$axes[["lat"]]
 obj$axes[["time"]]
 ```
 
-You can further modify the resulting `CFVariable` by setting other properties, such as attributes or a coordinate reference system. Once the object is complete, you can export or save it.
+You can further modify the resulting `CFVariable` by setting other properties, such as attributes or a coordinate reference system. Once the object is complete, you can export or save it. 
 
 More detailed operations and options are given on the [package web site](https://r-cf.github.io/ncdfCF/).
 

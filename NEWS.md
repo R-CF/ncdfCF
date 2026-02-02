@@ -1,7 +1,9 @@
 # ncdfCF (development version)
 
+Patch release with bug fixes and some new functionality.
+
 #### API
-- New `geom_ncdf()` function to create a `geom` for use in map composition using package `ggplot2`.
+- New `geom_ncdf()` function to create a `geom` for use in map composition using package `ggplot2`. Functionality is currently limited and only basically tested.
 - In `CFVariable$subset()` subsetting a "time" axis can now use abbreviated specification such as `time = "2025-12"` to select all data for December 2025, or `time = c("2020-S1", "2025-S4")` for all meteorological season data from 2019-12-01 to 2025-11-30 (inclusive). Abbreviation can be by year, month, meteorological season (S1 to S4), quarter (Q1 to Q4) or dekad (D01 to D36). 
 
 #### Code

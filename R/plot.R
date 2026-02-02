@@ -34,7 +34,7 @@ geom_ncdf <- function(mapping = NULL, data, ...) {
     stop("Not enough data to plot.", call. = FALSE)
 
   ax_names <- names(data$axes)
-  ax_orient <- sapply(data$axes, function(ax)  ax$orientation)
+  ax_orient <- sapply(data$axes, function(ax)  if (ax$length > 1L) ax$orientation else "")
   ax_order <- match(c("X", "Y", "Z", "T"), ax_orient, nomatch = 0L)
   XY <- ax_order[1L] > 0L && ax_order[2L] > 0L
 

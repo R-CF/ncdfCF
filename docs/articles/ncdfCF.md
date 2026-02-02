@@ -143,7 +143,7 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 # Open the file, all metadata is read
 (ds <- open_ncdf(fn))
 #> <Dataset> ERA5land_Rwanda_20160101 
-#> Resource   : /private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpBxdt42/temp_libpath12e464e36401/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
+#> Resource   : /private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpBxdt42/temp_libpath12e4419edf29/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
 #> Format     : offset64 
 #> Collection : Generic netCDF data 
 #> Conventions: CF-1.6 
