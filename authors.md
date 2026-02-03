@@ -7,7 +7,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/R-CF/ncdfCF/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/R-CF/ncdfCF/blob/v0.8.1/DESCRIPTION)
 
 Van Laake P (2026). *ncdfCF: Easy Access to NetCDF Files with CF
 Metadata Conventions*. R package version 0.8.1,
