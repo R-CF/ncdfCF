@@ -20,7 +20,7 @@ library(ncdfCF)
 #> Attributes:
 #>  name        type    length value                                             
 #>  Conventions NC_CHAR  7     CF-1.13                                           
-#>  history     NC_CHAR 62     Created with R package ncdfCF 0.8.1 on 2026-02-...
+#>  history     NC_CHAR 67     Created with R package ncdfCF 0.8.1.9000 on 202...
 ```
 
 The data set is created in memory (`Resource : (virtual)`) and you can
