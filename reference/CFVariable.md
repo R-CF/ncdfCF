@@ -465,7 +465,7 @@ resolution, using a user-supplied aggregation function.
   values (such as [`range()`](https://rdrr.io/r/base/range.html)). Lists
   and other objects are not allowed and will throw an error that may be
   cryptic as there is no way that this method can assert that `fun`
-  behaves properly so an error will pop up somewhere, most probably in
+  behaves properly so an error will pop up somewhere, quite possibly in
   unexpected ways. The function may also be user-defined so you could
   write a wrapper around a function like
   [`lm()`](https://rdrr.io/r/stats/lm.html) to return values like the
