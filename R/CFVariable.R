@@ -673,7 +673,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   values (such as `range()`). Lists and other objects are not allowed and
     #'   will throw an error that may be cryptic as there is no way that this
     #'   method can assert that `fun` behaves properly so an error will pop up
-    #'   somewhere, most probably in unexpected ways. The function may also be
+    #'   somewhere, quite possibly in unexpected ways. The function may also be
     #'   user-defined so you could write a wrapper around a function like `lm()`
     #'   to return values like the intercept or any coefficients from the object
     #'   returned by calling that function.
@@ -686,7 +686,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   resolution of the time axis.
     #' @param era Optional, integer vector of years to summarise over by the
     #'   specified `period`. The extreme values of the years will be used. This
-    #'   can also be a list of multiple such  vectors. The elements in the list,
+    #'   can also be a list of multiple such vectors. The elements in the list,
     #'   if used, should have names as these will be used to label the results.
     #' @param ... Additional parameters passed on to `fun`.
     #' @return A `CFVariable` object, or a list thereof with as many

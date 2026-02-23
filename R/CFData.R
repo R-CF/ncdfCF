@@ -139,7 +139,10 @@ CFData <- R6::R6Class("CFData",
       }
 
       if (!is.null(values) && self$ndims > 1L) {
-        dim(values) <- private$.dims
+        if (private$.data_type == "NC_CHAR" && inherits(self, c("CFAxis", "CFLabel")))
+          dim(values) <- private$.dims[-1] # First dimension is string length
+        else
+          dim(values) <- private$.dims
       }
       private$.values <- values
     },

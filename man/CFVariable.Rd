@@ -397,7 +397,7 @@ an atomic value (such as \code{sum()} or \code{mean()}), or a vector of atomic
 values (such as \code{range()}). Lists and other objects are not allowed and
 will throw an error that may be cryptic as there is no way that this
 method can assert that \code{fun} behaves properly so an error will pop up
-somewhere, most probably in unexpected ways. The function may also be
+somewhere, quite possibly in unexpected ways. The function may also be
 user-defined so you could write a wrapper around a function like \code{lm()}
 to return values like the intercept or any coefficients from the object
 returned by calling that function.}
@@ -412,7 +412,7 @@ resolution of the time axis.}
 
 \item{\code{era}}{Optional, integer vector of years to summarise over by the
 specified \code{period}. The extreme values of the years will be used. This
-can also be a list of multiple such  vectors. The elements in the list,
+can also be a list of multiple such vectors. The elements in the list,
 if used, should have names as these will be used to label the results.}
 
 \item{\code{...}}{Additional parameters passed on to \code{fun}.}

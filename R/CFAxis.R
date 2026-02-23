@@ -153,10 +153,15 @@ CFAxis <- R6::R6Class("CFAxis",
     #' @description Some details of the axis.
     #' @return A 1-row `data.frame` with some details of the axis.
     brief = function() {
-      longname <- self$attribute("long_name")
-      if (is.na(longname) || longname == self$name) longname <- ""
+      if (private$.active_coords > 1L) {
+        longname <- private$.aux[[private$.active_coords - 1L]]$name
+        units <- private$.aux[[private$.active_coords - 1L]]$attribute("units")
+      } else {
+        longname <- self$attribute("long_name")
+        if (is.na(longname) || longname == self$name) longname <- ""
+        units <- self$attribute("units")
+      }
       len <- if (self$unlimited) paste0(self$length, "-U") else self$length
-      units <- self$attribute("units")
       if (is.na(units)) units <- ""
       else if (units == "1") units <- ""
 

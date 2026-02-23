@@ -363,12 +363,12 @@ peek_ncdf <- function(resource) {
 #' NC variables are scanned for a "coordinates" attribute (which must reference
 #' a data variable, domain variable or geometry container variable). If not
 #' already present, the NC variable referenced is converted into one of 3
-#' objects, depending on context: 1. A scalar coordinate variable in the group
-#' where its NC variable is located; 2. A label variable in the group where its
-#' NC variable is located; multiple label coordinates (such as in the case of
-#' taxon name and identifier) are stored in a single label variable; 3. A
-#' long-lat auxiliary coordinate variable when both a longitude and latitude NC
-#' variable are found, in the group of the longitude NC variable.
+#' objects, depending on context: 1. An axis for a scalar coordinate variable in
+#' the group where its NC variable is located; 2. A label variable in the group
+#' where its NC variable is located; multiple label coordinates (such as in the
+#' case of taxon name and identifier) are stored in a single label variable; 3.
+#' A long-lat auxiliary coordinate variable when both a longitude and latitude
+#' NC variable are found, in the group of the longitude NC variable.
 #' @param grp The CF group to scan.
 #' @return Nothing. `CFAxis`, `CFLabel` and `CFAuxiliaryLongLat` instances are
 #'   created in the CF groups corresponding to where the NC variables are found.
@@ -619,8 +619,8 @@ peek_ncdf <- function(resource) {
 #' Build CF variables from unused dimensional NC variables
 #'
 #' NC variables with dimensions that do not have their `CF` property set will be
-#' made into a `CFVariable`. This method is invoked recursively to travel through
-#' all groups of the netCDF resource.
+#' made into a `CFVariable`. This method is invoked recursively to travel
+#' through all groups of the netCDF resource.
 #'
 #' @param grp The CF group to scan for unused NC variables.
 #' @param axes List of available CF axes to use with the CF variables.
@@ -642,14 +642,14 @@ peek_ncdf <- function(resource) {
           for (cid in seq_along(coords)) {
             cv <- coords[cid]
             if (cv %in% ax_names) next
-
             aux <- grp$find_by_name(cv)
             if (!is.null(aux) && !inherits(aux, "CFVariable")) {
               clss <- class(aux)
               if (aux$length == 1L)
                 all_ax[[aux$name]] <- aux
               else if (clss[1L] == "CFLabel" || "CFAxis" %in% clss) {
-                ndx <- which(sapply(dim_ax, function(x) x$dimid == aux$dimid))
+                did <- if (aux$data_type == "NC_CHAR") aux$dimid[2L] else aux$dimid
+                ndx <- which(sapply(dim_ax, function(x) x$dimid == did))
                 if (length(ndx)) all_ax[[ndx]]$auxiliary <- aux
                 else {
                   warning("Unmatched `coordinates` value '", cv, "' found in variable '", v$name, "'.", call. = FALSE)
