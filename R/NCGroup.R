@@ -62,7 +62,7 @@ NCGroup <- R6::R6Class("NCGroup",
         } else {
           # Add a sub-group
           nc <- RNetCDF::grp.def.nc(parent$handle, name)
-          private$.resource$sync()
+          #private$.resource$sync()
           id <- as.integer(nc)
         }
       }

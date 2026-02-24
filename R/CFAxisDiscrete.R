@@ -152,27 +152,28 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
         stop("Axis values cannot be appended.", call. = FALSE)
     },
 
-    #' @description Write the axis to a netCDF file, including its attributes,
-    #' but only if it has an associated NC variable in the file.
-    #' @param nc The handle of the netCDF file opened for writing or a group in
-    #'   the netCDF file. If `NULL`, write to the file or group where the axis
-    #'   was read from (the file must have been opened for writing). If not
-    #'   `NULL`, the handle to a netCDF file or a group therein.
+    #' @description Write the axis to a netCDF file. A discrete axis does not
+    #' have any attributes or values to write.
     #' @return Self, invisibly.
-    write = function(nc = NULL) {
-      h <- if (inherits(nc, "NetCDF")) nc else self$NC$handle
+    write = function() {
+      # The NCVariable object is transient and should not be written to file.
 
-      # Write the dimension for the axis. Error will be thrown when trying to
-      # write a dimension that's already defined, such as when a dimension is
-      # shared between multiple objects. In that case, get the id.
-      did <- try(RNetCDF::dim.def.nc(h, self$name, self$length), silent = TRUE)
-      if (inherits(did, "try-error"))
-        did <- RNetCDF::dim.inq.nc(h, self$name)$id
+      # Try to find a NC dimension
+      ncobj <- private$.group$NC$find_by_name(self$name)
+      if (is.null(ncobj)) {
+        # Create a new NC dimension on file
+        private$.dimid <- NCDimension$new(id = NA, name = self$name, length = self$length,
+                                          unlim = private$.unlimited, group = private$.group$NC)$id
+      } else if (inherits(ncobj, "NCDimension")) {
+        # Existing NC dimension was found
+        private$.dimid <- ncobj$id
+      } else
+        stop("Incompatible object by this name already exists on file.", call. = FALSE)
 
       # No values or attributes to write.
 
-      # Write labels.
-      lapply(private$.aux, function(x) x$write(nc, did))
+      # Auxiliary coordinates
+      lapply(private$.aux, function(l) {l$dimid <- private$.dimid; l$write()})
 
       invisible(self)
     }

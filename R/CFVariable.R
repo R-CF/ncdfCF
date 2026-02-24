@@ -7,6 +7,7 @@
 #'   been associated with the data variable, such as axis information, grid
 #'   mapping parameters, etc.
 #'
+#' @export
 #' @docType class
 CFVariable <- R6::R6Class("CFVariable",
   inherit = CFData,
@@ -102,7 +103,7 @@ CFVariable <- R6::R6Class("CFVariable",
         stop("Invalid argument for ordering.", call. = FALSE)
 
       if (sum(order) == 0L) {
-        warning("Cannot orient data array because axis orientation has not been set")
+        # warning("Cannot orient data array because axis orientation has not been set")
         attr(data, "axes") <- dim_names
         return(data)
       }

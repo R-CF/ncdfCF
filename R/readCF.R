@@ -239,7 +239,6 @@ peek_ncdf <- function(resource) {
       local_vars <- nc$NCvars[dim_names]
       local_CVs <- local_vars[lengths(local_vars) > 0L]
       axes <- lapply(local_CVs, function(v) .makeAxis(grp, v))
-      #grp$add_CF_object(axes)
     } else axes <- list()
   } else axes <- list()
 
@@ -341,8 +340,7 @@ peek_ncdf <- function(resource) {
         nm <- d$name
         axis <- CFAxisDiscrete$new(nm, grp, count = d$length)
         axis$dimid <- d$id
-        lx <- list(axis); names(lx) <- nm
-        #grp$add_CF_object(lx)
+        # lx <- list(axis); names(lx) <- nm
         add_dims <- add_dims[-which(add_dims == d$id)]
         axis
       }

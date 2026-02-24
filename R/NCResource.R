@@ -24,7 +24,7 @@ NCResource <- R6::R6Class("NCResource",
           return()
       }
 
-      err <- try(private$.handle <- RNetCDF::open.nc(private$.uri, write = private$.write), silent = TRUE)
+      err <- try(private$.handle <- RNetCDF::open.nc(private$.uri, write = private$.write, share = TRUE), silent = TRUE)
       if (inherits(err, "try-error")) {
         self$error <- paste("Error opening netCDF resource:", private$.uri)
         private$.handle <- NULL
@@ -83,11 +83,12 @@ NCResource <- R6::R6Class("NCResource",
       private$.handle <- NULL
     },
 
-    #' @description Write any buffered data to the netCDF resource.
-    sync = function() {
-      private$open()
-      try(RNetCDF::sync.nc(private$.handle), silent = TRUE)
-    },
+    # #' @description Write any buffered data to the netCDF resource.
+    # sync = function() {
+    #   # This method is superfluous as netCDF files are opened with share = TRUE
+    #   private$open()
+    #   try(RNetCDF::sync.nc(private$.handle), silent = TRUE)
+    # },
 
     #' @description Every group in a netCDF file has its own handle, with the
     #'   "root" group having the handle for the entire netCDF resource. The

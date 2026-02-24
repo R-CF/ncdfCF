@@ -517,7 +517,7 @@ CFAxis <- R6::R6Class("CFAxis",
     },
 
     #' @field unlimited Logical to indicate if the axis is unlimited. The
-    #'   setting can only be changed if the axis has not yet been wriiten to
+    #'   setting can only be changed if the axis has not yet been written to
     #'   file.
     unlimited = function(value) {
       if (missing(value))
