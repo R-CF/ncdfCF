@@ -112,6 +112,7 @@ Metadata Conventions.</p></dd>
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/CFVerticalParametricTerm.html">CFVerticalParametricTerm</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
 <span>  <span class="va">var</span>,</span>
+<span>  <span class="va">group</span>,</span>
 <span>  <span class="va">axes</span>,</span>
 <span>  values <span class="op">=</span> <span class="va">values</span>,</span>
 <span>  start <span class="op">=</span> <span class="cn">NA</span>,</span>
@@ -126,6 +127,10 @@ Metadata Conventions.</p></dd>
 <dd><p>The <a href="NCVariable.html">NCVariable</a> instance upon which this CF variable is based
 when read from a netCDF resource, or the name for the new CF variable
 to be created.</p></dd>
+
+
+<dt><code>group</code></dt>
+<dd><p>The <a href="CFGroup.html">CFGroup</a> that this instance will live in.</p></dd>
 
 
 <dt><code>axes</code></dt>

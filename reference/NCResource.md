@@ -49,8 +49,6 @@ handled by higher-level methods.
 
 - [`NCResource$close()`](#method-NCResource-close)
 
-- [`NCResource$sync()`](#method-NCResource-sync)
-
 - [`NCResource$group_handle()`](#method-NCResource-group_handle)
 
 - [`NCResource$clone()`](#method-NCResource-clone)
@@ -120,16 +118,6 @@ this method directly.
 #### Usage
 
     NCResource$close()
-
-------------------------------------------------------------------------
-
-### Method `sync()`
-
-Write any buffered data to the netCDF resource.
-
-#### Usage
-
-    NCResource$sync()
 
 ------------------------------------------------------------------------
 

@@ -293,21 +293,12 @@ lengths of this axis and the `from` axis.
 
 ### Method [`write()`](https://rdrr.io/r/base/write.html)
 
-Write the axis to a netCDF file, including its attributes, but only if
-it has an associated NC variable in the file.
+Write the axis to a netCDF file. A discrete axis does not have any
+attributes or values to write.
 
 #### Usage
 
-    CFAxisDiscrete$write(nc = NULL)
-
-#### Arguments
-
-- `nc`:
-
-  The handle of the netCDF file opened for writing or a group in the
-  netCDF file. If `NULL`, write to the file or group where the axis was
-  read from (the file must have been opened for writing). If not `NULL`,
-  the handle to a netCDF file or a group therein.
+    CFAxisDiscrete$write()
 
 #### Returns
 

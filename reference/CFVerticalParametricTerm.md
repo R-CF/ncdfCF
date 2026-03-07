@@ -76,6 +76,7 @@ Create an instance of this class.
 
     CFVerticalParametricTerm$new(
       var,
+      group,
       axes,
       values = values,
       start = NA,
@@ -91,6 +92,11 @@ Create an instance of this class.
   [NCVariable](https://r-cf.github.io/ncdfCF/reference/NCVariable.md)
   instance upon which this CF variable is based when read from a netCDF
   resource, or the name for the new CF variable to be created.
+
+- `group`:
+
+  The [CFGroup](https://r-cf.github.io/ncdfCF/reference/CFGroup.md) that
+  this instance will live in.
 
 - `axes`:
 

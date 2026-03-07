@@ -318,23 +318,12 @@ the lengths of this axis and the <code>from</code> axis.</p>
 
 </div><p></p><hr><a id="method-CFAxisDiscrete-write"></a><div class="section">
 <h3 id="method-write-">Method <code><a href="https://rdrr.io/r/base/write.html" class="external-link">write()</a></code><a class="anchor" aria-label="anchor" href="#method-write-"></a></h3>
-<p>Write the axis to a netCDF file, including its attributes,
-but only if it has an associated NC variable in the file.</p><div class="section">
+<p>Write the axis to a netCDF file. A discrete axis does not
+have any attributes or values to write.</p><div class="section">
 <h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFAxisDiscrete</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span>nc <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFAxisDiscrete</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
-<div class="section">
-<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>nc</code></dt>
-<dd><p>The handle of the netCDF file opened for writing or a group in
-the netCDF file. If <code>NULL</code>, write to the file or group where the axis
-was read from (the file must have been opened for writing). If not
-<code>NULL</code>, the handle to a netCDF file or a group therein.</p></dd>
-
-
-</dl><p></p></div>
-</div>
 <div class="section">
 <h4 id="returns-7">Returns<a class="anchor" aria-label="anchor" href="#returns-7"></a></h4>
 <p>Self, invisibly.</p>

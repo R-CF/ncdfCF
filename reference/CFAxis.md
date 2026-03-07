@@ -89,7 +89,7 @@ selectable through methods and fields in this class.
 - `unlimited`:
 
   Logical to indicate if the axis is unlimited. The setting can only be
-  changed if the axis has not yet been wriiten to file.
+  changed if the axis has not yet been written to file.
 
 - `time`:
 
