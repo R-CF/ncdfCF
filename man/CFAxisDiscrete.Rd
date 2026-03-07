@@ -264,22 +264,12 @@ the lengths of this axis and the \code{from} axis.
 \if{html}{\out{<a id="method-CFAxisDiscrete-write"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-write}{}}}
 \subsection{Method \code{write()}}{
-Write the axis to a netCDF file, including its attributes,
-but only if it has an associated NC variable in the file.
+Write the axis to a netCDF file. A discrete axis does not
+have any attributes or values to write.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$write(nc = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$write()}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{nc}}{The handle of the netCDF file opened for writing or a group in
-the netCDF file. If \code{NULL}, write to the file or group where the axis
-was read from (the file must have been opened for writing). If not
-\code{NULL}, the handle to a netCDF file or a group therein.}
-}
-\if{html}{\out{</div>}}
-}
 \subsection{Returns}{
 Self, invisibly.
 }

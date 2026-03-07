@@ -16,6 +16,7 @@ CFVerticalParametricTerm <- R6::R6Class("CFVerticalParametricTerm",
     #' @param var The [NCVariable] instance upon which this CF variable is based
     #'   when read from a netCDF resource, or the name for the new CF variable
     #'   to be created.
+    #' @param group The [CFGroup] that this instance will live in.
     #' @param axes A `list` of [CFAxis] descendant instances that describe the
     #'   axes of the data object.
     #' @param values Optional. The values of the variable in an array.
@@ -34,8 +35,8 @@ CFVerticalParametricTerm <- R6::R6Class("CFVerticalParametricTerm",
     #'   argument is an empty `data.frame` (default), arguments will be read
     #'   from the resource.
     #' @return An instance of this class.
-    initialize = function(var, axes, values = values, start = NA, count = NA, attributes = data.frame()) {
-      super$initialize(var, axes = axes, values = values, start = start, count = count, attributes = attributes)
+    initialize = function(var, group, axes, values = values, start = NA, count = NA, attributes = data.frame()) {
+      super$initialize(var, group = group, axes = axes, values = values, start = start, count = count, attributes = attributes)
       if (inherits(var, "NCVariable"))
         private$.nodata <- FALSE
     },

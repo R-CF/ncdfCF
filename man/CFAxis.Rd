@@ -64,7 +64,7 @@ to use with the axis for printing to the console as well as for
 processing methods such as \code{subset()}.}
 
 \item{\code{unlimited}}{Logical to indicate if the axis is unlimited. The
-setting can only be changed if the axis has not yet been wriiten to
+setting can only be changed if the axis has not yet been written to
 file.}
 
 \item{\code{time}}{(read-only) Retrieve the \code{CFTime} object associated with the

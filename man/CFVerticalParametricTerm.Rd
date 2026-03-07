@@ -75,6 +75,7 @@ Create an instance of this class.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFVerticalParametricTerm$new(
   var,
+  group,
   axes,
   values = values,
   start = NA,
@@ -89,6 +90,8 @@ Create an instance of this class.
 \item{\code{var}}{The \link{NCVariable} instance upon which this CF variable is based
 when read from a netCDF resource, or the name for the new CF variable
 to be created.}
+
+\item{\code{group}}{The \link{CFGroup} that this instance will live in.}
 
 \item{\code{axes}}{A \code{list} of \link{CFAxis} descendant instances that describe the
 axes of the data object.}

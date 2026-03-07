@@ -43,7 +43,6 @@ filename or the location of an online resource.}
 \item \href{#method-NCResource-print}{\code{NCResource$print()}}
 \item \href{#method-NCResource-create}{\code{NCResource$create()}}
 \item \href{#method-NCResource-close}{\code{NCResource$close()}}
-\item \href{#method-NCResource-sync}{\code{NCResource$sync()}}
 \item \href{#method-NCResource-group_handle}{\code{NCResource$group_handle()}}
 \item \href{#method-NCResource-clone}{\code{NCResource$clone()}}
 }
@@ -107,16 +106,6 @@ Closing an open netCDF resource. It should rarely be
 necessary to call this method directly.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{NCResource$close()}\if{html}{\out{</div>}}
-}
-
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-NCResource-sync"></a>}}
-\if{latex}{\out{\hypertarget{method-NCResource-sync}{}}}
-\subsection{Method \code{sync()}}{
-Write any buffered data to the netCDF resource.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCResource$sync()}\if{html}{\out{</div>}}
 }
 
 }

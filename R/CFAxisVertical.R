@@ -96,6 +96,9 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     },
 
     atmosphere_hybrid_sigma_pressure_coordinate = function() {
+      # Virtual group for the results
+      grp <- CFGroup$new("vertical_field_data", NULL)
+
       # p(n,k,j,i) = a(k)*p0 + b(k)*ps(n,j,i)
       # or
       # p(n,k,j,i) = ap(k) + b(k)*ps(n,j,i)
@@ -117,7 +120,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
         # layer boundary values variant
         crds <- sweep(ps %o% b, 4:5, ap, "+")
         crds <- aperm(crds, c(1, 2, 5, 3, 4))
-        axes <- append(axes, CFAxisDiscrete$new("layer_position", start = 0L, count = 2L))
+        axes <- append(axes, CFAxisDiscrete$new("layer_position", group = grp, start = 0L, count = 2L))
       } else {
         # layer mid-point variant
         crds <- sweep(ps %o% b, 4, ap, "+")
@@ -127,7 +130,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
       # Construct the result
       names(axes) <- sapply(axes, function(ax) ax$name)
       private$.name_computed <- "air_pressure"
-      v <- CFVariable$new(private$.name_computed, values = crds, axes = axes)
+      v <- CFVariable$new(private$.name_computed, group = grp, values = crds, axes = axes)
       un <- ps_var$attribute("units")
       if (!is.na(un))
         v$set_attribute("units", "NC_CHAR", un)
@@ -135,6 +138,9 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     },
 
     ocean_s_coordinate_g1 = function() {
+      # Virtual group for the results
+      grp <- CFGroup$new("vertical_field_data", NULL)
+
       # z(n,k,j,i) = S(k,j,i) + eta(n,j,i) * (1 + S(k,j,i) / depth(j,i))
       # where S(k,j,i) = depth_c * s(k) + (depth(j,i) - depth_c) * C(k)
       s <- private$get_data("s")
@@ -170,13 +176,16 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
           S + sweep(tmp, MARGIN = 1:2, eta, "*")
       }
       private$.name_computed <- private$ocean_computed_name()
-      v <- CFVariable$new(private$.name_computed, values = crds, axes = axes)
+      v <- CFVariable$new(private$.name_computed, group = grp, values = crds, axes = axes)
       un <- private$.terms[private$.terms$term == "depth", "param"][[1L]]$attribute("units")
       v$set_attribute("units", "NC_CHAR", un)
       private$.computed_values <- v
     },
 
     ocean_s_coordinate_g2 = function() {
+      # Virtual group for the results
+      grp <- CFGroup$new("vertical_field_data", NULL)
+
       # z(n,k,j,i) = eta(n,j,i) + (eta(n,j,i) + depth(j,i)) * S(k,j,i)
       # where S(k,j,i) = (depth_c * s(k) + depth(j,i) * C(k)) / (depth_c + depth(j,i))
       s <- private$get_data("s")
@@ -214,7 +223,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
         }
       }
       private$.name_computed <- private$ocean_computed_name()
-      v <- CFVariable$new(private$.name_computed, values = crds, axes = axes)
+      v <- CFVariable$new(private$.name_computed, group = grp, values = crds, axes = axes)
       un <- private$.terms[private$.terms$term == "depth", "param"][[1L]]$attribute("units")
       v$set_attribute("units", "NC_CHAR", un)
       private$.computed_values <- v
