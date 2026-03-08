@@ -2,6 +2,8 @@
 
 ## ncdfCF (development version)
 
+Patch release with bug fixes.
+
 ##### API
 
 - When selecting auxiliary coordinates on an axis, printing a
