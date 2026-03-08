@@ -1,5 +1,7 @@
 # ncdfCF (development version)
 
+Patch release with bug fixes.
+
 #### API
 - When selecting auxiliary coordinates on an axis, printing a `CFVariable` using that axis will print the name of the active coordinates for that axis and its units, if set.
 

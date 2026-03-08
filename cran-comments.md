@@ -1,4 +1,4 @@
-This is a patch release to fix two annoying bugs. Minor new functionality.
+This is a patch release to fix some bugs. Minor new functionality.
 
 ## R CMD check results
 
