@@ -1,6 +1,8 @@
 # Changelog
 
-## ncdfCF (development version)
+## ncdfCF 0.8.2
+
+CRAN release: 2026-03-08
 
 Patch release with bug fixes.
 
