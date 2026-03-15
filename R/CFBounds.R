@@ -47,7 +47,7 @@ CFBounds <- R6::R6Class("CFBounds",
       if (length(private$.NC_map$count) > owner_dims + 1L) {
         private$.NC_map$count[owner_dims + 2L] <- 1L
         private$.dims <- private$.NC_map$count
-        private$read_data()
+        self$read_data()
         private$.values <- drop(private$.values)
         private$.dims <- private$.dims[seq(owner_dims + 1L)]
       }
@@ -227,7 +227,7 @@ CFBounds <- R6::R6Class("CFBounds",
     #'   is a linked netCDF resource, this object will be detached from it.
     values = function(value) {
       if (missing(value)) {
-        private$read_data()
+        self$read_data()
       } else {
         private$set_values(value)
         self$detach()

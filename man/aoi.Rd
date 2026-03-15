@@ -13,9 +13,10 @@ must agree with the range of the longitude in the data variable to which
 this AOI will be applied, e.g. \verb{[-180,180]} or \verb{[0,360]}.}
 
 \item{resX, resY}{The separation between adjacent grid cell, in the longitude
-and latitude directions respectively, in decimal degrees. The permitted
-values lie within the range \verb{[0.01 ... 10]}. If \code{resY} is missing it will
-use the value of \code{resX}, yielding square grid cells.}
+and latitude directions respectively, in decimal degrees. The recommended
+values lie within the range \verb{[0.01 ... 10]} - if the values fall outside of
+this range an warning will be issued. If \code{resY} is missing it will use the
+value of \code{resX}, yielding square grid cells.}
 }
 \value{
 The return value of the function is an \code{R6} object which uses

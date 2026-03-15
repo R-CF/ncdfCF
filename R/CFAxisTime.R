@@ -161,7 +161,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         units <- var$attribute("units")
         if (is.na(units))
           stop("Could not create a CFTime object from the arguments.", call. = FALSE)
-        cal <- if (is.na(cal <- var$attribute("calendar"))) "standard" else cal
+        cal <- if (is.na(cal <- var$attribute("calendar")) || cal == "gregorian") "standard" else cal
 
         bnds <- NULL
         clim <- var$attribute("climatology")
@@ -225,7 +225,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       bndrng <- if (!is.null(time$get_bounds()))
         paste0(time$range(format = "", bounds = TRUE), collapse = " ... ")
       else "(not set)"
-      cat("Calendar   :", time$cal$name, "\n")
+      cat("Calendar   :", time$calendar$name, "\n")
       cat("Range      :", rng, "\n")
       cat("Bounds     :", bndrng, "\n")
 
@@ -247,7 +247,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @return `TRUE` if the two axes are identical, `FALSE` if not.
     identical = function(axis) {
       super$identical(axis) &&
-      private$.tm$cal$is_equivalent(axis$time$cal) &&
+      private$.tm$cal$is_equivalent(axis$time$calendar) &&
       all(.near(private$.tm$offsets, axis$time$offsets))
     },
 
@@ -312,28 +312,17 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @return A new `CFAxisTime` instance with values from this axis and the
     #'   `from` axis appended.
     append = function(from, group) {
-      ft <- from$time
-      if (super$can_append(from) && .c_is_monotonic(private$.tm$offsets, ft$offsets)) {
-        bnds <- if (is.null(private$.tm$bounds) || is.null(ft$bounds)) NULL
-                else cbind(private$.tm$bounds, ft$bounds)
-        if (class(private$.tm)[1L] == "CFClimatology")
-          time <- CFtime::CFClimatology$new(private$.tm$cal$definition, private$.tm$cal$name, c(private$.tm$offsets, ft$offsets), bnds)
-        else {
-          time <- CFtime::CFTime$new(private$.tm$cal$definition, private$.tm$cal$name, c(private$.tm$offsets, ft$offsets))
-          time$bounds <- bnds
-        }
-        ax <- CFAxisTime$new(self$name, group = group,
-                             values = time, attributes = self$attributes)
-
-        if (!is.null(private$.bounds)) {
-          new_bnds <- private$.bounds$append(from$bounds, group)
-          if (!is.null(new_bnds))
-            ax$bounds <- new_bnds
-        }
-
-        ax
-      } else
+      if (!super$can_append(from))
         stop("Axis values cannot be appended.", call. = FALSE)
+
+      new_time <- private$.tm + from$time
+      ax <- CFAxisTime$new(self$name, group = group,
+                           values = new_time, attributes = self$attributes)
+
+      ax$bounds <- if (is.null(b <- new_time$bounds)) NULL
+      else CFBounds$new(paste0(self$name, "_bnds"), group = group, values = b)
+
+      ax
     },
 
     #' @description Retrieve the indices of supplied values on the time axis.
@@ -379,7 +368,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @param rng The range of indices whose values from this axis to include in
     #'   the returned axis. If the value of the argument is `NULL`, return a
     #'   copy of the axis.
-    #' @return A new `CFAxisNumeric` instance covering the indicated range of
+    #' @return A new `CFAxisTime` instance covering the indicated range of
     #'   indices. If the value of the argument `rng` is `NULL`, return a copy of
     #'   `self` as the new axis.
     subset = function(name = "", group, rng = NULL) {
@@ -410,7 +399,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
     #' @return Self, invisibly.
     write = function() {
       time <- private$.tm
-      if (time$cal$name == "gregorian")
+      if (time$calendar$name == "gregorian")
         self$set_attribute("calendar", "NC_CHAR", "standard")
       super$write()
     }

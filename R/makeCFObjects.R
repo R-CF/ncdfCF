@@ -202,8 +202,8 @@ makeTimeAxis <- function(name, values, attributes = data.frame(), group = NULL) 
 
   if (is.na(axis$attribute("standard_name")))
     axis$set_attribute("standard_name", "NC_CHAR", "time")
-  axis$set_attribute("units", "NC_CHAR", values$cal$definition)
-  axis$set_attribute("calendar", "NC_CHAR", values$cal$name)
+  axis$set_attribute("units", "NC_CHAR", values$calendar$definition)
+  axis$set_attribute("calendar", "NC_CHAR", values$calendar$name)
 
   if (!is.null(values$bounds)) {
     nm <- paste0(name, "_bnds")

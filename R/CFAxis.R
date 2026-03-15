@@ -122,7 +122,7 @@ CFAxis <- R6::R6Class("CFAxis",
         self$set_attribute("axis", "NC_CHAR", orientation)
 
       if (missing(values) || is.null(values))
-        private$read_data()
+        self$read_data()
 
       self$delete_attribute("_FillValue")
     },
@@ -239,12 +239,14 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   `self`. This only tests for generic properties - class, length, name
     #'   and attributes - with further assessment done in sub-classes.
     #' @param axis The `CFAxis` instance to test.
+    #' @param with_attributes Logical that indicates if the attributes are
+    #'   assessed for equality too. Default is `FALSE`.
     #' @return `TRUE` if the two axes are identical, `FALSE` if not.
-    identical = function(axis) {
+    identical = function(axis, with_attributes = FALSE) {
       class(self)[1L] == class(axis)[1L] &&
       self$length == axis$length &&
       self$name == axis$name &&
-      self$attributes_identical(axis$attributes)
+      (!with_attributes || self$attributes_identical(axis$attributes))
     },
 
     #' @description Tests if the axis passed to this method can be appended to
@@ -440,7 +442,7 @@ CFAxis <- R6::R6Class("CFAxis",
     #'   you should use the `coordinates` field rather than this one.
     values = function(value) {
       if (missing(value))
-        private$read_data()
+        self$read_data()
     },
 
     #' @field coordinates (read-only) Retrieve the coordinate values of the

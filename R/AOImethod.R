@@ -40,20 +40,18 @@
 #'   class is cached to improve performance. The successive calls to
 #'   `CFVariable$subset()` should use the same object returned from a single
 #'   call to this function for this caching to work properly.
-#'
 #' @param lonMin,lonMax,latMin,latMax The minimum and maximum values of the
 #'   longitude and latitude of the AOI, in decimal degrees. The longitude values
 #'   must agree with the range of the longitude in the data variable to which
 #'   this AOI will be applied, e.g. `[-180,180]` or `[0,360]`.
 #' @param resX,resY The separation between adjacent grid cell, in the longitude
-#'   and latitude directions respectively, in decimal degrees. The permitted
-#'   values lie within the range `[0.01 ... 10]`. If `resY` is missing it will
-#'   use the value of `resX`, yielding square grid cells.
-#'
+#'   and latitude directions respectively, in decimal degrees. The recommended
+#'   values lie within the range `[0.01 ... 10]` - if the values fall outside of
+#'   this range an warning will be issued. If `resY` is missing it will use the
+#'   value of `resX`, yielding square grid cells.
 #' @return The return value of the function is an `R6` object which uses
 #'   reference semantics. Making changes to the returned object will be visible
 #'   in all copies made of the object.
-#'
 #' @export
 #' @examples
 #' (aoi <- aoi(20, 60, -40, -20, 0.5))

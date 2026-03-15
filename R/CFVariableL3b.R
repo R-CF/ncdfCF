@@ -150,7 +150,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       tc_end <- grp$parent$attribute("time_coverage_end")
       if (!is.na(tc_start) && !is.na(tc_end)) {
         tc <- CFtime::CFTime$new("seconds since 1970-01-01", "proleptic_gregorian", c(tc_start, tc_end))
-        ymd <- tc$cal$offset2date(mean(tc$offsets) / 86400)
+        ymd <- tc$calendar$offset2date(mean(tc$offsets) / 86400)
         cft <- CFtime::CFTime$new("seconds since 1970-01-01", "proleptic_gregorian")
         cft <- cft + CFtime::parse_timestamps(cft, sprintf("%04d-%02d-%02dT12:00:00", ymd$year, ymd$month, as.integer(ymd$day)))$offset
         cft$set_bounds(matrix(tc$offsets, nrow = 2))
@@ -253,7 +253,7 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       }
 
       # Read the data
-      d <- private$read_chunk(start, count)
+      d <- self$read_chunk(start, count)
       d <- drop(d)
 
       # Assemble the CFVariable instance

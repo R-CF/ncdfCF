@@ -147,59 +147,6 @@ CFData <- R6::R6Class("CFData",
       private$.values <- values
     },
 
-    # Read the data of the CF object from the NC file. The data is cached by
-    # `self` so repeated calls do not access the netCDF resource, unless
-    # argument `refresh` is `TRUE`. This method will not assess how big the data
-    # is before reading it so there is a chance that memory will be exhausted.
-    # The calling code should check for this possibility and break up the
-    # reading of data into chunks.
-    # @param refresh Should the data be read from file if the object is linked?
-    #   This will replace current values, if previously loaded. Default `FALSE`.
-    # @return An array of data, invisibly, as prescribed by the `start` and
-    #   `count` values used to create this object. If the object is not backed
-    #   by a netCDF resource, returns `NULL`.
-    read_data = function(refresh = FALSE) {
-      if ((!is.null(private$.NCobj)) && (is.null(private$.values) || refresh)) {
-        if (!length(private$.NC_map))
-          private$set_values(private$.NCobj$get_data())
-        else
-          private$set_values(private$.NCobj$get_data(private$.NC_map$start, private$.NC_map$count))
-      }
-      invisible(private$.values)
-    },
-
-    # Read a chunk of raw data of the CF object, as defined by the `start` and
-    # `count` vectors. Note that these vectors are relative to any subset of the
-    # data variable that this CF object refers to. The data read by this method
-    # will not be stored in `self` so the calling code must take a reference to
-    # it.
-    # @param start Vector of indices where to start reading data along the
-    #   dimensions of the array. The vector must be `NA` to read all data,
-    #   otherwise it must have agree with the dimensions of the array.
-    # @param count Vector of number of elements to read along each dimension of
-    #   the array. The vector must be `NA` to read to the end of each dimension,
-    #   otherwise its value must agree with the corresponding `start` value and
-    #   the dimension of the array.
-    # @return An array of data, as prescribed by the `start` and `count`
-    #   arguments, or `NULL` if there is no data.
-    read_chunk = function(start, count) {
-      sc <- private$check_start_count(start, count)
-      if (!length(sc)) return (NULL)
-
-      if (!is.null(private$.values)) {
-        # Extract from loaded data
-        cll <- paste0("private$.values[", paste(sc$start, ":", sc$start + sc$count - 1L, sep = "", collapse = ", "), "]")
-        eval(parse(text = cll))
-      } else {
-        # Read from the netCDF resource. .NC_map always refers to the initial
-        # dimensions, so the arguments are trimmed to that length (noting that
-        # there may be "scalar" axes in a variable backed by a netCDF resource).
-        len <- length(private$.NC_map$start)
-        start <- private$.NC_map$start + sc$start[1L:len] - 1L
-        private$.NCobj$get_data(start, sc$count[1L:len])
-      }
-    },
-
     # Write a data array to a netCDF file.
     # dt : Data array to write, optional
     # @param start Vector of indices where to start reading data along the
@@ -284,7 +231,7 @@ CFData <- R6::R6Class("CFData",
     #'   detaching.
     detach = function() {
       if (!is.null(private$.NCobj) && is.null(private$.values))
-        private$read_data()
+        self$read_data()
       private$.NC_map <- list()
       private$.data_dirty <- TRUE
       super$detach()
@@ -299,6 +246,60 @@ CFData <- R6::R6Class("CFData",
         private$.dims
       else
         private$.dims[dimension]
+    },
+
+    #' Read the data of the CF object from the NC file. The data is cached by
+    #' `self` so repeated calls do not access the netCDF resource, unless
+    #' argument `refresh` is `TRUE`. This method will not assess how big the
+    #' data is before reading it so there is a chance that memory will be
+    #' exhausted. The calling code should check for this possibility and break
+    #' up the reading of data into chunks.
+    #' @param refresh Should the data be read from file if the object is linked?
+    #'   This will replace current values, if previously loaded. Default
+    #'   `FALSE`.
+    #' @return An array of data, invisibly, as prescribed by the `start` and
+    #'   `count` values used to create this object. If the object is not backed
+    #'   by a netCDF resource, returns `NULL`.
+    read_data = function(refresh = FALSE) {
+      if ((!is.null(private$.NCobj)) && (is.null(private$.values) || refresh)) {
+        if (!length(private$.NC_map))
+          private$set_values(private$.NCobj$get_data())
+        else
+          private$set_values(private$.NCobj$get_data(private$.NC_map$start, private$.NC_map$count))
+      }
+      invisible(private$.values)
+    },
+
+    #' Read a chunk of raw data of the CF object, as defined by the `start` and
+    #' `count` vectors. Note that these vectors are relative to any subset of
+    #' the data variable that this CF object refers to. The data read by this
+    #' method will not be stored in `self` so the calling code must take a
+    #' reference to it.
+    #' @param start Vector of indices where to start reading data along the
+    #'   dimensions of the array. The vector must be `NA` to read all data,
+    #'   otherwise it must agree with the dimensions of the array.
+    #' @param count Vector of number of elements to read along each dimension of
+    #'   the array. The vector must be `NA` to read to the end of each
+    #'   dimension, otherwise its value must agree with the corresponding
+    #'   `start` value and the dimension of the array.
+    #' @return An array of data, as prescribed by the `start` and `count`
+    #'   arguments, or `NULL` if there is no data.
+    read_chunk = function(start, count) {
+      sc <- private$check_start_count(start, count)
+      if (!length(sc)) return (NULL)
+
+      if (!is.null(private$.values)) {
+        # Extract from loaded data
+        cll <- paste0("private$.values[", paste(sc$start, ":", sc$start + sc$count - 1L, sep = "", collapse = ", "), "]")
+        eval(parse(text = cll))
+      } else {
+        # Read from the netCDF resource. .NC_map always refers to the initial
+        # dimensions, so the arguments are trimmed to that length (noting that
+        # there may be "scalar" axes in a variable backed by a netCDF resource).
+        len <- length(private$.NC_map$start)
+        start <- private$.NC_map$start + sc$start[1L:len] - 1L
+        private$.NCobj$get_data(start, sc$count[1L:len])
+      }
     }
   ),
   active = list(

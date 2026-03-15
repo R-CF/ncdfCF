@@ -34,6 +34,8 @@ list is empty if this object is not backed by a netCDF resource.}
 \item \href{#method-CFData-new}{\code{CFData$new()}}
 \item \href{#method-CFData-detach}{\code{CFData$detach()}}
 \item \href{#method-CFData-dim}{\code{CFData$dim()}}
+\item \href{#method-CFData-read_data}{\code{CFData$read_data()}}
+\item \href{#method-CFData-read_chunk}{\code{CFData$read_chunk()}}
 }
 }
 \if{html}{\out{
@@ -136,6 +138,67 @@ length for. If omitted, retrieve the lengths of all dimensions.}
 }
 \subsection{Returns}{
 Integer vector with the length of each requested dimension.
+Read the data of the CF object from the NC file. The data is cached by
+\code{self} so repeated calls do not access the netCDF resource, unless
+argument \code{refresh} is \code{TRUE}. This method will not assess how big the
+data is before reading it so there is a chance that memory will be
+exhausted. The calling code should check for this possibility and break
+up the reading of data into chunks.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFData-read_data"></a>}}
+\if{latex}{\out{\hypertarget{method-CFData-read_data}{}}}
+\subsection{Method \code{read_data()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFData$read_data(refresh = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{refresh}}{Should the data be read from file if the object is linked?
+This will replace current values, if previously loaded. Default
+\code{FALSE}.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+An array of data, invisibly, as prescribed by the \code{start} and
+\code{count} values used to create this object. If the object is not backed
+by a netCDF resource, returns \code{NULL}.
+Read a chunk of raw data of the CF object, as defined by the \code{start} and
+\code{count} vectors. Note that these vectors are relative to any subset of
+the data variable that this CF object refers to. The data read by this
+method will not be stored in \code{self} so the calling code must take a
+reference to it.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFData-read_chunk"></a>}}
+\if{latex}{\out{\hypertarget{method-CFData-read_chunk}{}}}
+\subsection{Method \code{read_chunk()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFData$read_chunk(start, count)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{start}}{Vector of indices where to start reading data along the
+dimensions of the array. The vector must be \code{NA} to read all data,
+otherwise it must agree with the dimensions of the array.}
+
+\item{\code{count}}{Vector of number of elements to read along each dimension of
+the array. The vector must be \code{NA} to read to the end of each
+dimension, otherwise its value must agree with the corresponding
+\code{start} value and the dimension of the array.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+An array of data, as prescribed by the \code{start} and \code{count}
+arguments, or \code{NULL} if there is no data.
 }
 }
 }

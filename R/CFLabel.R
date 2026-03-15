@@ -35,7 +35,7 @@ CFLabel <- R6::R6Class("CFLabel",
       if (inherits(var, "NCVariable"))
         private$.dimid <- var$dimids
       if (is.null(values) || (length(values) == 1L && is.na(values)))
-        private$read_data()
+        self$read_data()
     },
 
     #' @description  Prints a summary of the labels to the console.
@@ -156,7 +156,7 @@ CFLabel <- R6::R6Class("CFLabel",
     #'   detached from it.
     values = function(value) {
       if (missing(value)) {
-        private$read_data()
+        self$read_data()
       } else {
         private$set_values(value)
         self$detach()

@@ -95,6 +95,8 @@ description of the variable as a WKT2 string.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href='../../ncdfCF/html/CFData.html#method-CFData-dim'><code>ncdfCF::CFData$dim()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_chunk'><code>ncdfCF::CFData$read_chunk()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_data'><code>ncdfCF::CFData$read_data()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -432,7 +434,8 @@ method to set or update attributes as appropriate.
 
 \subsection{Returns}{
 A \code{CFVariable} object, or a list thereof with as many
-\code{CFVariable} objects as \code{fun} returns values.
+\code{CFVariable} objects as \code{fun} returns values, or \code{NULL} if the \code{era}
+argument falls entirely outside of the range of the time axis.
 }
 }
 \if{html}{\out{<hr>}}
@@ -519,7 +522,8 @@ Append the data from another \code{CFVariable} instance to the
 current instance, along one of the axes. The operation will only
 succeed if the axes other than the one to append along have the same
 coordinates and the coordinates of the axis to append along have to be
-monotonically increasing or decreasing after appending.
+monotonically increasing or decreasing after appending. The attributes
+are not assessed.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CFVariable$append(from, along)}\if{html}{\out{</div>}}
 }

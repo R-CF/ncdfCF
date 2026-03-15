@@ -189,7 +189,7 @@ CFVariable <- R6::R6Class("CFVariable",
         return(.process.data(self$values, tdim, fac, fun, ...))
       else if (prod(sapply(private$.axes, function(x) x$length)) < CF.options$memory_cell_limit)
         # Read the whole data array because size is manageable
-        return(.process.data(private$read_data(), tdim, fac, fun, ...))
+        return(.process.data(self$read_data(), tdim, fac, fun, ...))
 
       # If data variable is too large, go by individual factor levels
       num_dims <- self$ndims
@@ -207,13 +207,13 @@ CFVariable <- R6::R6Class("CFVariable",
           rng <- range(indices)
           start[tdim] <- rng[1L]
           count[tdim] <- rng[2L] - rng[1L] + 1L
-          values <- private$read_chunk(start, count)
+          values <- self$read_chunk(start, count)
         } else {                    # Era factors have disparate indices
           cutoffs <- c(0L, which(c(dff, 2L) > 1L))
           values <- lapply(2L:length(cutoffs), function(i) {
             start[tdim] <- indices[cutoffs[i - 1L] + 1L]
             count[tdim] <- cutoffs[i] - cutoffs[i - 1L]
-            private$read_chunk(start, count)
+            self$read_chunk(start, count)
           })
           values <- abind::abind(values, along = num_dims)
         }
@@ -417,7 +417,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   a netCDF resource or produced by an operation.
     #' @return An `array`, `matrix` or `vector` with (dim)names set.
     raw = function() {
-      data <- private$read_data()
+      data <- self$read_data()
       if (is.null(data)) return(NULL)
       if (is.null(dim(data)))
         names(data) <- self$dimnames
@@ -597,10 +597,10 @@ CFVariable <- R6::R6Class("CFVariable",
       if (is.null(aux)) {
         # Regular axes selected so stay virtual if data has not been loaded yet
         if (!is.null(private$.values))
-          d <- private$read_chunk(start, count)
+          d <- self$read_chunk(start, count)
       } else {
         # Auxiliary grids selected, index the data
-        d <- private$read_chunk(start, count)
+        d <- self$read_chunk(start, count)
 
         lon_idx <- which(sapply(out_axes, inherits, "CFAxisLongitude"))
         lat_idx <- which(sapply(out_axes, inherits, "CFAxisLatitude"))
@@ -691,7 +691,8 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   if used, should have names as these will be used to label the results.
     #' @param ... Additional parameters passed on to `fun`.
     #' @return A `CFVariable` object, or a list thereof with as many
-    #'   `CFVariable` objects as `fun` returns values.
+    #'   `CFVariable` objects as `fun` returns values, or `NULL` if the `era`
+    #'   argument falls entirely outside of the range of the time axis.
     summarise = function(name, fun, period, era = NULL, ...) {
       if (missing(name) || missing(period) || missing(fun))
         stop("Arguments 'name', 'period' and 'fun' are required.", call. = FALSE) # nocov
@@ -723,6 +724,9 @@ CFVariable <- R6::R6Class("CFVariable",
       }
 
       res <- lapply(f, function(fac) {
+        if (!nlevels(fac))
+          return(NULL)
+
         atts <- tax$attributes
         # New CFTime object
         new_tm <- attr(fac, "CFTime")
@@ -900,7 +904,7 @@ CFVariable <- R6::R6Class("CFVariable",
           names(out_axes) <- sapply(out_axes, function(a) a$name)
 
           # Read the data
-          d <- private$read_chunk(start, count)
+          d <- self$read_chunk(start, count)
 
           # Sanitize the attributes for the result, as required, and make CRS
           if (is.null(xy)) {
@@ -935,7 +939,8 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   current instance, along one of the axes. The operation will only
     #'   succeed if the axes other than the one to append along have the same
     #'   coordinates and the coordinates of the axis to append along have to be
-    #'   monotonically increasing or decreasing after appending.
+    #'   monotonically increasing or decreasing after appending. The attributes
+    #'   are not assessed.
     #' @param from The `CFVariable` instance to append to this data variable.
     #' @param along The name of the axis to append along. This must be a single
     #'   character string and the named axis has to be present both in this data
@@ -943,6 +948,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @return Self, invisibly, with the arrays from this data variable and
     #'   `from` appended, in a new private group.
     append = function(from, along) {
+      # FIXME: Make from a list so that multiple appends can be done in one go
       # Check if the `from` variable can be appended to self
       if (length(along) != 1L || !(along %in% names(private$.axes)))
         stop("Argument `along` must be the name of an axis present in this data variable.", call. = FALSE)
@@ -951,8 +957,11 @@ CFVariable <- R6::R6Class("CFVariable",
       for (ax in seq_along(self$axes)) {
         if (self$axes[[ax]]$name == along)
           axno <- ax
-        else if (!self$axes[[ax]]$identical(from$axes[[ax]]))
-          stop(paste("Axis", ax, "is not identical between the two data variables."), call. = FALSE)
+        else {
+          browser(expr = !self$axes[[ax]]$identical(from$axes[[ax]]))
+          if (!self$axes[[ax]]$identical(from$axes[[ax]]))
+            stop(paste("Axis", ax, "is not identical between the two data variables."), call. = FALSE)
+        }
       }
 
       # Merge the data values
@@ -1177,17 +1186,19 @@ CFVariable <- R6::R6Class("CFVariable",
         lbls <- unlist(sapply(private$.axes, function(ax) {ax$write(); ax$coordinate_names[-1L]}), use.names = FALSE)
 
       if (private$.dirty) {
-        dt <- private$orient(private$read_data(), "CF")
+        dt <- private$orient(self$read_data(), "CF")
 
         if (is.null(private$.NCobj)) {
-          # Create a new NC variable on file
-          scalars <- sapply(private$.axes, function(ax) ax$length == 1L && !ax$unlimited)
-          axes <- attr(dt, "axes")[!scalars]
+          # Drop true scalar dimensions from the dt dim
+          ax_names <- attr(dt, "axes")
+          scalars <- sapply(ax_names, function(ax) private$.axes[[ax]]$length == 1L && !private$.axes[[ax]]$unlimited)
+          axes <- ax_names[!scalars]
           dim(dt) <- dim(dt)[!scalars]
 
           pack <- if (missing(pack)) FALSE
                   else pack && private$.data_type %in% c("NC_FLOAT", "NC_DOUBLE")
 
+          # Create a new NC variable on file
           private$.NCobj <- NCVariable$new(id = NA, name = self$name, group = private$.group$NC,
                                            vtype = if (pack) "NC_SHORT" else private$.data_type,
                                            dimids = if (all(scalars)) NA else axes)
@@ -1311,7 +1322,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   is returned.
     values = function(value) {
       if (missing(value))
-        private$read_data()
+        self$read_data()
     },
 
     #' @field gridLongLat  Retrieve or set the grid of longitude and latitude
@@ -1475,7 +1486,7 @@ dimnames.CFVariable <- function(x) {
       }
     }
   }
-  data <- x$NC$get_data(start, count)
+  data <- x$read_chunk(start, count)
 
   # Apply dimension data and other attributes
   if (length(x$axes) && length(dim(data)) == length(dnames)) { # dimensions may have been dropped automatically, e.g. NC_CHAR to character string
