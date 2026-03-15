@@ -71,6 +71,8 @@ Inherited methods
 - [`ncdfCF::CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
 - [`ncdfCF::CFData$detach()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-detach)
 - [`ncdfCF::CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
+- [`ncdfCF::CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
+- [`ncdfCF::CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
 
 ------------------------------------------------------------------------
 

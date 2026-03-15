@@ -19,7 +19,7 @@ processing is selectable through methods and fields in this class.'></head><body
 
     <a class="navbar-brand me-2" href="../index.html">ncdfCF</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@ processing is selectable through methods and fields in this class.'></head><body
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>CF axis object</h1>
-      <small class="dont-index">Source: <a href="https://github.com/R-CF/ncdfCF/blob/v0.8.2/R/CFAxis.R" class="external-link"><code>R/CFAxis.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/R-CF/ncdfCF/blob/main/R/CFAxis.R" class="external-link"><code>R/CFAxis.R</code></a></small>
       <div class="d-none name"><code>CFAxis.Rd</code></div>
     </div>
 
@@ -183,6 +183,8 @@ has parametric coordinates. Always <code>FALSE</code> for all axes except for
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href="CFObject.html#method-set_attribute"><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href="CFObject.html#method-write_attributes"><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href="CFData.html#method-dim"><code>ncdfCF::CFData$dim()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href="CFData.html#method-read_chunk"><code>ncdfCF::CFData$read_chunk()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href="CFData.html#method-read_data"><code>ncdfCF::CFData$read_data()</code></a></span></li>
 </ul></details></p><hr><a id="method-CFAxis-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create a new CF axis instance from a dimension and a
@@ -383,13 +385,18 @@ method succeed with no result for the other descendant classes.</p><div class="s
 <code>self</code>. This only tests for generic properties - class, length, name
 and attributes - with further assessment done in sub-classes.</p><div class="section">
 <h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFAxis</span><span class="op">$</span><span class="fu">identical</span><span class="op">(</span><span class="va">axis</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFAxis</span><span class="op">$</span><span class="fu">identical</span><span class="op">(</span><span class="va">axis</span>, with_attributes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>axis</code></dt>
 <dd><p>The <code>CFAxis</code> instance to test.</p></dd>
+
+
+<dt><code>with_attributes</code></dt>
+<dd><p>Logical that indicates if the attributes are
+assessed for equality too. Default is <code>FALSE</code>.</p></dd>
 
 
 </dl><p></p></div>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ncdfCF</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,9 +36,28 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/R-CF/ncdfCF/blob/v0.8.2/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/R-CF/ncdfCF/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="ncdfcf-development-version">ncdfCF (development version)<a class="anchor" aria-label="anchor" href="#ncdfcf-development-version"></a></h2>
+<div class="section level5">
+<h5 id="api-development-version">API<a class="anchor" aria-label="anchor" href="#api-development-version"></a></h5>
+<ul><li>
+<code>CFData$read_data()</code> and <code>$read_chunk()</code> have been made public.</li>
+</ul></div>
+<div class="section level5">
+<h5 id="code-development-version">Code<a class="anchor" aria-label="anchor" href="#code-development-version"></a></h5>
+<ul><li>
+<code>CFAxisTime$append()</code> uses <code>CFtime</code> code for merging <code>CFTime</code> instances, allowing for instances with distinct but compatible definition to be merged.</li>
+<li>
+<code>CFAxis$identical()</code> can optionally assess attributes for equality.</li>
+<li>Fixed writing a <code>CFVariable</code> to file having a length-1 axis in X-Y-Z-T.</li>
+<li>
+<code>CFVariable$summarise()</code> returns <code>NULL</code> if the <code>era</code> argument falls entirely outside of the time axis of the variable.</li>
+<li>Fixed retrieving data by index from virtual <code>CFVariable</code>.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.2" id="ncdfcf-082">ncdfCF 0.8.2<a class="anchor" aria-label="anchor" href="#ncdfcf-082"></a></h2><p class="text-muted">CRAN release: 2026-03-08</p>
 <p>Patch release with bug fixes.</p>

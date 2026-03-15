@@ -29,9 +29,10 @@ aoi(lonMin, lonMax, latMin, latMax, resX, resY)
 - resX, resY:
 
   The separation between adjacent grid cell, in the longitude and
-  latitude directions respectively, in decimal degrees. The permitted
-  values lie within the range `[0.01 ... 10]`. If `resY` is missing it
-  will use the value of `resX`, yielding square grid cells.
+  latitude directions respectively, in decimal degrees. The recommended
+  values lie within the range `[0.01 ... 10]` - if the values fall
+  outside of this range an warning will be issued. If `resY` is missing
+  it will use the value of `resX`, yielding square grid cells.
 
 ## Value
 

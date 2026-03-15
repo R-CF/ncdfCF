@@ -1,5 +1,23 @@
 # Changelog
 
+## ncdfCF (development version)
+
+##### API
+
+- `CFData$read_data()` and `$read_chunk()` have been made public.
+
+##### Code
+
+- `CFAxisTime$append()` uses `CFtime` code for merging `CFTime`
+  instances, allowing for instances with distinct but compatible
+  definition to be merged.
+- `CFAxis$identical()` can optionally assess attributes for equality.
+- Fixed writing a `CFVariable` to file having a length-1 axis in
+  X-Y-Z-T.
+- `CFVariable$summarise()` returns `NULL` if the `era` argument falls
+  entirely outside of the time axis of the variable.
+- Fixed retrieving data by index from virtual `CFVariable`.
+
 ## ncdfCF 0.8.2
 
 CRAN release: 2026-03-08

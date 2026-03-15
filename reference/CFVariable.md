@@ -135,6 +135,8 @@ Inherited methods
 - [`ncdfCF::CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
 - [`ncdfCF::CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
 - [`ncdfCF::CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
+- [`ncdfCF::CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
+- [`ncdfCF::CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
 
 ------------------------------------------------------------------------
 
@@ -507,7 +509,8 @@ update attributes as appropriate.
 #### Returns
 
 A `CFVariable` object, or a list thereof with as many `CFVariable`
-objects as `fun` returns values.
+objects as `fun` returns values, or `NULL` if the `era` argument falls
+entirely outside of the range of the time axis.
 
 ------------------------------------------------------------------------
 
@@ -596,7 +599,8 @@ Append the data from another `CFVariable` instance to the current
 instance, along one of the axes. The operation will only succeed if the
 axes other than the one to append along have the same coordinates and
 the coordinates of the axis to append along have to be monotonically
-increasing or decreasing after appending.
+increasing or decreasing after appending. The attributes are not
+assessed.
 
 #### Usage
 
