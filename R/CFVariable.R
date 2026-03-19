@@ -710,7 +710,7 @@ CFVariable <- R6::R6Class("CFVariable",
         stop("The 'time' axis is too short to summarise on.", call. = FALSE) # nocov
       if (is.factor(f)) f <- list(f)
 
-      tm <- sum(private$YXZT() > 0L) # Test which oriented axes are present, T is the last one
+      tm <- which(names(private$.axes) == tax$name)
 
       # Private group for the result
       grp <- CFGroup$new("", NULL)
@@ -1205,6 +1205,8 @@ CFVariable <- R6::R6Class("CFVariable",
           private$.id <- private$.NCobj$id
         } else {
           pack <- private$.NCobj$is_packed
+          ax_names <- names(private$.axes)
+          scalars <- rep(FALSE, length(ax_names))
         }
 
         # Packing attributes
@@ -1217,7 +1219,7 @@ CFVariable <- R6::R6Class("CFVariable",
 
         # Set "coordinates" attribute for scalar axes and labels
         if (any(scalars) || length(lbls))
-          self$set_attribute("coordinates", "NC_CHAR", paste(c(names(private$.axes[scalars]), lbls), collapse = " "))
+          self$set_attribute("coordinates", "NC_CHAR", paste(c(ax_names[scalars], lbls), collapse = " "))
 
         private$write_data(dt, pack = pack, na.mode = 2)
         private$.dirty <- FALSE
@@ -1439,6 +1441,8 @@ dimnames.CFVariable <- function(x) {
 #' summer <- pr[, , 173:263]
 #' str(summer)
 "[.CFVariable" <- function(x, i, j, ..., drop = FALSE) {
+  caller_env <- parent.frame()
+
   numaxes <- x$ndims
   t <- vector("list", numaxes)
   names(t) <- dimnames(x)[1:numaxes]
@@ -1473,7 +1477,7 @@ dimnames.CFVariable <- function(x) {
           if (!is.null(tm)) t[[d]] <- tm
         } else {
           # Subset the axis
-          v <- eval(sc[[d]])
+          v <- eval(sc[[d]], envir = caller_env)
           ex <- range(v)
           start[d] <- ex[1L]
           count[d] <- ex[2L] - ex[1L] + 1L

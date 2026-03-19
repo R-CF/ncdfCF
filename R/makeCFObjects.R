@@ -17,9 +17,27 @@ create_ncdf <- function() {
   ds
 }
 
+#' Create a new group
+#'
+#' This function creates a new group for CF objects. Groups are organized in an
+#' hierarchy, starting with a root node. A root node is specified by an empty
+#' string for a name and with argument `parent_group = NULL`.
+#' @param name A name for the group. This must be a valid name for CF objects.
+#' The default value is the empty string "".
+#' @param parent_group Optionally, a parent for the current group. This must be
+#' an instance of `CFGroup` itself.
+#' @return A new instance of `CFGroup`.
+#' @export
+#' @examples
+#' root <- makeGroup()
+#' sub_group <- makeGroup("sub", root)
+makeGroup <- function(name = "", parent_group = NULL) {
+  CFGroup$new(name, parent_group)
+}
+
 #' Create an axis
 #'
-#' With this method you can create an axis to use with new [CFVariable]
+#' With this function you can create an axis to use with new [CFVariable]
 #' instances. Depending on the `orientation` argument and the type of the
 #' `values` argument an instance of a class descending from [CFAxis] will be
 #' returned.

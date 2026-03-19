@@ -36,7 +36,7 @@ amended.}
 An instance of a class descending from \link{CFAxis}.
 }
 \description{
-With this method you can create an axis to use with new \link{CFVariable}
+With this function you can create an axis to use with new \link{CFVariable}
 instances. Depending on the \code{orientation} argument and the type of the
 \code{values} argument an instance of a class descending from \link{CFAxis} will be
 returned.
