@@ -56,6 +56,8 @@ Inherited methods
 - [`ncdfCF::CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
 - [`ncdfCF::CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
 - [`ncdfCF::CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
+- [`ncdfCF::CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
+- [`ncdfCF::CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
 - [`ncdfCF::CFAxis$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-attach_to_group)
 - [`ncdfCF::CFAxis$can_append()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-can_append)
 - [`ncdfCF::CFAxis$configure_terms()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-configure_terms)
@@ -293,21 +295,12 @@ lengths of this axis and the `from` axis.
 
 ### Method [`write()`](https://rdrr.io/r/base/write.html)
 
-Write the axis to a netCDF file, including its attributes, but only if
-it has an associated NC variable in the file.
+Write the axis to a netCDF file. A discrete axis does not have any
+attributes or values to write.
 
 #### Usage
 
-    CFAxisDiscrete$write(nc = NULL)
-
-#### Arguments
-
-- `nc`:
-
-  The handle of the netCDF file opened for writing or a group in the
-  netCDF file. If `NULL`, write to the file or group where the axis was
-  read from (the file must have been opened for writing). If not `NULL`,
-  the handle to a netCDF file or a group therein.
+    CFAxisDiscrete$write()
 
 #### Returns
 

@@ -89,7 +89,7 @@ selectable through methods and fields in this class.
 - `unlimited`:
 
   Logical to indicate if the axis is unlimited. The setting can only be
-  changed if the axis has not yet been wriiten to file.
+  changed if the axis has not yet been written to file.
 
 - `time`:
 
@@ -149,6 +149,8 @@ Inherited methods
 - [`ncdfCF::CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
 - [`ncdfCF::CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
 - [`ncdfCF::CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
+- [`ncdfCF::CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
+- [`ncdfCF::CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
 
 ------------------------------------------------------------------------
 
@@ -368,13 +370,18 @@ with further assessment done in sub-classes.
 
 #### Usage
 
-    CFAxis$identical(axis)
+    CFAxis$identical(axis, with_attributes = FALSE)
 
 #### Arguments
 
 - `axis`:
 
   The `CFAxis` instance to test.
+
+- `with_attributes`:
+
+  Logical that indicates if the attributes are assessed for equality
+  too. Default is `FALSE`.
 
 #### Returns
 

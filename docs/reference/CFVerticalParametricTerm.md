@@ -46,6 +46,8 @@ Inherited methods
 - [`ncdfCF::CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
 - [`ncdfCF::CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
 - [`ncdfCF::CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
+- [`ncdfCF::CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
+- [`ncdfCF::CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
 - [`ncdfCF::CFVariable$add_ancillary_variable()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-add_ancillary_variable)
 - [`ncdfCF::CFVariable$add_auxiliary_coordinate()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-add_auxiliary_coordinate)
 - [`ncdfCF::CFVariable$add_cell_measure()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-add_cell_measure)
@@ -76,6 +78,7 @@ Create an instance of this class.
 
     CFVerticalParametricTerm$new(
       var,
+      group,
       axes,
       values = values,
       start = NA,
@@ -91,6 +94,11 @@ Create an instance of this class.
   [NCVariable](https://r-cf.github.io/ncdfCF/reference/NCVariable.md)
   instance upon which this CF variable is based when read from a netCDF
   resource, or the name for the new CF variable to be created.
+
+- `group`:
+
+  The [CFGroup](https://r-cf.github.io/ncdfCF/reference/CFGroup.md) that
+  this instance will live in.
 
 - `axes`:
 

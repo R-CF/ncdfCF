@@ -37,6 +37,10 @@ classes use this class as ancestor.
 
 - [`CFData$dim()`](#method-CFData-dim)
 
+- [`CFData$read_data()`](#method-CFData-read_data)
+
+- [`CFData$read_chunk()`](#method-CFData-read_chunk)
+
 Inherited methods
 
 - [`ncdfCF::CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
@@ -143,4 +147,63 @@ Retrieve the dimensions of the data of this object.
 
 #### Returns
 
-Integer vector with the length of each requested dimension.
+Integer vector with the length of each requested dimension. Read the
+data of the CF object from the NC file. The data is cached by `self` so
+repeated calls do not access the netCDF resource, unless argument
+`refresh` is `TRUE`. This method will not assess how big the data is
+before reading it so there is a chance that memory will be exhausted.
+The calling code should check for this possibility and break up the
+reading of data into chunks.
+
+------------------------------------------------------------------------
+
+### Method `read_data()`
+
+#### Usage
+
+    CFData$read_data(refresh = FALSE)
+
+#### Arguments
+
+- `refresh`:
+
+  Should the data be read from file if the object is linked? This will
+  replace current values, if previously loaded. Default `FALSE`.
+
+#### Returns
+
+An array of data, invisibly, as prescribed by the `start` and `count`
+values used to create this object. If the object is not backed by a
+netCDF resource, returns `NULL`. Read a chunk of raw data of the CF
+object, as defined by the `start` and `count` vectors. Note that these
+vectors are relative to any subset of the data variable that this CF
+object refers to. The data read by this method will not be stored in
+`self` so the calling code must take a reference to it.
+
+------------------------------------------------------------------------
+
+### Method `read_chunk()`
+
+#### Usage
+
+    CFData$read_chunk(start, count)
+
+#### Arguments
+
+- `start`:
+
+  Vector of indices where to start reading data along the dimensions of
+  the array. The vector must be `NA` to read all data, otherwise it must
+  agree with the dimensions of the array.
+
+- `count`:
+
+  Vector of number of elements to read along each dimension of the
+  array. The vector must be `NA` to read to the end of each dimension,
+  otherwise its value must agree with the corresponding `start` value
+  and the dimension of the array.
+
+#### Returns
+
+An array of data, as prescribed by the `start` and `count` arguments, or
+`NULL` if there is no data.

@@ -21,7 +21,7 @@ not a geographic system of longitude and latitude coordinates."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">ncdfCF</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,9 +83,10 @@ this AOI will be applied, e.g. <code>[-180,180]</code> or <code>[0,360]</code>.<
 
 <dt id="arg-resx-resy">resX, resY<a class="anchor" aria-label="anchor" href="#arg-resx-resy"></a></dt>
 <dd><p>The separation between adjacent grid cell, in the longitude
-and latitude directions respectively, in decimal degrees. The permitted
-values lie within the range <code>[0.01 ... 10]</code>. If <code>resY</code> is missing it will
-use the value of <code>resX</code>, yielding square grid cells.</p></dd>
+and latitude directions respectively, in decimal degrees. The recommended
+values lie within the range <code>[0.01 ... 10]</code> - if the values fall outside of
+this range an warning will be issued. If <code>resY</code> is missing it will use the
+value of <code>resX</code>, yielding square grid cells.</p></dd>
 
 </dl></div>
     <div class="section level2">

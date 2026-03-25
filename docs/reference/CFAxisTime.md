@@ -63,6 +63,8 @@ Inherited methods
 - [`ncdfCF::CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
 - [`ncdfCF::CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
 - [`ncdfCF::CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
+- [`ncdfCF::CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
+- [`ncdfCF::CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
 - [`ncdfCF::CFAxis$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-attach_to_group)
 - [`ncdfCF::CFAxis$can_append()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-can_append)
 - [`ncdfCF::CFAxis$configure_terms()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-configure_terms)
@@ -367,8 +369,8 @@ an axis which spans the range of indices given by the `rng` argument.
 
 #### Returns
 
-A new `CFAxisNumeric` instance covering the indicated range of indices.
-If the value of the argument `rng` is `NULL`, return a copy of `self` as
+A new `CFAxisTime` instance covering the indicated range of indices. If
+the value of the argument `rng` is `NULL`, return a copy of `self` as
 the new axis.
 
 ------------------------------------------------------------------------

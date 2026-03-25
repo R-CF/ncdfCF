@@ -4,10 +4,52 @@
 
 ##### API
 
+- `CFData$read_data()` and `$read_chunk()` have been made public.
+- Added
+  [`makeGroup()`](https://r-cf.github.io/ncdfCF/reference/makeGroup.md)
+  function.
+
+##### Code
+
+- `CFAxisTime$append()` uses `CFtime` code for merging `CFTime`
+  instances, allowing for instances with distinct but compatible
+  definition to be merged.
+- `CFAxis$identical()` can optionally assess attributes for equality.
+- Fixed writing a `CFVariable` to file having a length-1 axis in
+  X-Y-Z-T.
+- `CFVariable$summarise()` returns `NULL` if the `era` argument falls
+  entirely outside of the time axis of the variable.
+- Fixed retrieving data by index from virtual `CFVariable`.
+
+## ncdfCF 0.8.2
+
+CRAN release: 2026-03-08
+
+Patch release with bug fixes.
+
+##### API
+
+- When selecting auxiliary coordinates on an axis, printing a
+  `CFVariable` using that axis will print the name of the active
+  coordinates for that axis and its units, if set.
+
+##### Code
+
+- Fixed NC_CHAR label/axis dimensions.
+
+## ncdfCF 0.8.1
+
+CRAN release: 2026-02-02
+
+Patch release with bug fixes and some new functionality.
+
+##### API
+
 - New
   [`geom_ncdf()`](https://r-cf.github.io/ncdfCF/reference/geom_ncdf.md)
   function to create a `geom` for use in map composition using package
-  `ggplot2`.
+  `ggplot2`. Functionality is currently limited and only basically
+  tested.
 - In `CFVariable$subset()` subsetting a “time” axis can now use
   abbreviated specification such as `time = "2025-12"` to select all
   data for December 2025, or `time = c("2020-S1", "2025-S4")` for all

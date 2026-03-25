@@ -608,7 +608,11 @@ bounds.
 
 The corresponding `cell_methods` are not yet supported.
 
-##### 7.5. Geometries
+##### 7.5. Anomaly data
+
+Not implemented.
+
+##### 7.6. Geometries
 
 Not implemented.
 

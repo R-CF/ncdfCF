@@ -137,7 +137,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       # Single coordinate value
       if (len == 1L) {
         valid <- if (is.null(bnds)) .near(x, vals)
-                 else valid <- x >= bnds[1L, 1L] & x <= bnds[2L, 1L]
+                 else x >= bnds[1L, 1L] & x <= bnds[2L, 1L]
         valid[!valid] <- NA
         return(as.integer(valid))
       }
@@ -147,11 +147,10 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
         # No bounds so get the closest value
         idx <- stats::approx(vals, 1L:length(vals), x, method = method)$y
       } else {
-        # Axis has bounds so get the closest coordinate first, allow for extremes
-        idx <- .round.5down(stats::approx(vals, 1L:length(vals), x, method = "linear", rule = 2)$y)
-        # Test that `x` falls within the bounds of the coordinates
-        valid <- (bnds[1L, idx] <= x) & (x <= bnds[2L, idx])
-        idx[!valid] <- NA
+        # Axis has bounds so check that x is clamped in between bounds
+        idx <- stats::approx(bnds[1L,], 1L:len, x, method = method, rule = 1:2)$y
+        # Invalidate `x`s that exceed the upper boundary at that index
+        idx[x > bnds[2L, idx]] <- NA
       }
 
       if (method == "constant")

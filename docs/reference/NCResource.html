@@ -19,7 +19,7 @@ by higher-level methods."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">ncdfCF</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -102,7 +102,6 @@ filename or the location of an online resource.</p></dd>
 <li><p><a href="#method-NCResource-print"><code>NCResource$print()</code></a></p></li>
 <li><p><a href="#method-NCResource-create"><code>NCResource$create()</code></a></p></li>
 <li><p><a href="#method-NCResource-close"><code>NCResource$close()</code></a></p></li>
-<li><p><a href="#method-NCResource-sync"><code>NCResource$sync()</code></a></p></li>
 <li><p><a href="#method-NCResource-group_handle"><code>NCResource$group_handle()</code></a></p></li>
 <li><p><a href="#method-NCResource-clone"><code>NCResource$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-NCResource-new"></a><div class="section">
@@ -165,20 +164,12 @@ necessary to call this method directly.</p><div class="section">
 </div>
 
 
-</div><p></p><hr><a id="method-NCResource-sync"></a><div class="section">
-<h3 id="method-sync-">Method <code>sync()</code><a class="anchor" aria-label="anchor" href="#method-sync-"></a></h3>
-<p>Write any buffered data to the netCDF resource.</p><div class="section">
-<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCResource</span><span class="op">$</span><span class="fu">sync</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-
 </div><p></p><hr><a id="method-NCResource-group_handle"></a><div class="section">
 <h3 id="method-group-handle-">Method <code>group_handle()</code><a class="anchor" aria-label="anchor" href="#method-group-handle-"></a></h3>
 <p>Every group in a netCDF file has its own handle, with the
 "root" group having the handle for the entire netCDF resource. The
 handle returned by this method is valid only for the named group.</p><div class="section">
-<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCResource</span><span class="op">$</span><span class="fu">group_handle</span><span class="op">(</span><span class="va">group_name</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -198,7 +189,7 @@ handle returned by this method is valid only for the named group.</p><div class=
 </div><p></p><hr><a id="method-NCResource-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
+<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCResource</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 

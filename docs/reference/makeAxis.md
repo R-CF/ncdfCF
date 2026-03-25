@@ -1,6 +1,6 @@
 # Create an axis
 
-With this method you can create an axis to use with new
+With this function you can create an axis to use with new
 [CFVariable](https://r-cf.github.io/ncdfCF/reference/CFVariable.md)
 instances. Depending on the `orientation` argument and the type of the
 `values` argument an instance of a class descending from
