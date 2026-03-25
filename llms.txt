@@ -204,6 +204,9 @@ CF Conventions will have been applied and the objects within the
 - [`groups()`](https://r-cf.github.io/ncdfCF/reference/groups.md) : List
   the groups in the CF object, recursively.
 
+- [`makeGroup()`](https://r-cf.github.io/ncdfCF/reference/makeGroup.md)
+  : Create a new group
+
 - [`` `[[`( ``*`<CFDataset>`*`)`](https://r-cf.github.io/ncdfCF/reference/sub-sub-.CFDataset.md)
   : Get a CF object from a data set
 
