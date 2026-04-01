@@ -89,7 +89,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       if (units == "") cat("\n") else cat(" (", units, ")\n", sep = "")
 
       if (!is.null(private$.bounds))
-        private$.bounds$print(attributes = FALSE, ...)
+        private$.bounds$print_boundary_values()
       else cat("Bounds     : (not set)\n")
 
       private$print_details(...)

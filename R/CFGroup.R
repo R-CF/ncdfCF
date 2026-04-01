@@ -203,6 +203,21 @@ CFGroup <- R6::R6Class("CFGroup",
       invisible(self)
     },
 
+    #' @description Remove a CF objects from the current group. This is an
+    #'   internal method that should not be invoked by the user. The objects to
+    #'   be removed are considered atomic and not assessed for any contained
+    #'   objects.
+    #' @param obj The integer id property of the CF object to remove from this
+    #' group.
+    #' @return Self, invisibly.
+    remove_CF_object = function(obj) {
+      refs <- sapply(private$.objects, function(o) o$id)
+      refs[!(lengths(refs) > 0L)] <- 1000000L # Mask any NULLs, such as from lat-long grid
+      refs <- unlist(refs)
+      private$.objects <- private$.objects[refs != obj]
+      invisible(self)
+    },
+
     #' @description This method lists the CF objects of a certain class located
     #'   in this group, optionally including objects in subgroups.
     #' @param cls Character vector of classes whose objects to retrieve. Note

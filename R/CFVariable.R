@@ -103,7 +103,7 @@ CFVariable <- R6::R6Class("CFVariable",
         stop("Invalid argument for ordering.", call. = FALSE)
 
       if (sum(order) == 0L) {
-        # warning("Cannot orient data array because axis orientation has not been set")
+        # Cannot orient data array because axis orientation has not been set
         attr(data, "axes") <- dim_names
         return(data)
       }
@@ -958,7 +958,6 @@ CFVariable <- R6::R6Class("CFVariable",
         if (self$axes[[ax]]$name == along)
           axno <- ax
         else {
-          browser(expr = !self$axes[[ax]]$identical(from$axes[[ax]]))
           if (!self$axes[[ax]]$identical(from$axes[[ax]]))
             stop(paste("Axis", ax, "is not identical between the two data variables."), call. = FALSE)
         }
@@ -1187,13 +1186,15 @@ CFVariable <- R6::R6Class("CFVariable",
 
       if (private$.dirty) {
         dt <- private$orient(self$read_data(), "CF")
+        ord <- private$XYZT()
 
         if (is.null(private$.NCobj)) {
           # Drop true scalar dimensions from the dt dim
-          ax_names <- attr(dt, "axes")
-          scalars <- sapply(ax_names, function(ax) private$.axes[[ax]]$length == 1L && !private$.axes[[ax]]$unlimited)
-          axes <- ax_names[!scalars]
-          dim(dt) <- dim(dt)[!scalars]
+          ax_names <- attr(dt, "axes") # Names not qualified!
+          scalars  <- sapply(ax_names, function(ax) private$.axes[[ax]]$length == 1L && !private$.axes[[ax]]$unlimited)
+          axis_dimids <- sapply(ax_names[!scalars], function(ax) private$.axes[[ax]]$dimid)
+          ax_names <- sapply(ax_names, function(ax) private$.axes[[ax]]$fullname) # Names are now qualified
+          dim(dt)  <- dim(dt)[!scalars]
 
           pack <- if (missing(pack)) FALSE
                   else pack && private$.data_type %in% c("NC_FLOAT", "NC_DOUBLE")
@@ -1201,11 +1202,11 @@ CFVariable <- R6::R6Class("CFVariable",
           # Create a new NC variable on file
           private$.NCobj <- NCVariable$new(id = NA, name = self$name, group = private$.group$NC,
                                            vtype = if (pack) "NC_SHORT" else private$.data_type,
-                                           dimids = if (all(scalars)) NA else axes)
+                                           dimids = if (all(scalars)) NA else axis_dimids)
           private$.id <- private$.NCobj$id
         } else {
           pack <- private$.NCobj$is_packed
-          ax_names <- names(private$.axes)
+          ax_names <- sapply(private$.axes, function(x) x$fullname)
           scalars <- rep(FALSE, length(ax_names))
         }
 

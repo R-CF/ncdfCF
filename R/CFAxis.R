@@ -136,8 +136,8 @@ CFAxis <- R6::R6Class("CFAxis",
       cat("<", self$friendlyClassName, "> [", private$.id, "] ", private$.name, "\n", sep = "")
 
       fullname <- self$fullname
-      if (fullname != self$name)
-        cat("Path name:", fullname, "\n")
+      if (fullname != paste0("/", self$name))
+        cat("Path name  :", fullname, "\n")
 
       longname <- self$attribute("long_name")
       if (!is.na(longname) && longname != self$name)
@@ -165,7 +165,7 @@ CFAxis <- R6::R6Class("CFAxis",
       if (is.na(units)) units <- ""
       else if (units == "1") units <- ""
 
-      data.frame(axis = private$.orient,  name = self$fullname, long_name = longname,
+      data.frame(axis = private$.orient, name = self$fullname, long_name = longname,
                  length = len, values = "", unit = units)
     },
 
@@ -351,24 +351,28 @@ CFAxis <- R6::R6Class("CFAxis",
     #' @return Self, invisibly.
     write = function() {
       if (is.null(private$.NCobj)) {
+        grp <- private$.group$NC
+        if (is.null(grp))
+          stop("Axis ", self$name, " has no netCDF group.")
+
         # Try to find a NC variable and its associated dimension
-        ncobj <- private$.group$NC$find_by_name(self$name)
+        ncobj <- grp$find_by_name(self$fullname)
         if (is.null(ncobj)) {
           # Create a new NC dimension and variable on file.
           if (self$length == 1L && !private$.unlimited)
-            private$.NCobj <- NCVariable$new(id = NA, name = self$name, group = private$.group$NC,
+            private$.NCobj <- NCVariable$new(id = NA, name = self$name, group = grp,
                                              vtype = private$.data_type, dimids = NA)
           else {
             private$.dimid <- NCDimension$new(id = NA, name = self$name, length = self$length,
-                                              unlim = private$.unlimited, group = private$.group$NC)$id
-            private$.NCobj <- NCVariable$new(id = NA, name = self$name, group = private$.group$NC,
+                                              unlim = private$.unlimited, group = grp)$id
+            private$.NCobj <- NCVariable$new(id = NA, name = self$name, group = grp,
                                              vtype = private$.data_type, dimids = private$.dimid)
           }
         } else if (inherits(ncobj, "NCDimension")) {
           # NC dimension was found so NC variable does not exist
           if (self$length == ncobj$length && private$.unlimited == ncobj$unlim) {
             private$.dimid <- ncobj$id
-            private$.NCobj <- NCVariable$new(id = NA, name = self$name, group = private$.group$NC,
+            private$.NCobj <- NCVariable$new(id = NA, name = self$name, group = grp,
                                              vtype = private$.data_type, dimids = private$.dimid)
           } else
             stop("Incompatible dimension by this name already exists.", call. = FALSE)
@@ -393,7 +397,7 @@ CFAxis <- R6::R6Class("CFAxis",
 
       # Bounds
       if (!is.null(private$.bounds))
-        private$.bounds$write(self$name)
+        private$.bounds$write(private$.dimid)
 
       # Auxiliary coordinates
       lapply(private$.aux, function(l) {l$dimid <- private$.dimid; l$write()})

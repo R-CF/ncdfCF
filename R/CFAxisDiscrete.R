@@ -159,7 +159,7 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
       # The NCVariable object is transient and should not be written to file.
 
       # Try to find a NC dimension
-      ncobj <- private$.group$NC$find_by_name(self$name)
+      ncobj <- private$.group$NC$find_by_name(self$fullname)
       if (is.null(ncobj)) {
         # Create a new NC dimension on file
         private$.dimid <- NCDimension$new(id = NA, name = self$name, length = self$length,

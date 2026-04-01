@@ -166,7 +166,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         bnds <- NULL
         clim <- var$attribute("climatology")
         if (!is.na(clim)) {
-          nc <- var$group$find_by_name(clim)
+          nc <- var$group$find_by_name(clim) # FIXME: Make this a FQN?
           if (is.null(nc)) {
             warning("Unmatched `climatology` value '", clim, "' found in variable '", var$name, "'.", call. = FALSE)
             stop("Could not create a CFClimatology object from the arguments.", call. = FALSE)
@@ -182,7 +182,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
             stop("Could not create a CFTime object from the arguments.", call. = FALSE)
           bounds <- var$attribute("bounds")
           if (!is.na(bounds)) {
-            nc <- var$group$find_by_name(bounds)
+            nc <- var$group$find_by_name(bounds) # FIXME: Make this a FQN?
             if (is.null(nc))
               warning("Unmatched `bounds` value '", bounds, "' found in variable '", var$name, "'.", call. = FALSE)
             else {
@@ -391,17 +391,6 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         }
         private$copy_properties_into(ax, rng)
       }
-    },
-
-    #' @description Write the axis to a netCDF file, including its attributes.
-    #' If the calendar name is "gregorian", it will be set to the functionally
-    #' identical calendar "standard" as the former is deprecated.
-    #' @return Self, invisibly.
-    write = function() {
-      time <- private$.tm
-      if (time$calendar$name == "gregorian")
-        self$set_attribute("calendar", "NC_CHAR", "standard")
-      super$write()
     }
   ),
   active = list(

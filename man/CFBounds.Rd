@@ -37,6 +37,7 @@ is a linked netCDF resource, this object will be detached from it.}
 \itemize{
 \item \href{#method-CFBounds-new}{\code{CFBounds$new()}}
 \item \href{#method-CFBounds-print}{\code{CFBounds$print()}}
+\item \href{#method-CFBounds-print_boundary_values}{\code{CFBounds$print_boundary_values()}}
 \item \href{#method-CFBounds-range}{\code{CFBounds$range()}}
 \item \href{#method-CFBounds-copy}{\code{CFBounds$copy()}}
 \item \href{#method-CFBounds-subset}{\code{CFBounds$subset()}}
@@ -140,6 +141,19 @@ is \verb{width = } to indicate a maximum width of attribute columns.}
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFBounds-print_boundary_values"></a>}}
+\if{latex}{\out{\hypertarget{method-CFBounds-print_boundary_values}{}}}
+\subsection{Method \code{print_boundary_values()}}{
+Print the boundary values to the console. This method is not
+very useful to call directly - instead, call \verb{$print()}, which will
+call this method. These boundary values are also printed when printing
+an axis that has boundary values associated with it.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFBounds$print_boundary_values()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFBounds-range"></a>}}
 \if{latex}{\out{\hypertarget{method-CFBounds-range}{}}}
 \subsection{Method \code{range()}}{
@@ -235,15 +249,14 @@ Write the boundary variable to a netCDF file. This method
 should not be called directly; instead, \code{CFVariable$save()} will call
 this method automatically.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$write(object_name)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CFBounds$write(object_id)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{object_name}}{The name of the object that uses these boundary
-values, usually an axis but could also be an auxiliary CV or a
-parametric Z axis.}
+\item{\code{object_id}}{The integer dimid of the object that uses these boundary
+values, usually an axis but could also be an auxiliary CV.}
 }
 \if{html}{\out{</div>}}
 }

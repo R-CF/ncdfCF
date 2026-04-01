@@ -50,7 +50,7 @@ NCVariable <- R6::R6Class("NCVariable",
     # object whose data type you are looking for.
     .vtype = NULL,
 
-    # Vector of dimension identifiers that this variable uses.
+    # Vector of integer dimension identifiers that this variable uses.
     .dimids  = NULL,
 
     # Additional properties for a `netcdf4` resource.
@@ -65,7 +65,8 @@ NCVariable <- R6::R6Class("NCVariable",
     #' @param name Character string with the name of the netCDF object.
     #' @param group The [NCGroup] this variable is located in.
     #' @param vtype The netCDF data type of the variable.
-    #' @param dimids The identifiers of the dimensions this variable uses.
+    #' @param dimids The integer identifiers of the dimensions this variable
+    #'   uses.
     #' @param attributes Optional, `data.frame` with the attributes of the
     #'   object.
     #' @param netcdf4 Optional, `netcdf4`-specific arguments in the format of
@@ -165,7 +166,7 @@ NCVariable <- R6::R6Class("NCVariable",
     #' @param new_name The new name for the NC variable
     #' @return Self, invisibly.
     set_name = function(new_name) {
-      if (new_name != private$.name && is.null(group$find_by_name(new_name)) &&
+      if (new_name != private$.name && is.null(group$find_by_name(new_name)) && # FIXME: Make this a FQN?
           private$.resource$can_write) {
         RNetCDF::var.rename.nc(private$.resource$handle, private$.name, new_name)
         private$.name <- new_name

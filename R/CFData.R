@@ -39,7 +39,7 @@ CFData <- R6::R6Class("CFData",
     # NC variable.
     set_name = function(new_name) {
       if (.is_valid_name(new_name)) {
-        if (is.null(private$.group$find_by_name(new_name))) {
+        if (is.null(private$.group$find_by_name(new_name))) { # FIXME: Make this a FQN?
           private$.name <- if (!is.null(private$.NCobj)) {
             private$.NCobj$set_name(new_name)
             private$.NCobj$name # new_name may not have been written

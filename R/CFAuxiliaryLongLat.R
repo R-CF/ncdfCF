@@ -304,6 +304,10 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
     #'   objects will be stored in this group.
     #' @return Self, invisibly.
     attach_to_group = function(grp, locations = list()) {
+      # FIXME: .varLong and .varLat do not have a group. attach_to_group() will
+      # then fail.
+      return()
+
       private$.varLong$attach_to_group(grp, locations)
       private$.varLat$attach_to_group(grp, locations)
       if (!is.null(private$.boundsLong))

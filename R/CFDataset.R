@@ -91,7 +91,7 @@ CFDataset <- R6::R6Class("CFDataset",
 
     #' @description Print the group hierarchy to the console.
     hierarchy = function() {
-      cat("<NetCDF objects>", self$name, "\n")
+      cat("<CF objects>", self$name, "\n")
       hier <- self$root$hierarchy(1L, 1L)
       cat(hier, sep = "")
     },
@@ -337,7 +337,10 @@ CFDataset <- R6::R6Class("CFDataset",
     #' @field var_names (read-only) Vector of names of variables in this data set.
     var_names = function(value) {
       if (missing(value)) {
-        nm <- sapply(self$variables(), function(v) v$fullname)
+        nm <- if (self$has_subgroups())
+          sapply(self$variables(), function(v) v$fullname)
+        else
+          sapply(self$variables(), function(v) v$name)
         names(nm) <- NULL
         nm
       }
@@ -346,9 +349,12 @@ CFDataset <- R6::R6Class("CFDataset",
     #' @field axis_names (read-only) Vector of names of axes in this data set.
     axis_names = function(value) {
       if (missing(value)) {
-        nms <- sapply(self$axes(), function(ax) ax$fullname)
-        names(nms) <- NULL
-        nms
+        nm <- if (self$has_subgroups())
+          sapply(self$axes(), function(ax) ax$fullname)
+        else
+          sapply(self$axes(), function(ax) ax$name)
+        names(nm) <- NULL
+        nm
       }
     }
   )
@@ -370,12 +376,8 @@ str.CFDataset <- function(object, ...) {
 #' @rdname dimnames
 #' @export
 names.CFDataset <- function(x) {
-  if (!length(x$variables()))
-    NULL
-  else if (x$has_subgroups())
-    paste0("/", gsub(".", "/", x$var_names, fixed = TRUE))
-  else
-    x$var_names
+  if (!length(x$variables())) NULL
+  else x$var_names
 }
 
 #' @export

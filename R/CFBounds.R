@@ -59,6 +59,28 @@ CFBounds <- R6::R6Class("CFBounds",
     #' @param ... Arguments passed on to other functions. Of particular interest
     #' is `width = ` to indicate a maximum width of attribute columns.
     print = function(attributes = TRUE, ...) {
+      cat("<", self$friendlyClassName, "> [", private$.id, "] ", private$.name, "\n", sep = "")
+
+      fullname <- self$fullname
+      if (fullname != paste0("/", self$name))
+        cat("Path name  :", fullname, "\n")
+
+      longname <- self$attribute("long_name")
+      if (!is.na(longname) && longname != self$name)
+        cat("Long name  :", longname, "\n")
+
+      cat("Length     :", self$length, "\n")
+      self$print_boundary_values()
+
+      if (attributes)
+        self$print_attributes()
+    },
+
+    #' @description Print the boundary values to the console. This method is not
+    #'   very useful to call directly - instead, call `$print()`, which will
+    #'   call this method. These boundary values are also printed when printing
+    #'   an axis that has boundary values associated with it.
+    print_boundary_values = function() {
       v <- self$values
       if (is.null(v))
         cat("Bounds     : (no values)\n")
@@ -82,9 +104,6 @@ CFBounds <- R6::R6Class("CFBounds",
           cat("Bounds     : (can't print multi-dimensional bounds just yet...)\n")
         }
       }
-
-      if (attributes)
-        self$print_attributes()
     },
 
     #' @description Retrieve the lowest and highest value in the bounds.
@@ -174,10 +193,12 @@ CFBounds <- R6::R6Class("CFBounds",
     #' @description Write the boundary variable to a netCDF file. This method
     #'   should not be called directly; instead, `CFVariable$save()` will call
     #'   this method automatically.
-    #' @param object_name The name of the object that uses these boundary
-    #'   values, usually an axis but could also be an auxiliary CV or a
-    #'   parametric Z axis.
-    write = function(object_name) {
+    #' @param object_id The integer dimid of the object that uses these boundary
+    #'   values, usually an axis but could also be an auxiliary CV.
+    write = function(object_id) {
+      if (is.character(object_id))
+        stop("Must have integer id for owning object of boundary variable ", self$name)
+
       v <- self$values
       nv <- dim(v)[1L]
 
@@ -185,7 +206,8 @@ CFBounds <- R6::R6Class("CFBounds",
         # Bounds do not yet exist on file so write dimensions and variable, axis dimension exists
         nm <- paste0("nv", nv)
         dim <- NCDimension$new(NA, nm, nv, FALSE, self$group$NC)
-        private$.NCobj <- NCVariable$new(NA, self$name, self$group$NC, private$.data_type, c(nm, object_name))
+        private$.NCobj <- NCVariable$new(id = NA, name = self$name, group = self$group$NC,
+                                         vtype = private$.data_type, dimids = c(dim$id, object_id))
         private$.id <- private$.NCobj$id
         private$.NCobj$CF <- self
       }

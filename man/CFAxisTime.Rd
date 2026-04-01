@@ -37,7 +37,6 @@ vector.}
 \item \href{#method-CFAxisTime-indexOf}{\code{CFAxisTime$indexOf()}}
 \item \href{#method-CFAxisTime-slice}{\code{CFAxisTime$slice()}}
 \item \href{#method-CFAxisTime-subset}{\code{CFAxisTime$subset()}}
-\item \href{#method-CFAxisTime-write}{\code{CFAxisTime$write()}}
 }
 }
 \if{html}{\out{
@@ -60,6 +59,7 @@ vector.}
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="detach"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-detach'><code>ncdfCF::CFAxis$detach()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-peek'><code>ncdfCF::CFAxis$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="write"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-write'><code>ncdfCF::CFAxis$write()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -332,21 +332,6 @@ copy of the axis.}
 A new \code{CFAxisTime} instance covering the indicated range of
 indices. If the value of the argument \code{rng} is \code{NULL}, return a copy of
 \code{self} as the new axis.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisTime-write"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisTime-write}{}}}
-\subsection{Method \code{write()}}{
-Write the axis to a netCDF file, including its attributes.
-If the calendar name is "gregorian", it will be set to the functionally
-identical calendar "standard" as the former is deprecated.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisTime$write()}\if{html}{\out{</div>}}
-}
-
-\subsection{Returns}{
-Self, invisibly.
 }
 }
 }

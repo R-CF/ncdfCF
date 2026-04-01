@@ -114,9 +114,12 @@ CFObject <- R6::R6Class("CFObject",
     #' @return Self, invisibly.
     attach_to_group = function(grp, locations = list()) {
       g <- grp$find_by_name(locations[[self$name]]) %||% grp
-      g$add_CF_object(self)
-      private$.group <- grp
-      private$.dirty <- TRUE
+      if (g$id != private$.group$id) {
+        private$.group$remove_CF_object(self$id)
+        g$add_CF_object(self)
+        private$.group <- g
+        private$.dirty <- TRUE
+      }
       invisible(self)
     },
 
@@ -338,7 +341,7 @@ CFObject <- R6::R6Class("CFObject",
         else {
           gnm <- grp$fullname
           if (gnm == "/")
-            private$.name
+            paste0("/", private$.name)
           else
             paste(gnm, private$.name, sep = "/")
         }

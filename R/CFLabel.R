@@ -129,7 +129,7 @@ CFLabel <- R6::R6Class("CFLabel",
     write = function() {
       if (is.null(private$.NCobj)) {
         # Try to find a NC variable
-        ncobj <- private$.group$NC$find_by_name(self$name)
+        ncobj <- private$.group$NC$find_by_name(self$fullname)
         private$.NCobj <- if (is.null(ncobj))
           # Create a new NC variable
           NCVariable$new(id = NA, name = self$name, group = private$.group$NC,

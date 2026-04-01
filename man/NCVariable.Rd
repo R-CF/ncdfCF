@@ -100,7 +100,8 @@ netCDF resource.
 
 \item{\code{vtype}}{The netCDF data type of the variable.}
 
-\item{\code{dimids}}{The identifiers of the dimensions this variable uses.}
+\item{\code{dimids}}{The integer identifiers of the dimensions this variable
+uses.}
 
 \item{\code{attributes}}{Optional, \code{data.frame} with the attributes of the
 object.}
