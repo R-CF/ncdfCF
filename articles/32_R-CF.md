@@ -89,20 +89,21 @@ names(ds)
 tmax <- ds[["tasmax"]]
 tmax$print(width = 25)
 #> <Variable> tasmax 
+#> Path name: /tasmax 
 #> Long name: Daily Maximum Near-Surface Air Temperature 
 #> 
 #> Values: (not loaded)
 #> 
 #> Coordinate reference system:
-#>  name              grid_mapping           
-#>  Lambert_Conformal lambert_conformal_conic
+#>  name               grid_mapping           
+#>  /Lambert_Conformal lambert_conformal_conic
 #> 
 #> Axes:
-#>  axis name   long_name                 length values               
-#>  X    x      x-coordinate in Cartes... 148    [0 ... 7350000]      
-#>  Y    y      y-coordinate in Cartes... 140    [0 ... 6950000]      
-#>  T    time                             1-U    [2041-07-01T12:00:00]
-#>  Z    height                           1      [2]                  
+#>  axis name    long_name                 length values               
+#>  X    /x      x-coordinate in Cartes... 148    [0 ... 7350000]      
+#>  Y    /y      y-coordinate in Cartes... 140    [0 ... 6950000]      
+#>  T    /time                             1-U    [2041-07-01T12:00:00]
+#>  Z    /height                           1      [2]                  
 #>  unit                     
 #>  m                        
 #>  m                        

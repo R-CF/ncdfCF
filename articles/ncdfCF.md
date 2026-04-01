@@ -149,9 +149,9 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 #> 
 #> Variables:
 #>  name long_name             units data_type axes                     
-#>  t2m  2 metre temperature   K     NC_DOUBLE longitude, latitude, time
-#>  pev  Potential evaporation m     NC_DOUBLE longitude, latitude, time
-#>  tp   Total precipitation   m     NC_DOUBLE longitude, latitude, time
+#>  /t2m 2 metre temperature   K     NC_DOUBLE longitude, latitude, time
+#>  /pev Potential evaporation m     NC_DOUBLE longitude, latitude, time
+#>  /tp  Total precipitation   m     NC_DOUBLE longitude, latitude, time
 #> 
 #> Attributes:
 #>  name        type    length value                             
@@ -161,15 +161,16 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 # Variables can be accessed through standard list-type extraction syntax
 (t2m <- ds[["t2m"]])
 #> <Variable> t2m 
+#> Path name: /t2m 
 #> Long name: 2 metre temperature 
 #> 
 #> Values: (not loaded)
 #> 
 #> Axes:
-#>  axis name      length values                                       
-#>  X    longitude 31     [28 ... 31]                                  
-#>  Y    latitude  21     [-1 ... -3]                                  
-#>  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  axis name       length values                                       
+#>  X    /longitude 31     [28 ... 31]                                  
+#>  Y    /latitude  21     [-1 ... -3]                                  
+#>  T    /time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    
@@ -349,15 +350,16 @@ extract, possibly processed:
 # Extract a specific region, full time dimension
 (ts <- t2m$subset(X = 29:30, Y = -1:-2))
 #> <Variable> t2m 
+#> Path name: /t2m 
 #> Long name: 2 metre temperature 
 #> 
 #> Values: (not loaded)
 #> 
 #> Axes:
-#>  axis name      length values                                       
-#>  X    longitude 11     [29 ... 30]                                  
-#>  Y    latitude  11     [-1 ... -2]                                  
-#>  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  axis name       length values                                       
+#>  X    /longitude 11     [29 ... 30]                                  
+#>  Y    /latitude  11     [-1 ... -2]                                  
+#>  T    /time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    
@@ -375,15 +377,16 @@ extract, possibly processed:
                   X = c(29.6, 28.8),
                   Y = seq(-2, -1, by = 0.05)))
 #> <Variable> t2m 
+#> Path name: /t2m 
 #> Long name: 2 metre temperature 
 #> 
 #> Values: (not loaded)
 #> 
 #> Axes:
-#>  axis name      length values                                       
-#>  X    longitude 7      [28.9 ... 29.5]                              
-#>  Y    latitude  11     [-1 ... -2]                                  
-#>  T    time      6-U    [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]
+#>  axis name       length values                                       
+#>  X    /longitude 7      [28.9 ... 29.5]                              
+#>  Y    /latitude  11     [-1 ... -2]                                  
+#>  T    /time      6-U    [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    
@@ -447,16 +450,17 @@ latitudinal transect, for instance, provide only a longitude coordinate:
 ``` r
 (trans29_74 <- t2m$profile(longitude = 29.74, .names = "lon_29_74"))
 #> <Variable> lon_29_74 
+#> Path name: /lon_29_74 
 #> Long name: 2 metre temperature 
 #> 
 #> Values: [286.5394 ... 298.963] K
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  axis name      length values                                       
-#>  X    longitude 1      [29.74]                                      
-#>  Y    latitude  21     [-1 ... -3]                                  
-#>  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  axis name       length values                                       
+#>  X    /longitude 1      [29.74]                                      
+#>  Y    /latitude  21     [-1 ... -3]                                  
+#>  T    /time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    
@@ -483,16 +487,17 @@ axis. The return value is a new `CFVariable` object.
 # Summarising hourly temperature data to calculate the daily maximum temperature
 t2m$summarise("tmax", max, "day")
 #> <Variable> tmax 
+#> Path name: /tmax 
 #> Long name: 2 metre temperature 
 #> 
 #> Values: [290.0364 ... 302.0447] K
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  axis name      length values                unit                             
-#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
-#>  X    longitude 31     [28 ... 31]           degrees_east                     
-#>  Y    latitude  21     [-1 ... -3]           degrees_north                    
+#>  axis name       length values                unit                             
+#>  T    /time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
+#>  X    /longitude 31     [28 ... 31]           degrees_east                     
+#>  Y    /latitude  21     [-1 ... -3]           degrees_north                    
 #> 
 #> Attributes:
 #>  name         type      length value                
@@ -524,16 +529,17 @@ daily_stats <- function(x, na.rm = TRUE) {
 (stats <- t2m$summarise(c("tmin", "tmax", "diurnal_range"), daily_stats, "day"))
 #> $tmin
 #> <Variable> tmin 
+#> Path name: /tmin 
 #> Long name: 2 metre temperature 
 #> 
 #> Values: [283.0182 ... 293.8659] K
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  axis name      length values                unit                             
-#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
-#>  X    longitude 31     [28 ... 31]           degrees_east                     
-#>  Y    latitude  21     [-1 ... -3]           degrees_north                    
+#>  axis name       length values                unit                             
+#>  T    /time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
+#>  X    /longitude 31     [28 ... 31]           degrees_east                     
+#>  Y    /latitude  21     [-1 ... -3]           degrees_north                    
 #> 
 #> Attributes:
 #>  name         type      length value                 
@@ -543,16 +549,17 @@ daily_stats <- function(x, na.rm = TRUE) {
 #> 
 #> $tmax
 #> <Variable> tmax 
+#> Path name: /tmax 
 #> Long name: 2 metre temperature 
 #> 
 #> Values: [290.0364 ... 302.0447] K
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  axis name      length values                unit                             
-#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
-#>  X    longitude 31     [28 ... 31]           degrees_east                     
-#>  Y    latitude  21     [-1 ... -3]           degrees_north                    
+#>  axis name       length values                unit                             
+#>  T    /time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
+#>  X    /longitude 31     [28 ... 31]           degrees_east                     
+#>  Y    /latitude  21     [-1 ... -3]           degrees_north                    
 #> 
 #> Attributes:
 #>  name         type      length value                
@@ -562,16 +569,17 @@ daily_stats <- function(x, na.rm = TRUE) {
 #> 
 #> $diurnal_range
 #> <Variable> diurnal_range 
+#> Path name: /diurnal_range 
 #> Long name: 2 metre temperature 
 #> 
 #> Values: [1.819982 ... 11.27369] K
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  axis name      length values                unit                             
-#>  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
-#>  X    longitude 31     [28 ... 31]           degrees_east                     
-#>  Y    latitude  21     [-1 ... -3]           degrees_north                    
+#>  axis name       length values                unit                             
+#>  T    /time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0
+#>  X    /longitude 31     [28 ... 31]           degrees_east                     
+#>  Y    /latitude  21     [-1 ... -3]           degrees_north                    
 #> 
 #> Attributes:
 #>  name         type      length value              
@@ -615,15 +623,16 @@ tsC <- ts - 273.15
 tsC$set_attribute("units", "NC_CHAR", "degrees_Celsius")
 tsC
 #> <Variable> t2m_273_15 
+#> Path name: /t2m_273_15 
 #> 
 #> Values: [15.08352 ... 28.05806] degrees_Celsius
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  axis name      length values                                       
-#>  X    longitude 7      [28.9 ... 29.5]                              
-#>  Y    latitude  11     [-1 ... -2]                                  
-#>  T    time      6-U    [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]
+#>  axis name       length values                                       
+#>  X    /longitude 7      [28.9 ... 29.5]                              
+#>  Y    /latitude  11     [-1 ... -2]                                  
+#>  T    /time      6-U    [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    
@@ -643,15 +652,16 @@ tsHot <- tsC > 20
 tsHot$set_attribute("units", "NC_CHAR", "1")
 tsHot
 #> <Variable> t2m_273_15_20 
+#> Path name: /t2m_273_15_20 
 #> 
 #> Values: [0 ... 1] 1
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  axis name      length values                                       
-#>  X    longitude 7      [28.9 ... 29.5]                              
-#>  Y    latitude  11     [-1 ... -2]                                  
-#>  T    time      6-U    [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]
+#>  axis name       length values                                       
+#>  X    /longitude 7      [28.9 ... 29.5]                              
+#>  Y    /latitude  11     [-1 ... -2]                                  
+#>  T    /time      6-U    [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    

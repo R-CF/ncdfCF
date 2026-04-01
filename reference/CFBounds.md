@@ -45,6 +45,8 @@ element).
 
 - [`CFBounds$print()`](#method-CFBounds-print)
 
+- [`CFBounds$print_boundary_values()`](#method-CFBounds-print_boundary_values)
+
 - [`CFBounds$range()`](#method-CFBounds-range)
 
 - [`CFBounds$copy()`](#method-CFBounds-copy)
@@ -164,6 +166,19 @@ Print a summary of the object to the console.
 
 ------------------------------------------------------------------------
 
+### Method `print_boundary_values()`
+
+Print the boundary values to the console. This method is not very useful
+to call directly - instead, call `$print()`, which will call this
+method. These boundary values are also printed when printing an axis
+that has boundary values associated with it.
+
+#### Usage
+
+    CFBounds$print_boundary_values()
+
+------------------------------------------------------------------------
+
 ### Method [`range()`](https://rdrr.io/r/base/range.html)
 
 Retrieve the lowest and highest value in the bounds.
@@ -269,11 +284,11 @@ automatically.
 
 #### Usage
 
-    CFBounds$write(object_name)
+    CFBounds$write(object_id)
 
 #### Arguments
 
-- `object_name`:
+- `object_id`:
 
-  The name of the object that uses these boundary values, usually an
-  axis but could also be an auxiliary CV or a parametric Z axis.
+  The integer dimid of the object that uses these boundary values,
+  usually an axis but could also be an auxiliary CV.

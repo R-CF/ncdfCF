@@ -51,8 +51,6 @@ This class represents a time axis. The functionality is provided by the
 
 - [`CFAxisTime$subset()`](#method-CFAxisTime-subset)
 
-- [`CFAxisTime$write()`](#method-CFAxisTime-write)
-
 Inherited methods
 
 - [`ncdfCF::CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
@@ -72,6 +70,7 @@ Inherited methods
 - [`ncdfCF::CFAxis$detach()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-detach)
 - [`ncdfCF::CFAxis$peek()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-peek)
 - [`ncdfCF::CFAxis$shard()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-shard)
+- [`ncdfCF::CFAxis$write()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-write)
 
 ------------------------------------------------------------------------
 
@@ -372,19 +371,3 @@ an axis which spans the range of indices given by the `rng` argument.
 A new `CFAxisTime` instance covering the indicated range of indices. If
 the value of the argument `rng` is `NULL`, return a copy of `self` as
 the new axis.
-
-------------------------------------------------------------------------
-
-### Method [`write()`](https://rdrr.io/r/base/write.html)
-
-Write the axis to a netCDF file, including its attributes. If the
-calendar name is "gregorian", it will be set to the functionally
-identical calendar "standard" as the former is deprecated.
-
-#### Usage
-
-    CFAxisTime$write()
-
-#### Returns
-
-Self, invisibly.

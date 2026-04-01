@@ -47,7 +47,7 @@ fn <- system.file("extdata",
 #> 
 #> Variable:
 #>  name long_name     units      data_type axes          
-#>  pr   Precipitation kg m-2 s-1 NC_FLOAT  lon, lat, time
+#>  /pr  Precipitation kg m-2 s-1 NC_FLOAT  lon, lat, time
 #> 
 #> External variable: areacella
 #> 

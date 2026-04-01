@@ -45,15 +45,16 @@ method.
 arr <- array(rnorm(120), dim = c(6, 5, 4))
 as_CF("my_first_CF_object", arr)
 #> <Variable> my_first_CF_object 
+#> Path name: /my_first_CF_object 
 #> 
 #> Values: [-2.612334 ... 2.755418] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  name   length values   
-#>  axis_1 6      [1 ... 6]
-#>  axis_2 5      [1 ... 5]
-#>  axis_3 4      [1 ... 4]
+#>  name    length values   
+#>  /axis_1 6      [1 ... 6]
+#>  /axis_2 5      [1 ... 5]
+#>  /axis_3 4      [1 ... 4]
 #> 
 #> Attributes:
 #>  name         type      length value              
@@ -78,15 +79,16 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 
 (obj <- as_CF("a_better_CF_object", arr))
 #> <Variable> a_better_CF_object 
+#> Path name: /a_better_CF_object 
 #> 
 #> Values: [-2.612334 ... 2.755418] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  axis name length values                      unit                          
-#>  Y    lat  6      [45 ... 40]                 degrees_north                 
-#>  X    lon  5      [0 ... 4]                   degrees_east                  
-#>  T    time 4      [2025-07-01 ... 2025-07-04] days since 1970-01-01T00:00:00
+#>  axis name  length values                      unit                          
+#>  Y    /lat  6      [45 ... 40]                 degrees_north                 
+#>  X    /lon  5      [0 ... 4]                   degrees_east                  
+#>  T    /time 4      [2025-07-01 ... 2025-07-04] days since 1970-01-01T00:00:00
 #> 
 #> Attributes:
 #>  name         type      length value              
@@ -172,15 +174,16 @@ my_ds$add_variable(pr_mon)
 my_ds$variables()
 #> $pr_month
 #> <Variable> pr_month 
+#> Path name: /pr_month 
 #> 
 #> Values: [8.9e-05 ... 513.1605] mm
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  axis name long_name length values                                       
-#>  T    time           12     [2023-01-16T12:00:00 ... 2023-12-16T12:00:00]
-#>  X    lon  Longitude 14     [5.625 ... 14.765625]                        
-#>  Y    lat  Latitude  14     [40.35078 ... 49.47356]                      
+#>  axis name  long_name length values                                       
+#>  T    /time           12     [2023-01-16T12:00:00 ... 2023-12-16T12:00:00]
+#>  X    /lon  Longitude 14     [5.625 ... 14.765625]                        
+#>  Y    /lat  Latitude  14     [40.35078 ... 49.47356]                      
 #>  unit                 
 #>  days since 1850-01-01
 #>  degrees_east         
@@ -217,7 +220,7 @@ subsubgroup1 <- subgroup$create_subgroup("subsub1")
 subsubgroup2 <- subgroup$create_subgroup("subsub2")
 subsubgroup1$add_variable(pr_mon)
 complex_ds$hierarchy()
-#> <NetCDF objects> CF_dataset 
+#> <CF objects> CF_dataset 
 #> * /
 #>    * sub1
 #>       * subsub1

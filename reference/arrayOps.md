@@ -77,15 +77,16 @@ t2mC$name <- "t2m_Celsius"
 t2mC$set_attribute("units", "NC_CHAR", "degrees_Celsius")
 t2mC
 #> <Variable> t2m_Celsius 
+#> Path name: /t2m_Celsius 
 #> 
 #> Values: [9.868168 ... 28.89472] degrees_Celsius
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  axis name      length values                                       
-#>  X    longitude 31     [28 ... 31]                                  
-#>  Y    latitude  21     [-1 ... -3]                                  
-#>  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  axis name       length values                                       
+#>  X    /longitude 31     [28 ... 31]                                  
+#>  Y    /latitude  21     [-1 ... -3]                                  
+#>  T    /time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    
@@ -102,16 +103,17 @@ hot$set_attribute("long_name", "NC_CHAR", "Flag to indicate where temperature is
 hot$set_attribute("units", "NC_CHAR", "1")
 hot
 #> <Variable> t2m_Celsius_over_20 
+#> Path name: /t2m_Celsius_over_20 
 #> Long name: Flag to indicate where temperature is 20C or hotter 
 #> 
 #> Values: [0 ... 1] 1
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
-#>  axis name      length values                                       
-#>  X    longitude 31     [28 ... 31]                                  
-#>  Y    latitude  21     [-1 ... -3]                                  
-#>  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  axis name       length values                                       
+#>  X    /longitude 31     [28 ... 31]                                  
+#>  Y    /latitude  21     [-1 ... -3]                                  
+#>  T    /time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    

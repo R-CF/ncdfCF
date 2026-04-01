@@ -125,7 +125,7 @@ directly, they are created automatically when opening a netCDF resource.
 
 - `dimids`:
 
-  The identifiers of the dimensions this variable uses.
+  The integer identifiers of the dimensions this variable uses.
 
 - `attributes`:
 

@@ -91,6 +91,7 @@ is a linked netCDF resource, this object will be detached from it.</p></dd>
 
 <ul><li><p><a href="#method-CFBounds-new"><code>CFBounds$new()</code></a></p></li>
 <li><p><a href="#method-CFBounds-print"><code>CFBounds$print()</code></a></p></li>
+<li><p><a href="#method-CFBounds-print_boundary_values"><code>CFBounds$print_boundary_values()</code></a></p></li>
 <li><p><a href="#method-CFBounds-range"><code>CFBounds$range()</code></a></p></li>
 <li><p><a href="#method-CFBounds-copy"><code>CFBounds$copy()</code></a></p></li>
 <li><p><a href="#method-CFBounds-subset"><code>CFBounds$subset()</code></a></p></li>
@@ -198,10 +199,21 @@ is <code>width = </code> to indicate a maximum width of attribute columns.</p></
 </dl><p></p></div>
 </div>
 
+</div><p></p><hr><a id="method-CFBounds-print_boundary_values"></a><div class="section">
+<h3 id="method-print-boundary-values-">Method <code>print_boundary_values()</code><a class="anchor" aria-label="anchor" href="#method-print-boundary-values-"></a></h3>
+<p>Print the boundary values to the console. This method is not
+very useful to call directly - instead, call <code>$print()</code>, which will
+call this method. These boundary values are also printed when printing
+an axis that has boundary values associated with it.</p><div class="section">
+<h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFBounds</span><span class="op">$</span><span class="fu">print_boundary_values</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+
 </div><p></p><hr><a id="method-CFBounds-range"></a><div class="section">
 <h3 id="method-range-">Method <code><a href="https://rdrr.io/r/base/range.html" class="external-link">range()</a></code><a class="anchor" aria-label="anchor" href="#method-range-"></a></h3>
 <p>Retrieve the lowest and highest value in the bounds.</p><div class="section">
-<h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
+<h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFBounds</span><span class="op">$</span><span class="fu">range</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -211,7 +223,7 @@ is <code>width = </code> to indicate a maximum width of attribute columns.</p></
 <p>Create a copy of this bounds object The copy is completely
 separate from <code>self</code>, meaning that both <code>self</code> and all of its
 components are made from new instances.</p><div class="section">
-<h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
+<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFBounds</span><span class="op">$</span><span class="fu">copy</span><span class="op">(</span>name <span class="op">=</span> <span class="st">""</span>, <span class="va">group</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -239,7 +251,7 @@ passed, will use the name of this bounds object.</p></dd>
 range. This currently only applies to 1-D axes.</p>
 <p>This method returns boundary values which span the range of indices
 given by the <code>rng</code> argument.</p><div class="section">
-<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
+<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFBounds</span><span class="op">$</span><span class="fu">subset</span><span class="op">(</span><span class="va">group</span>, <span class="va">rng</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -265,7 +277,7 @@ returned object.</p></dd>
 <h3 id="method-append-">Method <code><a href="https://rdrr.io/r/base/append.html" class="external-link">append()</a></code><a class="anchor" aria-label="anchor" href="#method-append-"></a></h3>
 <p>Append boundary values at the end of the current values of
 the boundary variable.</p><div class="section">
-<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFBounds</span><span class="op">$</span><span class="fu">append</span><span class="op">(</span><span class="va">from</span>, <span class="va">group</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -294,16 +306,15 @@ and the <code>from</code> boundary variable appended. If argument <code>from</co
 <p>Write the boundary variable to a netCDF file. This method
 should not be called directly; instead, <code>CFVariable$save()</code> will call
 this method automatically.</p><div class="section">
-<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFBounds</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span><span class="va">object_name</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFBounds</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span><span class="va">object_id</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>object_name</code></dt>
-<dd><p>The name of the object that uses these boundary
-values, usually an axis but could also be an auxiliary CV or a
-parametric Z axis.</p></dd>
+<p></p><div class="arguments"><dl><dt><code>object_id</code></dt>
+<dd><p>The integer dimid of the object that uses these boundary
+values, usually an axis but could also be an auxiliary CV.</p></dd>
 
 
 </dl><p></p></div>

@@ -86,7 +86,6 @@ vector.</p></dd>
 <li><p><a href="#method-CFAxisTime-indexOf"><code>CFAxisTime$indexOf()</code></a></p></li>
 <li><p><a href="#method-CFAxisTime-slice"><code>CFAxisTime$slice()</code></a></p></li>
 <li><p><a href="#method-CFAxisTime-subset"><code>CFAxisTime$subset()</code></a></p></li>
-<li><p><a href="#method-CFAxisTime-write"><code>CFAxisTime$write()</code></a></p></li>
 </ul></div><p><details><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href="CFObject.html#method-append_attribute"><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href="CFObject.html#method-attribute"><code>ncdfCF::CFObject$attribute()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href="CFObject.html#method-attributes_identical"><code>ncdfCF::CFObject$attributes_identical()</code></a></span></li>
@@ -104,6 +103,7 @@ vector.</p></dd>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="detach"><a href="CFAxis.html#method-detach"><code>ncdfCF::CFAxis$detach()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href="CFAxis.html#method-peek"><code>ncdfCF::CFAxis$peek()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href="CFAxis.html#method-shard"><code>ncdfCF::CFAxis$shard()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="write"><a href="CFAxis.html#method-write"><code>ncdfCF::CFAxis$write()</code></a></span></li>
 </ul></details></p><hr><a id="method-CFAxisTime-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create a new instance of this class, including its boundary
@@ -396,20 +396,6 @@ copy of the axis.</p></dd>
 <p>A new <code>CFAxisTime</code> instance covering the indicated range of
 indices. If the value of the argument <code>rng</code> is <code>NULL</code>, return a copy of
 <code>self</code> as the new axis.</p>
-</div>
-
-</div><p></p><hr><a id="method-CFAxisTime-write"></a><div class="section">
-<h3 id="method-write-">Method <code><a href="https://rdrr.io/r/base/write.html" class="external-link">write()</a></code><a class="anchor" aria-label="anchor" href="#method-write-"></a></h3>
-<p>Write the axis to a netCDF file, including its attributes.
-If the calendar name is "gregorian", it will be set to the functionally
-identical calendar "standard" as the former is deprecated.</p><div class="section">
-<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFAxisTime</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
-<h4 id="returns-8">Returns<a class="anchor" aria-label="anchor" href="#returns-8"></a></h4>
-<p>Self, invisibly.</p>
 </div>
 
 </div>
