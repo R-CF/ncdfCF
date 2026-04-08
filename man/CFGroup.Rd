@@ -56,6 +56,7 @@ current group.}
 \item \href{#method-CFGroup-create_subgroup}{\code{CFGroup$create_subgroup()}}
 \item \href{#method-CFGroup-add_subgroups}{\code{CFGroup$add_subgroups()}}
 \item \href{#method-CFGroup-add_CF_object}{\code{CFGroup$add_CF_object()}}
+\item \href{#method-CFGroup-remove_CF_object}{\code{CFGroup$remove_CF_object()}}
 \item \href{#method-CFGroup-objects}{\code{CFGroup$objects()}}
 \item \href{#method-CFGroup-find_by_name}{\code{CFGroup$find_by_name()}}
 \item \href{#method-CFGroup-add_variable}{\code{CFGroup$add_variable()}}
@@ -243,6 +244,30 @@ otherwise or when the argument is \code{FALSE} an error is thrown.}
 }
 \subsection{Returns}{
 Self, invisibly, or an error.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFGroup-remove_CF_object"></a>}}
+\if{latex}{\out{\hypertarget{method-CFGroup-remove_CF_object}{}}}
+\subsection{Method \code{remove_CF_object()}}{
+Remove a CF objects from the current group. This is an
+internal method that should not be invoked by the user. The objects to
+be removed are considered atomic and not assessed for any contained
+objects.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CFGroup$remove_CF_object(obj)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{obj}}{The integer id property of the CF object to remove from this
+group.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Self, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

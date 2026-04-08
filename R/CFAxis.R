@@ -153,19 +153,24 @@ CFAxis <- R6::R6Class("CFAxis",
     #' @description Some details of the axis.
     #' @return A 1-row `data.frame` with some details of the axis.
     brief = function() {
+      nm <- if (!is.null(ds <- self$group$data_set) && ds$has_subgroups())
+        self$fullname
+      else
+        self$name
+
       if (private$.active_coords > 1L) {
         longname <- private$.aux[[private$.active_coords - 1L]]$name
         units <- private$.aux[[private$.active_coords - 1L]]$attribute("units")
       } else {
         longname <- self$attribute("long_name")
-        if (is.na(longname) || longname == self$name) longname <- ""
+        if (is.na(longname) || longname == nm) longname <- ""
         units <- self$attribute("units")
       }
       len <- if (self$unlimited) paste0(self$length, "-U") else self$length
       if (is.na(units)) units <- ""
       else if (units == "1") units <- ""
 
-      data.frame(axis = private$.orient, name = self$fullname, long_name = longname,
+      data.frame(axis = private$.orient, name = nm, long_name = longname,
                  length = len, values = "", unit = units)
     },
 

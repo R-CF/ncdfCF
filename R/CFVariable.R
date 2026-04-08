@@ -295,9 +295,8 @@ CFVariable <- R6::R6Class("CFVariable",
     print = function(...) {
       cat("<Variable>", self$name, "\n")
 
-      fullname <- self$fullname
-      if (fullname != self$name)
-        cat("Path name:", fullname, "\n")
+      if (!is.null(ds <- self$group$data_set) && ds$has_subgroups())
+        cat("Path name:", self$fullname, "\n")
 
       longname <- self$attribute("long_name")
       if (!is.na(longname) && longname != self$name)
@@ -358,12 +357,17 @@ CFVariable <- R6::R6Class("CFVariable",
     #'
     #' @return A 1-row `data.frame` with some details of the data variable.
     brief = function() {
+      nm <- if (!is.null(ds <- self$group$data_set) && ds$has_subgroups())
+        self$fullname
+      else
+        self$name
+
       unit <- self$attribute("units")
       if (is.na(unit)) unit <- ""
       longname <- self$attribute("long_name")
-      if (is.na(longname) || longname == self$name) longname <- ""
+      if (is.na(longname) || longname == nm) longname <- ""
 
-      data.frame(name = self$fullname, long_name = longname, units = unit,
+      data.frame(name = nm, long_name = longname, units = unit,
                  data_type = private$.data_type, axes = paste(names(private$.axes), collapse = ", "))
     },
 
