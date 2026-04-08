@@ -17,6 +17,8 @@
 - `CFAxisTime$append()` uses `CFtime` code for merging `CFTime`
   instances, allowing for instances with distinct but compatible
   definition to be merged.
+- Cross-referencing NC objects now uses the dimid for more robust code.
+- More consistent use of FQNs for variables and axes.
 - Fixed writing a `CFVariable` to file having a length-1 axis in
   X-Y-Z-T.
 - Fixed retrieving data by index from virtual `CFVariable`.

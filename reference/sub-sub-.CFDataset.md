@@ -44,16 +44,15 @@ v1 <- ds$var_names[1]
 var <- ds[[v1]]
 var
 #> <Variable> t2m 
-#> Path name: /t2m 
 #> Long name: 2 metre temperature 
 #> 
 #> Values: (not loaded)
 #> 
 #> Axes:
-#>  axis name       length values                                       
-#>  X    /longitude 31     [28 ... 31]                                  
-#>  Y    /latitude  21     [-1 ... -3]                                  
-#>  T    /time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
+#>  axis name      length values                                       
+#>  X    longitude 31     [28 ... 31]                                  
+#>  Y    latitude  21     [-1 ... -3]                                  
+#>  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]
 #>  unit                             
 #>  degrees_east                     
 #>  degrees_north                    

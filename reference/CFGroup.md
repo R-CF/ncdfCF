@@ -74,6 +74,8 @@ very well invalidate the CF objects or even the netCDF file.
 
 - [`CFGroup$add_CF_object()`](#method-CFGroup-add_CF_object)
 
+- [`CFGroup$remove_CF_object()`](#method-CFGroup-remove_CF_object)
+
 - [`CFGroup$objects()`](#method-CFGroup-objects)
 
 - [`CFGroup$find_by_name()`](#method-CFGroup-find_by_name)
@@ -265,6 +267,28 @@ as its composing sub-objects such as axes.
 #### Returns
 
 Self, invisibly, or an error.
+
+------------------------------------------------------------------------
+
+### Method `remove_CF_object()`
+
+Remove a CF objects from the current group. This is an internal method
+that should not be invoked by the user. The objects to be removed are
+considered atomic and not assessed for any contained objects.
+
+#### Usage
+
+    CFGroup$remove_CF_object(obj)
+
+#### Arguments
+
+- `obj`:
+
+  The integer id property of the CF object to remove from this group.
+
+#### Returns
+
+Self, invisibly.
 
 ------------------------------------------------------------------------
 

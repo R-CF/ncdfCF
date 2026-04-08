@@ -231,9 +231,9 @@ straightforward:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Variables:</span></span>
 <span><span class="co">#&gt;  name long_name             units data_type axes                     </span></span>
-<span><span class="co">#&gt;  /t2m 2 metre temperature   K     NC_DOUBLE longitude, latitude, time</span></span>
-<span><span class="co">#&gt;  /pev Potential evaporation m     NC_DOUBLE longitude, latitude, time</span></span>
-<span><span class="co">#&gt;  /tp  Total precipitation   m     NC_DOUBLE longitude, latitude, time</span></span>
+<span><span class="co">#&gt;  t2m  2 metre temperature   K     NC_DOUBLE longitude, latitude, time</span></span>
+<span><span class="co">#&gt;  pev  Potential evaporation m     NC_DOUBLE longitude, latitude, time</span></span>
+<span><span class="co">#&gt;  tp   Total precipitation   m     NC_DOUBLE longitude, latitude, time</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attributes:</span></span>
 <span><span class="co">#&gt;  name        type    length value                             </span></span>
@@ -243,16 +243,15 @@ straightforward:</p>
 <span><span class="co"># Variables can be accessed through standard list-type extraction syntax</span></span>
 <span><span class="op">(</span><span class="va">t2m</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">[[</span><span class="st">"t2m"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;Variable&gt; t2m </span></span>
-<span><span class="co">#&gt; Path name: /t2m </span></span>
 <span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Values: (not loaded)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name       length values                                       </span></span>
-<span><span class="co">#&gt;  X    /longitude 31     [28 ... 31]                                  </span></span>
-<span><span class="co">#&gt;  Y    /latitude  21     [-1 ... -3]                                  </span></span>
-<span><span class="co">#&gt;  T    /time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]</span></span>
+<span><span class="co">#&gt;  axis name      length values                                       </span></span>
+<span><span class="co">#&gt;  X    longitude 31     [28 ... 31]                                  </span></span>
+<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]                                  </span></span>
+<span><span class="co">#&gt;  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]</span></span>
 <span><span class="co">#&gt;  unit                             </span></span>
 <span><span class="co">#&gt;  degrees_east                     </span></span>
 <span><span class="co">#&gt;  degrees_north                    </span></span>
@@ -430,16 +429,15 @@ variable.</li>
 <code class="sourceCode R"><span><span class="co"># Extract a specific region, full time dimension</span></span>
 <span><span class="op">(</span><span class="va">ts</span> <span class="op">&lt;-</span> <span class="va">t2m</span><span class="op">$</span><span class="fu">subset</span><span class="op">(</span>X <span class="op">=</span> <span class="fl">29</span><span class="op">:</span><span class="fl">30</span>, Y <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">:</span><span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;Variable&gt; t2m </span></span>
-<span><span class="co">#&gt; Path name: /t2m </span></span>
 <span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Values: (not loaded)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name       length values                                       </span></span>
-<span><span class="co">#&gt;  X    /longitude 11     [29 ... 30]                                  </span></span>
-<span><span class="co">#&gt;  Y    /latitude  11     [-1 ... -2]                                  </span></span>
-<span><span class="co">#&gt;  T    /time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]</span></span>
+<span><span class="co">#&gt;  axis name      length values                                       </span></span>
+<span><span class="co">#&gt;  X    longitude 11     [29 ... 30]                                  </span></span>
+<span><span class="co">#&gt;  Y    latitude  11     [-1 ... -2]                                  </span></span>
+<span><span class="co">#&gt;  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]</span></span>
 <span><span class="co">#&gt;  unit                             </span></span>
 <span><span class="co">#&gt;  degrees_east                     </span></span>
 <span><span class="co">#&gt;  degrees_north                    </span></span>
@@ -457,16 +455,15 @@ variable.</li>
 <span>                  X <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">29.6</span>, <span class="fl">28.8</span><span class="op">)</span>,</span>
 <span>                  Y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>, <span class="op">-</span><span class="fl">1</span>, by <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;Variable&gt; t2m </span></span>
-<span><span class="co">#&gt; Path name: /t2m </span></span>
 <span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Values: (not loaded)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name       length values                                       </span></span>
-<span><span class="co">#&gt;  X    /longitude 7      [28.9 ... 29.5]                              </span></span>
-<span><span class="co">#&gt;  Y    /latitude  11     [-1 ... -2]                                  </span></span>
-<span><span class="co">#&gt;  T    /time      6-U    [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]</span></span>
+<span><span class="co">#&gt;  axis name      length values                                       </span></span>
+<span><span class="co">#&gt;  X    longitude 7      [28.9 ... 29.5]                              </span></span>
+<span><span class="co">#&gt;  Y    latitude  11     [-1 ... -2]                                  </span></span>
+<span><span class="co">#&gt;  T    time      6-U    [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]</span></span>
 <span><span class="co">#&gt;  unit                             </span></span>
 <span><span class="co">#&gt;  degrees_east                     </span></span>
 <span><span class="co">#&gt;  degrees_north                    </span></span>
@@ -525,17 +522,16 @@ coordinate:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">trans29_74</span> <span class="op">&lt;-</span> <span class="va">t2m</span><span class="op">$</span><span class="fu">profile</span><span class="op">(</span>longitude <span class="op">=</span> <span class="fl">29.74</span>, .names <span class="op">=</span> <span class="st">"lon_29_74"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;Variable&gt; lon_29_74 </span></span>
-<span><span class="co">#&gt; Path name: /lon_29_74 </span></span>
 <span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Values: [286.5394 ... 298.963] K</span></span>
 <span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name       length values                                       </span></span>
-<span><span class="co">#&gt;  X    /longitude 1      [29.74]                                      </span></span>
-<span><span class="co">#&gt;  Y    /latitude  21     [-1 ... -3]                                  </span></span>
-<span><span class="co">#&gt;  T    /time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]</span></span>
+<span><span class="co">#&gt;  axis name      length values                                       </span></span>
+<span><span class="co">#&gt;  X    longitude 1      [29.74]                                      </span></span>
+<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]                                  </span></span>
+<span><span class="co">#&gt;  T    time      24-U   [2016-01-01T00:00:00 ... 2016-01-01T23:00:00]</span></span>
 <span><span class="co">#&gt;  unit                             </span></span>
 <span><span class="co">#&gt;  degrees_east                     </span></span>
 <span><span class="co">#&gt;  degrees_north                    </span></span>
@@ -561,17 +557,16 @@ object.</p>
 <code class="sourceCode R"><span><span class="co"># Summarising hourly temperature data to calculate the daily maximum temperature</span></span>
 <span><span class="va">t2m</span><span class="op">$</span><span class="fu">summarise</span><span class="op">(</span><span class="st">"tmax"</span>, <span class="va">max</span>, <span class="st">"day"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;Variable&gt; tmax </span></span>
-<span><span class="co">#&gt; Path name: /tmax </span></span>
 <span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Values: [290.0364 ... 302.0447] K</span></span>
 <span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name       length values                unit                             </span></span>
-<span><span class="co">#&gt;  T    /time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0</span></span>
-<span><span class="co">#&gt;  X    /longitude 31     [28 ... 31]           degrees_east                     </span></span>
-<span><span class="co">#&gt;  Y    /latitude  21     [-1 ... -3]           degrees_north                    </span></span>
+<span><span class="co">#&gt;  axis name      length values                unit                             </span></span>
+<span><span class="co">#&gt;  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0</span></span>
+<span><span class="co">#&gt;  X    longitude 31     [28 ... 31]           degrees_east                     </span></span>
+<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]           degrees_north                    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attributes:</span></span>
 <span><span class="co">#&gt;  name         type      length value                </span></span>
@@ -600,17 +595,16 @@ one go:</p>
 <span><span class="op">(</span><span class="va">stats</span> <span class="op">&lt;-</span> <span class="va">t2m</span><span class="op">$</span><span class="fu">summarise</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tmin"</span>, <span class="st">"tmax"</span>, <span class="st">"diurnal_range"</span><span class="op">)</span>, <span class="va">daily_stats</span>, <span class="st">"day"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $tmin</span></span>
 <span><span class="co">#&gt; &lt;Variable&gt; tmin </span></span>
-<span><span class="co">#&gt; Path name: /tmin </span></span>
 <span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Values: [283.0182 ... 293.8659] K</span></span>
 <span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name       length values                unit                             </span></span>
-<span><span class="co">#&gt;  T    /time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0</span></span>
-<span><span class="co">#&gt;  X    /longitude 31     [28 ... 31]           degrees_east                     </span></span>
-<span><span class="co">#&gt;  Y    /latitude  21     [-1 ... -3]           degrees_north                    </span></span>
+<span><span class="co">#&gt;  axis name      length values                unit                             </span></span>
+<span><span class="co">#&gt;  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0</span></span>
+<span><span class="co">#&gt;  X    longitude 31     [28 ... 31]           degrees_east                     </span></span>
+<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]           degrees_north                    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attributes:</span></span>
 <span><span class="co">#&gt;  name         type      length value                 </span></span>
@@ -620,17 +614,16 @@ one go:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $tmax</span></span>
 <span><span class="co">#&gt; &lt;Variable&gt; tmax </span></span>
-<span><span class="co">#&gt; Path name: /tmax </span></span>
 <span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Values: [290.0364 ... 302.0447] K</span></span>
 <span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name       length values                unit                             </span></span>
-<span><span class="co">#&gt;  T    /time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0</span></span>
-<span><span class="co">#&gt;  X    /longitude 31     [28 ... 31]           degrees_east                     </span></span>
-<span><span class="co">#&gt;  Y    /latitude  21     [-1 ... -3]           degrees_north                    </span></span>
+<span><span class="co">#&gt;  axis name      length values                unit                             </span></span>
+<span><span class="co">#&gt;  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0</span></span>
+<span><span class="co">#&gt;  X    longitude 31     [28 ... 31]           degrees_east                     </span></span>
+<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]           degrees_north                    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attributes:</span></span>
 <span><span class="co">#&gt;  name         type      length value                </span></span>
@@ -640,17 +633,16 @@ one go:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $diurnal_range</span></span>
 <span><span class="co">#&gt; &lt;Variable&gt; diurnal_range </span></span>
-<span><span class="co">#&gt; Path name: /diurnal_range </span></span>
 <span><span class="co">#&gt; Long name: 2 metre temperature </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Values: [1.819982 ... 11.27369] K</span></span>
 <span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name       length values                unit                             </span></span>
-<span><span class="co">#&gt;  T    /time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0</span></span>
-<span><span class="co">#&gt;  X    /longitude 31     [28 ... 31]           degrees_east                     </span></span>
-<span><span class="co">#&gt;  Y    /latitude  21     [-1 ... -3]           degrees_north                    </span></span>
+<span><span class="co">#&gt;  axis name      length values                unit                             </span></span>
+<span><span class="co">#&gt;  T    time       1     [2016-01-01T12:00:00] hours since 1900-01-01 00:00:00.0</span></span>
+<span><span class="co">#&gt;  X    longitude 31     [28 ... 31]           degrees_east                     </span></span>
+<span><span class="co">#&gt;  Y    latitude  21     [-1 ... -3]           degrees_north                    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attributes:</span></span>
 <span><span class="co">#&gt;  name         type      length value              </span></span>
@@ -694,16 +686,15 @@ can be converted to degrees Celsius in the usual way:</p>
 <span><span class="va">tsC</span><span class="op">$</span><span class="fu">set_attribute</span><span class="op">(</span><span class="st">"units"</span>, <span class="st">"NC_CHAR"</span>, <span class="st">"degrees_Celsius"</span><span class="op">)</span></span>
 <span><span class="va">tsC</span></span>
 <span><span class="co">#&gt; &lt;Variable&gt; t2m_273_15 </span></span>
-<span><span class="co">#&gt; Path name: /t2m_273_15 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Values: [15.08352 ... 28.05806] degrees_Celsius</span></span>
 <span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name       length values                                       </span></span>
-<span><span class="co">#&gt;  X    /longitude 7      [28.9 ... 29.5]                              </span></span>
-<span><span class="co">#&gt;  Y    /latitude  11     [-1 ... -2]                                  </span></span>
-<span><span class="co">#&gt;  T    /time      6-U    [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]</span></span>
+<span><span class="co">#&gt;  axis name      length values                                       </span></span>
+<span><span class="co">#&gt;  X    longitude 7      [28.9 ... 29.5]                              </span></span>
+<span><span class="co">#&gt;  Y    latitude  11     [-1 ... -2]                                  </span></span>
+<span><span class="co">#&gt;  T    time      6-U    [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]</span></span>
 <span><span class="co">#&gt;  unit                             </span></span>
 <span><span class="co">#&gt;  degrees_east                     </span></span>
 <span><span class="co">#&gt;  degrees_north                    </span></span>
@@ -720,16 +711,15 @@ can be converted to degrees Celsius in the usual way:</p>
 <span><span class="va">tsHot</span><span class="op">$</span><span class="fu">set_attribute</span><span class="op">(</span><span class="st">"units"</span>, <span class="st">"NC_CHAR"</span>, <span class="st">"1"</span><span class="op">)</span></span>
 <span><span class="va">tsHot</span></span>
 <span><span class="co">#&gt; &lt;Variable&gt; t2m_273_15_20 </span></span>
-<span><span class="co">#&gt; Path name: /t2m_273_15_20 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Values: [0 ... 1] 1</span></span>
 <span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Axes:</span></span>
-<span><span class="co">#&gt;  axis name       length values                                       </span></span>
-<span><span class="co">#&gt;  X    /longitude 7      [28.9 ... 29.5]                              </span></span>
-<span><span class="co">#&gt;  Y    /latitude  11     [-1 ... -2]                                  </span></span>
-<span><span class="co">#&gt;  T    /time      6-U    [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]</span></span>
+<span><span class="co">#&gt;  axis name      length values                                       </span></span>
+<span><span class="co">#&gt;  X    longitude 7      [28.9 ... 29.5]                              </span></span>
+<span><span class="co">#&gt;  Y    latitude  11     [-1 ... -2]                                  </span></span>
+<span><span class="co">#&gt;  T    time      6-U    [2016-01-01T09:00:00 ... 2016-01-01T14:00:00]</span></span>
 <span><span class="co">#&gt;  unit                             </span></span>
 <span><span class="co">#&gt;  degrees_east                     </span></span>
 <span><span class="co">#&gt;  degrees_north                    </span></span>

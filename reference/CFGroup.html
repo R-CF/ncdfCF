@@ -124,6 +124,7 @@ current group.</p></dd>
 <li><p><a href="#method-CFGroup-create_subgroup"><code>CFGroup$create_subgroup()</code></a></p></li>
 <li><p><a href="#method-CFGroup-add_subgroups"><code>CFGroup$add_subgroups()</code></a></p></li>
 <li><p><a href="#method-CFGroup-add_CF_object"><code>CFGroup$add_CF_object()</code></a></p></li>
+<li><p><a href="#method-CFGroup-remove_CF_object"><code>CFGroup$remove_CF_object()</code></a></p></li>
 <li><p><a href="#method-CFGroup-objects"><code>CFGroup$objects()</code></a></p></li>
 <li><p><a href="#method-CFGroup-find_by_name"><code>CFGroup$find_by_name()</code></a></p></li>
 <li><p><a href="#method-CFGroup-add_variable"><code>CFGroup$add_variable()</code></a></p></li>
@@ -309,16 +310,40 @@ otherwise or when the argument is <code>FALSE</code> an error is thrown.</p></dd
 <p>Self, invisibly, or an error.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFGroup-objects"></a><div class="section">
-<h3 id="method-objects-">Method <code><a href="https://rdrr.io/r/base/ls.html" class="external-link">objects()</a></code><a class="anchor" aria-label="anchor" href="#method-objects-"></a></h3>
-<p>This method lists the CF objects of a certain class located
-in this group, optionally including objects in subgroups.</p><div class="section">
+</div><p></p><hr><a id="method-CFGroup-remove_CF_object"></a><div class="section">
+<h3 id="method-remove-cf-object-">Method <code>remove_CF_object()</code><a class="anchor" aria-label="anchor" href="#method-remove-cf-object-"></a></h3>
+<p>Remove a CF objects from the current group. This is an
+internal method that should not be invoked by the user. The objects to
+be removed are considered atomic and not assessed for any contained
+objects.</p><div class="section">
 <h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFGroup</span><span class="op">$</span><span class="fu">objects</span><span class="op">(</span><span class="va">cls</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFGroup</span><span class="op">$</span><span class="fu">remove_CF_object</span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>obj</code></dt>
+<dd><p>The integer id property of the CF object to remove from this
+group.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
+<p>Self, invisibly.</p>
+</div>
+
+</div><p></p><hr><a id="method-CFGroup-objects"></a><div class="section">
+<h3 id="method-objects-">Method <code><a href="https://rdrr.io/r/base/ls.html" class="external-link">objects()</a></code><a class="anchor" aria-label="anchor" href="#method-objects-"></a></h3>
+<p>This method lists the CF objects of a certain class located
+in this group, optionally including objects in subgroups.</p><div class="section">
+<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFGroup</span><span class="op">$</span><span class="fu">objects</span><span class="op">(</span><span class="va">cls</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>cls</code></dt>
 <dd><p>Character vector of classes whose objects to retrieve. Note
 that subclasses are automatically retrieved as well, so specifying
@@ -333,7 +358,7 @@ that subclasses are automatically retrieved as well, so specifying
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
+<h4 id="returns-6">Returns<a class="anchor" aria-label="anchor" href="#returns-6"></a></h4>
 <p>A list of <a href="CFObject.html">CFObject</a> instances.</p>
 </div>
 
@@ -344,12 +369,12 @@ possibly preceded by an absolute or relative group path, return the
 object to the caller. Typically, this method is called
 programmatically; similar interactive use is provided through the
 <code>[[.CFDataset</code> operator.</p><div class="section">
-<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFGroup</span><span class="op">$</span><span class="fu">find_by_name</span><span class="op">(</span><span class="va">name</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
+<h4 id="arguments-9">Arguments<a class="anchor" aria-label="anchor" href="#arguments-9"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>name</code></dt>
 <dd><p>The name of an object, with an optional absolute or relative
 group path from the calling group. The object must be an CF construct:
@@ -359,7 +384,7 @@ group, data variable, axis, auxiliary axis, label, grid mapping, etc.</p></dd>
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-6">Returns<a class="anchor" aria-label="anchor" href="#returns-6"></a></h4>
+<h4 id="returns-7">Returns<a class="anchor" aria-label="anchor" href="#returns-7"></a></h4>
 <p>The object with the provided name. If the object is not found,
 returns <code>NULL</code>.</p>
 </div>
@@ -372,12 +397,12 @@ associated objects (such as axes, CRS, boundary variables, etc), if
 another object with the same name is otherwise identical to the
 associated object then that object will be linked from the variable,
 otherwise an error is thrown.</p><div class="section">
-<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
+<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFGroup</span><span class="op">$</span><span class="fu">add_variable</span><span class="op">(</span><span class="va">var</span>, locations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-9">Arguments<a class="anchor" aria-label="anchor" href="#arguments-9"></a></h4>
+<h4 id="arguments-10">Arguments<a class="anchor" aria-label="anchor" href="#arguments-10"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>var</code></dt>
 <dd><p>An instance of <code>CFVariable</code> or any of its descendants.</p></dd>
 
@@ -397,7 +422,7 @@ associated objects will be stored in this group.</p></dd>
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-7">Returns<a class="anchor" aria-label="anchor" href="#returns-7"></a></h4>
+<h4 id="returns-8">Returns<a class="anchor" aria-label="anchor" href="#returns-8"></a></h4>
 <p>Argument <code>var</code>, invisibly.</p>
 </div>
 
@@ -405,12 +430,12 @@ associated objects will be stored in this group.</p></dd>
 <h3 id="method-write-">Method <code><a href="https://rdrr.io/r/base/write.html" class="external-link">write()</a></code><a class="anchor" aria-label="anchor" href="#method-write-"></a></h3>
 <p>Write the group to file, including its attributes, if it
 doesn't already exist.</p><div class="section">
-<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
+<h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFGroup</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span>recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-10">Arguments<a class="anchor" aria-label="anchor" href="#arguments-10"></a></h4>
+<h4 id="arguments-11">Arguments<a class="anchor" aria-label="anchor" href="#arguments-11"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>recursive</code></dt>
 <dd><p>If <code>TRUE</code> (default), write sub-groups as well.</p></dd>
 
@@ -418,7 +443,7 @@ doesn't already exist.</p><div class="section">
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-8">Returns<a class="anchor" aria-label="anchor" href="#returns-8"></a></h4>
+<h4 id="returns-9">Returns<a class="anchor" aria-label="anchor" href="#returns-9"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 
@@ -426,12 +451,12 @@ doesn't already exist.</p><div class="section">
 <h3 id="method-write-variables-">Method <code>write_variables()</code><a class="anchor" aria-label="anchor" href="#method-write-variables-"></a></h3>
 <p>Write data variables in the group to file, including its
 associated objects, if it doesn't already exist.</p><div class="section">
-<h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
+<h4 id="usage-12">Usage<a class="anchor" aria-label="anchor" href="#usage-12"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFGroup</span><span class="op">$</span><span class="fu">write_variables</span><span class="op">(</span>pack <span class="op">=</span> <span class="cn">FALSE</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-11">Arguments<a class="anchor" aria-label="anchor" href="#arguments-11"></a></h4>
+<h4 id="arguments-12">Arguments<a class="anchor" aria-label="anchor" href="#arguments-12"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>pack</code></dt>
 <dd><p>Logical to indicate if the data should be packed. Packing is
 only useful for numeric data; packing is not performed on integer
@@ -447,7 +472,7 @@ as well.</p></dd>
 </dl><p></p></div>
 </div>
 <div class="section">
-<h4 id="returns-9">Returns<a class="anchor" aria-label="anchor" href="#returns-9"></a></h4>
+<h4 id="returns-10">Returns<a class="anchor" aria-label="anchor" href="#returns-10"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 
