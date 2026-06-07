@@ -24,8 +24,13 @@ CFGroup <- R6::R6Class("CFGroup",
     # List of child `CFGroup` instances of this group.
     .subgroups = list(),
 
-    # List of CF objects defined for this group
-    .objects = list(),
+    # Lists of CF objects defined for this group, by type
+    .axes     = list(),
+    .vars     = list(),
+    .longlat  = list(),
+    .aux      = list(),
+    .measures = list(),
+    .crs      = list(),
 
     # Set the name of the group. Cascade to the underlying NCGroup, as necessary.
     set_name = function(new_name) {
@@ -80,7 +85,7 @@ CFGroup <- R6::R6Class("CFGroup",
         cat("Path      :", self$fullname, "\n")
       }
       if (self$has_subgroups)
-        cat("Subgroups :", paste(names(self$subgroups), collapse = ", "), "\n")
+      cat("Subgroups :", paste(names(self$subgroups), collapse = ", "), "\n")
 
       self$print_attributes(width = 50L)
     },
@@ -128,7 +133,7 @@ CFGroup <- R6::R6Class("CFGroup",
     #'   their path.
     subgroup_names = function(recursive = TRUE) {
       nms <- if (recursive) sapply(private$.subgroups, function(g) g$fullname)
-             else names(private$.subgroups)
+      else names(private$.subgroups)
 
       if (recursive && self$has_subgroups) {
         subs <- lapply(private$.subgroups, function(g) g$subgroup_names(TRUE))
@@ -159,10 +164,10 @@ CFGroup <- R6::R6Class("CFGroup",
     #' @param grps A `CFGroup`, or `list` thereof.
     #' @return Self, invisibly.
     add_subgroups = function(grps) {
-      if (!is.list(grps))
-        grps <- setNames(list(grps), grps$name)
-      private$.subgroups <- c(private$.subgroups, grps)
-      invisible(self)
+    if (!is.list(grps))
+      grps <- setNames(list(grps), grps$name)
+    private$.subgroups <- c(private$.subgroups, grps)
+    invisible(self)
     },
 
     #' @description Add one or more CF objects to the current group. This is an
@@ -179,27 +184,38 @@ CFGroup <- R6::R6Class("CFGroup",
     #'   otherwise or when the argument is `FALSE` an error is thrown.
     #' @return Self, invisibly, or an error.
     add_CF_object = function(obj, silent = TRUE) {
-      if (is.list(obj)) {
-        names <- sapply(obj, function(o) o$name)
-        idx <- match(names, names(private$.objects))
-        if (any(!is.na(idx)))
-          if (silent) {
-            idx <- idx[which(!is.na(idx))] # the duplicates
-            if (!all(sapply(obj, function(o) class(o)[1L]) == class(private$.objects[idx])[1L]))
-              stop("Object name already present in group.", call. = FALSE)
-          } else
+      # Determine the target typed field for obj
+      .target <- function(o) {
+        if (inherits(o, "CFAxis"))              private$.axes
+        else if (inherits(o, "CFVariable"))     private$.vars
+        else if (inherits(o, "CFAuxiliaryLongLat")) private$.longlat
+        else if (inherits(o, "CFLabel"))        private$.aux
+        else if (inherits(o, "CFCellMeasure"))  private$.measures
+        else if (inherits(o, "CFGridMapping"))  private$.crs
+        else stop("Unknown CF object type.", call. = FALSE)
+      }
+      .assign <- function(o) {
+        nm <- o$name
+        field <- .target(o)
+        if (nm %in% names(field)) {
+          if (silent && class(o)[1L] == class(field[[nm]])[1L])
+            return(invisible(NULL))
+          else
             stop("Object name already present in group.", call. = FALSE)
-      } else {
-        idx <- match(obj$name, names(private$.objects))
-        if (is.na(idx))
-          obj <- setNames(list(obj), obj$name)
-        else if (silent && class(obj)[1L] == class(private$.objects[[idx]])[1L])
-          return(invisible(self))
-        else
-          stop("Object name already present in group.", call. = FALSE)
+        }
+        if (inherits(o, "CFAxis"))                  private$.axes[[nm]]     <- o
+        else if (inherits(o, "CFVariable"))         private$.vars[[nm]]     <- o
+        else if (inherits(o, "CFAuxiliaryLongLat")) private$.longlat[[nm]]  <- o
+        else if (inherits(o, "CFLabel"))            private$.aux[[nm]]      <- o
+        else if (inherits(o, "CFCellMeasure"))      private$.measures[[nm]] <- o
+        else if (inherits(o, "CFGridMapping"))      private$.crs[[nm]]      <- o
       }
 
-      private$.objects <- c(private$.objects, obj)
+      if (is.list(obj))
+        lapply(obj, .assign)
+      else
+        .assign(obj)
+
       invisible(self)
     },
 
@@ -211,10 +227,17 @@ CFGroup <- R6::R6Class("CFGroup",
     #' group.
     #' @return Self, invisibly.
     remove_CF_object = function(obj) {
-      refs <- sapply(private$.objects, function(o) o$id)
-      refs[!(lengths(refs) > 0L)] <- 1000000L # Mask any NULLs, such as from lat-long grid
-      refs <- unlist(refs)
-      private$.objects <- private$.objects[refs != obj]
+      .remove_from <- function(lst) {
+        refs <- sapply(lst, function(o) o$id)
+        refs[!(lengths(refs) > 0L)] <- 1000000L
+        lst[unlist(refs) != obj]
+      }
+      private$.axes     <- .remove_from(private$.axes)
+      private$.vars     <- .remove_from(private$.vars)
+      private$.longlat  <- .remove_from(private$.longlat)
+      private$.aux      <- .remove_from(private$.aux)
+      private$.measures <- .remove_from(private$.measures)
+      private$.crs      <- .remove_from(private$.crs)
       invisible(self)
     },
 
@@ -227,8 +250,9 @@ CFGroup <- R6::R6Class("CFGroup",
     #'   (default is `TRUE`)?
     #' @return A list of [CFObject] instances.
     objects = function(cls, recursive = TRUE) {
-      objs <- lapply(private$.objects, function(obj) {if (any(!is.na(match(cls, class(obj))))) obj})
-      objs <- objs[lengths(objs) > 0L]
+      all_objs <- c(private$.axes, private$.vars, private$.longlat,
+                    private$.aux, private$.measures, private$.crs)
+      objs <- Filter(function(obj) any(!is.na(match(cls, class(obj)))), all_objs)
 
       if (recursive && self$has_subgroups) {
         subs <- lapply(private$.subgroups, function(g) g$objects(cls, recursive))
@@ -258,7 +282,7 @@ CFGroup <- R6::R6Class("CFGroup",
       if (!nzchar(elements[1L])) { # first element is empty string: absolute path
         elements <- elements[-1L]
         while (grp$name != "/")
-          grp <- grp$parent
+        grp <- grp$parent
       } else {
         dotdot <- which(elements == "..")
         dotdots <- length(dotdot)
@@ -285,13 +309,14 @@ CFGroup <- R6::R6Class("CFGroup",
 
       # Helper function to find a named object in the group `g`.
       .find_here <- function(g) {
-        objs <- g$CFobjects
-        idx <- which(names(objs) == nm)
-        if (length(idx))
-          objs[[idx]]
-        else if (nm %in% names(g$subgroups))
-          g$subgroups[[nm]]
-        else NULL
+        if (nm %in% names(g$CFaxes))     return(g$CFaxes[[nm]])
+        if (nm %in% names(g$CFvars))     return(g$CFvars[[nm]])
+        if (nm %in% names(g$CFlonglat))  return(g$CFlonglat[[nm]])
+        if (nm %in% names(g$CFaux))      return(g$CFaux[[nm]])
+        if (nm %in% names(g$CFmeasures)) return(g$CFmeasures[[nm]])
+        if (nm %in% names(g$CFcrs))      return(g$CFcrs[[nm]])
+        if (nm %in% names(g$subgroups))  return(g$subgroups[[nm]])
+        NULL
       }
 
       # Find the object in the current group
@@ -368,7 +393,7 @@ CFGroup <- R6::R6Class("CFGroup",
       self$write_attributes()
 
       if (recursive)
-        lapply(private$.subgroups, function(g) g$write(recursive))
+      lapply(private$.subgroups, function(g) g$write(recursive))
 
       invisible(self)
     },
@@ -383,13 +408,9 @@ CFGroup <- R6::R6Class("CFGroup",
     #'   as well.
     #' @return Self, invisibly.
     write_variables = function(pack = FALSE, recursive = TRUE) {
-      lapply(private$.objects, function(obj) {
-        if (inherits(obj, "CFVariable"))
-          obj$write(pack)
-      })
+      lapply(private$.vars, function(obj) obj$write(pack))
       if (recursive)
         lapply(private$.subgroups, function(g) g$write_variables(pack, recursive))
-
       invisible(self)
     }
   ),
@@ -463,11 +484,41 @@ CFGroup <- R6::R6Class("CFGroup",
         private$.subgroups
     },
 
-    #' @field CFobjects (read-only) Retrieve the list of CF objects of the
-    #'   current group.
+    #' @field CFaxes (read-only) Retrieve the list of axes of the current group.
+    CFaxes = function(value) {
+      if (missing(value)) private$.axes
+    },
+
+    #' @field CFvars (read-only) Retrieve the list of CF data variables of the current group.
+    CFvars = function(value) {
+      if (missing(value)) private$.vars
+    },
+
+    #' @field CFlonglat (read-only) Retrieve the list of auxiliary long-lat grids of the current group.
+    CFlonglat = function(value) {
+      if (missing(value)) private$.longlat
+    },
+
+    #' @field CFaux (read-only) Retrieve the list of auxiliary coordinates of the current group.
+    CFaux = function(value) {
+      if (missing(value)) private$.aux
+    },
+
+    #' @field CFmeasures (read-only) Retrieve the list of cell measures of the current group.
+    CFmeasures = function(value) {
+      if (missing(value)) private$.measures
+    },
+
+    #' @field CFcrs (read-only) Retrieve the list of grid mappings of the current group.
+    CFcrs = function(value) {
+      if (missing(value)) private$.crs
+    },
+
+    #' @field CFobjects (read-only) Retrieve all CF objects of the current group as a single list.
     CFobjects = function(value) {
       if (missing(value))
-        private$.objects
+        c(private$.axes, private$.vars, private$.longlat,
+        private$.aux, private$.measures, private$.crs)
     }
   )
 )

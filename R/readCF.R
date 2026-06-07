@@ -182,7 +182,7 @@ peek_ncdf <- function(resource) {
 
   # Dimensions by dimid
   if (length(g$dimids) && length(new_dims <- g$dimids[!(g$dimids %in% parent_dims)]))
-    dims <- lapply(new_dims, function (d) {
+    lapply(new_dims, function (d) {
       dmeta <- RNetCDF::dim.inq.nc(h, d)
       NCDimension$new(dmeta$id, dmeta$name, dmeta$length, dmeta$unlim, ncgrp)
     })
@@ -230,14 +230,19 @@ peek_ncdf <- function(resource) {
 #' @param grp The CF group to build axes for
 #' @return A list with axes built, including from subgroups
 #' @noRd
+
 .buildAxes <- function(grp) {
   nc <- grp$NC
   if (length(nc$NCvars) > 0L) {
-    # Create axis for local variables with name equal to visible dimensions
-    dim_names <- sapply(nc$dimensions("all"), function(d) d$name)
-    if (length(dim_names)) {
-      local_vars <- nc$NCvars[dim_names]
-      local_CVs <- local_vars[lengths(local_vars) > 0L]
+    dims <- nc$dimensions("all")
+    if (length(dims)) {
+      # Match by dimid: a coordinate variable is a 1D variable
+      # whose single dimension id equals the dimension's own id.
+      local_CVs <- Filter(Negate(is.null), lapply(dims, function(d) {
+        # Find a variable in this group that has exactly one dimid equal to d$id
+        cv <- Filter(function(v) v$ndims == 1L && !is.na(v$dimids[1L]) && v$dimids[1L] == d$id, nc$NCvars)
+        if (length(cv)) cv[[1L]] else NULL
+      }))
       axes <- lapply(local_CVs, function(v) .makeAxis(grp, v))
     } else axes <- list()
   } else axes <- list()

@@ -161,7 +161,8 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         units <- var$attribute("units")
         if (is.na(units))
           stop("Could not create a CFTime object from the arguments.", call. = FALSE)
-        cal <- if (is.na(cal <- var$attribute("calendar")) || cal == "gregorian") "standard" else cal
+        cal <- var$attribute("calendar")
+        cal <- if (is.na(cal) || cal == "gregorian") "standard" else cal
 
         bnds <- NULL
         clim <- var$attribute("climatology")
@@ -198,10 +199,9 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
 
       super$initialize(var, group, values = values, start = start, count = count, orientation = "T", attributes = attributes)
       self$set_attribute("standard_name", "NC_CHAR", "time")
-      if (!inherits(var, "NCVariable")) {
+      if (!inherits(var, "NCVariable"))
         self$set_attribute("units", "NC_CHAR", private$.tm$calendar$definition)
-        self$set_attribute("calendar", "NC_CHAR", private$.tm$calendar$name)
-      }
+      self$set_attribute("calendar", "NC_CHAR", private$.tm$calendar$name)
     },
 
     #' @description Summary of the time axis printed to the console.
