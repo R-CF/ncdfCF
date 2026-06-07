@@ -27,6 +27,7 @@ CFGroup <- R6::R6Class("CFGroup",
     # Lists of CF objects defined for this group, by type
     .axes     = list(),
     .vars     = list(),
+    .bounds   = list(),
     .longlat  = list(),
     .aux      = list(),
     .measures = list(),
@@ -188,11 +189,15 @@ CFGroup <- R6::R6Class("CFGroup",
       .target <- function(o) {
         if (inherits(o, "CFAxis"))              private$.axes
         else if (inherits(o, "CFVariable"))     private$.vars
+        else if (inherits(o, "CFBounds"))       private$.bounds
         else if (inherits(o, "CFAuxiliaryLongLat")) private$.longlat
         else if (inherits(o, "CFLabel"))        private$.aux
         else if (inherits(o, "CFCellMeasure"))  private$.measures
         else if (inherits(o, "CFGridMapping"))  private$.crs
-        else stop("Unknown CF object type.", call. = FALSE)
+        else {
+          browser()
+          stop("Unknown CF object type.", call. = FALSE)
+        }
       }
       .assign <- function(o) {
         nm <- o$name
@@ -205,6 +210,7 @@ CFGroup <- R6::R6Class("CFGroup",
         }
         if (inherits(o, "CFAxis"))                  private$.axes[[nm]]     <- o
         else if (inherits(o, "CFVariable"))         private$.vars[[nm]]     <- o
+        else if (inherits(o, "CFBounds"))           private$.bounds[[nm]]   <- o
         else if (inherits(o, "CFAuxiliaryLongLat")) private$.longlat[[nm]]  <- o
         else if (inherits(o, "CFLabel"))            private$.aux[[nm]]      <- o
         else if (inherits(o, "CFCellMeasure"))      private$.measures[[nm]] <- o
@@ -234,6 +240,7 @@ CFGroup <- R6::R6Class("CFGroup",
       }
       private$.axes     <- .remove_from(private$.axes)
       private$.vars     <- .remove_from(private$.vars)
+      private$.bounds   <- .remove_from(private$.bounds)
       private$.longlat  <- .remove_from(private$.longlat)
       private$.aux      <- .remove_from(private$.aux)
       private$.measures <- .remove_from(private$.measures)
@@ -311,6 +318,7 @@ CFGroup <- R6::R6Class("CFGroup",
       .find_here <- function(g) {
         if (nm %in% names(g$CFaxes))     return(g$CFaxes[[nm]])
         if (nm %in% names(g$CFvars))     return(g$CFvars[[nm]])
+        if (nm %in% names(g$CFbounds))   return(g$CFbounds[[nm]])
         if (nm %in% names(g$CFlonglat))  return(g$CFlonglat[[nm]])
         if (nm %in% names(g$CFaux))      return(g$CFaux[[nm]])
         if (nm %in% names(g$CFmeasures)) return(g$CFmeasures[[nm]])
@@ -492,6 +500,11 @@ CFGroup <- R6::R6Class("CFGroup",
     #' @field CFvars (read-only) Retrieve the list of CF data variables of the current group.
     CFvars = function(value) {
       if (missing(value)) private$.vars
+    },
+
+    #' @field CFvars (read-only) Retrieve the list of CF boundary variables of the current group.
+    CFbounds = function(value) {
+      if (missing(value)) private$.bounds
     },
 
     #' @field CFlonglat (read-only) Retrieve the list of auxiliary long-lat grids of the current group.
