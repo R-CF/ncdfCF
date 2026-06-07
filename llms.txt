@@ -16,6 +16,7 @@ Opening and inspecting the contents of a netCDF resource is very
 straightforward:
 
 ``` r
+
 library(ncdfCF)
 
 # Get any netCDF file
@@ -54,6 +55,7 @@ the domain of the axis type). For “time” coordinates, these are
 automatically detected irrespective of the name.
 
 ``` r
+
 # Note the use of named dimnames: these will become the names of the axes
 arr <- array(rnorm(120), dim = c(6, 5, 4))
 dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4), 
