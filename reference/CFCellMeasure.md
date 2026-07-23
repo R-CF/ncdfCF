@@ -24,7 +24,7 @@ to this instance before it can be used in analysis.
 
 ### Public methods
 
-- [`CFCellMeasure$new()`](#method-CFCellMeasure-new)
+- [`CFCellMeasure$new()`](#method-CFCellMeasure-initialize)
 
 - [`CFCellMeasure$print()`](#method-CFCellMeasure-print)
 
@@ -40,7 +40,7 @@ to this instance before it can be used in analysis.
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `CFCellMeasure$new()`
 
 Create an instance of this class.
 
@@ -76,7 +76,7 @@ An instance of this class.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `CFCellMeasure$print()`
 
 Print a summary of the cell measure variable to the console.
 
@@ -93,7 +93,7 @@ Print a summary of the cell measure variable to the console.
 
 ------------------------------------------------------------------------
 
-### Method [`data()`](https://rdrr.io/r/utils/data.html)
+### `CFCellMeasure$data()`
 
 Retrieve the values of the cell measure variable.
 
@@ -109,7 +109,7 @@ instance.
 
 ------------------------------------------------------------------------
 
-### Method `register()`
+### `CFCellMeasure$register()`
 
 Register a
 [CFVariable](https://r-cf.github.io/ncdfCF/reference/CFVariable.md)
@@ -132,7 +132,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `link()`
+### `CFCellMeasure$link()`
 
 Link the cell measure variable to an external netCDF resource. The
 resource will be opened and the appropriate data variable will be linked
@@ -156,7 +156,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method [`detach()`](https://rdrr.io/r/base/detach.html)
+### `CFCellMeasure$detach()`
 
 Detach the internal data variable from an underlying netCDF resource.
 
@@ -170,7 +170,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `CFCellMeasure$clone()`
 
 The objects of this class are cloneable with this method.
 

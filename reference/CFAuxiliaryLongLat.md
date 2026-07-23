@@ -69,7 +69,7 @@ has no practical purpose.
 
 ### Public methods
 
-- [`CFAuxiliaryLongLat$new()`](#method-CFAuxiliaryLongLat-new)
+- [`CFAuxiliaryLongLat$new()`](#method-CFAuxiliaryLongLat-initialize)
 
 - [`CFAuxiliaryLongLat$print()`](#method-CFAuxiliaryLongLat-print)
 
@@ -89,7 +89,7 @@ has no practical purpose.
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `CFAuxiliaryLongLat$new()`
 
 Creating a new instance. It should normally not be useful to create an
 instance of this class other than upon reading a netCDF resource.
@@ -114,7 +114,7 @@ instance of this class other than upon reading a netCDF resource.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `CFAuxiliaryLongLat$print()`
 
 Summary of the auxiliary longitude-latitude variable printed to the
 console.
@@ -125,7 +125,7 @@ console.
 
 ------------------------------------------------------------------------
 
-### Method `brief()`
+### `CFAuxiliaryLongLat$brief()`
 
 Some details of the auxiliary longitude-latitude grid.
 
@@ -139,7 +139,7 @@ A 2-row `data.frame` with some details of the grid components.
 
 ------------------------------------------------------------------------
 
-### Method `sample_index()`
+### `CFAuxiliaryLongLat$sample_index()`
 
 Return the indexes into the X (longitude) and Y (latitude) axes of the
 original data grid of the points closest to the supplied longitudes and
@@ -171,7 +171,7 @@ sampling points, or `c(NA, NA)` is no grid point is located within the
 
 ------------------------------------------------------------------------
 
-### Method `grid_index()`
+### `CFAuxiliaryLongLat$grid_index()`
 
 Compute the indices for the AOI into the data grid.
 
@@ -186,7 +186,7 @@ gives the linear index value into the longitude and latitude grids.
 
 ------------------------------------------------------------------------
 
-### Method `clear_cache()`
+### `CFAuxiliaryLongLat$clear_cache()`
 
 Clears the cache of pre-computed grid index values if an AOI has been
 set.
@@ -197,7 +197,7 @@ set.
 
 ------------------------------------------------------------------------
 
-### Method `attach_to_group()`
+### `CFAuxiliaryLongLat$attach_to_group()`
 
 Attach the auxiliary long-lat grids and any bounds to a group. If there
 is another object with the same name in this group an error is thrown.
@@ -232,7 +232,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method [`detach()`](https://rdrr.io/r/base/detach.html)
+### `CFAuxiliaryLongLat$detach()`
 
 Detach the latitude and longitude from an underlying netCDF resource.
 
@@ -246,7 +246,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `CFAuxiliaryLongLat$clone()`
 
 The objects of this class are cloneable with this method.
 

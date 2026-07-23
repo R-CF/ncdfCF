@@ -25,7 +25,7 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 # Open the file, all metadata is read
 (ds <- open_ncdf(fn))
 #> <Dataset> ERA5land_Rwanda_20160101 
-#> Resource   : /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
+#> Resource   : /Library/Frameworks/R.framework/Versions/4.6/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
 #> Format     : offset64 
 #> Collection : Generic netCDF data 
 #> Conventions: CF-1.6 
@@ -64,7 +64,7 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 (obj <- as_CF("a_new_CF_object", arr))
 #> <Variable> a_new_CF_object 
 #> 
-#> Values: [-2.954212 ... 2.930731] 
+#> Values: [-2.54328 ... 2.501505] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -74,8 +74,8 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 #>  T    time 4      [2025-07-01 ... 2025-07-04] days since 1970-01-01T00:00:00
 #> 
 #> Attributes:
-#>  name         type      length value              
-#>  actual_range NC_DOUBLE 2      -2.954212, 2.930731
+#>  name         type      length value             
+#>  actual_range NC_DOUBLE 2      -2.54328, 2.501505
 
 # Axes are of a specific type and have basic attributes set
 obj$axes[["lat"]]
@@ -118,13 +118,13 @@ site](https://r-cf.github.io/ncdfCF/).
 
 ## Development plan
 
-Package `ncdfCF` is still being developed. It supports reading of all
-data objects from netCDF resources in “classic” and “netcdf4” formats;
-and can write data variables back to a netCDF file. From the CF Metadata
-Conventions it supports identification of axes, interpretation of the
-“time” axis, name resolution when using groups, cell boundary
-information, auxiliary coordinate variables, labels, cell measures,
-attributes and grid mapping information, among others.
+Package `ncdfCF` currently supports reading of all data objects from
+netCDF resources in “classic” and “netcdf4” formats; and can write data
+variables back to a netCDF file. From the CF Metadata Conventions it
+supports identification of axes, interpretation of the “time” axis, name
+resolution when using groups, cell boundary information, auxiliary
+coordinate variables, labels, cell measures, attributes and grid mapping
+information, among others.
 
 Development plans for the near future focus on supporting the below
 features:
@@ -136,17 +136,16 @@ features:
 ##### CF Metadata Conventions
 
 - Cell methods.
-- Aggregation.
 - Support for discrete sampling geometries.
 - Compliance with CMIP5 / CMIP6 requirements.
 
 ## Installation
 
-Package `ncdfCF` is still being developed. While extensively tested on
-multiple well-structured data sets, errors may still occur, particularly
-in data sets that do not adhere to the CF Metadata Conventions. The API
-may still change and although care is taken not to make breaking
-changes, sometimes this is unavoidable.
+While package `ncdfCF` is extensively tested on multiple well-structured
+data sets, errors may still occur, particularly in data sets that do not
+adhere to the CF Metadata Conventions. The API may still change and
+although care is taken not to make breaking changes, sometimes this is
+unavoidable.
 
 Installation from CRAN of the latest release:
 

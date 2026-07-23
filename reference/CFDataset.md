@@ -68,7 +68,7 @@ netCDF resource, organized in groups.
 
 ### Public methods
 
-- [`CFDataset$new()`](#method-CFDataset-new)
+- [`CFDataset$new()`](#method-CFDataset-initialize)
 
 - [`CFDataset$print()`](#method-CFDataset-print)
 
@@ -98,11 +98,13 @@ netCDF resource, organized in groups.
 
 - [`CFDataset$save()`](#method-CFDataset-save)
 
+- [`CFDataset$geozarr()`](#method-CFDataset-geozarr)
+
 - [`CFDataset$clone()`](#method-CFDataset-clone)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `CFDataset$new()`
 
 Create an instance of this class. Do not instantiate this class
 directly; instead, call
@@ -131,7 +133,7 @@ for a new, empty instance.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `CFDataset$print()`
 
 Summary of the data set printed to the console.
 
@@ -148,7 +150,7 @@ Summary of the data set printed to the console.
 
 ------------------------------------------------------------------------
 
-### Method `hierarchy()`
+### `CFDataset$hierarchy()`
 
 Print the group hierarchy to the console.
 
@@ -158,7 +160,7 @@ Print the group hierarchy to the console.
 
 ------------------------------------------------------------------------
 
-### Method `objects_by_standard_name()`
+### `CFDataset$objects_by_standard_name()`
 
 Get objects by standard_name. Several conventions define standard
 vocabularies for physical properties. The standard names from those
@@ -186,7 +188,7 @@ the netCDF resource; each list item is named for the variable or axis.
 
 ------------------------------------------------------------------------
 
-### Method `has_subgroups()`
+### `CFDataset$has_subgroups()`
 
 Does the netCDF resource have subgroups? Newer versions of the `netcdf`
 library, specifically `netcdf4`, can organize dimensions and variables
@@ -203,7 +205,7 @@ Logical to indicate that the netCDF resource uses subgroups.
 
 ------------------------------------------------------------------------
 
-### Method `find_by_name()`
+### `CFDataset$find_by_name()`
 
 Find an object by its name. Given the name of a CF data variable or
 axis, possibly preceded by an absolute group path, return the object to
@@ -227,7 +229,7 @@ The object with the provided name. If the object is not found, returns
 
 ------------------------------------------------------------------------
 
-### Method `variables()`
+### `CFDataset$variables()`
 
 This method lists the CF data variables located in this netCDF resource,
 including those in subgroups.
@@ -242,7 +244,7 @@ A list of `CFVariable` instances.
 
 ------------------------------------------------------------------------
 
-### Method `axes()`
+### `CFDataset$axes()`
 
 This method lists the axes located in this netCDF resource, including
 axes in subgroups.
@@ -257,7 +259,7 @@ A list of `CFAxis` descendants.
 
 ------------------------------------------------------------------------
 
-### Method [`attributes()`](https://rdrr.io/r/base/attributes.html)
+### `CFDataset$attributes()`
 
 List all the attributes of a group. This method returns a `data.frame`
 containing all the attributes of the indicated `group`.
@@ -279,7 +281,7 @@ A `data.frame` of attributes.
 
 ------------------------------------------------------------------------
 
-### Method `attribute()`
+### `CFDataset$attribute()`
 
 Retrieve global attributes of the data set.
 
@@ -307,7 +309,7 @@ of argument `att` `NA` is returned.
 
 ------------------------------------------------------------------------
 
-### Method `set_attribute()`
+### `CFDataset$set_attribute()`
 
 Add an attribute to the global attributes. If an attribute `name`
 already exists, it will be overwritten.
@@ -344,7 +346,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `append_attribute()`
+### `CFDataset$append_attribute()`
 
 Append the text value of a global attribute. If an attribute `name`
 already exists, the `value` will be appended to the existing value of
@@ -384,7 +386,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `delete_attribute()`
+### `CFDataset$delete_attribute()`
 
 Delete attributes. If an attribute `name` is not present this method
 simply returns.
@@ -405,7 +407,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `add_variable()`
+### `CFDataset$add_variable()`
 
 Add a
 [CFVariable](https://r-cf.github.io/ncdfCF/reference/CFVariable.md)
@@ -452,7 +454,7 @@ Argument `var`, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method [`save()`](https://rdrr.io/r/base/save.html)
+### `CFDataset$save()`
 
 Save the data set to file, including its subordinate objects such as
 attributes, data variables, axes, CRS, etc.
@@ -485,7 +487,60 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `CFDataset$geozarr()`
+
+Save the data set to a Zarr store with GeoZarr conventions, including
+its subordinate objects such as attributes, data variables, axes, CRS,
+etc. Every principal `CFVariable` will become a `geozarr_array` and
+every `CFGroup` a `zarr_group`. Ancillary data variables will typically
+become a `zarr_array`, i.e. an array not having GeoZarr convention
+attributes. Axes with regular coordinate values will be stored in the
+attributes, saving space and reducing the number of such ancillary
+arrays.
+
+The data set will have the same hierarchy in the Zarr store as this data
+set, possibly anchored in some subgroup inside the Zarr store. It is
+highly recommended to use separate empty (or non-existing) groups to
+anchor multiple data sets to avoid the possibility of name collisions.
+
+Supported GeoZarr conventions for supplying coordinates are `cs` and
+`spatial`. Due to the limited scope of the latter convention (North-up Y
+coordinates, no support for time or vertical coordinates, 3 axes at
+most) most Zarr arrays will use the `cs` convention. Supporting
+conventions, like `proj` or `ref`, will be used as needed.
+
+#### Usage
+
+    CFDataset$geozarr(zarr, dataset_root = "/")
+
+#### Arguments
+
+- `zarr`:
+
+  Fully-qualified file name or URI indicating where to save the data set
+  to, or a `zarr` object. If a file name or URI, it must point to an
+  existing Zarr store where the data from this dat aset will be
+  appended, or a new Zarr store will be created by that name and then it
+  can not already exist. By convention, a new Zarr store should have a
+  ".zarr" file name extension.
+
+- `dataset_root`:
+
+  Optional. Path to a node in the Zarr store where this data set will be
+  anchored. If the node does not yet exist, it will be created. A path
+  must start from the root node of the Zarr store and be specified like
+  "/subgroup/sub/here" with the root of this data set starting at the
+  indicated path. Defaults to the root of the Zarr store, "/".
+  Alternatively, this may be a `zarr_group` to be used as the root for
+  this data set, but only if argument `zarr` is a `zarr` object.
+
+#### Returns
+
+The `zarr` object to which the data set was written.
+
+------------------------------------------------------------------------
+
+### `CFDataset$clone()`
 
 The objects of this class are cloneable with this method.
 

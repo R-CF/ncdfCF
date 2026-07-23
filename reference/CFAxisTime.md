@@ -5,12 +5,10 @@ This class represents a time axis. The functionality is provided by the
 
 ## Super classes
 
-[`ncdfCF::CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md)
--\>
-[`ncdfCF::CFData`](https://r-cf.github.io/ncdfCF/reference/CFData.md)
--\>
-[`ncdfCF::CFAxis`](https://r-cf.github.io/ncdfCF/reference/CFAxis.md)
--\> `CFAxisTime`
+[`CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md) -\>
+[`CFData`](https://r-cf.github.io/ncdfCF/reference/CFData.md) -\>
+[`CFAxis`](https://r-cf.github.io/ncdfCF/reference/CFAxis.md) -\>
+`CFAxisTime`
 
 ## Active bindings
 
@@ -31,7 +29,7 @@ This class represents a time axis. The functionality is provided by the
 
 ### Public methods
 
-- [`CFAxisTime$new()`](#method-CFAxisTime-new)
+- [`CFAxisTime$new()`](#method-CFAxisTime-initialize)
 
 - [`CFAxisTime$print()`](#method-CFAxisTime-print)
 
@@ -53,28 +51,28 @@ This class represents a time axis. The functionality is provided by the
 
 Inherited methods
 
-- [`ncdfCF::CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
-- [`ncdfCF::CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
-- [`ncdfCF::CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
-- [`ncdfCF::CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
-- [`ncdfCF::CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
-- [`ncdfCF::CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
-- [`ncdfCF::CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
-- [`ncdfCF::CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
-- [`ncdfCF::CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
-- [`ncdfCF::CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
-- [`ncdfCF::CFAxis$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-attach_to_group)
-- [`ncdfCF::CFAxis$can_append()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-can_append)
-- [`ncdfCF::CFAxis$configure_terms()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-configure_terms)
-- [`ncdfCF::CFAxis$copy_terms()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-copy_terms)
-- [`ncdfCF::CFAxis$detach()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-detach)
-- [`ncdfCF::CFAxis$peek()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-peek)
-- [`ncdfCF::CFAxis$shard()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-shard)
-- [`ncdfCF::CFAxis$write()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-write)
+- [`CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
+- [`CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
+- [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
+- [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
+- [`CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
+- [`CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
+- [`CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
+- [`CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
+- [`CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
+- [`CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
+- [`CFAxis$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-attach_to_group)
+- [`CFAxis$can_append()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-can_append)
+- [`CFAxis$configure_terms()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-configure_terms)
+- [`CFAxis$copy_terms()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-copy_terms)
+- [`CFAxis$detach()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-detach)
+- [`CFAxis$peek()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-peek)
+- [`CFAxis$shard()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-shard)
+- [`CFAxis$write()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-write)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `CFAxisTime$new()`
 
 Create a new instance of this class, including its boundary values. A
 `CFTime` or `CFClimatology` instance will also be created to manage the
@@ -134,7 +132,7 @@ function.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `CFAxisTime$print()`
 
 Summary of the time axis printed to the console.
 
@@ -151,7 +149,7 @@ Summary of the time axis printed to the console.
 
 ------------------------------------------------------------------------
 
-### Method `brief()`
+### `CFAxisTime$brief()`
 
 Some details of the axis.
 
@@ -165,7 +163,7 @@ A 1-row `data.frame` with some details of the axis.
 
 ------------------------------------------------------------------------
 
-### Method [`identical()`](https://rdrr.io/r/base/identical.html)
+### `CFAxisTime$identical()`
 
 Tests if the axis passed to this method is identical to `self`.
 
@@ -185,7 +183,7 @@ Tests if the axis passed to this method is identical to `self`.
 
 ------------------------------------------------------------------------
 
-### Method `copy()`
+### `CFAxisTime$copy()`
 
 Create a copy of this axis. The copy is completely separate from `self`,
 meaning that both `self` and all of its components are made from new
@@ -213,7 +211,7 @@ The newly created axis.
 
 ------------------------------------------------------------------------
 
-### Method `copy_with_values()`
+### `CFAxisTime$copy_with_values()`
 
 Create a copy of this axis but using the supplied values. The attributes
 are copied to the new axis. Boundary values and auxiliary coordinates
@@ -254,7 +252,7 @@ The newly created axis.
 
 ------------------------------------------------------------------------
 
-### Method [`append()`](https://rdrr.io/r/base/append.html)
+### `CFAxisTime$append()`
 
 Append a vector of time values at the end of the current values of the
 axis.
@@ -282,7 +280,7 @@ axis appended.
 
 ------------------------------------------------------------------------
 
-### Method `indexOf()`
+### `CFAxisTime$indexOf()`
 
 Retrieve the indices of supplied values on the time axis.
 
@@ -312,7 +310,7 @@ A vector giving the indices in the time axis of valid values in `x`, or
 
 ------------------------------------------------------------------------
 
-### Method `slice()`
+### `CFAxisTime$slice()`
 
 Retrieve the indices of the time axis falling between two extreme
 values.
@@ -339,7 +337,7 @@ An integer vector giving the indices in the time axis between values in
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rdrr.io/r/base/subset.html)
+### `CFAxisTime$subset()`
 
 Return an axis spanning a smaller coordinate range. This method returns
 an axis which spans the range of indices given by the `rng` argument.

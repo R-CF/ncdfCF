@@ -34,7 +34,7 @@ https://cfconventions.org/cf-conventions/cf-conventions.html#standard-name
 
 ### Public methods
 
-- [`CFStandardNames$new()`](#method-CFStandardNames-new)
+- [`CFStandardNames$new()`](#method-CFStandardNames-initialize)
 
 - [`CFStandardNames$print()`](#method-CFStandardNames-print)
 
@@ -46,7 +46,7 @@ https://cfconventions.org/cf-conventions/cf-conventions.html#standard-name
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `CFStandardNames$new()`
 
 Initialize an instance of this class. This is done automatically when
 the package is loaded.
@@ -57,7 +57,7 @@ the package is loaded.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `CFStandardNames$print()`
 
 Print the version number of the standard names table in use, if it is
 loaded. The table is loaded automatically when it is first used.
@@ -68,7 +68,7 @@ loaded. The table is loaded automatically when it is first used.
 
 ------------------------------------------------------------------------
 
-### Method [`find()`](https://rdrr.io/r/utils/apropos.html)
+### `CFStandardNames$find()`
 
 Retrieve the information on the specified names.
 
@@ -91,7 +91,7 @@ with with with the canonical units and a description of the name. If no
 
 ------------------------------------------------------------------------
 
-### Method [`load()`](https://rdrr.io/r/base/load.html)
+### `CFStandardNames$load()`
 
 Load the standard names table so that it's contents may be used in
 display and analysis. Note that the table may be downloaded (4.3MB at
@@ -107,7 +107,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `CFStandardNames$clone()`
 
 The objects of this class are cloneable with this method.
 

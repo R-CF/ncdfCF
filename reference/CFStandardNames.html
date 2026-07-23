@@ -108,38 +108,37 @@ table is available.</p></dd>
 
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
-
-<ul><li><p><a href="#method-CFStandardNames-new"><code>CFStandardNames$new()</code></a></p></li>
+<p></p><ul><li><p><a href="#method-CFStandardNames-initialize"><code>CFStandardNames$new()</code></a></p></li>
 <li><p><a href="#method-CFStandardNames-print"><code>CFStandardNames$print()</code></a></p></li>
 <li><p><a href="#method-CFStandardNames-find"><code>CFStandardNames$find()</code></a></p></li>
 <li><p><a href="#method-CFStandardNames-load"><code>CFStandardNames$load()</code></a></p></li>
 <li><p><a href="#method-CFStandardNames-clone"><code>CFStandardNames$clone()</code></a></p></li>
-</ul></div><p></p><hr><a id="method-CFStandardNames-new"></a><div class="section">
-<h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
+</ul></div><p></p><hr><a id="method-CFStandardNames-initialize"></a><div class="section">
+<h3 id="cfstandardnames-new-"><code>CFStandardNames$new()</code><a class="anchor" aria-label="anchor" href="#cfstandardnames-new-"></a></h3>
 <p>Initialize an instance of this class. This is done
 automatically when the package is loaded.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/CFStandardNames.html">CFStandardNames</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+</div>
 
-</div><p></p><hr><a id="method-CFStandardNames-print"></a><div class="section">
-<h3 id="method-print-">Method <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code><a class="anchor" aria-label="anchor" href="#method-print-"></a></h3>
+<p></p><hr><a id="method-CFStandardNames-print"></a><div class="section">
+<h3 id="cfstandardnames-print-"><code>CFStandardNames$print()</code><a class="anchor" aria-label="anchor" href="#cfstandardnames-print-"></a></h3>
 <p>Print the version number of the standard names table in use,
 if it is loaded. The table is loaded automatically when it is first used.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFStandardNames</span><span class="op">$</span><span class="fu">print</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+</div>
 
-</div><p></p><hr><a id="method-CFStandardNames-find"></a><div class="section">
-<h3 id="method-find-">Method <code><a href="https://rdrr.io/r/utils/apropos.html" class="external-link">find()</a></code><a class="anchor" aria-label="anchor" href="#method-find-"></a></h3>
+<p></p><hr><a id="method-CFStandardNames-find"></a><div class="section">
+<h3 id="cfstandardnames-find-"><code>CFStandardNames$find()</code><a class="anchor" aria-label="anchor" href="#cfstandardnames-find-"></a></h3>
 <p>Retrieve the information on the specified names.</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFStandardNames</span><span class="op">$</span><span class="fu">find</span><span class="op">(</span><span class="va">names</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>names</code></dt>
 <dd><p>A character vector with the names to search the standard
@@ -147,36 +146,35 @@ names table for.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a></h4>
 <p>If an entry with a value in <code>names</code> is found, returns a
 <code>data.frame</code> with with with the canonical units and a description of
 the name. If no <code>names</code> are found in the table <code>NULL</code> is returned.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFStandardNames-load"></a><div class="section">
-<h3 id="method-load-">Method <code><a href="https://rdrr.io/r/base/load.html" class="external-link">load()</a></code><a class="anchor" aria-label="anchor" href="#method-load-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFStandardNames-load"></a><div class="section">
+<h3 id="cfstandardnames-load-"><code>CFStandardNames$load()</code><a class="anchor" aria-label="anchor" href="#cfstandardnames-load-"></a></h3>
 <p>Load the standard names table so that it's contents may be
 used in display and analysis. Note that the table may be downloaded
 (4.3MB at version 91) if not available or stale.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFStandardNames</span><span class="op">$</span><span class="fu">load</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-1">Returns<a class="anchor" aria-label="anchor" href="#returns-1"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFStandardNames-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFStandardNames-clone"></a><div class="section">
+<h3 id="cfstandardnames-clone-"><code>CFStandardNames$clone()</code><a class="anchor" aria-label="anchor" href="#cfstandardnames-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFStandardNames</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
@@ -186,6 +184,7 @@ used in display and analysis. Note that the table may be downloaded
 </div>
 
 </div>
+
 
     </div>
 
@@ -198,7 +197,7 @@ used in display and analysis. Note that the table may be downloaded
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

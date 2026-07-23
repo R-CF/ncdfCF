@@ -50,7 +50,7 @@ axis.</p>
 
     <div class="section level2">
     <h2 id="super-classes">Super classes<a class="anchor" aria-label="anchor" href="#super-classes"></a></h2>
-    <p><code><a href="CFObject.html">ncdfCF::CFObject</a></code> -&gt; <code><a href="CFData.html">ncdfCF::CFData</a></code> -&gt; <code><a href="CFVariable.html">ncdfCF::CFVariable</a></code> -&gt; <code>CFVerticalParametricTerm</code></p>
+    <p><code><a href="CFObject.html">CFObject</a></code> -&gt; <code><a href="CFData.html">CFData</a></code> -&gt; <code><a href="CFVariable.html">CFVariable</a></code> -&gt; <code>CFVerticalParametricTerm</code></p>
     </div>
     <div class="section level2">
     <h2 id="active-bindings">Active bindings<a class="anchor" aria-label="anchor" href="#active-bindings"></a></h2>
@@ -60,7 +60,7 @@ associated data variable. If not, the instance will report <code>0</code> as its
 data.</p></dd>
 
 
-<dt><code>values</code></dt>
+    <dt><code>values</code></dt>
 <dd><p>(read-only) The values of the parametric term. Depending on
 the definition of the term, this could be a large array or a simple
 scalar. Specifically, if the term is defined but no data is included in
@@ -75,41 +75,40 @@ Metadata Conventions.</p></dd>
 
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
-
-<ul><li><p><a href="#method-CFVerticalParametricTerm-new"><code>CFVerticalParametricTerm$new()</code></a></p></li>
+<p></p><ul><li><p><a href="#method-CFVerticalParametricTerm-initialize"><code>CFVerticalParametricTerm$new()</code></a></p></li>
 <li><p><a href="#method-CFVerticalParametricTerm-print"><code>CFVerticalParametricTerm$print()</code></a></p></li>
 <li><p><a href="#method-CFVerticalParametricTerm-subset"><code>CFVerticalParametricTerm$subset()</code></a></p></li>
-</ul></div><p><details><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href="CFObject.html#method-append_attribute"><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href="CFObject.html#method-attribute"><code>ncdfCF::CFObject$attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href="CFObject.html#method-attributes_identical"><code>ncdfCF::CFObject$attributes_identical()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href="CFObject.html#method-delete_attribute"><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href="CFObject.html#method-print_attributes"><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href="CFObject.html#method-set_attribute"><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href="CFObject.html#method-write_attributes"><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href="CFData.html#method-dim"><code>ncdfCF::CFData$dim()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href="CFData.html#method-read_chunk"><code>ncdfCF::CFData$read_chunk()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href="CFData.html#method-read_data"><code>ncdfCF::CFData$read_data()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="add_ancillary_variable"><a href="CFVariable.html#method-add_ancillary_variable"><code>ncdfCF::CFVariable$add_ancillary_variable()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="add_auxiliary_coordinate"><a href="CFVariable.html#method-add_auxiliary_coordinate"><code>ncdfCF::CFVariable$add_auxiliary_coordinate()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="add_cell_measure"><a href="CFVariable.html#method-add_cell_measure"><code>ncdfCF::CFVariable$add_cell_measure()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="append"><a href="CFVariable.html#method-append"><code>ncdfCF::CFVariable$append()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="array"><a href="CFVariable.html#method-array"><code>ncdfCF::CFVariable$array()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="attach_to_group"><a href="CFVariable.html#method-attach_to_group"><code>ncdfCF::CFVariable$attach_to_group()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="brief"><a href="CFVariable.html#method-brief"><code>ncdfCF::CFVariable$brief()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="data.table"><a href="CFVariable.html#method-data.table"><code>ncdfCF::CFVariable$data.table()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="detach"><a href="CFVariable.html#method-detach"><code>ncdfCF::CFVariable$detach()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="is_coincident"><a href="CFVariable.html#method-is_coincident"><code>ncdfCF::CFVariable$is_coincident()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="peek"><a href="CFVariable.html#method-peek"><code>ncdfCF::CFVariable$peek()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="profile"><a href="CFVariable.html#method-profile"><code>ncdfCF::CFVariable$profile()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="raw"><a href="CFVariable.html#method-raw"><code>ncdfCF::CFVariable$raw()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="save"><a href="CFVariable.html#method-save"><code>ncdfCF::CFVariable$save()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="shard"><a href="CFVariable.html#method-shard"><code>ncdfCF::CFVariable$shard()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="summarise"><a href="CFVariable.html#method-summarise"><code>ncdfCF::CFVariable$summarise()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="terra"><a href="CFVariable.html#method-terra"><code>ncdfCF::CFVariable$terra()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="time"><a href="CFVariable.html#method-time"><code>ncdfCF::CFVariable$time()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="write"><a href="CFVariable.html#method-write"><code>ncdfCF::CFVariable$write()</code></a></span></li>
-</ul></details></p><hr><a id="method-CFVerticalParametricTerm-new"></a><div class="section">
-<h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
+</ul></div><p><details><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href="CFObject.html#method-append_attribute"><code>CFObject$append_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href="CFObject.html#method-attribute"><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href="CFObject.html#method-attributes_identical"><code>CFObject$attributes_identical()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href="CFObject.html#method-delete_attribute"><code>CFObject$delete_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href="CFObject.html#method-print_attributes"><code>CFObject$print_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href="CFObject.html#method-set_attribute"><code>CFObject$set_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href="CFObject.html#method-write_attributes"><code>CFObject$write_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href="CFData.html#method-dim"><code>CFData$dim()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href="CFData.html#method-read_chunk"><code>CFData$read_chunk()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href="CFData.html#method-read_data"><code>CFData$read_data()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="add_ancillary_variable"><a href="CFVariable.html#method-add_ancillary_variable"><code>CFVariable$add_ancillary_variable()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="add_auxiliary_coordinate"><a href="CFVariable.html#method-add_auxiliary_coordinate"><code>CFVariable$add_auxiliary_coordinate()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="add_cell_measure"><a href="CFVariable.html#method-add_cell_measure"><code>CFVariable$add_cell_measure()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="append"><a href="CFVariable.html#method-append"><code>CFVariable$append()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="array"><a href="CFVariable.html#method-array"><code>CFVariable$array()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="attach_to_group"><a href="CFVariable.html#method-attach_to_group"><code>CFVariable$attach_to_group()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="brief"><a href="CFVariable.html#method-brief"><code>CFVariable$brief()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="data.table"><a href="CFVariable.html#method-data.table"><code>CFVariable$data.table()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="detach"><a href="CFVariable.html#method-detach"><code>CFVariable$detach()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="is_coincident"><a href="CFVariable.html#method-is_coincident"><code>CFVariable$is_coincident()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="peek"><a href="CFVariable.html#method-peek"><code>CFVariable$peek()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="profile"><a href="CFVariable.html#method-profile"><code>CFVariable$profile()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="raw"><a href="CFVariable.html#method-raw"><code>CFVariable$raw()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="save"><a href="CFVariable.html#method-save"><code>CFVariable$save()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="shard"><a href="CFVariable.html#method-shard"><code>CFVariable$shard()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="summarise"><a href="CFVariable.html#method-summarise"><code>CFVariable$summarise()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="terra"><a href="CFVariable.html#method-terra"><code>CFVariable$terra()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="time"><a href="CFVariable.html#method-time"><code>CFVariable$time()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFVariable" data-id="write"><a href="CFVariable.html#method-write"><code>CFVariable$write()</code></a></span></li>
+</ul></details></p><hr><a id="method-CFVerticalParametricTerm-initialize"></a><div class="section">
+<h3 id="cfverticalparametricterm-new-"><code>CFVerticalParametricTerm$new()</code><a class="anchor" aria-label="anchor" href="#cfverticalparametricterm-new-"></a></h3>
 <p>Create an instance of this class.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/CFVerticalParametricTerm.html">CFVerticalParametricTerm</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
@@ -121,46 +120,38 @@ Metadata Conventions.</p></dd>
 <span>  count <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>var</code></dt>
 <dd><p>The <a href="NCVariable.html">NCVariable</a> instance upon which this CF variable is based
 when read from a netCDF resource, or the name for the new CF variable
 to be created.</p></dd>
 
-
-<dt><code>group</code></dt>
+      <dt><code>group</code></dt>
 <dd><p>The <a href="CFGroup.html">CFGroup</a> that this instance will live in.</p></dd>
 
-
-<dt><code>axes</code></dt>
+      <dt><code>axes</code></dt>
 <dd><p>A <code>list</code> of <a href="CFAxis.html">CFAxis</a> descendant instances that describe the
 axes of the data object.</p></dd>
 
-
-<dt><code>values</code></dt>
+      <dt><code>values</code></dt>
 <dd><p>Optional. The values of the variable in an array.</p></dd>
 
-
-<dt><code>start</code></dt>
+      <dt><code>start</code></dt>
 <dd><p>Optional. Vector of indices where to start reading data
 along the dimensions of the array on file. The vector must be <code>NA</code> to
 read all data, otherwise it must have agree with the dimensions of the
 array on file. Ignored when argument <code>var</code> is not an <code>NCVariable</code>
 instance.</p></dd>
 
-
-<dt><code>count</code></dt>
+      <dt><code>count</code></dt>
 <dd><p>Optional. Vector of number of elements to read along each
 dimension of the array on file. The vector must be <code>NA</code> to read to the
 end of each dimension, otherwise its value must agree with the
 corresponding <code>start</code> value and the dimension of the array on file.
 Ignored when argument <code>var</code> is not an <code>NCVariable</code> instance.</p></dd>
 
-
-<dt><code>attributes</code></dt>
+      <dt><code>attributes</code></dt>
 <dd><p>Optional. A <code>data.frame</code> with the attributes of the
 object. When argument <code>var</code> is an <code>NCVariable</code> instance and this
 argument is an empty <code>data.frame</code> (default), arguments will be read
@@ -168,20 +159,19 @@ from the resource.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a></h4>
 <p>An instance of this class.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFVerticalParametricTerm-print"></a><div class="section">
-<h3 id="method-print-">Method <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code><a class="anchor" aria-label="anchor" href="#method-print-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFVerticalParametricTerm-print"></a><div class="section">
+<h3 id="cfverticalparametricterm-print-"><code>CFVerticalParametricTerm$print()</code><a class="anchor" aria-label="anchor" href="#cfverticalparametricterm-print-"></a></h3>
 <p>Prints a summary of the parametric formula term to the console.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFVerticalParametricTerm</span><span class="op">$</span><span class="fu">print</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>Arguments passed on to other functions. Of particular interest
@@ -189,14 +179,15 @@ is <code>width = </code> to indicate a maximum width of attribute columns.</p></
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-1">Returns<a class="anchor" aria-label="anchor" href="#returns-1"></a></h4>
 <p><code>self</code>, invisibly.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFVerticalParametricTerm-subset"></a><div class="section">
-<h3 id="method-subset-">Method <code><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset()</a></code><a class="anchor" aria-label="anchor" href="#method-subset-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFVerticalParametricTerm-subset"></a><div class="section">
+<h3 id="cfverticalparametricterm-subset-"><code>CFVerticalParametricTerm$subset()</code><a class="anchor" aria-label="anchor" href="#cfverticalparametricterm-subset-"></a></h3>
 <p>Subset the indices to read a smaller portion of the data
 from the netCDF file. The passed indices should be named after the axes
 that they refer to. There may be more indices than axes and they may be
@@ -210,47 +201,40 @@ in a different order than the axes of the term.</p><div class="section">
 <span>  aux <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ZT_dim <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>original_axis_names</code></dt>
 <dd><p>Character vector of names of the axes prior to
 a modifying operation in the owning data variable.</p></dd>
 
-
-<dt><code>new_axes</code></dt>
+      <dt><code>new_axes</code></dt>
 <dd><p>List of <code>CFAxis</code> instances to use for the subsetting.</p></dd>
 
-
-<dt><code>start</code></dt>
+      <dt><code>start</code></dt>
 <dd><p>The indices to start reading data from the file, as an
 integer vector at least as long as the number of axis for the term.</p></dd>
 
-
-<dt><code>count</code></dt>
+      <dt><code>count</code></dt>
 <dd><p>The number of values to read from the file, as an integer
 vector at least as long as the number of axis for the term.</p></dd>
 
-
-<dt><code>aux</code></dt>
+      <dt><code>aux</code></dt>
 <dd><p>Optional. List with the parameters for an auxiliary grid
 transformation. Default is <code>NULL</code>.</p></dd>
 
-
-<dt><code>ZT_dim</code></dt>
+      <dt><code>ZT_dim</code></dt>
 <dd><p>Optional. Dimensions of the non-grid axes when an auxiliary
 grid transformation is specified.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-2">Returns<a class="anchor" aria-label="anchor" href="#returns-2"></a></h4>
 <p>The new parametric term object.</p>
 </div>
 
 </div>
+
 
     </div>
 
@@ -263,7 +247,7 @@ grid transformation is specified.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

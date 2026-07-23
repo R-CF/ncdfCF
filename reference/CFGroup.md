@@ -12,8 +12,8 @@ very well invalidate the CF objects or even the netCDF file.
 
 ## Super class
 
-[`ncdfCF::CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md)
--\> `CFGroup`
+[`CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md) -\>
+`CFGroup`
 
 ## Active bindings
 
@@ -52,15 +52,48 @@ very well invalidate the CF objects or even the netCDF file.
 
   (read-only) Retrieve the list of the subgroups of the current group.
 
+- `CFaxes`:
+
+  (read-only) Retrieve the list of axes of the current group.
+
+- `CFvars`:
+
+  (read-only) Retrieve the list of CF data variables of the current
+  group.
+
+- `CFbounds`:
+
+  (read-only) Retrieve the list of CF boundary variables of the current
+  group.
+
+- `CFlonglat`:
+
+  (read-only) Retrieve the list of auxiliary long-lat grids of the
+  current group.
+
+- `CFaux`:
+
+  (read-only) Retrieve the list of auxiliary coordinates of the current
+  group.
+
+- `CFmeasures`:
+
+  (read-only) Retrieve the list of cell measures of the current group.
+
+- `CFcrs`:
+
+  (read-only) Retrieve the list of grid mappings of the current group.
+
 - `CFobjects`:
 
-  (read-only) Retrieve the list of CF objects of the current group.
+  (read-only) Retrieve all CF objects of the current group as a single
+  list.
 
 ## Methods
 
 ### Public methods
 
-- [`CFGroup$new()`](#method-CFGroup-new)
+- [`CFGroup$new()`](#method-CFGroup-initialize)
 
 - [`CFGroup$print()`](#method-CFGroup-print)
 
@@ -86,21 +119,23 @@ very well invalidate the CF objects or even the netCDF file.
 
 - [`CFGroup$write_variables()`](#method-CFGroup-write_variables)
 
+- [`CFGroup$write_geozarr()`](#method-CFGroup-write_geozarr)
+
 Inherited methods
 
-- [`ncdfCF::CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
-- [`ncdfCF::CFObject$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attach_to_group)
-- [`ncdfCF::CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
-- [`ncdfCF::CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
-- [`ncdfCF::CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
-- [`ncdfCF::CFObject$detach()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-detach)
-- [`ncdfCF::CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
-- [`ncdfCF::CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
-- [`ncdfCF::CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
+- [`CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
+- [`CFObject$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attach_to_group)
+- [`CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
+- [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
+- [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
+- [`CFObject$detach()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-detach)
+- [`CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
+- [`CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
+- [`CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `CFGroup$new()`
 
 Create a new CF group instance.
 
@@ -128,7 +163,7 @@ An instance of this class.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `CFGroup$print()`
 
 Summary of the group printed to the console.
 
@@ -150,7 +185,7 @@ Summary of the group printed to the console.
 
 ------------------------------------------------------------------------
 
-### Method `hierarchy()`
+### `CFGroup$hierarchy()`
 
 Prints the hierarchy of the group and its subgroups to the console, with
 a summary of contained objects. Usually called from the root group to
@@ -170,7 +205,7 @@ display the full group hierarchy.
 
 ------------------------------------------------------------------------
 
-### Method `subgroup_names()`
+### `CFGroup$subgroup_names()`
 
 Retrieve the names of the subgroups of the current group.
 
@@ -193,7 +228,7 @@ path.
 
 ------------------------------------------------------------------------
 
-### Method `create_subgroup()`
+### `CFGroup$create_subgroup()`
 
 Create a new group as a subgroup of the current group.
 
@@ -215,7 +250,7 @@ The newly created group, or an error.
 
 ------------------------------------------------------------------------
 
-### Method `add_subgroups()`
+### `CFGroup$add_subgroups()`
 
 Add subgroups to the current group. These subgroups must be fully
 formed, including having set their parent to this group. Use the
@@ -237,7 +272,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `add_CF_object()`
+### `CFGroup$add_CF_object()`
 
 Add one or more CF objects to the current group. This is an internal
 method that should not be invoked by the user. The objects to be added
@@ -270,7 +305,7 @@ Self, invisibly, or an error.
 
 ------------------------------------------------------------------------
 
-### Method `remove_CF_object()`
+### `CFGroup$remove_CF_object()`
 
 Remove a CF objects from the current group. This is an internal method
 that should not be invoked by the user. The objects to be removed are
@@ -292,7 +327,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method [`objects()`](https://rdrr.io/r/base/ls.html)
+### `CFGroup$objects()`
 
 This method lists the CF objects of a certain class located in this
 group, optionally including objects in subgroups.
@@ -321,7 +356,7 @@ instances.
 
 ------------------------------------------------------------------------
 
-### Method `find_by_name()`
+### `CFGroup$find_by_name()`
 
 Find an object by its name. Given the name of an object, possibly
 preceded by an absolute or relative group path, return the object to the
@@ -347,7 +382,7 @@ The object with the provided name. If the object is not found, returns
 
 ------------------------------------------------------------------------
 
-### Method `add_variable()`
+### `CFGroup$add_variable()`
 
 Add a
 [CFVariable](https://r-cf.github.io/ncdfCF/reference/CFVariable.md)
@@ -387,7 +422,7 @@ Argument `var`, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method [`write()`](https://rdrr.io/r/base/write.html)
+### `CFGroup$write()`
 
 Write the group to file, including its attributes, if it doesn't already
 exist.
@@ -408,7 +443,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `write_variables()`
+### `CFGroup$write_variables()`
 
 Write data variables in the group to file, including its associated
 objects, if it doesn't already exist.
@@ -428,6 +463,27 @@ objects, if it doesn't already exist.
 - `recursive`:
 
   If `TRUE` (default), write data variables in sub-groups as well.
+
+#### Returns
+
+Self, invisibly.
+
+------------------------------------------------------------------------
+
+### `CFGroup$write_geozarr()`
+
+Write this group to a Zarr store. Iterate over contained objects and
+walk through the hierarchy.
+
+#### Usage
+
+    CFGroup$write_geozarr(grp)
+
+#### Arguments
+
+- `grp`:
+
+  The `zarr_group` instance to write to.
 
 #### Returns
 

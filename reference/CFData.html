@@ -53,7 +53,7 @@ classes use this class as ancestor.</p>
 
     <div class="section level2">
     <h2 id="super-class">Super class<a class="anchor" aria-label="anchor" href="#super-class"></a></h2>
-    <p><code><a href="CFObject.html">ncdfCF::CFObject</a></code> -&gt; <code>CFData</code></p>
+    <p><code><a href="CFObject.html">CFObject</a></code> -&gt; <code>CFData</code></p>
     </div>
     <div class="section level2">
     <h2 id="active-bindings">Active bindings<a class="anchor" aria-label="anchor" href="#active-bindings"></a></h2>
@@ -63,12 +63,12 @@ Setting the data type to a wrong value can have unpredictable and
 mostly catastrophic consequences.</p></dd>
 
 
-<dt><code>ndims</code></dt>
+    <dt><code>ndims</code></dt>
 <dd><p>(read-only) Retrieve the dimensionality of the data in the
 array.</p></dd>
 
 
-<dt><code>NC_map</code></dt>
+    <dt><code>NC_map</code></dt>
 <dd><p>Returns a list with columns "start" and "count" giving the
 indices for reading the data of this object from a netCDF resource. The
 list is empty if this object is not backed by a netCDF resource.</p></dd>
@@ -81,22 +81,21 @@ list is empty if this object is not backed by a netCDF resource.</p></dd>
 
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
-
-<ul><li><p><a href="#method-CFData-new"><code>CFData$new()</code></a></p></li>
+<p></p><ul><li><p><a href="#method-CFData-initialize"><code>CFData$new()</code></a></p></li>
 <li><p><a href="#method-CFData-detach"><code>CFData$detach()</code></a></p></li>
 <li><p><a href="#method-CFData-dim"><code>CFData$dim()</code></a></p></li>
 <li><p><a href="#method-CFData-read_data"><code>CFData$read_data()</code></a></p></li>
 <li><p><a href="#method-CFData-read_chunk"><code>CFData$read_chunk()</code></a></p></li>
-</ul></div><p><details><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href="CFObject.html#method-append_attribute"><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href="CFObject.html#method-attach_to_group"><code>ncdfCF::CFObject$attach_to_group()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href="CFObject.html#method-attribute"><code>ncdfCF::CFObject$attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href="CFObject.html#method-attributes_identical"><code>ncdfCF::CFObject$attributes_identical()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href="CFObject.html#method-delete_attribute"><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href="CFObject.html#method-print_attributes"><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href="CFObject.html#method-set_attribute"><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href="CFObject.html#method-write_attributes"><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
-</ul></details></p><hr><a id="method-CFData-new"></a><div class="section">
-<h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
+</ul></div><p><details><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href="CFObject.html#method-append_attribute"><code>CFObject$append_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href="CFObject.html#method-attach_to_group"><code>CFObject$attach_to_group()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href="CFObject.html#method-attribute"><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href="CFObject.html#method-attributes_identical"><code>CFObject$attributes_identical()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href="CFObject.html#method-delete_attribute"><code>CFObject$delete_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href="CFObject.html#method-print_attributes"><code>CFObject$print_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href="CFObject.html#method-set_attribute"><code>CFObject$set_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href="CFObject.html#method-write_attributes"><code>CFObject$write_attributes()</code></a></span></li>
+</ul></details></p><hr><a id="method-CFData-initialize"></a><div class="section">
+<h3 id="cfdata-new-"><code>CFData$new()</code><a class="anchor" aria-label="anchor" href="#cfdata-new-"></a></h3>
 <p>Create a new <code>CFData</code> instance. This method is called upon
 creating CF objects, such as when opening a netCDF resource or creating
 a new CF object. It is rarely, if ever, useful to call this constructor
@@ -111,26 +110,21 @@ directly. Instead, use the methods from higher-level classes such as
 <span>  count <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>obj</code></dt>
 <dd><p>The <a href="NCVariable.html">NCVariable</a> instance upon which this CF object is based
 when read from a netCDF resource, or the name for the new CF object to
 be created.</p></dd>
 
-
-<dt><code>group</code></dt>
+      <dt><code>group</code></dt>
 <dd><p>The <a href="CFGroup.html">CFGroup</a> that this instance will live in.</p></dd>
 
-
-<dt><code>values</code></dt>
+      <dt><code>values</code></dt>
 <dd><p>Optional. The values of the object in an array. Ignored
 when argument <code>obj</code> is an <code>NCVariable</code> instance.</p></dd>
 
-
-<dt><code>start</code></dt>
+      <dt><code>start</code></dt>
 <dd><p>Optional. Vector of indices where to start reading data
 along the dimensions of the array on file. The vector must be <code>NA</code> to
 read all data, otherwise it must have agree with the dimensions of the
@@ -138,8 +132,7 @@ array on file. Default value is <code>1</code>, i.e. start from the beginning of
 the 1-D NC variable. Ignored when argument <code>obj</code> is not an <code>NCVariable</code>
 instance.</p></dd>
 
-
-<dt><code>count</code></dt>
+      <dt><code>count</code></dt>
 <dd><p>Optional. Vector of number of elements to read along each
 dimension of the array on file. The vector must be <code>NA</code> to read to the
 end of each dimension, otherwise its value must agree with the
@@ -147,21 +140,21 @@ corresponding <code>start</code> value and the dimension of the array on file.
 Default is <code>NA</code>. Ignored when argument <code>obj</code> is not an <code>NCVariable</code>
 instance.</p></dd>
 
-
-<dt><code>attributes</code></dt>
+      <dt><code>attributes</code></dt>
 <dd><p>Optional. A <code>data.frame</code> with the attributes of the
 object.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a></h4>
 <p>A <code>CFData</code> instance.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFData-detach"></a><div class="section">
-<h3 id="method-detach-">Method <code><a href="https://rdrr.io/r/base/detach.html" class="external-link">detach()</a></code><a class="anchor" aria-label="anchor" href="#method-detach-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFData-detach"></a><div class="section">
+<h3 id="cfdata-detach-"><code>CFData$detach()</code><a class="anchor" aria-label="anchor" href="#cfdata-detach-"></a></h3>
 <p>Detach the current object from its underlying netCDF
 resource. If necessary, data is read from the resource before
 detaching.</p><div class="section">
@@ -169,15 +162,14 @@ detaching.</p><div class="section">
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFData</span><span class="op">$</span><span class="kw">detach</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+</div>
 
-</div><p></p><hr><a id="method-CFData-dim"></a><div class="section">
-<h3 id="method-dim-">Method <code><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim()</a></code><a class="anchor" aria-label="anchor" href="#method-dim-"></a></h3>
+<p></p><hr><a id="method-CFData-dim"></a><div class="section">
+<h3 id="cfdata-dim-"><code>CFData$dim()</code><a class="anchor" aria-label="anchor" href="#cfdata-dim-"></a></h3>
 <p>Retrieve the dimensions of the data of this object.</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFData</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="va">dimension</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>dimension</code></dt>
 <dd><p>Optional. The index of the dimension to retrieve the
@@ -185,8 +177,7 @@ length for. If omitted, retrieve the lengths of all dimensions.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-1">Returns<a class="anchor" aria-label="anchor" href="#returns-1"></a></h4>
 <p>Integer vector with the length of each requested dimension.
 Read the data of the CF object from the NC file. The data is cached by
@@ -197,15 +188,14 @@ exhausted. The calling code should check for this possibility and break
 up the reading of data into chunks.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFData-read_data"></a><div class="section">
-<h3 id="method-read-data-">Method <code>read_data()</code><a class="anchor" aria-label="anchor" href="#method-read-data-"></a></h3>
-
-<div class="section">
-<h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFData</span><span class="op">$</span><span class="fu">read_data</span><span class="op">(</span>refresh <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
-<div class="section">
+<p></p><hr><a id="method-CFData-read_data"></a><div class="section">
+<h3 id="cfdata-read-data-"><code>CFData$read_data()</code><a class="anchor" aria-label="anchor" href="#cfdata-read-data-"></a></h3>
+<p></p><div class="section">
+<h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFData</span><span class="op">$</span><span class="fu">read_data</span><span class="op">(</span>refresh <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div><p></p><div class="section">
 <h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>refresh</code></dt>
 <dd><p>Should the data be read from file if the object is linked?
@@ -214,8 +204,7 @@ This will replace current values, if previously loaded. Default
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-2">Returns<a class="anchor" aria-label="anchor" href="#returns-2"></a></h4>
 <p>An array of data, invisibly, as prescribed by the <code>start</code> and
 <code>count</code> values used to create this object. If the object is not backed
@@ -227,23 +216,21 @@ method will not be stored in <code>self</code> so the calling code must take a
 reference to it.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFData-read_chunk"></a><div class="section">
-<h3 id="method-read-chunk-">Method <code>read_chunk()</code><a class="anchor" aria-label="anchor" href="#method-read-chunk-"></a></h3>
-
-<div class="section">
-<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFData</span><span class="op">$</span><span class="fu">read_chunk</span><span class="op">(</span><span class="va">start</span>, <span class="va">count</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
-<div class="section">
+<p></p><hr><a id="method-CFData-read_chunk"></a><div class="section">
+<h3 id="cfdata-read-chunk-"><code>CFData$read_chunk()</code><a class="anchor" aria-label="anchor" href="#cfdata-read-chunk-"></a></h3>
+<p></p><div class="section">
+<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFData</span><span class="op">$</span><span class="fu">read_chunk</span><span class="op">(</span><span class="va">start</span>, <span class="va">count</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div><p></p><div class="section">
 <h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>start</code></dt>
 <dd><p>Vector of indices where to start reading data along the
 dimensions of the array. The vector must be <code>NA</code> to read all data,
 otherwise it must agree with the dimensions of the array.</p></dd>
 
-
-<dt><code>count</code></dt>
+      <dt><code>count</code></dt>
 <dd><p>Vector of number of elements to read along each dimension of
 the array. The vector must be <code>NA</code> to read to the end of each
 dimension, otherwise its value must agree with the corresponding
@@ -251,14 +238,14 @@ dimension, otherwise its value must agree with the corresponding
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
 <p>An array of data, as prescribed by the <code>start</code> and <code>count</code>
 arguments, or <code>NULL</code> if there is no data.</p>
 </div>
 
 </div>
+
 
     </div>
 
@@ -271,7 +258,7 @@ arguments, or <code>NULL</code> if there is no data.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

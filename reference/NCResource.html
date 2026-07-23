@@ -77,16 +77,16 @@ by higher-level methods.</p>
 <dd><p>(read-only) A nice description of the class.</p></dd>
 
 
-<dt><code>handle</code></dt>
+    <dt><code>handle</code></dt>
 <dd><p>(read-only) The handle to the netCDF resource.</p></dd>
 
 
-<dt><code>uri</code></dt>
+    <dt><code>uri</code></dt>
 <dd><p>(read-only) The URI of the netCDF resource, either a local
 filename or the location of an online resource.</p></dd>
 
 
-<dt><code>can_write</code></dt>
+    <dt><code>can_write</code></dt>
 <dd><p>(read-only) Is the resource writable?</p></dd>
 
 
@@ -97,103 +97,98 @@ filename or the location of an online resource.</p></dd>
 
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
-
-<ul><li><p><a href="#method-NCResource-new"><code>NCResource$new()</code></a></p></li>
+<p></p><ul><li><p><a href="#method-NCResource-initialize"><code>NCResource$new()</code></a></p></li>
 <li><p><a href="#method-NCResource-print"><code>NCResource$print()</code></a></p></li>
 <li><p><a href="#method-NCResource-create"><code>NCResource$create()</code></a></p></li>
 <li><p><a href="#method-NCResource-close"><code>NCResource$close()</code></a></p></li>
 <li><p><a href="#method-NCResource-group_handle"><code>NCResource$group_handle()</code></a></p></li>
 <li><p><a href="#method-NCResource-clone"><code>NCResource$clone()</code></a></p></li>
-</ul></div><p></p><hr><a id="method-NCResource-new"></a><div class="section">
-<h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
+</ul></div><p></p><hr><a id="method-NCResource-initialize"></a><div class="section">
+<h3 id="ncresource-new-"><code>NCResource$new()</code><a class="anchor" aria-label="anchor" href="#ncresource-new-"></a></h3>
 <p>Create a connection to a netCDF resource. This is called by
 <code><a href="open_ncdf.html">open_ncdf()</a></code> when opening a netCDF resource or when saving a dataset
 to file. You should never have to call this directly.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/NCResource.html">NCResource</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">uri</span>, <span class="va">write</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>uri</code></dt>
 <dd><p>The URI to the netCDF resource.</p></dd>
 
-
-<dt><code>write</code></dt>
+      <dt><code>write</code></dt>
 <dd><p>Logical flag to indicate if the resource should be
 read-write.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a></h4>
 <p>An instance of this class.</p>
 </div>
 
-</div><p></p><hr><a id="method-NCResource-print"></a><div class="section">
-<h3 id="method-print-">Method <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code><a class="anchor" aria-label="anchor" href="#method-print-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-NCResource-print"></a><div class="section">
+<h3 id="ncresource-print-"><code>NCResource$print()</code><a class="anchor" aria-label="anchor" href="#ncresource-print-"></a></h3>
 <p>Print a summary of the netCDF resource to the console.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCResource</span><span class="op">$</span><span class="fu">print</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-1">Returns<a class="anchor" aria-label="anchor" href="#returns-1"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 
-</div><p></p><hr><a id="method-NCResource-create"></a><div class="section">
-<h3 id="method-create-">Method <code>create()</code><a class="anchor" aria-label="anchor" href="#method-create-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-NCResource-create"></a><div class="section">
+<h3 id="ncresource-create-"><code>NCResource$create()</code><a class="anchor" aria-label="anchor" href="#ncresource-create-"></a></h3>
 <p>Create a new file on disk for the netCDF resource.</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCResource</span><span class="op">$</span><span class="fu">create</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-2">Returns<a class="anchor" aria-label="anchor" href="#returns-2"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 
-</div><p></p><hr><a id="method-NCResource-close"></a><div class="section">
-<h3 id="method-close-">Method <code><a href="https://rdrr.io/r/base/connections.html" class="external-link">close()</a></code><a class="anchor" aria-label="anchor" href="#method-close-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-NCResource-close"></a><div class="section">
+<h3 id="ncresource-close-"><code>NCResource$close()</code><a class="anchor" aria-label="anchor" href="#ncresource-close-"></a></h3>
 <p>Closing an open netCDF resource. It should rarely be
 necessary to call this method directly.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCResource</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+</div>
 
-</div><p></p><hr><a id="method-NCResource-group_handle"></a><div class="section">
-<h3 id="method-group-handle-">Method <code>group_handle()</code><a class="anchor" aria-label="anchor" href="#method-group-handle-"></a></h3>
+<p></p><hr><a id="method-NCResource-group_handle"></a><div class="section">
+<h3 id="ncresource-group-handle-"><code>NCResource$group_handle()</code><a class="anchor" aria-label="anchor" href="#ncresource-group-handle-"></a></h3>
 <p>Every group in a netCDF file has its own handle, with the
 "root" group having the handle for the entire netCDF resource. The
 handle returned by this method is valid only for the named group.</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCResource</span><span class="op">$</span><span class="fu">group_handle</span><span class="op">(</span><span class="va">group_name</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>group_name</code></dt>
 <dd><p>The absolute path to the group.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
 <p>The handle to the group.</p>
 </div>
 
-</div><p></p><hr><a id="method-NCResource-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-NCResource-clone"></a><div class="section">
+<h3 id="ncresource-clone-"><code>NCResource$clone()</code><a class="anchor" aria-label="anchor" href="#ncresource-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCResource</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
@@ -203,6 +198,7 @@ handle returned by this method is valid only for the named group.</p><div class=
 </div>
 
 </div>
+
 
     </div>
 
@@ -215,7 +211,7 @@ handle returned by this method is valid only for the named group.</p><div class=
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

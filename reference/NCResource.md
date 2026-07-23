@@ -41,7 +41,7 @@ handled by higher-level methods.
 
 ### Public methods
 
-- [`NCResource$new()`](#method-NCResource-new)
+- [`NCResource$new()`](#method-NCResource-initialize)
 
 - [`NCResource$print()`](#method-NCResource-print)
 
@@ -55,7 +55,7 @@ handled by higher-level methods.
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `NCResource$new()`
 
 Create a connection to a netCDF resource. This is called by
 [`open_ncdf()`](https://r-cf.github.io/ncdfCF/reference/open_ncdf.md)
@@ -82,7 +82,7 @@ An instance of this class.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `NCResource$print()`
 
 Print a summary of the netCDF resource to the console.
 
@@ -96,7 +96,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `create()`
+### `NCResource$create()`
 
 Create a new file on disk for the netCDF resource.
 
@@ -110,7 +110,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method [`close()`](https://rdrr.io/r/base/connections.html)
+### `NCResource$close()`
 
 Closing an open netCDF resource. It should rarely be necessary to call
 this method directly.
@@ -121,7 +121,7 @@ this method directly.
 
 ------------------------------------------------------------------------
 
-### Method `group_handle()`
+### `NCResource$group_handle()`
 
 Every group in a netCDF file has its own handle, with the "root" group
 having the handle for the entire netCDF resource. The handle returned by
@@ -143,7 +143,7 @@ The handle to the group.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `NCResource$clone()`
 
 The objects of this class are cloneable with this method.
 

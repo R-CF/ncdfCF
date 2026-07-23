@@ -6,12 +6,10 @@ their nature. More specific classes descend from this class.
 
 ## Super classes
 
-[`ncdfCF::CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md)
--\>
-[`ncdfCF::CFData`](https://r-cf.github.io/ncdfCF/reference/CFData.md)
--\>
-[`ncdfCF::CFAxis`](https://r-cf.github.io/ncdfCF/reference/CFAxis.md)
--\> `CFAxisNumeric`
+[`CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md) -\>
+[`CFData`](https://r-cf.github.io/ncdfCF/reference/CFData.md) -\>
+[`CFAxis`](https://r-cf.github.io/ncdfCF/reference/CFAxis.md) -\>
+`CFAxisNumeric`
 
 ## Active bindings
 
@@ -29,7 +27,7 @@ their nature. More specific classes descend from this class.
 
 ### Public methods
 
-- [`CFAxisNumeric$new()`](#method-CFAxisNumeric-new)
+- [`CFAxisNumeric$new()`](#method-CFAxisNumeric-initialize)
 
 - [`CFAxisNumeric$print()`](#method-CFAxisNumeric-print)
 
@@ -53,28 +51,28 @@ their nature. More specific classes descend from this class.
 
 Inherited methods
 
-- [`ncdfCF::CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
-- [`ncdfCF::CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
-- [`ncdfCF::CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
-- [`ncdfCF::CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
-- [`ncdfCF::CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
-- [`ncdfCF::CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
-- [`ncdfCF::CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
-- [`ncdfCF::CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
-- [`ncdfCF::CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
-- [`ncdfCF::CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
-- [`ncdfCF::CFAxis$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-attach_to_group)
-- [`ncdfCF::CFAxis$can_append()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-can_append)
-- [`ncdfCF::CFAxis$configure_terms()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-configure_terms)
-- [`ncdfCF::CFAxis$copy_terms()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-copy_terms)
-- [`ncdfCF::CFAxis$detach()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-detach)
-- [`ncdfCF::CFAxis$peek()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-peek)
-- [`ncdfCF::CFAxis$shard()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-shard)
-- [`ncdfCF::CFAxis$write()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-write)
+- [`CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
+- [`CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
+- [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
+- [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
+- [`CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
+- [`CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
+- [`CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
+- [`CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
+- [`CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
+- [`CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
+- [`CFAxis$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-attach_to_group)
+- [`CFAxis$can_append()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-can_append)
+- [`CFAxis$configure_terms()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-configure_terms)
+- [`CFAxis$copy_terms()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-copy_terms)
+- [`CFAxis$detach()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-detach)
+- [`CFAxis$peek()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-peek)
+- [`CFAxis$shard()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-shard)
+- [`CFAxis$write()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-write)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `CFAxisNumeric$new()`
 
 Create a new instance of this class.
 
@@ -138,7 +136,7 @@ function.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `CFAxisNumeric$print()`
 
 Summary of the axis printed to the console.
 
@@ -159,7 +157,7 @@ Summary of the axis printed to the console.
 
 ------------------------------------------------------------------------
 
-### Method `brief()`
+### `CFAxisNumeric$brief()`
 
 Some details of the axis.
 
@@ -173,7 +171,7 @@ A 1-row `data.frame` with some details of the axis.
 
 ------------------------------------------------------------------------
 
-### Method [`range()`](https://rdrr.io/r/base/range.html)
+### `CFAxisNumeric$range()`
 
 Retrieve the range of coordinate values in the axis.
 
@@ -188,7 +186,7 @@ in the axis, respectively.
 
 ------------------------------------------------------------------------
 
-### Method `indexOf()`
+### `CFAxisNumeric$indexOf()`
 
 Retrieve the indices of supplied coordinates on the axis. If the axis
 has boundary values then the supplied coordinates must fall within the
@@ -225,7 +223,7 @@ fall on or between the boundaries of an axis coordinate are returned as
 
 ------------------------------------------------------------------------
 
-### Method `slice()`
+### `CFAxisNumeric$slice()`
 
 Given a range of domain coordinate values, returns the indices into the
 axis that fall within the supplied range. If the axis has bounds, any
@@ -252,7 +250,7 @@ of coordinates.
 
 ------------------------------------------------------------------------
 
-### Method `copy()`
+### `CFAxisNumeric$copy()`
 
 Create a copy of this axis. The copy is completely separate from `self`,
 meaning that both `self` and all of its components are made from new
@@ -280,7 +278,7 @@ The newly created axis.
 
 ------------------------------------------------------------------------
 
-### Method `copy_with_values()`
+### `CFAxisNumeric$copy_with_values()`
 
 Create a copy of this axis but using the supplied values. The attributes
 are copied to the new axis. Boundary values and auxiliary coordinates
@@ -316,7 +314,7 @@ The newly created axis.
 
 ------------------------------------------------------------------------
 
-### Method [`identical()`](https://rdrr.io/r/base/identical.html)
+### `CFAxisNumeric$identical()`
 
 Tests if the axis passed to this method is identical to `self`.
 
@@ -336,7 +334,7 @@ Tests if the axis passed to this method is identical to `self`.
 
 ------------------------------------------------------------------------
 
-### Method [`append()`](https://rdrr.io/r/base/append.html)
+### `CFAxisNumeric$append()`
 
 Append a vector of values at the end of the current values of the axis.
 Boundary values are appended as well but if either this axis or the
@@ -366,7 +364,7 @@ axis appended.
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rdrr.io/r/base/subset.html)
+### `CFAxisNumeric$subset()`
 
 Return an axis spanning a smaller coordinate range. This method returns
 an axis which spans the range of indices given by the `rng` argument.

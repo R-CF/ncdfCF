@@ -9,10 +9,9 @@ grid mapping parameters, etc.
 
 ## Super classes
 
-[`ncdfCF::CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md)
--\>
-[`ncdfCF::CFData`](https://r-cf.github.io/ncdfCF/reference/CFData.md)
--\> `CFVariable`
+[`CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md) -\>
+[`CFData`](https://r-cf.github.io/ncdfCF/reference/CFData.md) -\>
+`CFVariable`
 
 ## Active bindings
 
@@ -81,7 +80,7 @@ grid mapping parameters, etc.
 
 ### Public methods
 
-- [`CFVariable$new()`](#method-CFVariable-new)
+- [`CFVariable$new()`](#method-CFVariable-initialize)
 
 - [`CFVariable$print()`](#method-CFVariable-print)
 
@@ -127,20 +126,20 @@ grid mapping parameters, etc.
 
 Inherited methods
 
-- [`ncdfCF::CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
-- [`ncdfCF::CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
-- [`ncdfCF::CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
-- [`ncdfCF::CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
-- [`ncdfCF::CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
-- [`ncdfCF::CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
-- [`ncdfCF::CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
-- [`ncdfCF::CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
-- [`ncdfCF::CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
-- [`ncdfCF::CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
+- [`CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
+- [`CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
+- [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
+- [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
+- [`CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
+- [`CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
+- [`CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
+- [`CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
+- [`CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
+- [`CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `CFVariable$new()`
 
 Create an instance of this class.
 
@@ -208,7 +207,7 @@ A `CFVariable` instance.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `CFVariable$print()`
 
 Print a summary of the data variable to the console.
 
@@ -225,7 +224,7 @@ Print a summary of the data variable to the console.
 
 ------------------------------------------------------------------------
 
-### Method `brief()`
+### `CFVariable$brief()`
 
 Some details of the data variable.
 
@@ -239,7 +238,7 @@ A 1-row `data.frame` with some details of the data variable.
 
 ------------------------------------------------------------------------
 
-### Method `shard()`
+### `CFVariable$shard()`
 
 The information returned by this method is very concise and most useful
 when combined with similar information from other variables.
@@ -254,7 +253,7 @@ Character string with very basic variable information.
 
 ------------------------------------------------------------------------
 
-### Method `peek()`
+### `CFVariable$peek()`
 
 Retrieve interesting details of the data variable.
 
@@ -268,7 +267,7 @@ A 1-row `data.frame` with details of the data variable.
 
 ------------------------------------------------------------------------
 
-### Method [`detach()`](https://rdrr.io/r/base/detach.html)
+### `CFVariable$detach()`
 
 Detach the various properties of this variable from an underlying netCDF
 resource.
@@ -283,7 +282,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method [`time()`](https://rdrr.io/r/stats/time.html)
+### `CFVariable$time()`
 
 Return the time object from the axis representing time.
 
@@ -307,7 +306,7 @@ the variable does not have a "time" axis.
 
 ------------------------------------------------------------------------
 
-### Method [`raw()`](https://rdrr.io/r/base/raw.html)
+### `CFVariable$raw()`
 
 Retrieve the data in the object exactly as it was read from a netCDF
 resource or produced by an operation.
@@ -322,7 +321,7 @@ An `array`, `matrix` or `vector` with (dim)names set.
 
 ------------------------------------------------------------------------
 
-### Method [`array()`](https://rdrr.io/r/base/array.html)
+### `CFVariable$array()`
 
 Retrieve the data in the object in the form of an R array, with axis
 ordering Y-X-others and Y values going from the top down.
@@ -338,7 +337,7 @@ has only a single dimension.
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rdrr.io/r/base/subset.html)
+### `CFVariable$subset()`
 
 This method extracts a subset of values from the array of the variable,
 with the range along each axis to extract expressed in coordinate values
@@ -440,7 +439,7 @@ result will be attached to a private group.
 
 ------------------------------------------------------------------------
 
-### Method `summarise()`
+### `CFVariable$summarise()`
 
 Summarise the temporal domain of the data, if present, to a lower
 resolution, using a user-supplied aggregation function.
@@ -514,7 +513,7 @@ entirely outside of the range of the time axis.
 
 ------------------------------------------------------------------------
 
-### Method [`profile()`](https://rdrr.io/r/stats/profile.html)
+### `CFVariable$profile()`
 
 This method extracts profiles of values from the array of the variable,
 with the location along each axis to extract expressed in coordinate
@@ -593,7 +592,7 @@ all profiles, with a ".variable" column using the values from the
 
 ------------------------------------------------------------------------
 
-### Method [`append()`](https://rdrr.io/r/base/append.html)
+### `CFVariable$append()`
 
 Append the data from another `CFVariable` instance to the current
 instance, along one of the axes. The operation will only succeed if the
@@ -625,7 +624,7 @@ appended, in a new private group.
 
 ------------------------------------------------------------------------
 
-### Method `is_coincident()`
+### `CFVariable$is_coincident()`
 
 Tests if the `other` object is coincident with this data variable:
 identical axes.
@@ -646,7 +645,7 @@ identical axes.
 
 ------------------------------------------------------------------------
 
-### Method `add_cell_measure()`
+### `CFVariable$add_cell_measure()`
 
 Add a cell measure variable to this variable.
 
@@ -667,7 +666,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `add_auxiliary_coordinate()`
+### `CFVariable$add_auxiliary_coordinate()`
 
 Add an auxiliary coordinate to the appropriate axis of this variable.
 The length of the axis must be the same as the length of the auxiliary
@@ -695,7 +694,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `add_ancillary_variable()`
+### `CFVariable$add_ancillary_variable()`
 
 Add an ancillary variable to this variable.
 
@@ -715,7 +714,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `attach_to_group()`
+### `CFVariable$attach_to_group()`
 
 Attach this variable to a group. If there is another object with the
 same name in this group an error is thrown. For associated objects (such
@@ -754,7 +753,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `terra()`
+### `CFVariable$terra()`
 
 Convert the data to a
 [`terra::SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
@@ -779,7 +778,7 @@ instance.
 
 ------------------------------------------------------------------------
 
-### Method `data.table()`
+### `CFVariable$data.table()`
 
 Retrieve the data variable in the object in the form of a `data.table`.
 The `data.table` package needs to be installed for this method to work.
@@ -810,7 +809,7 @@ values.
 
 ------------------------------------------------------------------------
 
-### Method [`write()`](https://rdrr.io/r/base/write.html)
+### `CFVariable$write()`
 
 Write the data variable to a netCDF file, including all of its dependent
 objects, such as axes and attributes.
@@ -839,7 +838,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method [`save()`](https://rdrr.io/r/base/save.html)
+### `CFVariable$save()`
 
 Save the data variable to a netCDF file, including its subordinate
 objects such as axes, CRS, etc. Note that saving a data variable will

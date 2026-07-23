@@ -11,6 +11,8 @@
 - `CFAxis$identical()` can optionally assess attributes for equality.
 - `CFVariable$summarise()` returns `NULL` if the `era` argument falls
   entirely outside of the time axis of the variable.
+- Exporting data sets to GeoZarr using the `geozarr` package
+  (experimental - has known issues and is incomplete).
 
 ##### Code
 
@@ -18,11 +20,15 @@
   instances, allowing for instances with distinct but compatible
   definition to be merged.
 - Cross-referencing NC objects now uses the dimid for more robust code.
-- More consistent use of FQNs for variables and axes.
+- More consistent use of FQNs for dimensions, variables and axes.
+- Axes, axis boundary values and labels have a `regular` active field to
+  flag if coordinates are regularly spaced.
 - Fixed writing a `CFVariable` to file having a length-1 axis in
   X-Y-Z-T.
 - Fixed retrieving data by index from virtual `CFVariable`.
 - Fixed indexing of numeric axis with one-sided boundary values.
+- Suggests packages `zarr` and `geozarr`.
+- Bumped R version to 4.2.
 
 ## ncdfCF 0.8.2
 

@@ -11,8 +11,8 @@ invalidate the CF objects or even the netCDF file.
 
 ## Super class
 
-[`ncdfCF::NCObject`](https://r-cf.github.io/ncdfCF/reference/NCObject.md)
--\> `NCGroup`
+[`NCObject`](https://r-cf.github.io/ncdfCF/reference/NCObject.md) -\>
+`NCGroup`
 
 ## Public fields
 
@@ -79,11 +79,13 @@ invalidate the CF objects or even the netCDF file.
 
 ### Public methods
 
-- [`NCGroup$new()`](#method-NCGroup-new)
+- [`NCGroup$new()`](#method-NCGroup-initialize)
 
 - [`NCGroup$print()`](#method-NCGroup-print)
 
 - [`NCGroup$find_by_name()`](#method-NCGroup-find_by_name)
+
+- [`NCGroup$find_dimvar_by_name()`](#method-NCGroup-find_dimvar_by_name)
 
 - [`NCGroup$find_dim_by_id()`](#method-NCGroup-find_dim_by_id)
 
@@ -105,13 +107,13 @@ invalidate the CF objects or even the netCDF file.
 
 Inherited methods
 
-- [`ncdfCF::NCObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-attribute)
-- [`ncdfCF::NCObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-print_attributes)
-- [`ncdfCF::NCObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-write_attributes)
+- [`NCObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-attribute)
+- [`NCObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-print_attributes)
+- [`NCObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-write_attributes)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `NCGroup$new()`
 
 Create a new instance of this class.
 
@@ -152,7 +154,7 @@ An instance of this class.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `NCGroup$print()`
 
 Summary of the group printed to the console.
 
@@ -174,7 +176,7 @@ Summary of the group printed to the console.
 
 ------------------------------------------------------------------------
 
-### Method `find_by_name()`
+### `NCGroup$find_by_name()`
 
 Find an object by its name. Given the name of an object, possibly
 preceded by an absolute or relative group path, return the object to the
@@ -190,7 +192,8 @@ caller. Usually this method is called programmatically.
 
   The name of an object, with an optional absolute or relative group
   path from the calling group. The object must be an NC group, dimension
-  or variable.
+  or variable. For dimensions, see also the `find_dimension_by_name()`
+  method.
 
 #### Returns
 
@@ -199,7 +202,33 @@ The object with the provided name. If the object is not found, returns
 
 ------------------------------------------------------------------------
 
-### Method `find_dim_by_id()`
+### `NCGroup$find_dimvar_by_name()`
+
+Find a dimension variable by its name. Dimensions are scoped differently
+than other out-of-group objects - specifically, dimensions are visible
+in all child groups. Given the name of a dimension variable, possibly
+preceded by an absolute or relative group path, return the dimension
+variable to the caller. Usually this method is called programmatically.
+
+#### Usage
+
+    NCGroup$find_dimvar_by_name(name)
+
+#### Arguments
+
+- `name`:
+
+  The name of a dimension, with an optional absolute or relative group
+  path from the calling group.
+
+#### Returns
+
+The dimension variable with the provided name. If the dimension variable
+is not found, returns `NULL`.
+
+------------------------------------------------------------------------
+
+### `NCGroup$find_dim_by_id()`
 
 Find an NC dimension object by its id. Given the id of a dimension,
 return the
@@ -226,7 +255,7 @@ not found, returns `NULL`.
 
 ------------------------------------------------------------------------
 
-### Method `has_name()`
+### `NCGroup$has_name()`
 
 Has a given name been defined in this group already?
 
@@ -246,7 +275,7 @@ Has a given name been defined in this group already?
 
 ------------------------------------------------------------------------
 
-### Method `set_name()`
+### `NCGroup$set_name()`
 
 Change the name of the NC group. The new name must be valid and should
 not duplicate a sibling group.
@@ -267,7 +296,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `unused()`
+### `NCGroup$unused()`
 
 Find NC variables that are not referenced by CF objects. For debugging
 purposes only.
@@ -283,7 +312,7 @@ List of
 
 ------------------------------------------------------------------------
 
-### Method `create_group()`
+### `NCGroup$create_group()`
 
 Create a new group as a sub-group of the current group. This writes the
 new group to the netCDF resource, but only if it is open for writing.
@@ -305,7 +334,7 @@ The newly created group as a `NCGroup` instance, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method [`append()`](https://rdrr.io/r/base/append.html)
+### `NCGroup$append()`
 
 Append an object to this group.
 
@@ -326,7 +355,7 @@ Self, invisible.
 
 ------------------------------------------------------------------------
 
-### Method `fullnames()`
+### `NCGroup$fullnames()`
 
 This method lists the fully qualified name of this group, optionally
 including names in subgroups.
@@ -347,7 +376,7 @@ A character vector with group names.
 
 ------------------------------------------------------------------------
 
-### Method `dimensions()`
+### `NCGroup$dimensions()`
 
 List all the dimensions that are visible from this group, possibly
 including those that are defined in parent groups (by names not defined
@@ -373,7 +402,7 @@ objects.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `NCGroup$clone()`
 
 The objects of this class are cloneable with this method.
 

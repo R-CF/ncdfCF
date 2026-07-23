@@ -61,7 +61,7 @@ https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappi
     </div>
     <div class="section level2">
     <h2 id="super-class">Super class<a class="anchor" aria-label="anchor" href="#super-class"></a></h2>
-    <p><code><a href="CFObject.html">ncdfCF::CFObject</a></code> -&gt; <code>CFGridMapping</code></p>
+    <p><code><a href="CFObject.html">CFObject</a></code> -&gt; <code>CFGridMapping</code></p>
     </div>
     <div class="section level2">
     <h2 id="active-bindings">Active bindings<a class="anchor" aria-label="anchor" href="#active-bindings"></a></h2>
@@ -76,23 +76,22 @@ https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappi
 
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
-
-<ul><li><p><a href="#method-CFGridMapping-new"><code>CFGridMapping$new()</code></a></p></li>
+<p></p><ul><li><p><a href="#method-CFGridMapping-initialize"><code>CFGridMapping$new()</code></a></p></li>
 <li><p><a href="#method-CFGridMapping-print"><code>CFGridMapping$print()</code></a></p></li>
 <li><p><a href="#method-CFGridMapping-brief"><code>CFGridMapping$brief()</code></a></p></li>
 <li><p><a href="#method-CFGridMapping-wkt2"><code>CFGridMapping$wkt2()</code></a></p></li>
 <li><p><a href="#method-CFGridMapping-write"><code>CFGridMapping$write()</code></a></p></li>
-</ul></div><p><details><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href="CFObject.html#method-append_attribute"><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href="CFObject.html#method-attach_to_group"><code>ncdfCF::CFObject$attach_to_group()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href="CFObject.html#method-attribute"><code>ncdfCF::CFObject$attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href="CFObject.html#method-attributes_identical"><code>ncdfCF::CFObject$attributes_identical()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href="CFObject.html#method-delete_attribute"><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href="CFObject.html#method-detach"><code>ncdfCF::CFObject$detach()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href="CFObject.html#method-print_attributes"><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href="CFObject.html#method-set_attribute"><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href="CFObject.html#method-write_attributes"><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
-</ul></details></p><hr><a id="method-CFGridMapping-new"></a><div class="section">
-<h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
+</ul></div><p><details><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href="CFObject.html#method-append_attribute"><code>CFObject$append_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href="CFObject.html#method-attach_to_group"><code>CFObject$attach_to_group()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href="CFObject.html#method-attribute"><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href="CFObject.html#method-attributes_identical"><code>CFObject$attributes_identical()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href="CFObject.html#method-delete_attribute"><code>CFObject$delete_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href="CFObject.html#method-detach"><code>CFObject$detach()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href="CFObject.html#method-print_attributes"><code>CFObject$print_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href="CFObject.html#method-set_attribute"><code>CFObject$set_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href="CFObject.html#method-write_attributes"><code>CFObject$write_attributes()</code></a></span></li>
+</ul></details></p><hr><a id="method-CFGridMapping-initialize"></a><div class="section">
+<h3 id="cfgridmapping-new-"><code>CFGridMapping$new()</code><a class="anchor" aria-label="anchor" href="#cfgridmapping-new-"></a></h3>
 <p>Create a new instance of this class.</p>
 <p>Note that when a new grid mapping object is created (as opposed to
 reading from a netCDF resource), only the <code>grid_mapping_name</code> attribute
@@ -100,21 +99,17 @@ will be set. The caller must set all other parameters through their
 respective attributes, following the CF Metadata Conventions.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/CFGridMapping.html">CFGridMapping</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">var</span>, <span class="va">group</span>, <span class="va">grid_mapping_name</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>var</code></dt>
 <dd><p>When creating a new grid mapping object, the name of the
 object. When reading from a netCDF resource, the netCDF variable that
 describes this instance.</p></dd>
 
-
-<dt><code>group</code></dt>
+      <dt><code>group</code></dt>
 <dd><p>The <a href="CFGroup.html">CFGroup</a> that this instance will live in.</p></dd>
 
-
-<dt><code>grid_mapping_name</code></dt>
+      <dt><code>grid_mapping_name</code></dt>
 <dd><p>Optional. When creating a new grid mapping
 object, the formal name of the grid mapping, as specified in the CF
 Metadata Conventions. This value is stored in the new object as
@@ -125,31 +120,33 @@ object.</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-CFGridMapping-print"></a><div class="section">
-<h3 id="method-print-">Method <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code><a class="anchor" aria-label="anchor" href="#method-print-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFGridMapping-print"></a><div class="section">
+<h3 id="cfgridmapping-print-"><code>CFGridMapping$print()</code><a class="anchor" aria-label="anchor" href="#cfgridmapping-print-"></a></h3>
 <p>Prints a summary of the grid mapping to the console.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFGridMapping</span><span class="op">$</span><span class="fu">print</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+</div>
 
-</div><p></p><hr><a id="method-CFGridMapping-brief"></a><div class="section">
-<h3 id="method-brief-">Method <code>brief()</code><a class="anchor" aria-label="anchor" href="#method-brief-"></a></h3>
+<p></p><hr><a id="method-CFGridMapping-brief"></a><div class="section">
+<h3 id="cfgridmapping-brief-"><code>CFGridMapping$brief()</code><a class="anchor" aria-label="anchor" href="#cfgridmapping-brief-"></a></h3>
 <p>Retrieve a 1-row <code>data.frame</code> with some information on this
 grid mapping.</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFGridMapping</span><span class="op">$</span><span class="fu">brief</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+</div>
 
-</div><p></p><hr><a id="method-CFGridMapping-wkt2"></a><div class="section">
-<h3 id="method-wkt-">Method <code>wkt2()</code><a class="anchor" aria-label="anchor" href="#method-wkt-"></a></h3>
+<p></p><hr><a id="method-CFGridMapping-wkt2"></a><div class="section">
+<h3 id="cfgridmapping-wkt-"><code>CFGridMapping$wkt2()</code><a class="anchor" aria-label="anchor" href="#cfgridmapping-wkt-"></a></h3>
 <p>Retrieve the CRS string for a specific variable.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFGridMapping</span><span class="op">$</span><span class="fu">wkt2</span><span class="op">(</span><span class="va">axis_info</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>axis_info</code></dt>
 <dd><p>A list with information that describes the axes of the
@@ -157,25 +154,25 @@ grid mapping.</p><div class="section">
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a></h4>
 <p>A character string with the CRS in WKT2 format.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFGridMapping-write"></a><div class="section">
-<h3 id="method-write-">Method <code><a href="https://rdrr.io/r/base/write.html" class="external-link">write()</a></code><a class="anchor" aria-label="anchor" href="#method-write-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFGridMapping-write"></a><div class="section">
+<h3 id="cfgridmapping-write-"><code>CFGridMapping$write()</code><a class="anchor" aria-label="anchor" href="#cfgridmapping-write-"></a></h3>
 <p>Write the CRS object to a netCDF file.</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFGridMapping</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-1">Returns<a class="anchor" aria-label="anchor" href="#returns-1"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 
 </div>
+
 
     </div>
 
@@ -188,7 +185,7 @@ grid mapping.</p><div class="section">
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

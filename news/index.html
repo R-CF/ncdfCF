@@ -50,16 +50,20 @@
 <code>CFAxis$identical()</code> can optionally assess attributes for equality.</li>
 <li>
 <code>CFVariable$summarise()</code> returns <code>NULL</code> if the <code>era</code> argument falls entirely outside of the time axis of the variable.</li>
+<li>Exporting data sets to GeoZarr using the <code>geozarr</code> package (experimental - has known issues and is incomplete).</li>
 </ul></div>
 <div class="section level5">
 <h5 id="code-development-version">Code<a class="anchor" aria-label="anchor" href="#code-development-version"></a></h5>
 <ul><li>
 <code>CFAxisTime$append()</code> uses <code>CFtime</code> code for merging <code>CFTime</code> instances, allowing for instances with distinct but compatible definition to be merged.</li>
 <li>Cross-referencing NC objects now uses the dimid for more robust code.</li>
-<li>More consistent use of FQNs for variables and axes.</li>
+<li>More consistent use of FQNs for dimensions, variables and axes.</li>
+<li>Axes, axis boundary values and labels have a <code>regular</code> active field to flag if coordinates are regularly spaced.</li>
 <li>Fixed writing a <code>CFVariable</code> to file having a length-1 axis in X-Y-Z-T.</li>
 <li>Fixed retrieving data by index from virtual <code>CFVariable</code>.</li>
 <li>Fixed indexing of numeric axis with one-sided boundary values.</li>
+<li>Suggests packages <code>zarr</code> and <code>geozarr</code>.</li>
+<li>Bumped R version to 4.2.</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -283,7 +287,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

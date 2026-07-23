@@ -62,7 +62,7 @@ properties are thus made accessible.</p>
 
     <div class="section level2">
     <h2 id="super-class">Super class<a class="anchor" aria-label="anchor" href="#super-class"></a></h2>
-    <p><code><a href="NCObject.html">ncdfCF::NCObject</a></code> -&gt; <code>NCVariable</code></p>
+    <p><code><a href="NCObject.html">NCObject</a></code> -&gt; <code>NCVariable</code></p>
     </div>
     <div class="section level2">
     <h2 id="active-bindings">Active bindings<a class="anchor" aria-label="anchor" href="#active-bindings"></a></h2>
@@ -70,41 +70,41 @@ properties are thus made accessible.</p>
 <dd><p>(read-only) NetCDF group where this variable is located.</p></dd>
 
 
-<dt><code>handle</code></dt>
+    <dt><code>handle</code></dt>
 <dd><p>(read-only) Get the handle to the netCDF resource for the
 variable.</p></dd>
 
 
-<dt><code>vtype</code></dt>
+    <dt><code>vtype</code></dt>
 <dd><p>(read-only) The netCDF data type of this variable. This could be the
 packed type. Don't check this field but use the appropriate method in the
 class of the object whose data type you are looking for.</p></dd>
 
 
-<dt><code>ndims</code></dt>
+    <dt><code>ndims</code></dt>
 <dd><p>(read-only) Number of dimensions that this variable uses.</p></dd>
 
 
-<dt><code>dimids</code></dt>
+    <dt><code>dimids</code></dt>
 <dd><p>(read-only) Vector of dimension identifiers that this
 NCVariable uses.</p></dd>
 
 
-<dt><code>netcdf4</code></dt>
+    <dt><code>netcdf4</code></dt>
 <dd><p>(read-only) Additional properties for a <code>netcdf4</code> resource.</p></dd>
 
 
-<dt><code>CF</code></dt>
+    <dt><code>CF</code></dt>
 <dd><p>Register CF objects that use this netCDF variable, or retrieve
 the list of registered CF objects.</p></dd>
 
 
-<dt><code>fullname</code></dt>
+    <dt><code>fullname</code></dt>
 <dd><p>(read-only) Name of this netCDF variable including the
 group path from the root group.</p></dd>
 
 
-<dt><code>is_packed</code></dt>
+    <dt><code>is_packed</code></dt>
 <dd><p>(read-only) Flag that indicates if the data on file is
 packed.</p></dd>
 
@@ -116,8 +116,7 @@ packed.</p></dd>
 
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
-
-<ul><li><p><a href="#method-NCVariable-new"><code>NCVariable$new()</code></a></p></li>
+<p></p><ul><li><p><a href="#method-NCVariable-initialize"><code>NCVariable$new()</code></a></p></li>
 <li><p><a href="#method-NCVariable-print"><code>NCVariable$print()</code></a></p></li>
 <li><p><a href="#method-NCVariable-shard"><code>NCVariable$shard()</code></a></p></li>
 <li><p><a href="#method-NCVariable-detach"><code>NCVariable$detach()</code></a></p></li>
@@ -127,11 +126,11 @@ packed.</p></dd>
 <li><p><a href="#method-NCVariable-dimension"><code>NCVariable$dimension()</code></a></p></li>
 <li><p><a href="#method-NCVariable-dim"><code>NCVariable$dim()</code></a></p></li>
 <li><p><a href="#method-NCVariable-clone"><code>NCVariable$clone()</code></a></p></li>
-</ul></div><p><details open><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="attribute"><a href="NCObject.html#method-attribute"><code>ncdfCF::NCObject$attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="print_attributes"><a href="NCObject.html#method-print_attributes"><code>ncdfCF::NCObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="write_attributes"><a href="NCObject.html#method-write_attributes"><code>ncdfCF::NCObject$write_attributes()</code></a></span></li>
-</ul></details></p><hr><a id="method-NCVariable-new"></a><div class="section">
-<h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
+</ul></div><p><details open><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="attribute"><a href="NCObject.html#method-attribute"><code>NCObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="print_attributes"><a href="NCObject.html#method-print_attributes"><code>NCObject$print_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="write_attributes"><a href="NCObject.html#method-write_attributes"><code>NCObject$write_attributes()</code></a></span></li>
+</ul></details></p><hr><a id="method-NCVariable-initialize"></a><div class="section">
+<h3 id="ncvariable-new-"><code>NCVariable$new()</code><a class="anchor" aria-label="anchor" href="#ncvariable-new-"></a></h3>
 <p>Create a new netCDF variable. This class should not be
 instantiated directly, they are created automatically when opening a
 netCDF resource.</p><div class="section">
@@ -145,56 +144,47 @@ netCDF resource.</p><div class="section">
 <span>  attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  netcdf4 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>id</code></dt>
 <dd><p>Numeric identifier of the netCDF object.</p></dd>
 
-
-<dt><code>name</code></dt>
+      <dt><code>name</code></dt>
 <dd><p>Character string with the name of the netCDF object.</p></dd>
 
-
-<dt><code>group</code></dt>
+      <dt><code>group</code></dt>
 <dd><p>The <a href="NCGroup.html">NCGroup</a> this variable is located in.</p></dd>
 
-
-<dt><code>vtype</code></dt>
+      <dt><code>vtype</code></dt>
 <dd><p>The netCDF data type of the variable.</p></dd>
 
-
-<dt><code>dimids</code></dt>
+      <dt><code>dimids</code></dt>
 <dd><p>The integer identifiers of the dimensions this variable
 uses.</p></dd>
 
-
-<dt><code>attributes</code></dt>
+      <dt><code>attributes</code></dt>
 <dd><p>Optional, <code>data.frame</code> with the attributes of the
 object.</p></dd>
 
-
-<dt><code>netcdf4</code></dt>
+      <dt><code>netcdf4</code></dt>
 <dd><p>Optional, <code>netcdf4</code>-specific arguments in the format of
 RNetCDF.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a></h4>
 <p>An instance of this class.</p>
 </div>
 
-</div><p></p><hr><a id="method-NCVariable-print"></a><div class="section">
-<h3 id="method-print-">Method <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code><a class="anchor" aria-label="anchor" href="#method-print-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-NCVariable-print"></a><div class="section">
+<h3 id="ncvariable-print-"><code>NCVariable$print()</code><a class="anchor" aria-label="anchor" href="#ncvariable-print-"></a></h3>
 <p>Summary of the NC variable printed to the console.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCVariable</span><span class="op">$</span><span class="fu">print</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>Passed on to other methods.</p></dd>
@@ -203,58 +193,56 @@ RNetCDF.</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-NCVariable-shard"></a><div class="section">
-<h3 id="method-shard-">Method <code>shard()</code><a class="anchor" aria-label="anchor" href="#method-shard-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-NCVariable-shard"></a><div class="section">
+<h3 id="ncvariable-shard-"><code>NCVariable$shard()</code><a class="anchor" aria-label="anchor" href="#ncvariable-shard-"></a></h3>
 <p>Very concise information on the variable. The information
 returned by this function is very concise and most useful when combined
 with similar information from other variables.</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCVariable</span><span class="op">$</span><span class="fu">shard</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-1">Returns<a class="anchor" aria-label="anchor" href="#returns-1"></a></h4>
 <p>Character string with very basic variable information.</p>
 </div>
 
-</div><p></p><hr><a id="method-NCVariable-detach"></a><div class="section">
-<h3 id="method-detach-">Method <code><a href="https://rdrr.io/r/base/detach.html" class="external-link">detach()</a></code><a class="anchor" aria-label="anchor" href="#method-detach-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-NCVariable-detach"></a><div class="section">
+<h3 id="ncvariable-detach-"><code>NCVariable$detach()</code><a class="anchor" aria-label="anchor" href="#ncvariable-detach-"></a></h3>
 <p>Detach the passed object from this NC variable.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCVariable</span><span class="op">$</span><span class="kw">detach</span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>obj</code></dt>
 <dd><p>The CFObject instance to detach from this NC variable.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-2">Returns<a class="anchor" aria-label="anchor" href="#returns-2"></a></h4>
 <p><code>obj</code>, invisibly.</p>
 </div>
 
-</div><p></p><hr><a id="method-NCVariable-get_data"></a><div class="section">
-<h3 id="method-get-data-">Method <code>get_data()</code><a class="anchor" aria-label="anchor" href="#method-get-data-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-NCVariable-get_data"></a><div class="section">
+<h3 id="ncvariable-get-data-"><code>NCVariable$get_data()</code><a class="anchor" aria-label="anchor" href="#ncvariable-get-data-"></a></h3>
 <p>Read (a chunk of) data from the netCDF file. Degenerate
 dimensions are maintained and data is always returned in its smallest
 type.</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCVariable</span><span class="op">$</span><span class="fu">get_data</span><span class="op">(</span>start <span class="op">=</span> <span class="cn">NA</span>, count <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>start</code></dt>
 <dd><p>A vector of indices specifying the element where reading
 starts along each dimension of the data. When <code>NA</code>, all data are read
 from the start of the array.</p></dd>
 
-
-<dt><code>count</code></dt>
+      <dt><code>count</code></dt>
 <dd><p>An integer vector specifying the number of values to read
 along each dimension of the data. Any <code>NA</code> value in vector count
 indicates that the corresponding dimension should be read from the
@@ -262,80 +250,74 @@ start index to the end of the dimension.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
 <p>An array, matrix or vector with the requested data, or an error
 object.</p>
 </div>
 
-</div><p></p><hr><a id="method-NCVariable-write_data"></a><div class="section">
-<h3 id="method-write-data-">Method <code>write_data()</code><a class="anchor" aria-label="anchor" href="#method-write-data-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-NCVariable-write_data"></a><div class="section">
+<h3 id="ncvariable-write-data-"><code>NCVariable$write_data()</code><a class="anchor" aria-label="anchor" href="#ncvariable-write-data-"></a></h3>
 <p>Write (a chunk of) data to the netCDF file.</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCVariable</span><span class="op">$</span><span class="fu">write_data</span><span class="op">(</span><span class="va">d</span>, start <span class="op">=</span> <span class="cn">NA</span>, count <span class="op">=</span> <span class="cn">NA</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>d</code></dt>
 <dd><p>The data to write. This must have appropriate dimensions.</p></dd>
 
-
-<dt><code>start</code></dt>
+      <dt><code>start</code></dt>
 <dd><p>A vector of indices specifying the element where writing
 starts along each dimension of the data. When <code>NA</code>, all data are
 written from the start of the array.</p></dd>
 
-
-<dt><code>count</code></dt>
+      <dt><code>count</code></dt>
 <dd><p>An integer vector specifying the number of values to write
 along each dimension of the data. Any <code>NA</code> value in vector count
 indicates that the corresponding dimension should be written from the
 start index to the end of the dimension.</p></dd>
 
-
-<dt><code>...</code></dt>
+      <dt><code>...</code></dt>
 <dd><p>Other parameters passed on to <code><a href="https://rdrr.io/pkg/RNetCDF/man/var.put.nc.html" class="external-link">RNetCDF::var.put.nc()</a></code>.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 
-</div><p></p><hr><a id="method-NCVariable-set_name"></a><div class="section">
-<h3 id="method-set-name-">Method <code>set_name()</code><a class="anchor" aria-label="anchor" href="#method-set-name-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-NCVariable-set_name"></a><div class="section">
+<h3 id="ncvariable-set-name-"><code>NCVariable$set_name()</code><a class="anchor" aria-label="anchor" href="#ncvariable-set-name-"></a></h3>
 <p>Change the name of the NC variable. The new name must be
 valid in the indicated group, it can not already exist in the group.
 The netCDF file must be open for writing to change the name.</p><div class="section">
 <h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCVariable</span><span class="op">$</span><span class="fu">set_name</span><span class="op">(</span><span class="va">new_name</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>new_name</code></dt>
 <dd><p>The new name for the NC variable</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 
-</div><p></p><hr><a id="method-NCVariable-dimension"></a><div class="section">
-<h3 id="method-dimension-">Method <code>dimension()</code><a class="anchor" aria-label="anchor" href="#method-dimension-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-NCVariable-dimension"></a><div class="section">
+<h3 id="ncvariable-dimension-"><code>NCVariable$dimension()</code><a class="anchor" aria-label="anchor" href="#ncvariable-dimension-"></a></h3>
 <p>Get the <a href="NCDimension.html">NCDimension</a> object(s) that this variable uses.</p><div class="section">
 <h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCVariable</span><span class="op">$</span><span class="fu">dimension</span><span class="op">(</span><span class="va">id</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>id</code></dt>
 <dd><p>The index of the dimension. If missing, all dimensions of this
@@ -343,21 +325,20 @@ variable are returned.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-6">Returns<a class="anchor" aria-label="anchor" href="#returns-6"></a></h4>
 <p>A <code>NCDimension</code> object or a list thereof. If no <code>NCDimension</code>s
 were found, return <code>NULL</code>.</p>
 </div>
 
-</div><p></p><hr><a id="method-NCVariable-dim"></a><div class="section">
-<h3 id="method-dim-">Method <code><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim()</a></code><a class="anchor" aria-label="anchor" href="#method-dim-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-NCVariable-dim"></a><div class="section">
+<h3 id="ncvariable-dim-"><code>NCVariable$dim()</code><a class="anchor" aria-label="anchor" href="#ncvariable-dim-"></a></h3>
 <p>The lengths of the data dimensions of this object.</p><div class="section">
 <h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCVariable</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="va">dimension</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>dimension</code></dt>
 <dd><p>Optional. The index of the dimension to retrieve the
@@ -367,14 +348,14 @@ length for. If omitted, retrieve the lengths of all dimensions.</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-NCVariable-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-NCVariable-clone"></a><div class="section">
+<h3 id="ncvariable-clone-"><code>NCVariable$clone()</code><a class="anchor" aria-label="anchor" href="#ncvariable-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NCVariable</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
@@ -384,6 +365,7 @@ length for. If omitted, retrieve the lengths of all dimensions.</p></dd>
 </div>
 
 </div>
+
 
     </div>
 
@@ -396,7 +378,7 @@ length for. If omitted, retrieve the lengths of all dimensions.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

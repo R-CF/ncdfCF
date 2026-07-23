@@ -1,12 +1,12 @@
 pandoc: 3.8.3
-pkgdown: 2.2.0
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   articles/31_Creating: 31_Creating.html
   articles/32_R-CF: 32_R-CF.html
   articles/33_Troubleshooting: 33_Troubleshooting.html
   ncdfCF: ncdfCF.html
-last_built: 2026-06-07T16:04Z
+last_built: 2026-07-23T18:26Z
 urls:
   reference: https://r-cf.github.io/ncdfCF/reference
   article: https://r-cf.github.io/ncdfCF/articles

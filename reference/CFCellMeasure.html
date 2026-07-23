@@ -67,7 +67,7 @@ this instance before it can be used in analysis.</p>
 "area" or "volume".</p></dd>
 
 
-<dt><code>name</code></dt>
+    <dt><code>name</code></dt>
 <dd><p>The name of this instance, which must refer to a NC variable
 or an external variable.</p></dd>
 
@@ -79,58 +79,51 @@ or an external variable.</p></dd>
 
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
-
-<ul><li><p><a href="#method-CFCellMeasure-new"><code>CFCellMeasure$new()</code></a></p></li>
+<p></p><ul><li><p><a href="#method-CFCellMeasure-initialize"><code>CFCellMeasure$new()</code></a></p></li>
 <li><p><a href="#method-CFCellMeasure-print"><code>CFCellMeasure$print()</code></a></p></li>
 <li><p><a href="#method-CFCellMeasure-data"><code>CFCellMeasure$data()</code></a></p></li>
 <li><p><a href="#method-CFCellMeasure-register"><code>CFCellMeasure$register()</code></a></p></li>
 <li><p><a href="#method-CFCellMeasure-link"><code>CFCellMeasure$link()</code></a></p></li>
 <li><p><a href="#method-CFCellMeasure-detach"><code>CFCellMeasure$detach()</code></a></p></li>
 <li><p><a href="#method-CFCellMeasure-clone"><code>CFCellMeasure$clone()</code></a></p></li>
-</ul></div><p></p><hr><a id="method-CFCellMeasure-new"></a><div class="section">
-<h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
+</ul></div><p></p><hr><a id="method-CFCellMeasure-initialize"></a><div class="section">
+<h3 id="cfcellmeasure-new-"><code>CFCellMeasure$new()</code><a class="anchor" aria-label="anchor" href="#cfcellmeasure-new-"></a></h3>
 <p>Create an instance of this class.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/CFCellMeasure.html">CFCellMeasure</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">measure</span>, <span class="va">name</span>, nc_var <span class="op">=</span> <span class="cn">NULL</span>, axes <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>measure</code></dt>
 <dd><p>The measure of this object. Must be either of "area" or
 "volume".</p></dd>
 
-
-<dt><code>name</code></dt>
+      <dt><code>name</code></dt>
 <dd><p>The name of the cell measure variable. Ignored if argument
 <code>nc_var</code> is specified.</p></dd>
 
-
-<dt><code>nc_var</code></dt>
+      <dt><code>nc_var</code></dt>
 <dd><p>The netCDF variable that defines this CF cell measure
 object. <code>NULL</code> for an external variable.</p></dd>
 
-
-<dt><code>axes</code></dt>
+      <dt><code>axes</code></dt>
 <dd><p>List of <a href="CFAxis.html">CFAxis</a> instances that describe the dimensions of
 the cell measure object. <code>NULL</code> for an external variable.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a></h4>
 <p>An instance of this class.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFCellMeasure-print"></a><div class="section">
-<h3 id="method-print-">Method <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code><a class="anchor" aria-label="anchor" href="#method-print-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFCellMeasure-print"></a><div class="section">
+<h3 id="cfcellmeasure-print-"><code>CFCellMeasure$print()</code><a class="anchor" aria-label="anchor" href="#cfcellmeasure-print-"></a></h3>
 <p>Print a summary of the cell measure variable to the console.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFCellMeasure</span><span class="op">$</span><span class="fu">print</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>Arguments passed on to other functions. Of particular interest
@@ -140,42 +133,43 @@ is <code>width = </code> to indicate a maximum width of attribute columns.</p></
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-CFCellMeasure-data"></a><div class="section">
-<h3 id="method-data-">Method <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data()</a></code><a class="anchor" aria-label="anchor" href="#method-data-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFCellMeasure-data"></a><div class="section">
+<h3 id="cfcellmeasure-data-"><code>CFCellMeasure$data()</code><a class="anchor" aria-label="anchor" href="#cfcellmeasure-data-"></a></h3>
 <p>Retrieve the values of the cell measure variable.</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFCellMeasure</span><span class="op">$</span><span class="fu">data</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-1">Returns<a class="anchor" aria-label="anchor" href="#returns-1"></a></h4>
 <p>The values of the cell measure as a <a href="CFVariable.html">CFVariable</a> instance.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFCellMeasure-register"></a><div class="section">
-<h3 id="method-register-">Method <code>register()</code><a class="anchor" aria-label="anchor" href="#method-register-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFCellMeasure-register"></a><div class="section">
+<h3 id="cfcellmeasure-register-"><code>CFCellMeasure$register()</code><a class="anchor" aria-label="anchor" href="#cfcellmeasure-register-"></a></h3>
 <p>Register a <a href="CFVariable.html">CFVariable</a> which is using this cell measure
 variable. A check is performed on the compatibility between the data
 variable and this cell measure variable.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFCellMeasure</span><span class="op">$</span><span class="fu">register</span><span class="op">(</span><span class="va">var</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>var</code></dt>
 <dd><p>A <code>CFVariable</code> instance to link to this instance.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-2">Returns<a class="anchor" aria-label="anchor" href="#returns-2"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFCellMeasure-link"></a><div class="section">
-<h3 id="method-link-">Method <code>link()</code><a class="anchor" aria-label="anchor" href="#method-link-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFCellMeasure-link"></a><div class="section">
+<h3 id="cfcellmeasure-link-"><code>CFCellMeasure$link()</code><a class="anchor" aria-label="anchor" href="#cfcellmeasure-link-"></a></h3>
 <p>Link the cell measure variable to an external netCDF
 resource. The resource will be opened and the appropriate data variable
 will be linked to this instance. If the axes or other properties of the
@@ -183,9 +177,7 @@ external resource are not compatible with this instance, an error will
 be raised.</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFCellMeasure</span><span class="op">$</span><span class="fu">link</span><span class="op">(</span><span class="va">resource</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>resource</code></dt>
 <dd><p>The name of the netCDF resource to open, either a local
@@ -193,33 +185,32 @@ file name or a remote URI.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFCellMeasure-detach"></a><div class="section">
-<h3 id="method-detach-">Method <code><a href="https://rdrr.io/r/base/detach.html" class="external-link">detach()</a></code><a class="anchor" aria-label="anchor" href="#method-detach-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFCellMeasure-detach"></a><div class="section">
+<h3 id="cfcellmeasure-detach-"><code>CFCellMeasure$detach()</code><a class="anchor" aria-label="anchor" href="#cfcellmeasure-detach-"></a></h3>
 <p>Detach the internal data variable from an underlying netCDF
 resource.</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFCellMeasure</span><span class="op">$</span><span class="kw">detach</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFCellMeasure-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFCellMeasure-clone"></a><div class="section">
+<h3 id="cfcellmeasure-clone-"><code>CFCellMeasure$clone()</code><a class="anchor" aria-label="anchor" href="#cfcellmeasure-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFCellMeasure</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
@@ -229,6 +220,7 @@ resource.</p><div class="section">
 </div>
 
 </div>
+
 
     </div>
 
@@ -241,7 +233,7 @@ resource.</p><div class="section">
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

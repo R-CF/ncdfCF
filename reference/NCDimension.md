@@ -12,8 +12,8 @@ classes instead.
 
 ## Super class
 
-[`ncdfCF::NCObject`](https://r-cf.github.io/ncdfCF/reference/NCObject.md)
--\> `NCDimension`
+[`NCObject`](https://r-cf.github.io/ncdfCF/reference/NCObject.md) -\>
+`NCDimension`
 
 ## Active bindings
 
@@ -33,7 +33,7 @@ classes instead.
 
 ### Public methods
 
-- [`NCDimension$new()`](#method-NCDimension-new)
+- [`NCDimension$new()`](#method-NCDimension-initialize)
 
 - [`NCDimension$print()`](#method-NCDimension-print)
 
@@ -43,13 +43,13 @@ classes instead.
 
 Inherited methods
 
-- [`ncdfCF::NCObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-attribute)
-- [`ncdfCF::NCObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-print_attributes)
-- [`ncdfCF::NCObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-write_attributes)
+- [`NCObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-attribute)
+- [`NCObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-print_attributes)
+- [`NCObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-write_attributes)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `NCDimension$new()`
 
 Create a new netCDF dimension. This class should not be instantiated
 directly, create CF objects instead. This class is instantiated when
@@ -87,7 +87,7 @@ A `NCDimension` instance.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `NCDimension$print()`
 
 Summary of the NC dimension printed to the console.
 
@@ -103,7 +103,7 @@ Summary of the NC dimension printed to the console.
 
 ------------------------------------------------------------------------
 
-### Method [`write()`](https://rdrr.io/r/base/write.html)
+### `NCDimension$write()`
 
 Write the dimension to a netCDF file.
 
@@ -123,7 +123,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `NCDimension$clone()`
 
 The objects of this class are cloneable with this method.
 

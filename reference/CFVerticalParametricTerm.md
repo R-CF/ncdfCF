@@ -4,11 +4,9 @@ This class represents a formula term for a parametric vertical axis.
 
 ## Super classes
 
-[`ncdfCF::CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md)
--\>
-[`ncdfCF::CFData`](https://r-cf.github.io/ncdfCF/reference/CFData.md)
--\>
-[`ncdfCF::CFVariable`](https://r-cf.github.io/ncdfCF/reference/CFVariable.md)
+[`CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md) -\>
+[`CFData`](https://r-cf.github.io/ncdfCF/reference/CFData.md) -\>
+[`CFVariable`](https://r-cf.github.io/ncdfCF/reference/CFVariable.md)
 -\> `CFVerticalParametricTerm`
 
 ## Active bindings
@@ -30,7 +28,7 @@ This class represents a formula term for a parametric vertical axis.
 
 ### Public methods
 
-- [`CFVerticalParametricTerm$new()`](#method-CFVerticalParametricTerm-new)
+- [`CFVerticalParametricTerm$new()`](#method-CFVerticalParametricTerm-initialize)
 
 - [`CFVerticalParametricTerm$print()`](#method-CFVerticalParametricTerm-print)
 
@@ -38,39 +36,39 @@ This class represents a formula term for a parametric vertical axis.
 
 Inherited methods
 
-- [`ncdfCF::CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
-- [`ncdfCF::CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
-- [`ncdfCF::CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
-- [`ncdfCF::CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
-- [`ncdfCF::CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
-- [`ncdfCF::CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
-- [`ncdfCF::CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
-- [`ncdfCF::CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
-- [`ncdfCF::CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
-- [`ncdfCF::CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
-- [`ncdfCF::CFVariable$add_ancillary_variable()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-add_ancillary_variable)
-- [`ncdfCF::CFVariable$add_auxiliary_coordinate()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-add_auxiliary_coordinate)
-- [`ncdfCF::CFVariable$add_cell_measure()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-add_cell_measure)
-- [`ncdfCF::CFVariable$append()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-append)
-- [`ncdfCF::CFVariable$array()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-array)
-- [`ncdfCF::CFVariable$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-attach_to_group)
-- [`ncdfCF::CFVariable$brief()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-brief)
-- [`ncdfCF::CFVariable$data.table()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-data.table)
-- [`ncdfCF::CFVariable$detach()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-detach)
-- [`ncdfCF::CFVariable$is_coincident()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-is_coincident)
-- [`ncdfCF::CFVariable$peek()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-peek)
-- [`ncdfCF::CFVariable$profile()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-profile)
-- [`ncdfCF::CFVariable$raw()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-raw)
-- [`ncdfCF::CFVariable$save()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-save)
-- [`ncdfCF::CFVariable$shard()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-shard)
-- [`ncdfCF::CFVariable$summarise()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-summarise)
-- [`ncdfCF::CFVariable$terra()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-terra)
-- [`ncdfCF::CFVariable$time()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-time)
-- [`ncdfCF::CFVariable$write()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-write)
+- [`CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
+- [`CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
+- [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
+- [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
+- [`CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
+- [`CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
+- [`CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
+- [`CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
+- [`CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
+- [`CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
+- [`CFVariable$add_ancillary_variable()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-add_ancillary_variable)
+- [`CFVariable$add_auxiliary_coordinate()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-add_auxiliary_coordinate)
+- [`CFVariable$add_cell_measure()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-add_cell_measure)
+- [`CFVariable$append()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-append)
+- [`CFVariable$array()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-array)
+- [`CFVariable$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-attach_to_group)
+- [`CFVariable$brief()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-brief)
+- [`CFVariable$data.table()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-data.table)
+- [`CFVariable$detach()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-detach)
+- [`CFVariable$is_coincident()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-is_coincident)
+- [`CFVariable$peek()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-peek)
+- [`CFVariable$profile()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-profile)
+- [`CFVariable$raw()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-raw)
+- [`CFVariable$save()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-save)
+- [`CFVariable$shard()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-shard)
+- [`CFVariable$summarise()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-summarise)
+- [`CFVariable$terra()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-terra)
+- [`CFVariable$time()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-time)
+- [`CFVariable$write()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-write)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `CFVerticalParametricTerm$new()`
 
 Create an instance of this class.
 
@@ -138,7 +136,7 @@ An instance of this class.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `CFVerticalParametricTerm$print()`
 
 Prints a summary of the parametric formula term to the console.
 
@@ -159,7 +157,7 @@ Prints a summary of the parametric formula term to the console.
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rdrr.io/r/base/subset.html)
+### `CFVerticalParametricTerm$subset()`
 
 Subset the indices to read a smaller portion of the data from the netCDF
 file. The passed indices should be named after the axes that they refer

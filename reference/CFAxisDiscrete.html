@@ -53,7 +53,7 @@ values are ordinal values equal to the index into the axis.</p>
 
     <div class="section level2">
     <h2 id="super-classes">Super classes<a class="anchor" aria-label="anchor" href="#super-classes"></a></h2>
-    <p><code><a href="CFObject.html">ncdfCF::CFObject</a></code> -&gt; <code><a href="CFData.html">ncdfCF::CFData</a></code> -&gt; <code><a href="CFAxis.html">ncdfCF::CFAxis</a></code> -&gt; <code>CFAxisDiscrete</code></p>
+    <p><code><a href="CFObject.html">CFObject</a></code> -&gt; <code><a href="CFData.html">CFData</a></code> -&gt; <code><a href="CFAxis.html">CFAxis</a></code> -&gt; <code>CFAxisDiscrete</code></p>
     </div>
     <div class="section level2">
     <h2 id="active-bindings">Active bindings<a class="anchor" aria-label="anchor" href="#active-bindings"></a></h2>
@@ -61,7 +61,7 @@ values are ordinal values equal to the index into the axis.</p>
 <dd><p>(read-only) A nice description of the class.</p></dd>
 
 
-<dt><code>dimnames</code></dt>
+    <dt><code>dimnames</code></dt>
 <dd><p>(read-only) The coordinates of the axis as an integer
 vector, or labels for every axis element if they have been set.</p></dd>
 
@@ -73,8 +73,7 @@ vector, or labels for every axis element if they have been set.</p></dd>
 
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
-
-<ul><li><p><a href="#method-CFAxisDiscrete-new"><code>CFAxisDiscrete$new()</code></a></p></li>
+<p></p><ul><li><p><a href="#method-CFAxisDiscrete-initialize"><code>CFAxisDiscrete$new()</code></a></p></li>
 <li><p><a href="#method-CFAxisDiscrete-print"><code>CFAxisDiscrete$print()</code></a></p></li>
 <li><p><a href="#method-CFAxisDiscrete-brief"><code>CFAxisDiscrete$brief()</code></a></p></li>
 <li><p><a href="#method-CFAxisDiscrete-copy"><code>CFAxisDiscrete$copy()</code></a></p></li>
@@ -83,27 +82,27 @@ vector, or labels for every axis element if they have been set.</p></dd>
 <li><p><a href="#method-CFAxisDiscrete-subset"><code>CFAxisDiscrete$subset()</code></a></p></li>
 <li><p><a href="#method-CFAxisDiscrete-append"><code>CFAxisDiscrete$append()</code></a></p></li>
 <li><p><a href="#method-CFAxisDiscrete-write"><code>CFAxisDiscrete$write()</code></a></p></li>
-</ul></div><p><details><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href="CFObject.html#method-append_attribute"><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href="CFObject.html#method-attribute"><code>ncdfCF::CFObject$attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href="CFObject.html#method-attributes_identical"><code>ncdfCF::CFObject$attributes_identical()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href="CFObject.html#method-delete_attribute"><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href="CFObject.html#method-print_attributes"><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href="CFObject.html#method-set_attribute"><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href="CFObject.html#method-write_attributes"><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href="CFData.html#method-dim"><code>ncdfCF::CFData$dim()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href="CFData.html#method-read_chunk"><code>ncdfCF::CFData$read_chunk()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href="CFData.html#method-read_data"><code>ncdfCF::CFData$read_data()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="attach_to_group"><a href="CFAxis.html#method-attach_to_group"><code>ncdfCF::CFAxis$attach_to_group()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="can_append"><a href="CFAxis.html#method-can_append"><code>ncdfCF::CFAxis$can_append()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="configure_terms"><a href="CFAxis.html#method-configure_terms"><code>ncdfCF::CFAxis$configure_terms()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="copy_terms"><a href="CFAxis.html#method-copy_terms"><code>ncdfCF::CFAxis$copy_terms()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="copy_with_values"><a href="CFAxis.html#method-copy_with_values"><code>ncdfCF::CFAxis$copy_with_values()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="detach"><a href="CFAxis.html#method-detach"><code>ncdfCF::CFAxis$detach()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="identical"><a href="CFAxis.html#method-identical"><code>ncdfCF::CFAxis$identical()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href="CFAxis.html#method-peek"><code>ncdfCF::CFAxis$peek()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href="CFAxis.html#method-shard"><code>ncdfCF::CFAxis$shard()</code></a></span></li>
-</ul></details></p><hr><a id="method-CFAxisDiscrete-new"></a><div class="section">
-<h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
+</ul></div><p><details><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href="CFObject.html#method-append_attribute"><code>CFObject$append_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href="CFObject.html#method-attribute"><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href="CFObject.html#method-attributes_identical"><code>CFObject$attributes_identical()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href="CFObject.html#method-delete_attribute"><code>CFObject$delete_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href="CFObject.html#method-print_attributes"><code>CFObject$print_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href="CFObject.html#method-set_attribute"><code>CFObject$set_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href="CFObject.html#method-write_attributes"><code>CFObject$write_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href="CFData.html#method-dim"><code>CFData$dim()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href="CFData.html#method-read_chunk"><code>CFData$read_chunk()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href="CFData.html#method-read_data"><code>CFData$read_data()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="attach_to_group"><a href="CFAxis.html#method-attach_to_group"><code>CFAxis$attach_to_group()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="can_append"><a href="CFAxis.html#method-can_append"><code>CFAxis$can_append()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="configure_terms"><a href="CFAxis.html#method-configure_terms"><code>CFAxis$configure_terms()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="copy_terms"><a href="CFAxis.html#method-copy_terms"><code>CFAxis$copy_terms()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="copy_with_values"><a href="CFAxis.html#method-copy_with_values"><code>CFAxis$copy_with_values()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="detach"><a href="CFAxis.html#method-detach"><code>CFAxis$detach()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="identical"><a href="CFAxis.html#method-identical"><code>CFAxis$identical()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href="CFAxis.html#method-peek"><code>CFAxis$peek()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href="CFAxis.html#method-shard"><code>CFAxis$shard()</code></a></span></li>
+</ul></details></p><hr><a id="method-CFAxisDiscrete-initialize"></a><div class="section">
+<h3 id="cfaxisdiscrete-new-"><code>CFAxisDiscrete$new()</code><a class="anchor" aria-label="anchor" href="#cfaxisdiscrete-new-"></a></h3>
 <p>Create a new instance of this class. The values of this axis
 are always a sequence, but the sequence may start with any positive
 value such that the length of this instance falls within the length of
@@ -112,39 +111,34 @@ the axis on file, if there is one.</p>
 <code><a href="makeDiscreteAxis.html">makeDiscreteAxis()</a></code> function.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/CFAxisDiscrete.html">CFAxisDiscrete</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">var</span>, <span class="va">group</span>, start <span class="op">=</span> <span class="fl">1L</span>, <span class="va">count</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>var</code></dt>
 <dd><p>The name of the axis when creating a new axis. When reading an
 axis from file, the <a href="NCVariable.html">NCVariable</a> object that describes this instance.</p></dd>
 
-
-<dt><code>group</code></dt>
+      <dt><code>group</code></dt>
 <dd><p>The <a href="CFGroup.html">CFGroup</a> that this instance will live in.</p></dd>
 
-
-<dt><code>start</code></dt>
+      <dt><code>start</code></dt>
 <dd><p>Optional. Integer value that indicates the starting value of
 this axis. Defults to <code>1L</code>.</p></dd>
 
-
-<dt><code>count</code></dt>
+      <dt><code>count</code></dt>
 <dd><p>Number of elements in the axis.</p></dd>
 
 
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-CFAxisDiscrete-print"></a><div class="section">
-<h3 id="method-print-">Method <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code><a class="anchor" aria-label="anchor" href="#method-print-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFAxisDiscrete-print"></a><div class="section">
+<h3 id="cfaxisdiscrete-print-"><code>CFAxisDiscrete$print()</code><a class="anchor" aria-label="anchor" href="#cfaxisdiscrete-print-"></a></h3>
 <p>Summary of the axis printed to the console.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFAxisDiscrete</span><span class="op">$</span><span class="fu">print</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>Arguments passed on to other functions. Of particular interest
@@ -152,93 +146,87 @@ is <code>width = </code> to indicate a maximum width of attribute columns.</p></
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a></h4>
 <p><code>self</code>, invisibly.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFAxisDiscrete-brief"></a><div class="section">
-<h3 id="method-brief-">Method <code>brief()</code><a class="anchor" aria-label="anchor" href="#method-brief-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFAxisDiscrete-brief"></a><div class="section">
+<h3 id="cfaxisdiscrete-brief-"><code>CFAxisDiscrete$brief()</code><a class="anchor" aria-label="anchor" href="#cfaxisdiscrete-brief-"></a></h3>
 <p>Some details of the axis.</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFAxisDiscrete</span><span class="op">$</span><span class="fu">brief</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-1">Returns<a class="anchor" aria-label="anchor" href="#returns-1"></a></h4>
 <p>A 1-row <code>data.frame</code> with some details of the axis.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFAxisDiscrete-copy"></a><div class="section">
-<h3 id="method-copy-">Method <code>copy()</code><a class="anchor" aria-label="anchor" href="#method-copy-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFAxisDiscrete-copy"></a><div class="section">
+<h3 id="cfaxisdiscrete-copy-"><code>CFAxisDiscrete$copy()</code><a class="anchor" aria-label="anchor" href="#cfaxisdiscrete-copy-"></a></h3>
 <p>Create a copy of this axis. The copy is completely separate
 from this axis, meaning that both this axis and all of its components
 are made from new instances.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFAxisDiscrete</span><span class="op">$</span><span class="fu">copy</span><span class="op">(</span>name <span class="op">=</span> <span class="st">""</span>, <span class="va">group</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>name</code></dt>
 <dd><p>The name for the new axis. If an empty string is passed, will
 use the name of this axis.</p></dd>
 
-
-<dt><code>group</code></dt>
+      <dt><code>group</code></dt>
 <dd><p>The <a href="CFGroup.html">CFGroup</a> where the copy of this axis will live.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-2">Returns<a class="anchor" aria-label="anchor" href="#returns-2"></a></h4>
 <p>The newly created axis.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFAxisDiscrete-indexOf"></a><div class="section">
-<h3 id="method-indexof-">Method <code>indexOf()</code><a class="anchor" aria-label="anchor" href="#method-indexof-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFAxisDiscrete-indexOf"></a><div class="section">
+<h3 id="cfaxisdiscrete-indexof-"><code>CFAxisDiscrete$indexOf()</code><a class="anchor" aria-label="anchor" href="#cfaxisdiscrete-indexof-"></a></h3>
 <p>Find indices in the axis domain. Given a vector of numerical
 values <code>x</code>, find their indices in the values of the axis. Outside
 values will be dropped.</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFAxisDiscrete</span><span class="op">$</span><span class="fu">indexOf</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"constant"</span>, rightmost.closed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>x</code></dt>
 <dd><p>Vector of numeric values to find axis indices for.</p></dd>
 
-
-<dt><code>method</code></dt>
+      <dt><code>method</code></dt>
 <dd><p>Ignored.</p></dd>
 
-
-<dt><code>rightmost.closed</code></dt>
+      <dt><code>rightmost.closed</code></dt>
 <dd><p>Ignored.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
 <p>Numeric vector of the same length as <code>x</code>. Values of <code>x</code> outside
 of the range of the values in the axis are returned as <code>NA</code>.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFAxisDiscrete-slice"></a><div class="section">
-<h3 id="method-slice-">Method <code>slice()</code><a class="anchor" aria-label="anchor" href="#method-slice-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFAxisDiscrete-slice"></a><div class="section">
+<h3 id="cfaxisdiscrete-slice-"><code>CFAxisDiscrete$slice()</code><a class="anchor" aria-label="anchor" href="#cfaxisdiscrete-slice-"></a></h3>
 <p>Given a range of coordinate values, returns the indices into
 the axis that fall within the supplied range. If the axis has auxiliary
 coordinates selected then these will be used for the identification of
 the indices to return.</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFAxisDiscrete</span><span class="op">$</span><span class="fu">slice</span><span class="op">(</span><span class="va">rng</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>rng</code></dt>
 <dd><p>A vector whose extreme values indicate the indices of
@@ -247,8 +235,7 @@ agree with any auxiliary coordinates selected.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
 <p>An integer vector of length 2 with the lower and higher indices
 into the axis that fall within the range of coordinates in argument
@@ -256,82 +243,78 @@ into the axis that fall within the range of coordinates in argument
 the range of coordinates.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFAxisDiscrete-subset"></a><div class="section">
-<h3 id="method-subset-">Method <code><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset()</a></code><a class="anchor" aria-label="anchor" href="#method-subset-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFAxisDiscrete-subset"></a><div class="section">
+<h3 id="cfaxisdiscrete-subset-"><code>CFAxisDiscrete$subset()</code><a class="anchor" aria-label="anchor" href="#cfaxisdiscrete-subset-"></a></h3>
 <p>Return an axis spanning a smaller coordinate range. This
 method returns an axis which spans the range of indices given by the
 <code>rng</code> argument.</p><div class="section">
 <h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFAxisDiscrete</span><span class="op">$</span><span class="fu">subset</span><span class="op">(</span>name <span class="op">=</span> <span class="st">""</span>, <span class="va">group</span>, rng <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>name</code></dt>
 <dd><p>The name for the new axis. If an empty string is passed, will
 use the name of this axis.</p></dd>
 
-
-<dt><code>group</code></dt>
+      <dt><code>group</code></dt>
 <dd><p>The <a href="CFGroup.html">CFGroup</a> where the copy of this axis will live.</p></dd>
 
-
-<dt><code>rng</code></dt>
+      <dt><code>rng</code></dt>
 <dd><p>The range of indices whose values from this axis to include in
 the returned axis. If the value of the argument is <code>NULL</code>, return a
 copy of the axis.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
 <p>A new <code>CFAxisDiscrete</code> instance covering the indicated range of
 indices. If the value of the argument is <code>NULL</code>, return a copy of
 <code>self</code> as the new axis.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFAxisDiscrete-append"></a><div class="section">
-<h3 id="method-append-">Method <code><a href="https://rdrr.io/r/base/append.html" class="external-link">append()</a></code><a class="anchor" aria-label="anchor" href="#method-append-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFAxisDiscrete-append"></a><div class="section">
+<h3 id="cfaxisdiscrete-append-"><code>CFAxisDiscrete$append()</code><a class="anchor" aria-label="anchor" href="#cfaxisdiscrete-append-"></a></h3>
 <p>Append a vector of values at the end of the current values
 of the axis.</p><div class="section">
 <h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFAxisDiscrete</span><span class="op">$</span><span class="fu">append</span><span class="op">(</span><span class="va">from</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>from</code></dt>
 <dd><p>An instance of <code>CFAxisDiscrete</code> whose length to add to this
 axis.</p></dd>
 
-
-<dt><code>group</code></dt>
+      <dt><code>group</code></dt>
 <dd><p>The <a href="CFGroup.html">CFGroup</a> where the copy of this axis will live.</p></dd>
 
 
 </dl><p></p></div>
-</div>
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-6">Returns<a class="anchor" aria-label="anchor" href="#returns-6"></a></h4>
 <p>A new <code>CFAxisDiscrete</code> instance with a length that is the sum of
 the lengths of this axis and the <code>from</code> axis.</p>
 </div>
 
-</div><p></p><hr><a id="method-CFAxisDiscrete-write"></a><div class="section">
-<h3 id="method-write-">Method <code><a href="https://rdrr.io/r/base/write.html" class="external-link">write()</a></code><a class="anchor" aria-label="anchor" href="#method-write-"></a></h3>
+</div>
+
+<p></p><hr><a id="method-CFAxisDiscrete-write"></a><div class="section">
+<h3 id="cfaxisdiscrete-write-"><code>CFAxisDiscrete$write()</code><a class="anchor" aria-label="anchor" href="#cfaxisdiscrete-write-"></a></h3>
 <p>Write the axis to a netCDF file. A discrete axis does not
 have any attributes or values to write.</p><div class="section">
 <h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFAxisDiscrete</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
-</div>
-
-<div class="section">
+</div><p></p><div class="section">
 <h4 id="returns-7">Returns<a class="anchor" aria-label="anchor" href="#returns-7"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 
 </div>
+
 
     </div>
 
@@ -344,7 +327,7 @@ have any attributes or values to write.</p><div class="section">
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

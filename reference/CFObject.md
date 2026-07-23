@@ -52,7 +52,7 @@ More useful classes use this class as ancestor.
 
 ### Public methods
 
-- [`CFObject$new()`](#method-CFObject-new)
+- [`CFObject$new()`](#method-CFObject-initialize)
 
 - [`CFObject$attach_to_group()`](#method-CFObject-attach_to_group)
 
@@ -76,7 +76,7 @@ More useful classes use this class as ancestor.
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `CFObject$new()`
 
 Create a new `CFobject` instance in memory or from an object in a netCDF
 resource when this method is called upon opening a netCDF resource. It
@@ -114,7 +114,7 @@ A `CFObject` instance.
 
 ------------------------------------------------------------------------
 
-### Method `attach_to_group()`
+### `CFObject$attach_to_group()`
 
 Attach this CF object to a group. If there is another object with the
 same name in this group an error is thrown. This is the basic method
@@ -149,7 +149,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method [`detach()`](https://rdrr.io/r/base/detach.html)
+### `CFObject$detach()`
 
 Detach the current object from its underlying netCDF resource.
 
@@ -159,7 +159,7 @@ Detach the current object from its underlying netCDF resource.
 
 ------------------------------------------------------------------------
 
-### Method `attribute()`
+### `CFObject$attribute()`
 
 Retrieve an attribute of a CF object.
 
@@ -187,7 +187,7 @@ of argument `att` `NA` is returned.
 
 ------------------------------------------------------------------------
 
-### Method `print_attributes()`
+### `CFObject$print_attributes()`
 
 Print the attributes of the CF object to the console.
 
@@ -204,7 +204,7 @@ Print the attributes of the CF object to the console.
 
 ------------------------------------------------------------------------
 
-### Method `set_attribute()`
+### `CFObject$set_attribute()`
 
 Add an attribute. If an attribute `name` already exists, it will be
 overwritten.
@@ -241,7 +241,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `attributes_identical()`
+### `CFObject$attributes_identical()`
 
 Test if the supplied attributes are identical to the attributes of this
 instance. The order of the attributes may differ but the names, types
@@ -265,7 +265,7 @@ of this instance, `FALSE` otherwise.
 
 ------------------------------------------------------------------------
 
-### Method `append_attribute()`
+### `CFObject$append_attribute()`
 
 Append the text value of an attribute. If an attribute `name` already
 exists, the `value` will be appended to the existing value of the
@@ -305,7 +305,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `delete_attribute()`
+### `CFObject$delete_attribute()`
 
 Delete attributes. If an attribute `name` is not present this method
 simply returns.
@@ -326,7 +326,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `write_attributes()`
+### `CFObject$write_attributes()`
 
 Write the attributes of this object to a netCDF file.
 
@@ -340,7 +340,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `CFObject$clone()`
 
 The objects of this class are cloneable with this method.
 
