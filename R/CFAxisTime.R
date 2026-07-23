@@ -160,7 +160,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         # Make a CFTime or CFClimatology instance
         units <- var$attribute("units")
         if (is.na(units))
-          stop("Could not create a CFTime object from the arguments.", call. = FALSE)
+          stop("Could not create a CFTime object from the arguments", call. = FALSE)
         cal <- var$attribute("calendar")
         cal <- if (is.na(cal) || cal == "gregorian") "standard" else cal
 
@@ -169,23 +169,23 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         if (!is.na(clim)) {
           nc <- var$group$find_by_name(clim) # FIXME: Make this a FQN?
           if (is.null(nc)) {
-            warning("Unmatched `climatology` value '", clim, "' found in variable '", var$name, "'.", call. = FALSE)
-            stop("Could not create a CFClimatology object from the arguments.", call. = FALSE)
+            warning("Unmatched `climatology` value '", clim, "' found in variable '", var$name, "'", call. = FALSE)
+            stop("Could not create a CFClimatology object from the arguments", call. = FALSE)
           } else {
             bnds <- CFBounds$new(nc, group, start = c(1L, start), count = c(2L, count))
             t <- try(CFtime::CFClimatology$new(units, cal, values, bnds$values), silent = TRUE)
             if (inherits(t, "try-error"))
-              stop("Could not create a CFClimatology object from the arguments.", call. = FALSE)
+              stop("Could not create a CFClimatology object from the arguments", call. = FALSE)
           }
         } else {
           t <- try(CFtime::CFTime$new(units, cal, values), silent = TRUE)
           if (inherits(t, "try-error"))
-            stop("Could not create a CFTime object from the arguments.", call. = FALSE)
+            stop("Could not create a CFTime object from the arguments", call. = FALSE)
           bounds <- var$attribute("bounds")
           if (!is.na(bounds)) {
             nc <- var$group$find_by_name(bounds) # FIXME: Make this a FQN?
             if (is.null(nc))
-              warning("Unmatched `bounds` value '", bounds, "' found in variable '", var$name, "'.", call. = FALSE)
+              warning("Unmatched `bounds` value '", bounds, "' found in variable '", var$name, "'", call. = FALSE)
             else {
               bnds <- CFBounds$new(nc, group, start = c(1L, start), count = c(2L, count))
               t$bounds <- bnds$values
@@ -195,13 +195,15 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         private$.tm <- t
         private$.bounds <- bnds
       } else
-        stop("When initializing by time axis name, must provide a `CFTime` instance as argument 'values'.", call. = FALSE) # nocov
+        stop("When initializing by time axis name, must provide a `CFTime` instance as argument 'values'", call. = FALSE) # nocov
 
       super$initialize(var, group, values = values, start = start, count = count, orientation = "T", attributes = attributes)
       self$set_attribute("standard_name", "NC_CHAR", "time")
       if (!inherits(var, "NCVariable"))
         self$set_attribute("units", "NC_CHAR", private$.tm$calendar$definition)
       self$set_attribute("calendar", "NC_CHAR", private$.tm$calendar$name)
+
+      private$.regular <- .is_regular(values)
     },
 
     #' @description Summary of the time axis printed to the console.
@@ -391,6 +393,71 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         }
         private$copy_properties_into(ax, rng)
       }
+    },
+
+    #' @description Create the GeoZarr coordinates for this time axis. If the
+    #'   coordinate values are not regular and longer than a set minimum, write
+    #'   the coordinates to the group as a new Zarr array if it does not yet
+    #'   exist. This will also include boundary values.
+    #' @param grp An instance of `zarr_group` where the coordinates will be
+    #'   located in the Zarr store. The coordinates will be written to a new
+    #'   Zarr array with the name based on the axis name if it is irregular and
+    #'   long.
+    #' @return An instance of [geozarr::Coordinates] or a descendant class.
+    geozarr_coordinates = function(grp) {
+      len <- self$length
+      vals <- self$values
+      dir <- if (len == 1L) "OTHER" else "FUTURE"
+
+      unit <- strsplit(self$attribute("units"), " ", fixed = TRUE)[[1L]]
+      epoch <- unit[3L]
+
+      # Boundary values
+      bnds <- private$.bounds$values
+      if (!is.null(bnds)) {
+        if (.is_regular(vals - bnds[1L,]) && .is_regular(bnds[2L,] - vals))
+          # Regular, get up and down interval
+          bnds <- c(bnds[1L,1L] - vals[1L], bnds[2L,1L] - vals[1L])
+        else
+          # Irregular, write array to the Zarr group
+          private$.bounds$write_geozarr(grp)
+      }
+
+      # Regular coordinate values
+      if (private$.regular)
+        return(geozarr::CoordinatesPacked$new(self$name, dir, unit[1L], vals, len, bnds))
+
+      # Irregular
+      if (self$length > geozarr::geozarr_options()$max_explicit) {
+        # Create a Zarr array for the axis coordinates if it does not already exist
+        if (is.null(grp$children[[self$name]])) {
+          ab <- zarr::array_builder$new()
+          ab$shape <- len
+          ab$data_type <- switch(storage.mode(vals),
+                                 "double" = "float64",
+                                 "integer" = "int32")
+          ab$chunk_shape <- len
+          if (len > zarr::zarr_options()$min_compress)
+            ab$add_codec("blosc", list(clevel = 6L))
+          new_array <- try(grp$add_array(self$name, ab), silent = TRUE)
+          if (inherits(new_array, "try-error"))
+            stop("Could not create Zarr array with name", self$name, call. = FALSE)
+          new_array$write(vals)
+
+          # Attributes that are structural are written inline with the Zarr array
+          # so filter them out before writing. Leave a few that are descriptive of
+          # the data, such as units and calendar
+          atts <- self$attributes
+          atts <- atts[!atts$name %in% c("axis", "bounds", "climatology_bounds"), ]
+          idx <- which(atts$name == "units")
+          if (length(idx))
+            atts$value[[idx]] <- unit[1L]
+          atts <- rbind(atts, list(name = "epoch", type = "NC_STRING", length = 1L, value = epoch))
+          self$write_geozarr_attributes(new_array, atts)
+        }
+      }
+
+      geozarr::Coordinates$new(self$name, dir, unit[1L], vals, bnds)
     }
   ),
   active = list(

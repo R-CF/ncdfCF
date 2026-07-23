@@ -28,98 +28,108 @@ of the update check can be controlled with the
 https://cfconventions.org/cf-conventions/cf-conventions.html#standard-name
 }
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{is_loaded}}{(read-only) Flag to determine if the standard names
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{is_loaded}}{(read-only) Flag to determine if the standard names
 table is available.}
-}
-\if{html}{\out{</div>}}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-CFStandardNames-new}{\code{CFStandardNames$new()}}
-\item \href{#method-CFStandardNames-print}{\code{CFStandardNames$print()}}
-\item \href{#method-CFStandardNames-find}{\code{CFStandardNames$find()}}
-\item \href{#method-CFStandardNames-load}{\code{CFStandardNames$load()}}
-\item \href{#method-CFStandardNames-clone}{\code{CFStandardNames$clone()}}
-}
+  \itemize{
+    \item \href{#method-CFStandardNames-initialize}{\code{CFStandardNames$new()}}
+    \item \href{#method-CFStandardNames-print}{\code{CFStandardNames$print()}}
+    \item \href{#method-CFStandardNames-find}{\code{CFStandardNames$find()}}
+    \item \href{#method-CFStandardNames-load}{\code{CFStandardNames$load()}}
+    \item \href{#method-CFStandardNames-clone}{\code{CFStandardNames$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFStandardNames-new"></a>}}
-\if{latex}{\out{\hypertarget{method-CFStandardNames-new}{}}}
-\subsection{Method \code{new()}}{
-Initialize an instance of this class. This is done
+\if{html}{\out{<a id="method-CFStandardNames-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-CFStandardNames-initialize}{}}}
+\subsection{\code{CFStandardNames$new()}}{
+  Initialize an instance of this class. This is done
 automatically when the package is loaded.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFStandardNames$new()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFStandardNames$new()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFStandardNames-print"></a>}}
 \if{latex}{\out{\hypertarget{method-CFStandardNames-print}{}}}
-\subsection{Method \code{print()}}{
-Print the version number of the standard names table in use,
+\subsection{\code{CFStandardNames$print()}}{
+  Print the version number of the standard names table in use,
 if it is loaded. The table is loaded automatically when it is first used.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFStandardNames$print()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFStandardNames$print()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFStandardNames-find"></a>}}
 \if{latex}{\out{\hypertarget{method-CFStandardNames-find}{}}}
-\subsection{Method \code{find()}}{
-Retrieve the information on the specified names.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFStandardNames$find(names)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{names}}{A character vector with the names to search the standard
+\subsection{\code{CFStandardNames$find()}}{
+  Retrieve the information on the specified names.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFStandardNames$find(names)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{names}}{A character vector with the names to search the standard
 names table for.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-If an entry with a value in \code{names} is found, returns a
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    If an entry with a value in \code{names} is found, returns a
 \code{data.frame} with with with the canonical units and a description of
 the name. If no \code{names} are found in the table \code{NULL} is returned.
+  }
 }
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFStandardNames-load"></a>}}
 \if{latex}{\out{\hypertarget{method-CFStandardNames-load}{}}}
-\subsection{Method \code{load()}}{
-Load the standard names table so that it's contents may be
+\subsection{\code{CFStandardNames$load()}}{
+  Load the standard names table so that it's contents may be
 used in display and analysis. Note that the table may be downloaded
 (4.3MB at version 91) if not available or stale.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFStandardNames$load()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFStandardNames$load()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFStandardNames-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-CFStandardNames-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFStandardNames$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{CFStandardNames$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFStandardNames$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

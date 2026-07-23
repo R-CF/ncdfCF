@@ -6,8 +6,8 @@ classes use this class as ancestor.
 
 ## Super class
 
-[`ncdfCF::CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md)
--\> `CFData`
+[`CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md) -\>
+`CFData`
 
 ## Active bindings
 
@@ -31,7 +31,7 @@ classes use this class as ancestor.
 
 ### Public methods
 
-- [`CFData$new()`](#method-CFData-new)
+- [`CFData$new()`](#method-CFData-initialize)
 
 - [`CFData$detach()`](#method-CFData-detach)
 
@@ -43,18 +43,18 @@ classes use this class as ancestor.
 
 Inherited methods
 
-- [`ncdfCF::CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
-- [`ncdfCF::CFObject$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attach_to_group)
-- [`ncdfCF::CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
-- [`ncdfCF::CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
-- [`ncdfCF::CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
-- [`ncdfCF::CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
-- [`ncdfCF::CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
-- [`ncdfCF::CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
+- [`CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
+- [`CFObject$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attach_to_group)
+- [`CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
+- [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
+- [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
+- [`CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
+- [`CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
+- [`CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `CFData$new()`
 
 Create a new `CFData` instance. This method is called upon creating CF
 objects, such as when opening a netCDF resource or creating a new CF
@@ -119,7 +119,7 @@ A `CFData` instance.
 
 ------------------------------------------------------------------------
 
-### Method [`detach()`](https://rdrr.io/r/base/detach.html)
+### `CFData$detach()`
 
 Detach the current object from its underlying netCDF resource. If
 necessary, data is read from the resource before detaching.
@@ -130,7 +130,7 @@ necessary, data is read from the resource before detaching.
 
 ------------------------------------------------------------------------
 
-### Method [`dim()`](https://rdrr.io/r/base/dim.html)
+### `CFData$dim()`
 
 Retrieve the dimensions of the data of this object.
 
@@ -157,7 +157,7 @@ reading of data into chunks.
 
 ------------------------------------------------------------------------
 
-### Method `read_data()`
+### `CFData$read_data()`
 
 #### Usage
 
@@ -182,7 +182,7 @@ object refers to. The data read by this method will not be stored in
 
 ------------------------------------------------------------------------
 
-### Method `read_chunk()`
+### `CFData$read_chunk()`
 
 #### Usage
 

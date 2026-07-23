@@ -8,10 +8,9 @@ which is an axis with character labels.
 
 ## Super classes
 
-[`ncdfCF::CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md)
--\>
-[`ncdfCF::CFData`](https://r-cf.github.io/ncdfCF/reference/CFData.md)
--\> `CFLabel`
+[`CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md) -\>
+[`CFData`](https://r-cf.github.io/ncdfCF/reference/CFData.md) -\>
+`CFLabel`
 
 ## Active bindings
 
@@ -45,7 +44,7 @@ which is an axis with character labels.
 
 ### Public methods
 
-- [`CFLabel$new()`](#method-CFLabel-new)
+- [`CFLabel$new()`](#method-CFLabel-initialize)
 
 - [`CFLabel$print()`](#method-CFLabel-print)
 
@@ -61,22 +60,22 @@ which is an axis with character labels.
 
 Inherited methods
 
-- [`ncdfCF::CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
-- [`ncdfCF::CFObject$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attach_to_group)
-- [`ncdfCF::CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
-- [`ncdfCF::CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
-- [`ncdfCF::CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
-- [`ncdfCF::CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
-- [`ncdfCF::CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
-- [`ncdfCF::CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
-- [`ncdfCF::CFData$detach()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-detach)
-- [`ncdfCF::CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
-- [`ncdfCF::CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
-- [`ncdfCF::CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
+- [`CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
+- [`CFObject$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attach_to_group)
+- [`CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
+- [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
+- [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
+- [`CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
+- [`CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
+- [`CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
+- [`CFData$detach()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-detach)
+- [`CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
+- [`CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
+- [`CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `CFLabel$new()`
 
 Create a new instance of this class.
 
@@ -124,7 +123,7 @@ A `CFLabel` instance.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `CFLabel$print()`
 
 Prints a summary of the labels to the console.
 
@@ -141,7 +140,7 @@ Prints a summary of the labels to the console.
 
 ------------------------------------------------------------------------
 
-### Method [`identical()`](https://rdrr.io/r/base/identical.html)
+### `CFLabel$identical()`
 
 Tests if the object passed to this method is identical to `self`.
 
@@ -161,7 +160,7 @@ Tests if the object passed to this method is identical to `self`.
 
 ------------------------------------------------------------------------
 
-### Method `copy()`
+### `CFLabel$copy()`
 
 Create a copy of this label set. The copy is completely separate from
 `self`, meaning that both `self` and all of its components are made from
@@ -189,7 +188,7 @@ The newly created label set.
 
 ------------------------------------------------------------------------
 
-### Method `slice()`
+### `CFLabel$slice()`
 
 Given a range of domain coordinate values, returns the indices into the
 axis that fall within the supplied range.
@@ -214,7 +213,7 @@ coordinates.
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rdrr.io/r/base/subset.html)
+### `CFLabel$subset()`
 
 Retrieve a subset of the labels.
 
@@ -244,7 +243,7 @@ A `CFLabel` instance, or `NULL` if the `rng` values are invalid.
 
 ------------------------------------------------------------------------
 
-### Method [`write()`](https://rdrr.io/r/base/write.html)
+### `CFLabel$write()`
 
 Write the labels to a netCDF file, including its attributes.
 

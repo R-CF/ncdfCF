@@ -15,334 +15,362 @@ required. Changing the properties of a group other than its name may very
 well invalidate the CF objects or even the netCDF file.
 }
 \section{Super class}{
-\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFGroup}
+\code{\link[ncdfCF:CFObject]{CFObject}} -> \code{CFGroup}
 }
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{parent}}{(read-only) The parent group of the current group, or its
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{parent}}{(read-only) The parent group of the current group, or its
 owning data set for the root node.}
 
-\item{\code{name}}{Set or retrieve the name of the group. Note that the name is
+    \item{\code{name}}{Set or retrieve the name of the group. Note that the name is
 always relative to the location in the hierarchy that the group is in
 and it should thus not be qualified by backslashes. The name has to be
 a valid CF name. The name of the root group cannot be changed.}
 
-\item{\code{fullname}}{(read-only) The fully qualified absolute path of the group.}
+    \item{\code{fullname}}{(read-only) The fully qualified absolute path of the group.}
 
-\item{\code{root}}{(read-only) Retrieve the root group.}
+    \item{\code{root}}{(read-only) Retrieve the root group.}
 
-\item{\code{data_set}}{(read-only) Retrieve the \link{CFDataset} that the group
+    \item{\code{data_set}}{(read-only) Retrieve the \link{CFDataset} that the group
 belongs to. If the group is not attached to a \code{CFDataset}, returns
 \code{NULL}.}
 
-\item{\code{has_subgroups}}{(read-only) Does the current group have subgroups?}
+    \item{\code{has_subgroups}}{(read-only) Does the current group have subgroups?}
 
-\item{\code{subgroups}}{(read-only) Retrieve the list of the subgroups of the
+    \item{\code{subgroups}}{(read-only) Retrieve the list of the subgroups of the
 current group.}
 
-\item{\code{CFobjects}}{(read-only) Retrieve the list of CF objects of the
-current group.}
-}
-\if{html}{\out{</div>}}
+    \item{\code{CFaxes}}{(read-only) Retrieve the list of axes of the current group.}
+
+    \item{\code{CFvars}}{(read-only) Retrieve the list of CF data variables of the current group.}
+
+    \item{\code{CFbounds}}{(read-only) Retrieve the list of CF boundary variables of the current group.}
+
+    \item{\code{CFlonglat}}{(read-only) Retrieve the list of auxiliary long-lat grids of the current group.}
+
+    \item{\code{CFaux}}{(read-only) Retrieve the list of auxiliary coordinates of the current group.}
+
+    \item{\code{CFmeasures}}{(read-only) Retrieve the list of cell measures of the current group.}
+
+    \item{\code{CFcrs}}{(read-only) Retrieve the list of grid mappings of the current group.}
+
+    \item{\code{CFobjects}}{(read-only) Retrieve all CF objects of the current group as a single list.}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-CFGroup-new}{\code{CFGroup$new()}}
-\item \href{#method-CFGroup-print}{\code{CFGroup$print()}}
-\item \href{#method-CFGroup-hierarchy}{\code{CFGroup$hierarchy()}}
-\item \href{#method-CFGroup-subgroup_names}{\code{CFGroup$subgroup_names()}}
-\item \href{#method-CFGroup-create_subgroup}{\code{CFGroup$create_subgroup()}}
-\item \href{#method-CFGroup-add_subgroups}{\code{CFGroup$add_subgroups()}}
-\item \href{#method-CFGroup-add_CF_object}{\code{CFGroup$add_CF_object()}}
-\item \href{#method-CFGroup-remove_CF_object}{\code{CFGroup$remove_CF_object()}}
-\item \href{#method-CFGroup-objects}{\code{CFGroup$objects()}}
-\item \href{#method-CFGroup-find_by_name}{\code{CFGroup$find_by_name()}}
-\item \href{#method-CFGroup-add_variable}{\code{CFGroup$add_variable()}}
-\item \href{#method-CFGroup-write}{\code{CFGroup$write()}}
-\item \href{#method-CFGroup-write_variables}{\code{CFGroup$write_variables()}}
+  \itemize{
+    \item \href{#method-CFGroup-initialize}{\code{CFGroup$new()}}
+    \item \href{#method-CFGroup-print}{\code{CFGroup$print()}}
+    \item \href{#method-CFGroup-hierarchy}{\code{CFGroup$hierarchy()}}
+    \item \href{#method-CFGroup-subgroup_names}{\code{CFGroup$subgroup_names()}}
+    \item \href{#method-CFGroup-create_subgroup}{\code{CFGroup$create_subgroup()}}
+    \item \href{#method-CFGroup-add_subgroups}{\code{CFGroup$add_subgroups()}}
+    \item \href{#method-CFGroup-add_CF_object}{\code{CFGroup$add_CF_object()}}
+    \item \href{#method-CFGroup-remove_CF_object}{\code{CFGroup$remove_CF_object()}}
+    \item \href{#method-CFGroup-objects}{\code{CFGroup$objects()}}
+    \item \href{#method-CFGroup-find_by_name}{\code{CFGroup$find_by_name()}}
+    \item \href{#method-CFGroup-add_variable}{\code{CFGroup$add_variable()}}
+    \item \href{#method-CFGroup-write}{\code{CFGroup$write()}}
+    \item \href{#method-CFGroup-write_variables}{\code{CFGroup$write_variables()}}
+    \item \href{#method-CFGroup-write_geozarr}{\code{CFGroup$write_geozarr()}}
+  }
 }
-}
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
+\if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attach_to_group'><code>ncdfCF::CFObject$attach_to_group()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>ncdfCF::CFObject$attributes_identical()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-detach'><code>ncdfCF::CFObject$detach()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>CFObject$append_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attach_to_group'><code>CFObject$attach_to_group()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>CFObject$attributes_identical()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>CFObject$delete_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-detach'><code>CFObject$detach()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>CFObject$print_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>CFObject$set_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>CFObject$write_attributes()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFGroup-new"></a>}}
-\if{latex}{\out{\hypertarget{method-CFGroup-new}{}}}
-\subsection{Method \code{new()}}{
-Create a new CF group instance.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGroup$new(grp, parent)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{grp}}{Either a \link{NCGroup} instance when opening a netCDF resource, or
+\if{html}{\out{<a id="method-CFGroup-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-CFGroup-initialize}{}}}
+\subsection{\code{CFGroup$new()}}{
+  Create a new CF group instance.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGroup$new(grp, parent)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{grp}}{Either a \link{NCGroup} instance when opening a netCDF resource, or
 a character string with a name for the group when creating a new CF
 group in memory. When a character string, it should be the local name,
 without any slash "/" characters. For the root group, specify an empty
 string "".}
-
-\item{\code{parent}}{The parent group for this group, or a \code{CFDataset} for the
+      \item{\code{parent}}{The parent group for this group, or a \code{CFDataset} for the
 root group.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    An instance of this class.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-An instance of this class.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGroup-print"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGroup-print}{}}}
-\subsection{Method \code{print()}}{
-Summary of the group printed to the console.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGroup$print(stand_alone = TRUE, ...)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{stand_alone}}{Logical to indicate if the group should be printed as
+\subsection{\code{CFGroup$print()}}{
+  Summary of the group printed to the console.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGroup$print(stand_alone = TRUE, ...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{stand_alone}}{Logical to indicate if the group should be printed as
 an object separate from other objects (\code{TRUE}, default), or print as part
 of an enclosing object (\code{FALSE}).}
+      \item{\code{...}}{Passed on to other methods.}
+    }
+    \if{html}{\out{</div>}}
+  }
+}
 
-\item{\code{...}}{Passed on to other methods.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGroup-hierarchy"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGroup-hierarchy}{}}}
-\subsection{Method \code{hierarchy()}}{
-Prints the hierarchy of the group and its subgroups to the
+\subsection{\code{CFGroup$hierarchy()}}{
+  Prints the hierarchy of the group and its subgroups to the
 console, with a summary of contained objects. Usually called from the
 root group to display the full group hierarchy.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGroup$hierarchy(idx = 1L, total = 1L)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{idx, total}}{Arguments to control indentation. Should both be 1 (the
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGroup$hierarchy(idx = 1L, total = 1L)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{idx, total}}{Arguments to control indentation. Should both be 1 (the
 default) when called interactively. The values will be updated during
 recursion when there are groups below the current group.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
-\if{html}{\out{</div>}}
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGroup-subgroup_names"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGroup-subgroup_names}{}}}
-\subsection{Method \code{subgroup_names()}}{
-Retrieve the names of the subgroups of the current group.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGroup$subgroup_names(recursive = TRUE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{recursive}}{Logical, default is \code{TRUE}. If \code{TRUE}, include names of
+\subsection{\code{CFGroup$subgroup_names()}}{
+  Retrieve the names of the subgroups of the current group.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGroup$subgroup_names(recursive = TRUE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{recursive}}{Logical, default is \code{TRUE}. If \code{TRUE}, include names of
 recursively through the group hierarchy.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A character vector with the names of the subgroups of the current
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A character vector with the names of the subgroups of the current
 group. If \code{recursive = TRUE}, the names will be fully qualified with
 their path.
+  }
 }
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGroup-create_subgroup"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGroup-create_subgroup}{}}}
-\subsection{Method \code{create_subgroup()}}{
-Create a new group as a subgroup of the current group.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGroup$create_subgroup(name)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{The name of the new subgroup. This must be a valid CF name,
+\subsection{\code{CFGroup$create_subgroup()}}{
+  Create a new group as a subgroup of the current group.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGroup$create_subgroup(name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{The name of the new subgroup. This must be a valid CF name,
 so not contain any slash '/' characters among other restrictions, and
 it cannot be already present in the group.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The newly created group, or an error.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The newly created group, or an error.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGroup-add_subgroups"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGroup-add_subgroups}{}}}
-\subsection{Method \code{add_subgroups()}}{
-Add subgroups to the current group. These subgroups must be
+\subsection{\code{CFGroup$add_subgroups()}}{
+  Add subgroups to the current group. These subgroups must be
 fully formed, including having set their parent to this group. Use the
 \code{create_subgroup()} method to add a group from scratch.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGroup$add_subgroups(grps)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGroup$add_subgroups(grps)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{grps}}{A \code{CFGroup}, or \code{list} thereof.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{grps}}{A \code{CFGroup}, or \code{list} thereof.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGroup-add_CF_object"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGroup-add_CF_object}{}}}
-\subsection{Method \code{add_CF_object()}}{
-Add one or more CF objects to the current group. This is an
+\subsection{\code{CFGroup$add_CF_object()}}{
+  Add one or more CF objects to the current group. This is an
 internal method that should not be invoked by the user. The objects to
 be added are considered atomic and not assessed for any contained
 objects. Use a method like \code{add_variable()} to add a CF variable to
 this group as well as its composing sub-objects such as axes.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGroup$add_CF_object(obj, silent = TRUE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{obj}}{An instance of a \code{CFObject} descendant class, or a \code{list}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGroup$add_CF_object(obj, silent = TRUE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{obj}}{An instance of a \code{CFObject} descendant class, or a \code{list}
 thereof. If it is a \code{list}, the list elements must be named after the
 CF object they contain.}
-
-\item{\code{silent}}{Logical. If \code{TRUE} (default), CF objects in argument \code{obj}
+      \item{\code{silent}}{Logical. If \code{TRUE} (default), CF objects in argument \code{obj}
 whose name is already present in the list of CF objects \emph{and} whose
 class is identical to the already present object are silently dropped;
 otherwise or when the argument is \code{FALSE} an error is thrown.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly, or an error.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly, or an error.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGroup-remove_CF_object"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGroup-remove_CF_object}{}}}
-\subsection{Method \code{remove_CF_object()}}{
-Remove a CF objects from the current group. This is an
+\subsection{\code{CFGroup$remove_CF_object()}}{
+  Remove a CF objects from the current group. This is an
 internal method that should not be invoked by the user. The objects to
 be removed are considered atomic and not assessed for any contained
 objects.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGroup$remove_CF_object(obj)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGroup$remove_CF_object(obj)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{obj}}{The integer id property of the CF object to remove from this
+group.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{obj}}{The integer id property of the CF object to remove from this
-group.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGroup-objects"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGroup-objects}{}}}
-\subsection{Method \code{objects()}}{
-This method lists the CF objects of a certain class located
+\subsection{\code{CFGroup$objects()}}{
+  This method lists the CF objects of a certain class located
 in this group, optionally including objects in subgroups.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGroup$objects(cls, recursive = TRUE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{cls}}{Character vector of classes whose objects to retrieve. Note
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGroup$objects(cls, recursive = TRUE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{cls}}{Character vector of classes whose objects to retrieve. Note
 that subclasses are automatically retrieved as well, so specifying
 \code{cls = "CFAxis"} will retrieve all axes defined in this group.}
-
-\item{\code{recursive}}{Should subgroups be scanned for CF objects too
+      \item{\code{recursive}}{Should subgroups be scanned for CF objects too
 (default is \code{TRUE})?}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A list of \link{CFObject} instances.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A list of \link{CFObject} instances.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGroup-find_by_name"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGroup-find_by_name}{}}}
-\subsection{Method \code{find_by_name()}}{
-Find an object by its name. Given the name of an object,
+\subsection{\code{CFGroup$find_by_name()}}{
+  Find an object by its name. Given the name of an object,
 possibly preceded by an absolute or relative group path, return the
 object to the caller. Typically, this method is called
 programmatically; similar interactive use is provided through the
 \verb{[[.CFDataset} operator.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGroup$find_by_name(name)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{The name of an object, with an optional absolute or relative
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGroup$find_by_name(name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{The name of an object, with an optional absolute or relative
 group path from the calling group. The object must be an CF construct:
 group, data variable, axis, auxiliary axis, label, grid mapping, etc.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The object with the provided name. If the object is not found,
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The object with the provided name. If the object is not found,
 returns \code{NULL}.
+  }
 }
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGroup-add_variable"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGroup-add_variable}{}}}
-\subsection{Method \code{add_variable()}}{
-Add a \link{CFVariable} object to the group. If there is another
+\subsection{\code{CFGroup$add_variable()}}{
+  Add a \link{CFVariable} object to the group. If there is another
 object with the same name in this group an error is thrown. For
 associated objects (such as axes, CRS, boundary variables, etc), if
 another object with the same name is otherwise identical to the
 associated object then that object will be linked from the variable,
 otherwise an error is thrown.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGroup$add_variable(var, locations = list())}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{var}}{An instance of \code{CFVariable} or any of its descendants.}
-
-\item{\code{locations}}{Optional. A \code{list} whose named elements correspond to
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGroup$add_variable(var, locations = list())}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{var}}{An instance of \code{CFVariable} or any of its descendants.}
+      \item{\code{locations}}{Optional. A \code{list} whose named elements correspond to
 the names of objects associated with the variable in argument \code{var}.
 Each list element has a single character string indicating the group in
 the hierarchy where the object should be stored. As an example, if the
@@ -351,59 +379,86 @@ parent group of this group, then specify \code{locations = list(lon = "..", lat 
 the current group. Associated objects that are not in the list will be
 stored in this group. If the argument \code{locations} is not provided, all
 associated objects will be stored in this group.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Argument \code{var}, invisibly.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Argument \code{var}, invisibly.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGroup-write"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGroup-write}{}}}
-\subsection{Method \code{write()}}{
-Write the group to file, including its attributes, if it
+\subsection{\code{CFGroup$write()}}{
+  Write the group to file, including its attributes, if it
 doesn't already exist.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGroup$write(recursive = TRUE)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGroup$write(recursive = TRUE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{recursive}}{If \code{TRUE} (default), write sub-groups as well.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{recursive}}{If \code{TRUE} (default), write sub-groups as well.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGroup-write_variables"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGroup-write_variables}{}}}
-\subsection{Method \code{write_variables()}}{
-Write data variables in the group to file, including its
+\subsection{\code{CFGroup$write_variables()}}{
+  Write data variables in the group to file, including its
 associated objects, if it doesn't already exist.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGroup$write_variables(pack = FALSE, recursive = TRUE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{pack}}{Logical to indicate if the data should be packed. Packing is
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGroup$write_variables(pack = FALSE, recursive = TRUE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{pack}}{Logical to indicate if the data should be packed. Packing is
 only useful for numeric data; packing is not performed on integer
 values. Packing is always to the "NC_SHORT" data type, i.e. 16-bits per
 value.}
-
-\item{\code{recursive}}{If \code{TRUE} (default), write data variables in sub-groups
+      \item{\code{recursive}}{If \code{TRUE} (default), write data variables in sub-groups
 as well.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
-\if{html}{\out{</div>}}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFGroup-write_geozarr"></a>}}
+\if{latex}{\out{\hypertarget{method-CFGroup-write_geozarr}{}}}
+\subsection{\code{CFGroup$write_geozarr()}}{
+  Write this group to a Zarr store. Iterate over contained
+objects and walk through the hierarchy.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGroup$write_geozarr(grp)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{grp}}{The \code{zarr_group} instance to write to.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
-\subsection{Returns}{
-Self, invisibly.
-}
-}
+
 }

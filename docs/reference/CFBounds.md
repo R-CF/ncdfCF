@@ -9,10 +9,9 @@ element).
 
 ## Super classes
 
-[`ncdfCF::CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md)
--\>
-[`ncdfCF::CFData`](https://r-cf.github.io/ncdfCF/reference/CFData.md)
--\> `CFBounds`
+[`CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md) -\>
+[`CFData`](https://r-cf.github.io/ncdfCF/reference/CFData.md) -\>
+`CFBounds`
 
 ## Active bindings
 
@@ -41,9 +40,11 @@ element).
 
 ### Public methods
 
-- [`CFBounds$new()`](#method-CFBounds-new)
+- [`CFBounds$new()`](#method-CFBounds-initialize)
 
 - [`CFBounds$print()`](#method-CFBounds-print)
+
+- [`CFBounds$print_boundary_values()`](#method-CFBounds-print_boundary_values)
 
 - [`CFBounds$range()`](#method-CFBounds-range)
 
@@ -57,22 +58,22 @@ element).
 
 Inherited methods
 
-- [`ncdfCF::CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
-- [`ncdfCF::CFObject$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attach_to_group)
-- [`ncdfCF::CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
-- [`ncdfCF::CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
-- [`ncdfCF::CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
-- [`ncdfCF::CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
-- [`ncdfCF::CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
-- [`ncdfCF::CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
-- [`ncdfCF::CFData$detach()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-detach)
-- [`ncdfCF::CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
-- [`ncdfCF::CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
-- [`ncdfCF::CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
+- [`CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
+- [`CFObject$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attach_to_group)
+- [`CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
+- [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
+- [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
+- [`CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
+- [`CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
+- [`CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
+- [`CFData$detach()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-detach)
+- [`CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
+- [`CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
+- [`CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `CFBounds$new()`
 
 Create an instance of this class.
 
@@ -142,7 +143,7 @@ A new instance of this class.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `CFBounds$print()`
 
 Print a summary of the object to the console.
 
@@ -164,7 +165,20 @@ Print a summary of the object to the console.
 
 ------------------------------------------------------------------------
 
-### Method [`range()`](https://rdrr.io/r/base/range.html)
+### `CFBounds$print_boundary_values()`
+
+Print the boundary values to the console. This method is not very useful
+to call directly - instead, call `$print()`, which will call this
+method. These boundary values are also printed when printing an axis
+that has boundary values associated with it.
+
+#### Usage
+
+    CFBounds$print_boundary_values()
+
+------------------------------------------------------------------------
+
+### `CFBounds$range()`
 
 Retrieve the lowest and highest value in the bounds.
 
@@ -174,7 +188,7 @@ Retrieve the lowest and highest value in the bounds.
 
 ------------------------------------------------------------------------
 
-### Method `copy()`
+### `CFBounds$copy()`
 
 Create a copy of this bounds object The copy is completely separate from
 `self`, meaning that both `self` and all of its components are made from
@@ -202,7 +216,7 @@ The newly created bounds object.
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rdrr.io/r/base/subset.html)
+### `CFBounds$subset()`
 
 Return a boundary variable spanning a smaller coordinate range. This
 currently only applies to 1-D axes.
@@ -232,7 +246,7 @@ A `CFBounds` instance covering the indicated range of indices.
 
 ------------------------------------------------------------------------
 
-### Method [`append()`](https://rdrr.io/r/base/append.html)
+### `CFBounds$append()`
 
 Append boundary values at the end of the current values of the boundary
 variable.
@@ -261,7 +275,7 @@ return `NULL`.
 
 ------------------------------------------------------------------------
 
-### Method [`write()`](https://rdrr.io/r/base/write.html)
+### `CFBounds$write()`
 
 Write the boundary variable to a netCDF file. This method should not be
 called directly; instead, `CFVariable$save()` will call this method
@@ -269,11 +283,11 @@ automatically.
 
 #### Usage
 
-    CFBounds$write(object_name)
+    CFBounds$write(object_id)
 
 #### Arguments
 
-- `object_name`:
+- `object_id`:
 
-  The name of the object that uses these boundary values, usually an
-  axis but could also be an auxiliary CV or a parametric Z axis.
+  The integer dimid of the object that uses these boundary values,
+  usually an axis but could also be an auxiliary CV.

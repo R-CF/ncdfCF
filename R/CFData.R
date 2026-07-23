@@ -69,7 +69,7 @@ CFData <- R6::R6Class("CFData",
     check_start_count = function(start, count) {
       d <- private$.dims
       len <- length(d)
-      if (!len) return(list())          # When the object does not have any data
+      if (!len || any(d == 0L)) return(list())          # When the object does not have any data
 
       if (length(start) == 1L && is.na(start))
         start <- rep(1L, len)
@@ -206,7 +206,6 @@ CFData <- R6::R6Class("CFData",
     #' @return A `CFData` instance.
     initialize = function(obj, group, values, start = 1L, count = NA, attributes = data.frame()) {
       super$initialize(obj, attributes, group = group)
-
       if (inherits(obj, "NCVariable")) {
         # Set the initial .NC_map to cover the entire NC variable
         if ((nd <- obj$ndims) > 0L) {

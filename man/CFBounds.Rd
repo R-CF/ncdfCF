@@ -12,64 +12,63 @@ The class manages the boundary information for an axis (2 vertices per
 element) or an auxiliary longitude-latitude grid (4 vertices per element).
 }
 \section{Super classes}{
-\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFData]{ncdfCF::CFData}} -> \code{CFBounds}
+\code{\link[ncdfCF:CFObject]{CFObject}} -> \code{\link[ncdfCF:CFData]{CFData}} -> \code{CFBounds}
 }
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{length}}{(read-only) The length of the second dimension of the data, i.e. the
+    \item{\code{length}}{(read-only) The length of the second dimension of the data, i.e. the
 number of boundary values.}
 
-\item{\code{vertices}}{(read-only) The length of the first dimension of the data, i.e. the
+    \item{\code{vertices}}{(read-only) The length of the first dimension of the data, i.e. the
 number of vertices that make up a boundary.}
 
-\item{\code{values}}{Set or retrieve the boundary values of this object. Upon
+    \item{\code{values}}{Set or retrieve the boundary values of this object. Upon
 retrieval, values are read from the netCDF resource, if there is one,
 upon first access and cached thereafter. Upon setting values, if there
 is a linked netCDF resource, this object will be detached from it.}
-}
-\if{html}{\out{</div>}}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-CFBounds-new}{\code{CFBounds$new()}}
-\item \href{#method-CFBounds-print}{\code{CFBounds$print()}}
-\item \href{#method-CFBounds-print_boundary_values}{\code{CFBounds$print_boundary_values()}}
-\item \href{#method-CFBounds-range}{\code{CFBounds$range()}}
-\item \href{#method-CFBounds-copy}{\code{CFBounds$copy()}}
-\item \href{#method-CFBounds-subset}{\code{CFBounds$subset()}}
-\item \href{#method-CFBounds-append}{\code{CFBounds$append()}}
-\item \href{#method-CFBounds-write}{\code{CFBounds$write()}}
+  \itemize{
+    \item \href{#method-CFBounds-initialize}{\code{CFBounds$new()}}
+    \item \href{#method-CFBounds-print}{\code{CFBounds$print()}}
+    \item \href{#method-CFBounds-print_boundary_values}{\code{CFBounds$print_boundary_values()}}
+    \item \href{#method-CFBounds-range}{\code{CFBounds$range()}}
+    \item \href{#method-CFBounds-copy}{\code{CFBounds$copy()}}
+    \item \href{#method-CFBounds-subset}{\code{CFBounds$subset()}}
+    \item \href{#method-CFBounds-append}{\code{CFBounds$append()}}
+    \item \href{#method-CFBounds-write}{\code{CFBounds$write()}}
+  }
 }
-}
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
+\if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attach_to_group'><code>ncdfCF::CFObject$attach_to_group()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>ncdfCF::CFObject$attributes_identical()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="detach"><a href='../../ncdfCF/html/CFData.html#method-CFData-detach'><code>ncdfCF::CFData$detach()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href='../../ncdfCF/html/CFData.html#method-CFData-dim'><code>ncdfCF::CFData$dim()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_chunk'><code>ncdfCF::CFData$read_chunk()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_data'><code>ncdfCF::CFData$read_data()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>CFObject$append_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attach_to_group'><code>CFObject$attach_to_group()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>CFObject$attributes_identical()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>CFObject$delete_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>CFObject$print_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>CFObject$set_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>CFObject$write_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="detach"><a href='../../ncdfCF/html/CFData.html#method-CFData-detach'><code>CFData$detach()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href='../../ncdfCF/html/CFData.html#method-CFData-dim'><code>CFData$dim()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_chunk'><code>CFData$read_chunk()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_data'><code>CFData$read_data()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFBounds-new"></a>}}
-\if{latex}{\out{\hypertarget{method-CFBounds-new}{}}}
-\subsection{Method \code{new()}}{
-Create an instance of this class.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$new(
+\if{html}{\out{<a id="method-CFBounds-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-CFBounds-initialize}{}}}
+\subsection{\code{CFBounds$new()}}{
+  Create an instance of this class.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFBounds$new(
   var,
   group,
   values,
@@ -77,188 +76,193 @@ Create an instance of this class.
   count = NA,
   attributes = data.frame(),
   owner_dims = 1L
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{var}}{The name of the boundary variable when creating a new boundary
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{var}}{The name of the boundary variable when creating a new boundary
 variable. When reading a boundary variable from file, the \link{NCVariable}
 object that describes this instance.}
-
-\item{\code{group}}{The \link{CFGroup} that this instance will live in.}
-
-\item{\code{values}}{Optional. The values of the boundary variable. This must be
+      \item{\code{group}}{The \link{CFGroup} that this instance will live in.}
+      \item{\code{values}}{Optional. The values of the boundary variable. This must be
 a numeric matrix whose first dimension has a length equal to the number
 of vertices for each boundary, and the second dimension is as long as
 the \code{CFObject} instances that use these boundary values. Ignored when
 argument \code{var} is a \code{NCVariable} object.}
-
-\item{\code{start}}{Optional. Vector of indices where to start reading boundary
+      \item{\code{start}}{Optional. Vector of indices where to start reading boundary
 data along the dimensions of the data. The vector must be \code{NA} to read
 all data, otherwise it must have a length equal to the dimensionality
 of the owning object + 1.}
-
-\item{\code{count}}{Optional. Vector of number of elements to read along each
+      \item{\code{count}}{Optional. Vector of number of elements to read along each
 dimension of the boundary data. The vector must be \code{NA} to read to the
 end of each dimension, otherwise it must have a length equal to the
 dimensionality of the owning object + 1.}
-
-\item{\code{attributes}}{Optional. A \code{data.frame} with the attributes of the
+      \item{\code{attributes}}{Optional. A \code{data.frame} with the attributes of the
 boundary object. When an empty \code{data.frame} (default) and argument
 \code{var} is an \code{NCVariable} instance, attributes of the bounds object will
 be taken from the netCDF resource.}
-
-\item{\code{owner_dims}}{Optional, the number of dimensions of the object that
+      \item{\code{owner_dims}}{Optional, the number of dimensions of the object that
 these boundary values pertain to. Default is 1.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A new instance of this class.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A new instance of this class.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFBounds-print"></a>}}
 \if{latex}{\out{\hypertarget{method-CFBounds-print}{}}}
-\subsection{Method \code{print()}}{
-Print a summary of the object to the console.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$print(attributes = TRUE, ...)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{attributes}}{Default \code{TRUE}, flag to indicate if the attributes of
+\subsection{\code{CFBounds$print()}}{
+  Print a summary of the object to the console.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFBounds$print(attributes = TRUE, ...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{attributes}}{Default \code{TRUE}, flag to indicate if the attributes of
 the boundary values should be printed.}
-
-\item{\code{...}}{Arguments passed on to other functions. Of particular interest
+      \item{\code{...}}{Arguments passed on to other functions. Of particular interest
 is \verb{width = } to indicate a maximum width of attribute columns.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
-\if{html}{\out{</div>}}
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFBounds-print_boundary_values"></a>}}
 \if{latex}{\out{\hypertarget{method-CFBounds-print_boundary_values}{}}}
-\subsection{Method \code{print_boundary_values()}}{
-Print the boundary values to the console. This method is not
+\subsection{\code{CFBounds$print_boundary_values()}}{
+  Print the boundary values to the console. This method is not
 very useful to call directly - instead, call \verb{$print()}, which will
 call this method. These boundary values are also printed when printing
 an axis that has boundary values associated with it.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$print_boundary_values()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFBounds$print_boundary_values()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFBounds-range"></a>}}
 \if{latex}{\out{\hypertarget{method-CFBounds-range}{}}}
-\subsection{Method \code{range()}}{
-Retrieve the lowest and highest value in the bounds.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$range()}\if{html}{\out{</div>}}
+\subsection{\code{CFBounds$range()}}{
+  Retrieve the lowest and highest value in the bounds.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFBounds$range()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFBounds-copy"></a>}}
 \if{latex}{\out{\hypertarget{method-CFBounds-copy}{}}}
-\subsection{Method \code{copy()}}{
-Create a copy of this bounds object The copy is completely
+\subsection{\code{CFBounds$copy()}}{
+  Create a copy of this bounds object The copy is completely
 separate from \code{self}, meaning that both \code{self} and all of its
 components are made from new instances.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$copy(name = "", group)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{The name for the new bounds object. If an empty string is
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFBounds$copy(name = "", group)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{The name for the new bounds object. If an empty string is
 passed, will use the name of this bounds object.}
+      \item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The newly created bounds object.
+  }
+}
 
-\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The newly created bounds object.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFBounds-subset"></a>}}
 \if{latex}{\out{\hypertarget{method-CFBounds-subset}{}}}
-\subsection{Method \code{subset()}}{
-Return a boundary variable spanning a smaller coordinate
+\subsection{\code{CFBounds$subset()}}{
+  Return a boundary variable spanning a smaller coordinate
 range. This currently only applies to 1-D axes.
 
 This method returns boundary values which span the range of indices
 given by the \code{rng} argument.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$subset(group, rng)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{group}}{The \link{CFGroup} where the copy of these bounds will live.}
-
-\item{\code{rng}}{The range of values from this bounds object to include in the
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFBounds$subset(group, rng)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{group}}{The \link{CFGroup} where the copy of these bounds will live.}
+      \item{\code{rng}}{The range of values from this bounds object to include in the
 returned object.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A \code{CFBounds} instance covering the indicated range of indices.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A \code{CFBounds} instance covering the indicated range of indices.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFBounds-append"></a>}}
 \if{latex}{\out{\hypertarget{method-CFBounds-append}{}}}
-\subsection{Method \code{append()}}{
-Append boundary values at the end of the current values of
+\subsection{\code{CFBounds$append()}}{
+  Append boundary values at the end of the current values of
 the boundary variable.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$append(from, group)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{from}}{An instance of \code{CFBounds} whose values to append to the
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFBounds$append(from, group)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{from}}{An instance of \code{CFBounds} whose values to append to the
 values of this boundary variable.}
-
-\item{\code{group}}{The \link{CFGroup} where the copy of these bounds will live.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A new \code{CFBounds} instance with values from this boundary variable
+      \item{\code{group}}{The \link{CFGroup} where the copy of these bounds will live.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A new \code{CFBounds} instance with values from this boundary variable
 and the \code{from} boundary variable appended. If argument \code{from} is
 \code{NULL}, return \code{NULL}.
+  }
 }
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFBounds-write"></a>}}
 \if{latex}{\out{\hypertarget{method-CFBounds-write}{}}}
-\subsection{Method \code{write()}}{
-Write the boundary variable to a netCDF file. This method
+\subsection{\code{CFBounds$write()}}{
+  Write the boundary variable to a netCDF file. This method
 should not be called directly; instead, \code{CFVariable$save()} will call
 this method automatically.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFBounds$write(object_id)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFBounds$write(object_id)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{object_id}}{The integer dimid of the object that uses these boundary
+values, usually an axis but could also be an auxiliary CV.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{object_id}}{The integer dimid of the object that uses these boundary
-values, usually an axis but could also be an auxiliary CV.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

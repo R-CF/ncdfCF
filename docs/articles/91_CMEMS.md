@@ -15,6 +15,7 @@ on.
 ## Open netCDF files and load the data
 
 ``` r
+
 # Open the netCDF file
 library(ncdfCF)
 (ds <- open_ncdf("../../tests/testdata/cmems_mod_med_phy-tem_anfc_4.2km_P1M-m_1748594717636.nc"))
@@ -91,6 +92,7 @@ There are two variables in the data set: `bottomT` and `thetao.` We’ll
 work here with `thetao`: Sea temperature.
 
 ``` r
+
 # Assign the theta data variable
 (thetao <- ds[["thetao"]])
 #> <Variable> thetao 
@@ -131,6 +133,7 @@ data variable you can see the range of values and their physical unit.
 You can also inspect the coordinates along the axes quite easily:
 
 ``` r
+
 # The "time" coordinates
 thetao$axes[["time"]]$coordinates
 #>  [1] "2024-01-01" "2024-02-01" "2024-03-01" "2024-04-01" "2024-05-01"
@@ -173,6 +176,7 @@ represents the surface layer. We can extract this data using the
 value:
 
 ``` r
+
 (surfaceT <- thetao$subset(depth = c(0, 2)))
 #> <Variable> thetao 
 #> Long name: Sea temperature 
@@ -206,6 +210,7 @@ that you can look at its properties.
 ## Quick map plot
 
 ``` r
+
 # Get the longitude and latitude coordinates
 longitude <- thetao$axes[["longitude"]]$coordinates
 latitude <- thetao$axes[["latitude"]]$coordinates
@@ -222,6 +227,7 @@ The `lattice` package’s
 enables you to obtain a better map:
 
 ``` r
+
 library(lattice)
 grid <- expand.grid(lon=longitude, lat=latitude)
 cutpts <- c(12,13,14,15,16,17,18,19,20)
@@ -244,6 +250,7 @@ depths for the month of July in the middle of the Tyrrhenian Sea, one of
 the deeper parts of the Mediterranean.
 
 ``` r
+
 # Make a vertical profile of temperature at a single location for the month of July 2024
 tprof <- thetao$profile(longitude = 12.71, latitude = 40.33, time = "2024-07-01", .names = "Tyrrhenian_Sea")
 
@@ -265,6 +272,7 @@ This table can be used for further analysis, but you can also make very
 nice graph with the `ggplot2` package:
 
 ``` r
+
 library(ggplot2)
 ggplot(Tjuly) + geom_line(aes(depth, Tyrrhenian_Sea)) + theme_bw() + xlim(0, 4000) + 
   labs(x = "Depth (m)", y = "Temperature (°C)", title =  "Tyrrhenian Sea", subtitle = "Location: 12.71E - 40.33N  Month: July 2024")

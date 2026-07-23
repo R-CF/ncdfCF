@@ -10,8 +10,8 @@ properties are thus made accessible.
 
 ## Super class
 
-[`ncdfCF::NCObject`](https://r-cf.github.io/ncdfCF/reference/NCObject.md)
--\> `NCVariable`
+[`NCObject`](https://r-cf.github.io/ncdfCF/reference/NCObject.md) -\>
+`NCVariable`
 
 ## Active bindings
 
@@ -59,7 +59,7 @@ properties are thus made accessible.
 
 ### Public methods
 
-- [`NCVariable$new()`](#method-NCVariable-new)
+- [`NCVariable$new()`](#method-NCVariable-initialize)
 
 - [`NCVariable$print()`](#method-NCVariable-print)
 
@@ -81,13 +81,13 @@ properties are thus made accessible.
 
 Inherited methods
 
-- [`ncdfCF::NCObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-attribute)
-- [`ncdfCF::NCObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-print_attributes)
-- [`ncdfCF::NCObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-write_attributes)
+- [`NCObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-attribute)
+- [`NCObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-print_attributes)
+- [`NCObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/NCObject.html#method-write_attributes)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `NCVariable$new()`
 
 Create a new netCDF variable. This class should not be instantiated
 directly, they are created automatically when opening a netCDF resource.
@@ -125,7 +125,7 @@ directly, they are created automatically when opening a netCDF resource.
 
 - `dimids`:
 
-  The identifiers of the dimensions this variable uses.
+  The integer identifiers of the dimensions this variable uses.
 
 - `attributes`:
 
@@ -141,7 +141,7 @@ An instance of this class.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `NCVariable$print()`
 
 Summary of the NC variable printed to the console.
 
@@ -157,7 +157,7 @@ Summary of the NC variable printed to the console.
 
 ------------------------------------------------------------------------
 
-### Method `shard()`
+### `NCVariable$shard()`
 
 Very concise information on the variable. The information returned by
 this function is very concise and most useful when combined with similar
@@ -173,7 +173,7 @@ Character string with very basic variable information.
 
 ------------------------------------------------------------------------
 
-### Method [`detach()`](https://rdrr.io/r/base/detach.html)
+### `NCVariable$detach()`
 
 Detach the passed object from this NC variable.
 
@@ -193,7 +193,7 @@ Detach the passed object from this NC variable.
 
 ------------------------------------------------------------------------
 
-### Method `get_data()`
+### `NCVariable$get_data()`
 
 Read (a chunk of) data from the netCDF file. Degenerate dimensions are
 maintained and data is always returned in its smallest type.
@@ -223,7 +223,7 @@ An array, matrix or vector with the requested data, or an error object.
 
 ------------------------------------------------------------------------
 
-### Method `write_data()`
+### `NCVariable$write_data()`
 
 Write (a chunk of) data to the netCDF file.
 
@@ -261,7 +261,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `set_name()`
+### `NCVariable$set_name()`
 
 Change the name of the NC variable. The new name must be valid in the
 indicated group, it can not already exist in the group. The netCDF file
@@ -283,7 +283,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `dimension()`
+### `NCVariable$dimension()`
 
 Get the
 [NCDimension](https://r-cf.github.io/ncdfCF/reference/NCDimension.md)
@@ -307,7 +307,7 @@ found, return `NULL`.
 
 ------------------------------------------------------------------------
 
-### Method [`dim()`](https://rdrr.io/r/base/dim.html)
+### `NCVariable$dim()`
 
 The lengths of the data dimensions of this object.
 
@@ -324,7 +324,7 @@ The lengths of the data dimensions of this object.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `NCVariable$clone()`
 
 The objects of this class are cloneable with this method.
 

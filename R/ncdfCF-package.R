@@ -84,7 +84,7 @@
 #'
 #' * [names()]: Vector of names of the data variables in the data set.
 #' * [dimnames()]: Vector of names of the axes in the data set.
-#' * [group()]: Vector of groups defined in the data set.
+#' * [groups()]: Vector of groups defined in the data set.
 #'
 #' **Data variable**
 #'

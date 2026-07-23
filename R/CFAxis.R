@@ -37,6 +37,9 @@ CFAxis <- R6::R6Class("CFAxis",
     # it should be 1L.
     .active_coords = 1L,
 
+    # Flag if the axis coordinates are regular. Difference should not be 0.
+    .regular = FALSE,
+
     # Get the names of the auxiliary coordinate instances.
     aux_names = function() {
       sapply(private$.aux, function(aux) aux$name)
@@ -408,6 +411,95 @@ CFAxis <- R6::R6Class("CFAxis",
       lapply(private$.aux, function(l) {l$dimid <- private$.dimid; l$write()})
 
       invisible(self)
+    },
+
+    #' @description Create the GeoZarr coordinate system axis for this axis,
+    #'   inclusive of auxiliary coordinates. This will also include boundary
+    #'   values.
+    #' @param grp An instance of `zarr_group` where the axis will be located in
+    #'   the Zarr store. The axis will be written to a new Zarr array with the
+    #'   name of the axis if it is irregular and long.
+    #' @return An instance of [geozarr::CoordinateSystemAxis].
+    geozarr_axis = function(grp) {
+      # vertical?, discrete?
+      all_crds <- lapply(c(self, private$.aux), function(crd) {
+        crd$geozarr_coordinates(grp)
+      })
+      orient <- private$.orient
+      if (!nzchar(orient)) orient <- " "
+      geozarr::CoordinateSystemAxis$new(self$name, orient, all_crds)
+    },
+
+    #' @description Create the GeoZarr coordinates for this axis. If the
+    #'   coordinate values are not regular and longer than a set minimum, write
+    #'   the coordinates to the group as a new Zarr array if it does not yet
+    #'   exist. This will also include boundary values.
+    #' @param grp An instance of `zarr_group` where the coordinates will be
+    #'   located in the Zarr store. The coordinates will be written to a new
+    #'   Zarr array with the name based on the axis name if it is irregular and
+    #'   long.
+    #' @return An instance of [geozarr::Coordinates] or a descendant class.
+    geozarr_coordinates = function(grp) {
+      len <- self$length
+      orient <- self$orientation
+      vals <- self$values
+      dir <- if (len == 1L || !nzchar(orient) || !is.numeric(vals)) "OTHER"
+      else switch(orient, # CFAxisTime and CFAxisVertical override
+                  X = "EAST",
+                  Y = "NORTH")
+
+      unit <- self$attribute("units")
+      if (is.na(unit) || unit == "") unit <- "1"
+      else if (grepl("^degree(s?)(_?)(east|E)$", unit) ||
+               grepl("^degree(s?)(_?)(north|N)$", unit))
+        unit <- "degree"
+
+      # Boundary values
+      bnds <- private$.bounds$values
+      if (!is.null(bnds)) {
+        if (.is_regular(vals - bnds[1L,]) && .is_regular(bnds[2L,] - vals))
+          # Regular, get up and down interval
+          bnds <- c(bnds[1L,1L] - vals[1L], bnds[2L,1L] - vals[1L])
+        else
+          # Irregular, write array to the Zarr group
+          private$.bounds$write_geozarr(grp)
+      }
+
+      # Regular coordinate values
+      if (private$.regular)
+        return(geozarr::CoordinatesPacked$new(self$name, dir, unit, vals, len, bnds))
+
+      # Irregular
+      if (self$length > geozarr::geozarr_options()$max_explicit) {
+        # Create a Zarr array for the axis coordinates if it does not already exist
+        if (is.null(grp$children[[self$name]])) {
+          ab <- zarr::array_builder$new()
+          ab$shape <- len
+          ab$data_type <- switch(storage.mode(vals),
+                                 "double" = "float64",
+                                 "integer" = "int32",
+                                 "character" = "string")
+          ab$chunk_shape <- len
+          if (len > zarr::zarr_options()$min_compress)
+            ab$add_codec("blosc", list(clevel = 6L))
+          new_array <- try(grp$add_array(self$name, ab), silent = TRUE)
+          if (inherits(new_array, "try-error"))
+            stop("Could not create Zarr array with name", self$name, call. = FALSE)
+          new_array$write(vals)
+
+          # Attributes that are structural are written inline with the Zarr array
+          # so filter them out before writing. Leave a few that are descriptive of
+          # the data, such as units and calendar
+          atts <- self$attributes
+          atts <- atts[!atts$name %in% c("axis", "bounds"), ]
+          idx <- which(atts$name == "units")
+          if (length(idx))
+            atts$value[[idx]] <- unit
+          self$write_geozarr_attributes(new_array, atts)
+        }
+      }
+
+      geozarr::Coordinates$new(self$name, dir, unit, vals, bnds)
     }
   ),
   active = list(
@@ -460,6 +552,13 @@ CFAxis <- R6::R6Class("CFAxis",
       if (missing(value))
         private$get_coordinates()
       # FIXME: Must be able to add coordinates too, f.i. in an unlimited axis.
+    },
+
+    #' @field regular (read-only) Flag if the numeric or time axis coordinates
+    #'   are regular, meaning equally spaced.
+    regular = function(value) {
+      if (missing(value))
+        private$.regular
     },
 
     #' @field bounds Set or retrieve the bounds of this axis as a [CFBounds]

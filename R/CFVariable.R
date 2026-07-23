@@ -1235,6 +1235,54 @@ CFVariable <- R6::R6Class("CFVariable",
       invisible(self)
     },
 
+    #' @description Write the data variable to a Zarr group, including its
+    #'   attributes and other assorted objects. Axes, auxiliary coordinates and
+    #'   boundary values that are regular or short are written inline in the
+    #'   attributes of the array, irregular ones have already been stored
+    #'   externally.
+    #' @param grp An instance of `zarr_group` to write the data variable to. The
+    #'   data variable will be written to a new Zarr array with the name of the
+    #'   data variable.
+    #' @return Self, invisibly.
+    write_geozarr = function(grp) {
+      # Create Zarr array metadata for the data variable
+      ab <- zarr::array_builder$new()
+      vals <- self$values
+      ab$shape <- rev(dim(vals)) %||% length(vals)
+      ab$data_type <- switch(storage.mode(vals),
+                             "double" = "float64",
+                             "integer" = "int32",
+                             "character" = "string")
+      if (prod(ab$shape) > zarr::zarr_options()$min_compress)
+        ab$add_codec("blosc", list(clevel = 6L))
+
+      # Compile the coordinate system from the axes
+      axes <- lapply(private$.axes, function(ax) { ax$geozarr_axis(grp) })
+      cs <- geozarr::CoordinateSystem$new("coordinate_system", axes)
+
+      # Build the full array metadata, including convention attributes
+      meta <- .geozarr_set_convention(ab$metadata(), cs, '..')
+      meta$chunk_key_encoding <- list(name = 'default',
+                                      configuration = list(separator = '.'))
+
+      # Add any auxiliary variables
+      # lapply(private$.aux, function(x) {x$write_geozarr(grp)})
+
+      # Create the GeoZarr array and add it to the Zarr group
+      new_array <- geozarr::geozarr_array$new(self$name, meta, grp, grp$store, cs)
+      new_array$write(vals)
+      grp$set_node(new_array)
+
+      # Attributes that are structural are written inline with the Zarr array
+      # so filter them out before writing. Leave a few that are descriptive of
+      # the data, such as units.
+      atts <- self$attributes
+      atts <- atts[!atts$name %in% c("coords"), ]
+      self$write_geozarr_attributes(new_array, atts)
+
+      invisible(self)
+    },
+
     #' @description Save the data variable to a netCDF file, including its
     #'   subordinate objects such as axes, CRS, etc. Note that saving a data
     #'   variable will create a "bare-bones" netCDF file and its associated

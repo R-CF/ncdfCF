@@ -96,7 +96,8 @@ NCGroup <- R6::R6Class("NCGroup",
     #'   object to the caller. Usually this method is called programmatically.
     #' @param name The name of an object, with an optional absolute or relative
     #'   group path from the calling group. The object must be an NC group,
-    #'   dimension or variable.
+    #'   dimension or variable. For dimensions, see also the
+    #'   `find_dimension_by_name()` method.
     #' @return The object with the provided name. If the object is not found,
     #'   returns `NULL`.
     find_by_name = function(name) {
@@ -178,6 +179,29 @@ NCGroup <- R6::R6Class("NCGroup",
 
       # Give up
       NULL
+    },
+
+    #' @description Find a dimension variable by its name. Dimensions are scoped
+    #'   differently than other out-of-group objects - specifically, dimensions
+    #'   are visible in all child groups. Given the name of a dimension
+    #'   variable, possibly preceded by an absolute or relative group path,
+    #'   return the dimension variable to the caller. Usually this method is
+    #'   called programmatically.
+    #' @param name The name of a dimension, with an optional absolute or
+    #'   relative group path from the calling group.
+    #' @return The dimension variable with the provided name. If the dimension
+    #'   variable is not found, returns `NULL`.
+    find_dimvar_by_name = function(name) {
+      if (grepl("/", name))
+        self$find_by_name(name)
+      else {
+        g <- self
+        while (inherits(g, "NCGroup")) {
+          idx <- which(names(g$NCvars) == name)
+          if (length(idx)) return(g$NCvars[[idx]])
+          else g <- g$parent
+        }
+      }
     },
 
     #' @description Find an NC dimension object by its id. Given the id of a

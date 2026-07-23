@@ -14,165 +14,176 @@ will still be created for it, but the user must link the external file to
 this instance before it can be used in analysis.
 }
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{measure}}{(read-only) Retrieve the measure of this instance. Either
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{measure}}{(read-only) Retrieve the measure of this instance. Either
 "area" or "volume".}
 
-\item{\code{name}}{The name of this instance, which must refer to a NC variable
+    \item{\code{name}}{The name of this instance, which must refer to a NC variable
 or an external variable.}
-}
-\if{html}{\out{</div>}}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-CFCellMeasure-new}{\code{CFCellMeasure$new()}}
-\item \href{#method-CFCellMeasure-print}{\code{CFCellMeasure$print()}}
-\item \href{#method-CFCellMeasure-data}{\code{CFCellMeasure$data()}}
-\item \href{#method-CFCellMeasure-register}{\code{CFCellMeasure$register()}}
-\item \href{#method-CFCellMeasure-link}{\code{CFCellMeasure$link()}}
-\item \href{#method-CFCellMeasure-detach}{\code{CFCellMeasure$detach()}}
-\item \href{#method-CFCellMeasure-clone}{\code{CFCellMeasure$clone()}}
-}
+  \itemize{
+    \item \href{#method-CFCellMeasure-initialize}{\code{CFCellMeasure$new()}}
+    \item \href{#method-CFCellMeasure-print}{\code{CFCellMeasure$print()}}
+    \item \href{#method-CFCellMeasure-data}{\code{CFCellMeasure$data()}}
+    \item \href{#method-CFCellMeasure-register}{\code{CFCellMeasure$register()}}
+    \item \href{#method-CFCellMeasure-link}{\code{CFCellMeasure$link()}}
+    \item \href{#method-CFCellMeasure-detach}{\code{CFCellMeasure$detach()}}
+    \item \href{#method-CFCellMeasure-clone}{\code{CFCellMeasure$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFCellMeasure-new"></a>}}
-\if{latex}{\out{\hypertarget{method-CFCellMeasure-new}{}}}
-\subsection{Method \code{new()}}{
-Create an instance of this class.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFCellMeasure$new(measure, name, nc_var = NULL, axes = NULL)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{measure}}{The measure of this object. Must be either of "area" or
+\if{html}{\out{<a id="method-CFCellMeasure-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-CFCellMeasure-initialize}{}}}
+\subsection{\code{CFCellMeasure$new()}}{
+  Create an instance of this class.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFCellMeasure$new(measure, name, nc_var = NULL, axes = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{measure}}{The measure of this object. Must be either of "area" or
 "volume".}
-
-\item{\code{name}}{The name of the cell measure variable. Ignored if argument
+      \item{\code{name}}{The name of the cell measure variable. Ignored if argument
 \code{nc_var} is specified.}
-
-\item{\code{nc_var}}{The netCDF variable that defines this CF cell measure
+      \item{\code{nc_var}}{The netCDF variable that defines this CF cell measure
 object. \code{NULL} for an external variable.}
-
-\item{\code{axes}}{List of \link{CFAxis} instances that describe the dimensions of
+      \item{\code{axes}}{List of \link{CFAxis} instances that describe the dimensions of
 the cell measure object. \code{NULL} for an external variable.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    An instance of this class.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-An instance of this class.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFCellMeasure-print"></a>}}
 \if{latex}{\out{\hypertarget{method-CFCellMeasure-print}{}}}
-\subsection{Method \code{print()}}{
-Print a summary of the cell measure variable to the console.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFCellMeasure$print(...)}\if{html}{\out{</div>}}
+\subsection{\code{CFCellMeasure$print()}}{
+  Print a summary of the cell measure variable to the console.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFCellMeasure$print(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Arguments passed on to other functions. Of particular interest
+is \verb{width = } to indicate a maximum width of attribute columns.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{Arguments passed on to other functions. Of particular interest
-is \verb{width = } to indicate a maximum width of attribute columns.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFCellMeasure-data"></a>}}
 \if{latex}{\out{\hypertarget{method-CFCellMeasure-data}{}}}
-\subsection{Method \code{data()}}{
-Retrieve the values of the cell measure variable.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFCellMeasure$data()}\if{html}{\out{</div>}}
+\subsection{\code{CFCellMeasure$data()}}{
+  Retrieve the values of the cell measure variable.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFCellMeasure$data()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The values of the cell measure as a \link{CFVariable} instance.
+  }
 }
 
-\subsection{Returns}{
-The values of the cell measure as a \link{CFVariable} instance.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFCellMeasure-register"></a>}}
 \if{latex}{\out{\hypertarget{method-CFCellMeasure-register}{}}}
-\subsection{Method \code{register()}}{
-Register a \link{CFVariable} which is using this cell measure
+\subsection{\code{CFCellMeasure$register()}}{
+  Register a \link{CFVariable} which is using this cell measure
 variable. A check is performed on the compatibility between the data
 variable and this cell measure variable.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFCellMeasure$register(var)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFCellMeasure$register(var)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{var}}{A \code{CFVariable} instance to link to this instance.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{var}}{A \code{CFVariable} instance to link to this instance.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFCellMeasure-link"></a>}}
 \if{latex}{\out{\hypertarget{method-CFCellMeasure-link}{}}}
-\subsection{Method \code{link()}}{
-Link the cell measure variable to an external netCDF
+\subsection{\code{CFCellMeasure$link()}}{
+  Link the cell measure variable to an external netCDF
 resource. The resource will be opened and the appropriate data variable
 will be linked to this instance. If the axes or other properties of the
 external resource are not compatible with this instance, an error will
 be raised.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFCellMeasure$link(resource)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFCellMeasure$link(resource)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{resource}}{The name of the netCDF resource to open, either a local
+file name or a remote URI.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{resource}}{The name of the netCDF resource to open, either a local
-file name or a remote URI.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFCellMeasure-detach"></a>}}
 \if{latex}{\out{\hypertarget{method-CFCellMeasure-detach}{}}}
-\subsection{Method \code{detach()}}{
-Detach the internal data variable from an underlying netCDF
+\subsection{\code{CFCellMeasure$detach()}}{
+  Detach the internal data variable from an underlying netCDF
 resource.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFCellMeasure$detach()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFCellMeasure$detach()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFCellMeasure-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-CFCellMeasure-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFCellMeasure$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{CFCellMeasure$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFCellMeasure$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

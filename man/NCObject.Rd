@@ -14,137 +14,143 @@ The fields in this class are common among all netCDF objects. In addition,
 this class manages the attributes for its descendent classes.
 }
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{id}}{(read-only) Retrieve the identifier of the netCDF object.}
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{id}}{(read-only) Retrieve the identifier of the netCDF object.}
 
-\item{\code{name}}{Set or retrieve the name of the NC object. The netCDF file
+    \item{\code{name}}{Set or retrieve the name of the NC object. The netCDF file
 must be open for writing to change the name.}
 
-\item{\code{attributes}}{(read-only) Read the attributes of the object. When
+    \item{\code{attributes}}{(read-only) Read the attributes of the object. When
 there are no attributes, an empty \code{data.frame} will be returned.}
 
-\item{\code{CF}}{Register CF object that uses this netCDF object, or retrieve
+    \item{\code{CF}}{Register CF object that uses this netCDF object, or retrieve
 the list of registered CF objects.}
-}
-\if{html}{\out{</div>}}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-NCObject-new}{\code{NCObject$new()}}
-\item \href{#method-NCObject-print_attributes}{\code{NCObject$print_attributes()}}
-\item \href{#method-NCObject-attribute}{\code{NCObject$attribute()}}
-\item \href{#method-NCObject-write_attributes}{\code{NCObject$write_attributes()}}
-\item \href{#method-NCObject-clone}{\code{NCObject$clone()}}
-}
+  \itemize{
+    \item \href{#method-NCObject-initialize}{\code{NCObject$new()}}
+    \item \href{#method-NCObject-print_attributes}{\code{NCObject$print_attributes()}}
+    \item \href{#method-NCObject-attribute}{\code{NCObject$attribute()}}
+    \item \href{#method-NCObject-write_attributes}{\code{NCObject$write_attributes()}}
+    \item \href{#method-NCObject-clone}{\code{NCObject$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-NCObject-new"></a>}}
-\if{latex}{\out{\hypertarget{method-NCObject-new}{}}}
-\subsection{Method \code{new()}}{
-Create a new netCDF object. This class should not be
+\if{html}{\out{<a id="method-NCObject-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-NCObject-initialize}{}}}
+\subsection{\code{NCObject$new()}}{
+  Create a new netCDF object. This class should not be
 instantiated directly, create descendant objects instead.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCObject$new(id, name, attributes = data.frame())}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCObject$new(id, name, attributes = data.frame())}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{id}}{Numeric identifier of the netCDF object.}
+      \item{\code{name}}{Character string with the name of the netCDF object.}
+      \item{\code{attributes}}{Optional, \code{data.frame} with attributes of the object.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{id}}{Numeric identifier of the netCDF object.}
-
-\item{\code{name}}{Character string with the name of the netCDF object.}
-
-\item{\code{attributes}}{Optional, \code{data.frame} with attributes of the object.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCObject-print_attributes"></a>}}
 \if{latex}{\out{\hypertarget{method-NCObject-print_attributes}{}}}
-\subsection{Method \code{print_attributes()}}{
-This function prints the attributes of the netCDF object to
+\subsection{\code{NCObject$print_attributes()}}{
+  This function prints the attributes of the netCDF object to
 the console.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCObject$print_attributes(width = 50L)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCObject$print_attributes(width = 50L)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{width}}{The maximum width of each column in the \code{data.frame} when
+printed to the console.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{width}}{The maximum width of each column in the \code{data.frame} when
-printed to the console.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCObject-attribute"></a>}}
 \if{latex}{\out{\hypertarget{method-NCObject-attribute}{}}}
-\subsection{Method \code{attribute()}}{
-Retrieve an attribute of a NC object.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCObject$attribute(att, field = "value")}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{att}}{Single character string of attribute to return.}
-
-\item{\code{field}}{The field of the attribute to return values from. This must
+\subsection{\code{NCObject$attribute()}}{
+  Retrieve an attribute of a NC object.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCObject$attribute(att, field = "value")}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{att}}{Single character string of attribute to return.}
+      \item{\code{field}}{The field of the attribute to return values from. This must
 be "value" (default) or "type".}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-If the \code{field} argument is "type", a character string. If \code{field}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    If the \code{field} argument is "type", a character string. If \code{field}
 is "value", a single value of the type of the attribute, or a vector
 when the attribute has multiple values. If no attribute is named with a
 value of argument \code{att} \code{NA} is returned.
+  }
 }
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCObject-write_attributes"></a>}}
 \if{latex}{\out{\hypertarget{method-NCObject-write_attributes}{}}}
-\subsection{Method \code{write_attributes()}}{
-Write the attributes of this object to a netCDF file. This
+\subsection{\code{NCObject$write_attributes()}}{
+  Write the attributes of this object to a netCDF file. This
 will retain existing attributes, update modified attributes, and delete
 and add missing attributes from the passed in argument.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCObject$write_attributes(nm, new_atts)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCObject$write_attributes(nm, new_atts)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{nm}}{The NC variable name or "NC_GLOBAL" to write the attributes to.}
+      \item{\code{new_atts}}{The attributes to write.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{nm}}{The NC variable name or "NC_GLOBAL" to write the attributes to.}
-
-\item{\code{new_atts}}{The attributes to write.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCObject-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-NCObject-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCObject$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{NCObject$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCObject$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

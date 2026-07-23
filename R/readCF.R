@@ -44,7 +44,7 @@ open_ncdf <- function(resource, write = FALSE) {
   # Find the id's of any "bounds" variables
   bnds <- sapply(root$NC$NCvars, function(v) { # FIXME: what about dims in subgroups?
     nm <- v$attribute("bounds")
-    if (is.na(nm))
+    if (length(nm) > 1L || !is.character(nm) || is.na(nm)) # "bounds" attribute may have other information such as lat/long
       nm <- v$attribute("climatology_bounds")
     if (!is.na(nm)) {
       obj <- v$group$find_by_name(nm)
@@ -230,18 +230,18 @@ peek_ncdf <- function(resource) {
 #' @param grp The CF group to build axes for
 #' @return A list with axes built, including from subgroups
 #' @noRd
-
 .buildAxes <- function(grp) {
   nc <- grp$NC
   if (length(nc$NCvars) > 0L) {
     dims <- nc$dimensions("all")
     if (length(dims)) {
-      # Match by dimid: a coordinate variable is a 1D variable
-      # whose single dimension id equals the dimension's own id.
       local_CVs <- Filter(Negate(is.null), lapply(dims, function(d) {
-        # Find a variable in this group that has exactly one dimid equal to d$id
-        cv <- Filter(function(v) v$ndims == 1L && !is.na(v$dimids[1L]) && v$dimids[1L] == d$id, nc$NCvars)
-        if (length(cv)) cv[[1L]] else NULL
+        # Only accept a variable that is unambiguously the coordinate variable:
+        # 1D and name matches the dimension
+        named <- Filter(function(v) v$ndims == 1L && !is.na(v$dimids[1L]) &&
+                          v$dimids[1L] == d$id && v$name == d$name,
+                        nc$NCvars)
+        if (length(named)) named[[1L]] else NULL
       }))
       axes <- lapply(local_CVs, function(v) .makeAxis(grp, v))
     } else axes <- list()
@@ -384,13 +384,12 @@ peek_ncdf <- function(resource) {
     # The NCVariable must have dimensions.
     for (refid in seq_along(vars)) {
       v <- vars[[refid]]
-      if (length(vdimids <- v$dimids) &&
-          !is.na(coords <- v$attribute("coordinates"))) {
+      if (length(vdimids <- v$dimids) && !is.na(coords <- v$attribute("coordinates"))) {
         coords <- strsplit(coords, " ", fixed = TRUE)[[1L]]
         varLon <- varLat <- bndsLon <- bndsLat <- NA
         for (cid in seq_along(coords)) {
           found_one <- FALSE
-          aux <- grp$NC$find_by_name(coords[cid])
+          aux <- grp$NC$find_dimvar_by_name(coords[cid])
           if (!is.null(aux)) {
             nd <- aux$ndims
             bounds <- aux$attribute("bounds")

@@ -13,10 +13,9 @@ selectable through methods and fields in this class.
 
 ## Super classes
 
-[`ncdfCF::CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md)
--\>
-[`ncdfCF::CFData`](https://r-cf.github.io/ncdfCF/reference/CFData.md)
--\> `CFAxis`
+[`CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md) -\>
+[`CFData`](https://r-cf.github.io/ncdfCF/reference/CFData.md) -\>
+`CFAxis`
 
 ## Active bindings
 
@@ -50,6 +49,11 @@ selectable through methods and fields in this class.
 
   (read-only) Retrieve the coordinate values of the active coordinate
   set from the axis.
+
+- `regular`:
+
+  (read-only) Flag if the numeric, integer or time axis coordinates are
+  regular, meaning equally spaced.
 
 - `bounds`:
 
@@ -107,7 +111,7 @@ selectable through methods and fields in this class.
 
 ### Public methods
 
-- [`CFAxis$new()`](#method-CFAxis-new)
+- [`CFAxis$new()`](#method-CFAxis-initialize)
 
 - [`CFAxis$print()`](#method-CFAxis-print)
 
@@ -141,20 +145,20 @@ selectable through methods and fields in this class.
 
 Inherited methods
 
-- [`ncdfCF::CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
-- [`ncdfCF::CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
-- [`ncdfCF::CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
-- [`ncdfCF::CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
-- [`ncdfCF::CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
-- [`ncdfCF::CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
-- [`ncdfCF::CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
-- [`ncdfCF::CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
-- [`ncdfCF::CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
-- [`ncdfCF::CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
+- [`CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
+- [`CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
+- [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
+- [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
+- [`CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
+- [`CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
+- [`CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
+- [`CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
+- [`CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
+- [`CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `CFAxis$new()`
 
 Create a new CF axis instance from a dimension and a variable in a
 netCDF resource. This method is called upon opening a netCDF resource by
@@ -224,7 +228,7 @@ A basic `CFAxis` object.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `CFAxis$print()`
 
 Prints a summary of the axis to the console. This method is typically
 called by the [`print()`](https://rdrr.io/r/base/print.html) method of
@@ -247,7 +251,7 @@ descendant classes.
 
 ------------------------------------------------------------------------
 
-### Method `brief()`
+### `CFAxis$brief()`
 
 Some details of the axis.
 
@@ -261,7 +265,7 @@ A 1-row `data.frame` with some details of the axis.
 
 ------------------------------------------------------------------------
 
-### Method `shard()`
+### `CFAxis$shard()`
 
 Very concise information on the axis. The information returned by this
 function is very concise and most useful when combined with similar
@@ -277,7 +281,7 @@ Character string with very basic axis information.
 
 ------------------------------------------------------------------------
 
-### Method `peek()`
+### `CFAxis$peek()`
 
 Retrieve interesting details of the axis.
 
@@ -291,7 +295,7 @@ A 1-row `data.frame` with details of the axis.
 
 ------------------------------------------------------------------------
 
-### Method [`detach()`](https://rdrr.io/r/base/detach.html)
+### `CFAxis$detach()`
 
 Detach the axis from its underlying netCDF resource, including any
 dependent CF objects.
@@ -306,7 +310,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `copy_terms()`
+### `CFAxis$copy_terms()`
 
 Copy the parametric terms of a vertical axis. This method is only useful
 for `CFAxisVertical` instances having a parametric formulation. This
@@ -339,7 +343,7 @@ the other descendant classes.
 
 ------------------------------------------------------------------------
 
-### Method `configure_terms()`
+### `CFAxis$configure_terms()`
 
 Configure the function terms of a parametric vertical axis. This method
 is only useful for `CFAxisVertical` instances having a parametric
@@ -362,7 +366,7 @@ with no result for the other descendant classes.
 
 ------------------------------------------------------------------------
 
-### Method [`identical()`](https://rdrr.io/r/base/identical.html)
+### `CFAxis$identical()`
 
 Tests if the axis passed to this method is identical to `self`. This
 only tests for generic properties - class, length, name and attributes -
@@ -389,7 +393,7 @@ with further assessment done in sub-classes.
 
 ------------------------------------------------------------------------
 
-### Method `can_append()`
+### `CFAxis$can_append()`
 
 Tests if the axis passed to this method can be appended to `self`. This
 only tests for generic properties - class, mode of the values and name -
@@ -411,7 +415,7 @@ with further assessment done in sub-classes.
 
 ------------------------------------------------------------------------
 
-### Method `copy()`
+### `CFAxis$copy()`
 
 Create a copy of this axis. This method is "virtual" in the sense that
 it does not do anything other than return `NULL`. This stub is here to
@@ -440,7 +444,7 @@ descendants that do not implement this method.
 
 ------------------------------------------------------------------------
 
-### Method `copy_with_values()`
+### `CFAxis$copy_with_values()`
 
 Create a copy of this axis but using the supplied values. This method is
 "virtual" in the sense that it does not do anything other than return
@@ -474,7 +478,7 @@ method.
 
 ------------------------------------------------------------------------
 
-### Method [`subset()`](https://rdrr.io/r/base/subset.html)
+### `CFAxis$subset()`
 
 Return an axis spanning a smaller coordinate range. This method is
 "virtual" in the sense that it does not do anything other than return
@@ -509,7 +513,7 @@ method.
 
 ------------------------------------------------------------------------
 
-### Method `indexOf()`
+### `CFAxis$indexOf()`
 
 Find indices in the axis domain. Given a vector of numerical, timestamp
 or categorical coordinates `x`, find their indices in the coordinates of
@@ -545,7 +549,7 @@ Numeric vector of the same length as `x`.
 
 ------------------------------------------------------------------------
 
-### Method `attach_to_group()`
+### `CFAxis$attach_to_group()`
 
 Attach this axis to a group. If there is another object with the same
 name in this group an error is thrown. For associated objects (such as
@@ -584,7 +588,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method [`write()`](https://rdrr.io/r/base/write.html)
+### `CFAxis$write()`
 
 Write the axis to a netCDF file, including its attributes.
 

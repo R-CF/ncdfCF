@@ -32,7 +32,7 @@ addition, this class manages the attributes for its descendent classes.
 
 ### Public methods
 
-- [`NCObject$new()`](#method-NCObject-new)
+- [`NCObject$new()`](#method-NCObject-initialize)
 
 - [`NCObject$print_attributes()`](#method-NCObject-print_attributes)
 
@@ -44,7 +44,7 @@ addition, this class manages the attributes for its descendent classes.
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `NCObject$new()`
 
 Create a new netCDF object. This class should not be instantiated
 directly, create descendant objects instead.
@@ -69,7 +69,7 @@ directly, create descendant objects instead.
 
 ------------------------------------------------------------------------
 
-### Method `print_attributes()`
+### `NCObject$print_attributes()`
 
 This function prints the attributes of the netCDF object to the console.
 
@@ -86,7 +86,7 @@ This function prints the attributes of the netCDF object to the console.
 
 ------------------------------------------------------------------------
 
-### Method `attribute()`
+### `NCObject$attribute()`
 
 Retrieve an attribute of a NC object.
 
@@ -114,7 +114,7 @@ of argument `att` `NA` is returned.
 
 ------------------------------------------------------------------------
 
-### Method `write_attributes()`
+### `NCObject$write_attributes()`
 
 Write the attributes of this object to a netCDF file. This will retain
 existing attributes, update modified attributes, and delete and add
@@ -140,7 +140,7 @@ Self, invisibly.
 
 ------------------------------------------------------------------------
 
-### Method `clone()`
+### `NCObject$clone()`
 
 The objects of this class are cloneable with this method.
 

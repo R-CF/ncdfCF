@@ -303,6 +303,87 @@ CFDataset <- R6::R6Class("CFDataset",
       self$root$write_variables(pack, recursive = TRUE)
       private$.res$close()
       invisible(self)
+    },
+
+    #' @description Save the data set to a Zarr store with GeoZarr conventions,
+    #'   including its subordinate objects such as attributes, data variables,
+    #'   axes, CRS, etc. Every principal `CFVariable` will become a
+    #'   `geozarr_array` and every `CFGroup` a `zarr_group`. Ancillary data
+    #'   variables will typically become a `zarr_array`, i.e. an array not
+    #'   having GeoZarr convention attributes. Axes with regular coordinate
+    #'   values will be stored in the attributes, saving space and reducing the
+    #'   number of such ancillary arrays.
+    #'
+    #'   The data set will have the same hierarchy in the Zarr store as this
+    #'   data set, possibly anchored in some subgroup inside the Zarr store. It
+    #'   is highly recommended to use separate empty (or non-existing) groups to
+    #'   anchor multiple data sets to avoid the possibility of name collisions.
+    #'
+    #'   Supported GeoZarr conventions for supplying coordinates are `cs` and
+    #'   `spatial`. Due to the limited scope of the latter convention (North-up
+    #'   Y coordinates, no support for time or vertical coordinates, 3 axes at
+    #'   most) most Zarr arrays will use the `cs` convention. Supporting
+    #'   conventions, like `proj` or `ref`, will be used as needed.
+    #' @param zarr Fully-qualified file name or URI indicating where to save the
+    #'   data set to, or a `zarr` object. If a file name or URI, it must point
+    #'   to an existing Zarr store where the data from this dat aset will be
+    #'   appended, or a new Zarr store will be created by that name and then it
+    #'   can not already exist. By convention, a new Zarr store should have a
+    #'   ".zarr" file name extension.
+    #' @param dataset_root Optional. Path to a node in the Zarr store where this
+    #'   data set will be anchored. If the node does not yet exist, it will be
+    #'   created. A path must start from the root node of the Zarr store and be
+    #'   specified like "/subgroup/sub/here" with the root of this data set
+    #'   starting at the indicated path. Defaults to the root of the Zarr store,
+    #'   "/". Alternatively, this may be a `zarr_group` to be used as the root
+    #'   for this data set, but only if argument `zarr` is a `zarr` object.
+    #' @return The `zarr` object to which the data set was written.
+    geozarr = function(zarr, dataset_root = "/") {
+      if (!requireNamespace("geozarr", quietly = TRUE))
+        stop("Package 'geozarr' must be installed for this functionality", call. = FALSE)
+
+      # Get the `zarr` object, possibly in a new Zarr store
+      if (inherits(zarr, "zarr"))
+        z <- zarr
+      else {
+        # zarr argument is a name. Open it or create it.
+        z <- try(zarr::create_zarr(zarr), silent = TRUE)
+        if (inherits(z, "try-error")) {
+          z <- try(zarr::open_zarr(zarr), silent = TRUE)
+          if (inherits(z, "try-error"))
+            stop("Could not open or create a Zarr store at ", zarr, call. = FALSE)
+        }
+      }
+
+      # Get the root group for this data set
+      if (inherits(dataset_root, "zarr_group")) {
+        if (inherits(zarr, "zarr"))
+          root_group <- dataset_root
+        else
+          stop("Data set root group must be a character path to a Zarr group", call. = FALSE)
+      } else {
+        root_group <- z$get_node(dataset_root)
+        if (is.null(root_group)) {
+          # Node does not yet exist so create it
+          nodes <- strsplit(dataset_root, "/", fixed = TRUE)[[1L]]
+          if (nzchar(nodes[1L]))
+            stop("Path to the data set root group must start with a slash '/'", call. = FALSE)
+          nodes <- nodes[-1L]
+          root_group <- z[["/"]]
+          while (length(nodes)) {
+            grp <- root_group$children[[nodes[1L]]]
+            if (is.null(grp))
+              grp <- root_group$add_group(nodes[1L])
+            root_group <- grp
+            nodes <- nodes[-1L]
+          }
+        }
+      }
+
+      # Write the root group of this data set, iterate over contained objects
+      self$root$write_geozarr(root_group)
+
+      z
     }
   ),
   active = list(

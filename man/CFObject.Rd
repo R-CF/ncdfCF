@@ -9,101 +9,101 @@ This class is a basic ancestor to all classes that represent CF
 objects. More useful classes use this class as ancestor.
 }
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{id}}{(read-only) Retrieve the identifier of the CF object.}
+    \item{\code{id}}{(read-only) Retrieve the identifier of the CF object.}
 
-\item{\code{name}}{Set or retrieve the name of the CF object. The name must be a
+    \item{\code{name}}{Set or retrieve the name of the CF object. The name must be a
 valid netCDF name: start with a character, use only characters, numbers
 and the underscore, and be at most 255 characters long.}
 
-\item{\code{fullname}}{(read-only) The fully-qualified name of the CF object.}
+    \item{\code{fullname}}{(read-only) The fully-qualified name of the CF object.}
 
-\item{\code{group}}{Set or retrieve the \link{CFGroup} that this object is
+    \item{\code{group}}{Set or retrieve the \link{CFGroup} that this object is
 located in, possibly \code{NULL}.}
 
-\item{\code{attributes}}{(read-only) Retrieve a \code{data.frame} with the attributes
+    \item{\code{attributes}}{(read-only) Retrieve a \code{data.frame} with the attributes
 of the CF object.}
 
-\item{\code{has_resource}}{(read-only) Flag that indicates if this object has an
+    \item{\code{has_resource}}{(read-only) Flag that indicates if this object has an
 underlying netCDF resource.}
 
-\item{\code{NC}}{(read-only) The NC object that links to an underlying netCDF
+    \item{\code{NC}}{(read-only) The NC object that links to an underlying netCDF
 resource, or \code{NULL} if not linked.}
 
-\item{\code{is_dirty}}{Flag to indicate if the object has any unsaved changes.}
-}
-\if{html}{\out{</div>}}
+    \item{\code{is_dirty}}{Flag to indicate if the object has any unsaved changes.}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-CFObject-new}{\code{CFObject$new()}}
-\item \href{#method-CFObject-attach_to_group}{\code{CFObject$attach_to_group()}}
-\item \href{#method-CFObject-detach}{\code{CFObject$detach()}}
-\item \href{#method-CFObject-attribute}{\code{CFObject$attribute()}}
-\item \href{#method-CFObject-print_attributes}{\code{CFObject$print_attributes()}}
-\item \href{#method-CFObject-set_attribute}{\code{CFObject$set_attribute()}}
-\item \href{#method-CFObject-attributes_identical}{\code{CFObject$attributes_identical()}}
-\item \href{#method-CFObject-append_attribute}{\code{CFObject$append_attribute()}}
-\item \href{#method-CFObject-delete_attribute}{\code{CFObject$delete_attribute()}}
-\item \href{#method-CFObject-write_attributes}{\code{CFObject$write_attributes()}}
-\item \href{#method-CFObject-clone}{\code{CFObject$clone()}}
-}
+  \itemize{
+    \item \href{#method-CFObject-initialize}{\code{CFObject$new()}}
+    \item \href{#method-CFObject-attach_to_group}{\code{CFObject$attach_to_group()}}
+    \item \href{#method-CFObject-detach}{\code{CFObject$detach()}}
+    \item \href{#method-CFObject-attribute}{\code{CFObject$attribute()}}
+    \item \href{#method-CFObject-print_attributes}{\code{CFObject$print_attributes()}}
+    \item \href{#method-CFObject-set_attribute}{\code{CFObject$set_attribute()}}
+    \item \href{#method-CFObject-attributes_identical}{\code{CFObject$attributes_identical()}}
+    \item \href{#method-CFObject-append_attribute}{\code{CFObject$append_attribute()}}
+    \item \href{#method-CFObject-delete_attribute}{\code{CFObject$delete_attribute()}}
+    \item \href{#method-CFObject-write_attributes}{\code{CFObject$write_attributes()}}
+    \item \href{#method-CFObject-clone}{\code{CFObject$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFObject-new"></a>}}
-\if{latex}{\out{\hypertarget{method-CFObject-new}{}}}
-\subsection{Method \code{new()}}{
-Create a new \code{CFobject} instance in memory or from an object
+\if{html}{\out{<a id="method-CFObject-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-CFObject-initialize}{}}}
+\subsection{\code{CFObject$new()}}{
+  Create a new \code{CFobject} instance in memory or from an object
 in a netCDF resource when this method is called upon opening a netCDF
 resource. It is rarely, if ever, useful to call this constructor
 directly. Instead, use the methods from higher-level classes such as
 \link{CFVariable}.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$new(obj, attributes = data.frame(), group = NULL)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{obj}}{The \link{NCObject} instance upon which this CF object is based
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFObject$new(obj, attributes = data.frame(), group = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{obj}}{The \link{NCObject} instance upon which this CF object is based
 when read from a netCDF resource, or the name for the new CF object to
 be created.}
-
-\item{\code{attributes}}{Optional. A \code{data.frame} with the attributes of the
+      \item{\code{attributes}}{Optional. A \code{data.frame} with the attributes of the
 object. When argument \code{obj} is an \code{NCGroup} instance and this argument
 is an empty \code{data.frame} (default), arguments will be read from the
 resource.}
-
-\item{\code{group}}{The \link{CFGroup} instance that this object will live in. The
+      \item{\code{group}}{The \link{CFGroup} instance that this object will live in. The
 default is \code{NULL} but this is only useful for \code{CFGroup} instance.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A \code{CFObject} instance.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A \code{CFObject} instance.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFObject-attach_to_group"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-attach_to_group}{}}}
-\subsection{Method \code{attach_to_group()}}{
-Attach this CF object to a group. If there is another object
+\subsection{\code{CFObject$attach_to_group()}}{
+  Attach this CF object to a group. If there is another object
 with the same name in this group an error is thrown. This is the basic
 method that may be overridden by descendant classes.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$attach_to_group(grp, locations = list())}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{grp}}{An instance of \link{CFGroup}.}
-
-\item{\code{locations}}{Optional. A \code{list} whose named elements correspond to
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFObject$attach_to_group(grp, locations = list())}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{grp}}{An instance of \link{CFGroup}.}
+      \item{\code{locations}}{Optional. A \code{list} whose named elements correspond to
 the names of objects, possibly including this object. Each list element
 has a single character string indicating the group in the hierarchy
 where the object should be stored. As an example, if a data variable
@@ -112,211 +112,224 @@ of \code{grp}, then specify \code{locations = list(lon = "..", lat = "..")}.
 Locations can use absolute paths or relative paths from group \code{grp}. If
 the argument \code{locations} is not provided or the name of the object is
 not in the list, the object will be stored in group \code{grp}.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFObject-detach"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-detach}{}}}
-\subsection{Method \code{detach()}}{
-Detach the current object from its underlying netCDF
+\subsection{\code{CFObject$detach()}}{
+  Detach the current object from its underlying netCDF
 resource.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$detach()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFObject$detach()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFObject-attribute"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-attribute}{}}}
-\subsection{Method \code{attribute()}}{
-Retrieve an attribute of a CF object.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$attribute(att, field = "value")}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{att}}{Single character string of attribute to return.}
-
-\item{\code{field}}{The field of the attribute to return values from. This must
+\subsection{\code{CFObject$attribute()}}{
+  Retrieve an attribute of a CF object.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFObject$attribute(att, field = "value")}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{att}}{Single character string of attribute to return.}
+      \item{\code{field}}{The field of the attribute to return values from. This must
 be "value" (default) or "type".}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-If the \code{field} argument is "type", a character string. If \code{field}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    If the \code{field} argument is "type", a character string. If \code{field}
 is "value", a single value of the type of the attribute, or a vector
 when the attribute has multiple values. If no attribute is named with a
 value of argument \code{att} \code{NA} is returned.
+  }
 }
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFObject-print_attributes"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-print_attributes}{}}}
-\subsection{Method \code{print_attributes()}}{
-Print the attributes of the CF object to the console.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$print_attributes(width = 30L)}\if{html}{\out{</div>}}
+\subsection{\code{CFObject$print_attributes()}}{
+  Print the attributes of the CF object to the console.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFObject$print_attributes(width = 30L)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{width}}{The maximum width of each column in the \code{data.frame} when
+printed to the console.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{width}}{The maximum width of each column in the \code{data.frame} when
-printed to the console.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFObject-set_attribute"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-set_attribute}{}}}
-\subsection{Method \code{set_attribute()}}{
-Add an attribute. If an attribute \code{name} already exists, it
+\subsection{\code{CFObject$set_attribute()}}{
+  Add an attribute. If an attribute \code{name} already exists, it
 will be overwritten.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$set_attribute(name, type, value)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{The name of the attribute. The name must begin with a letter
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFObject$set_attribute(name, type, value)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{The name of the attribute. The name must begin with a letter
 and be composed of letters, digits, and underscores, with a maximum
 length of 255 characters. UTF-8 characters are not supported in
 attribute names.}
-
-\item{\code{type}}{The type of the attribute, as a string value of a netCDF data
+      \item{\code{type}}{The type of the attribute, as a string value of a netCDF data
 type.}
-
-\item{\code{value}}{The value of the attribute. This can be of any supported
+      \item{\code{value}}{The value of the attribute. This can be of any supported
 type, including a vector or list of values. Matrices, arrays and like
 compound data structures should be stored as a data variable, not as an
 attribute and they are thus not allowed. In general, an attribute
 should be a character value, a numeric value, a logical value, or a
 short vector or list of any of these. Values passed in a list will be
 coerced to their common mode.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFObject-attributes_identical"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-attributes_identical}{}}}
-\subsection{Method \code{attributes_identical()}}{
-Test if the supplied attributes are identical to the
+\subsection{\code{CFObject$attributes_identical()}}{
+  Test if the supplied attributes are identical to the
 attributes of this instance. The order of the attributes may differ but
 the names, types and values must coincide.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$attributes_identical(cmp)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFObject$attributes_identical(cmp)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{cmp}}{\code{data.frame} with attributes to compare to the attributes of
+this instance.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    \code{TRUE} if attributes in argument \code{cmp} are identical to the
+attributes of this instance, \code{FALSE} otherwise.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{cmp}}{\code{data.frame} with attributes to compare to the attributes of
-this instance.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-\code{TRUE} if attributes in argument \code{cmp} are identical to the
-attributes of this instance, \code{FALSE} otherwise.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFObject-append_attribute"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-append_attribute}{}}}
-\subsection{Method \code{append_attribute()}}{
-Append the text value of an attribute. If an attribute
+\subsection{\code{CFObject$append_attribute()}}{
+  Append the text value of an attribute. If an attribute
 \code{name} already exists, the \code{value} will be appended to the existing
 value of the attribute. If the attribute \code{name} does not exist it will
 be created. The attribute must be of "NC_CHAR" or "NC_STRING" type; in
 the latter case having only a single string value.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$append_attribute(name, value, sep = "; ", prepend = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{The name of the attribute. The name must begin with a letter
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFObject$append_attribute(name, value, sep = "; ", prepend = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{The name of the attribute. The name must begin with a letter
 and be composed of letters, digits, and underscores, with a maximum
 length of 255 characters. UTF-8 characters are not supported in
 attribute names.}
-
-\item{\code{value}}{The character value of the attribute to append. This must be
+      \item{\code{value}}{The character value of the attribute to append. This must be
 a character string.}
-
-\item{\code{sep}}{The separator to use. Default is \code{"; "}.}
-
-\item{\code{prepend}}{Logical to flag if the supplied \code{value} should be placed
+      \item{\code{sep}}{The separator to use. Default is \code{"; "}.}
+      \item{\code{prepend}}{Logical to flag if the supplied \code{value} should be placed
 before the existing value. Default is \code{FALSE}.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFObject-delete_attribute"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-delete_attribute}{}}}
-\subsection{Method \code{delete_attribute()}}{
-Delete attributes. If an attribute \code{name} is not present
+\subsection{\code{CFObject$delete_attribute()}}{
+  Delete attributes. If an attribute \code{name} is not present
 this method simply returns.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$delete_attribute(name)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFObject$delete_attribute(name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{Vector of names of the attributes to delete.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{Vector of names of the attributes to delete.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFObject-write_attributes"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-write_attributes}{}}}
-\subsection{Method \code{write_attributes()}}{
-Write the attributes of this object to a netCDF file.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$write_attributes()}\if{html}{\out{</div>}}
+\subsection{\code{CFObject$write_attributes()}}{
+  Write the attributes of this object to a netCDF file.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFObject$write_attributes()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFObject-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-CFObject-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFObject$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{CFObject$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFObject$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

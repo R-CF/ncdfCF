@@ -15,116 +15,118 @@ a \link{CFLabel} instance. The coordinate set to use in display, selection and
 processing is selectable through methods and fields in this class.
 }
 \section{Super classes}{
-\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFData]{ncdfCF::CFData}} -> \code{CFAxis}
+\code{\link[ncdfCF:CFObject]{CFObject}} -> \code{\link[ncdfCF:CFData]{CFData}} -> \code{CFAxis}
 }
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{dimid}}{The netCDF dimension id of this axis. Setting this value to
+    \item{\code{dimid}}{The netCDF dimension id of this axis. Setting this value to
 anything other than the correct value will lead to disaster.}
 
-\item{\code{length}}{(read-only) The declared length of this axis.}
+    \item{\code{length}}{(read-only) The declared length of this axis.}
 
-\item{\code{orientation}}{Set or retrieve the orientation of the axis, a single
+    \item{\code{orientation}}{Set or retrieve the orientation of the axis, a single
 character with a value of "X", "Y", "Z", "T". Setting the orientation
 of the axis should only be done when the current orientation is
 unknown. Setting a wrong value may give unexpected errors in processing
 of data variables.}
 
-\item{\code{values}}{(read-only) Retrieve the raw values of the axis. In general
+    \item{\code{values}}{(read-only) Retrieve the raw values of the axis. In general
 you should use the \code{coordinates} field rather than this one.}
 
-\item{\code{coordinates}}{(read-only) Retrieve the coordinate values of the
+    \item{\code{coordinates}}{(read-only) Retrieve the coordinate values of the
 active coordinate set from the axis.}
 
-\item{\code{bounds}}{Set or retrieve the bounds of this axis as a \link{CFBounds}
+    \item{\code{regular}}{(read-only) Flag if the numeric, integer or time axis
+coordinates are regular, meaning equally spaced.}
+
+    \item{\code{bounds}}{Set or retrieve the bounds of this axis as a \link{CFBounds}
 object. When setting the bounds, the bounds values must agree with the
 coordinates of this axis.}
 
-\item{\code{auxiliary}}{Set or retrieve auxiliary coordinates for the axis. On
+    \item{\code{auxiliary}}{Set or retrieve auxiliary coordinates for the axis. On
 assignment, the value must be an instance of \link{CFLabel} or a \link{CFAxis}
 descendant, which is added to the end of the list of coordinate sets.
 On retrieval, the active \code{CFLabel} or \code{CFAxis} instance or \code{NULL} when
 the active coordinate set is the primary axis coordinates.}
 
-\item{\code{coordinate_names}}{(read-only) Retrieve the names of the coordinate
+    \item{\code{coordinate_names}}{(read-only) Retrieve the names of the coordinate
 sets defined for the axis, as a character vector. The first element in
 the vector is the name of the axis and it refers to the values of the
 coordinates of this axis. Following elements refer to auxiliary
 coordinates.}
 
-\item{\code{coordinate_range}}{(read-only) Retrieve the range of the coordinates
+    \item{\code{coordinate_range}}{(read-only) Retrieve the range of the coordinates
 of the axis as a vector of two values. The mode of the result depends on
 the sub-type of the axis.}
 
-\item{\code{active_coordinates}}{Set or retrieve the name of the coordinate set
+    \item{\code{active_coordinates}}{Set or retrieve the name of the coordinate set
 to use with the axis for printing to the console as well as for
 processing methods such as \code{subset()}.}
 
-\item{\code{unlimited}}{Logical to indicate if the axis is unlimited. The
+    \item{\code{unlimited}}{Logical to indicate if the axis is unlimited. The
 setting can only be changed if the axis has not yet been written to
 file.}
 
-\item{\code{time}}{(read-only) Retrieve the \code{CFTime} object associated with the
+    \item{\code{time}}{(read-only) Retrieve the \code{CFTime} object associated with the
 axis. Always returns \code{NULL} but \code{CFAxisTime} overrides this field.}
 
-\item{\code{is_parametric}}{(read-only) Logical flag that indicates if the axis
+    \item{\code{is_parametric}}{(read-only) Logical flag that indicates if the axis
 has parametric coordinates. Always \code{FALSE} for all axes except for
 \link{CFAxisVertical} which overrides this method.}
-}
-\if{html}{\out{</div>}}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-CFAxis-new}{\code{CFAxis$new()}}
-\item \href{#method-CFAxis-print}{\code{CFAxis$print()}}
-\item \href{#method-CFAxis-brief}{\code{CFAxis$brief()}}
-\item \href{#method-CFAxis-shard}{\code{CFAxis$shard()}}
-\item \href{#method-CFAxis-peek}{\code{CFAxis$peek()}}
-\item \href{#method-CFAxis-detach}{\code{CFAxis$detach()}}
-\item \href{#method-CFAxis-copy_terms}{\code{CFAxis$copy_terms()}}
-\item \href{#method-CFAxis-configure_terms}{\code{CFAxis$configure_terms()}}
-\item \href{#method-CFAxis-identical}{\code{CFAxis$identical()}}
-\item \href{#method-CFAxis-can_append}{\code{CFAxis$can_append()}}
-\item \href{#method-CFAxis-copy}{\code{CFAxis$copy()}}
-\item \href{#method-CFAxis-copy_with_values}{\code{CFAxis$copy_with_values()}}
-\item \href{#method-CFAxis-subset}{\code{CFAxis$subset()}}
-\item \href{#method-CFAxis-indexOf}{\code{CFAxis$indexOf()}}
-\item \href{#method-CFAxis-attach_to_group}{\code{CFAxis$attach_to_group()}}
-\item \href{#method-CFAxis-write}{\code{CFAxis$write()}}
+  \itemize{
+    \item \href{#method-CFAxis-initialize}{\code{CFAxis$new()}}
+    \item \href{#method-CFAxis-print}{\code{CFAxis$print()}}
+    \item \href{#method-CFAxis-brief}{\code{CFAxis$brief()}}
+    \item \href{#method-CFAxis-shard}{\code{CFAxis$shard()}}
+    \item \href{#method-CFAxis-peek}{\code{CFAxis$peek()}}
+    \item \href{#method-CFAxis-detach}{\code{CFAxis$detach()}}
+    \item \href{#method-CFAxis-copy_terms}{\code{CFAxis$copy_terms()}}
+    \item \href{#method-CFAxis-configure_terms}{\code{CFAxis$configure_terms()}}
+    \item \href{#method-CFAxis-identical}{\code{CFAxis$identical()}}
+    \item \href{#method-CFAxis-can_append}{\code{CFAxis$can_append()}}
+    \item \href{#method-CFAxis-copy}{\code{CFAxis$copy()}}
+    \item \href{#method-CFAxis-copy_with_values}{\code{CFAxis$copy_with_values()}}
+    \item \href{#method-CFAxis-subset}{\code{CFAxis$subset()}}
+    \item \href{#method-CFAxis-indexOf}{\code{CFAxis$indexOf()}}
+    \item \href{#method-CFAxis-attach_to_group}{\code{CFAxis$attach_to_group()}}
+    \item \href{#method-CFAxis-write}{\code{CFAxis$write()}}
+  }
 }
-}
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
+\if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>ncdfCF::CFObject$attributes_identical()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href='../../ncdfCF/html/CFData.html#method-CFData-dim'><code>ncdfCF::CFData$dim()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_chunk'><code>ncdfCF::CFData$read_chunk()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_data'><code>ncdfCF::CFData$read_data()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>CFObject$append_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>CFObject$attributes_identical()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>CFObject$delete_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>CFObject$print_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>CFObject$set_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>CFObject$write_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href='../../ncdfCF/html/CFData.html#method-CFData-dim'><code>CFData$dim()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_chunk'><code>CFData$read_chunk()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_data'><code>CFData$read_data()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxis-new"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxis-new}{}}}
-\subsection{Method \code{new()}}{
-Create a new CF axis instance from a dimension and a
+\if{html}{\out{<a id="method-CFAxis-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-initialize}{}}}
+\subsection{\code{CFAxis$new()}}{
+  Create a new CF axis instance from a dimension and a
 variable in a netCDF resource. This method is called upon opening a
 netCDF resource by the \code{initialize()} method of a descendant class
 suitable for the type of axis.
 
 Creating a new axis is more easily done with the \code{\link[=makeAxis]{makeAxis()}} function.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$new(
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$new(
   var,
   group,
   values,
@@ -132,355 +134,366 @@ Creating a new axis is more easily done with the \code{\link[=makeAxis]{makeAxis
   count = NA,
   orientation = "",
   attributes = data.frame()
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{var}}{The name of the axis when creating a new axis. When reading an
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{var}}{The name of the axis when creating a new axis. When reading an
 axis from file, the \link{NCVariable} object that describes this instance.}
-
-\item{\code{group}}{The \link{CFGroup} that this instance will live in.}
-
-\item{\code{values}}{Optional. The values of the axis in a vector. Ignored when
+      \item{\code{group}}{The \link{CFGroup} that this instance will live in.}
+      \item{\code{values}}{Optional. The values of the axis in a vector. Ignored when
 argument \code{var} is a \code{NCVariable} object.}
-
-\item{\code{start}}{Optional. Integer index where to start reading axis data
+      \item{\code{start}}{Optional. Integer index where to start reading axis data
 from file. The index may be \code{NA} to start reading data from the start.}
-
-\item{\code{count}}{Optional. Number of elements to read from file. This may be
+      \item{\code{count}}{Optional. Number of elements to read from file. This may be
 \code{NA} to read to the end of the data.}
-
-\item{\code{orientation}}{Optional. The orientation of the axis: "X", "Y", "Z"
+      \item{\code{orientation}}{Optional. The orientation of the axis: "X", "Y", "Z"
 "T", or "" (default) when not known or relevant.}
-
-\item{\code{attributes}}{Optional. A \code{data.frame} with the attributes of the
+      \item{\code{attributes}}{Optional. A \code{data.frame} with the attributes of the
 axis. When an empty \code{data.frame} (default) and argument \code{var} is an
 \code{NCVariable} instance, attributes of the axis will be taken from the
 netCDF resource.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A basic \code{CFAxis} object.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A basic \code{CFAxis} object.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-print"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-print}{}}}
-\subsection{Method \code{print()}}{
-Prints a summary of the axis to the console. This method is
+\subsection{\code{CFAxis$print()}}{
+  Prints a summary of the axis to the console. This method is
 typically called by the \code{print()} method of descendant classes.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$print(...)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$print(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Arguments passed on to other functions. Of particular interest
+is \verb{width = } to indicate a maximum width of attribute columns.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    \code{self}, invisibly.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{Arguments passed on to other functions. Of particular interest
-is \verb{width = } to indicate a maximum width of attribute columns.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-\code{self}, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-brief"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-brief}{}}}
-\subsection{Method \code{brief()}}{
-Some details of the axis.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$brief()}\if{html}{\out{</div>}}
+\subsection{\code{CFAxis$brief()}}{
+  Some details of the axis.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$brief()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A 1-row \code{data.frame} with some details of the axis.
+  }
 }
 
-\subsection{Returns}{
-A 1-row \code{data.frame} with some details of the axis.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-shard"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-shard}{}}}
-\subsection{Method \code{shard()}}{
-Very concise information on the axis. The information
+\subsection{\code{CFAxis$shard()}}{
+  Very concise information on the axis. The information
 returned by this function is very concise and most useful when combined
 with similar information from other axes.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$shard()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$shard()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Character string with very basic axis information.
+  }
 }
 
-\subsection{Returns}{
-Character string with very basic axis information.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-peek"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-peek}{}}}
-\subsection{Method \code{peek()}}{
-Retrieve interesting details of the axis.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$peek()}\if{html}{\out{</div>}}
+\subsection{\code{CFAxis$peek()}}{
+  Retrieve interesting details of the axis.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$peek()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A 1-row \code{data.frame} with details of the axis.
+  }
 }
 
-\subsection{Returns}{
-A 1-row \code{data.frame} with details of the axis.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-detach"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-detach}{}}}
-\subsection{Method \code{detach()}}{
-Detach the axis from its underlying netCDF resource,
+\subsection{\code{CFAxis$detach()}}{
+  Detach the axis from its underlying netCDF resource,
 including any dependent CF objects.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$detach()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$detach()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-copy_terms"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-copy_terms}{}}}
-\subsection{Method \code{copy_terms()}}{
-Copy the parametric terms of a vertical axis. This method is
+\subsection{\code{CFAxis$copy_terms()}}{
+  Copy the parametric terms of a vertical axis. This method is
 only useful for \code{CFAxisVertical} instances having a parametric
 formulation. This stub is here to make the call to this method succeed
 with no result for the other descendant classes.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$copy_terms(from, original_axes, new_axes)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{from}}{A CFAxisVertical instance that will receive references to the
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$copy_terms(from, original_axes, new_axes)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{from}}{A CFAxisVertical instance that will receive references to the
 parametric terms.}
-
-\item{\code{original_axes}}{List of \code{CFAxis} instances from the CF object that
+      \item{\code{original_axes}}{List of \code{CFAxis} instances from the CF object that
 these parametric terms are copied from.}
-
-\item{\code{new_axes}}{List of \code{CFAxis} instances to use with the formula term
+      \item{\code{new_axes}}{List of \code{CFAxis} instances to use with the formula term
 objects.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    \code{NULL}
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-\code{NULL}
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-configure_terms"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-configure_terms}{}}}
-\subsection{Method \code{configure_terms()}}{
-Configure the function terms of a parametric vertical axis.
+\subsection{\code{CFAxis$configure_terms()}}{
+  Configure the function terms of a parametric vertical axis.
 This method is only useful for \code{CFAxisVertical} instances having a
 parametric formulation. This stub is here to make the call to this
 method succeed with no result for the other descendant classes.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$configure_terms(axes)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$configure_terms(axes)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{axes}}{List of \code{CFAxis} instances.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    \code{NULL}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{axes}}{List of \code{CFAxis} instances.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-\code{NULL}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-identical"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-identical}{}}}
-\subsection{Method \code{identical()}}{
-Tests if the axis passed to this method is identical to
+\subsection{\code{CFAxis$identical()}}{
+  Tests if the axis passed to this method is identical to
 \code{self}. This only tests for generic properties - class, length, name
 and attributes - with further assessment done in sub-classes.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$identical(axis, with_attributes = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{axis}}{The \code{CFAxis} instance to test.}
-
-\item{\code{with_attributes}}{Logical that indicates if the attributes are
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$identical(axis, with_attributes = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{axis}}{The \code{CFAxis} instance to test.}
+      \item{\code{with_attributes}}{Logical that indicates if the attributes are
 assessed for equality too. Default is \code{FALSE}.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    \code{TRUE} if the two axes are identical, \code{FALSE} if not.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-\code{TRUE} if the two axes are identical, \code{FALSE} if not.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-can_append"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-can_append}{}}}
-\subsection{Method \code{can_append()}}{
-Tests if the axis passed to this method can be appended to
+\subsection{\code{CFAxis$can_append()}}{
+  Tests if the axis passed to this method can be appended to
 \code{self}. This only tests for generic properties - class, mode of the
 values and name - with further assessment done in sub-classes.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$can_append(axis)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$can_append(axis)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{axis}}{The \code{CFAxis} descendant instance to test.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    \code{TRUE} if the passed axis can be appended to \code{self}, \code{FALSE} if
+not.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{axis}}{The \code{CFAxis} descendant instance to test.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-\code{TRUE} if the passed axis can be appended to \code{self}, \code{FALSE} if
-not.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-copy"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-copy}{}}}
-\subsection{Method \code{copy()}}{
-Create a copy of this axis. This method is "virtual" in the
+\subsection{\code{CFAxis$copy()}}{
+  Create a copy of this axis. This method is "virtual" in the
 sense that it does not do anything other than return \code{NULL}. This stub
 is here to make the call to this method succeed with no result for the
 \code{CFAxis} descendants that do not implement this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$copy(name = "", group)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{The name for the new axis. If an empty string is passed, will
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$copy(name = "", group)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{The name for the new axis. If an empty string is passed, will
 use the name of this axis.}
+      \item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    \code{NULL}
+  }
+}
 
-\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-\code{NULL}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-copy_with_values"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-copy_with_values}{}}}
-\subsection{Method \code{copy_with_values()}}{
-Create a copy of this axis but using the supplied values.
+\subsection{\code{CFAxis$copy_with_values()}}{
+  Create a copy of this axis but using the supplied values.
 This method is "virtual" in the sense that it does not do anything
 other than return \code{NULL}. This stub is here to make the call to this
 method succeed with no result for the \code{CFAxis} descendants that do not
 implement this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$copy_with_values(name = "", group, values)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{The name for the new axis. If an empty string is passed, will
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$copy_with_values(name = "", group, values)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{The name for the new axis. If an empty string is passed, will
 use the name of this axis.}
+      \item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
+      \item{\code{values}}{The values to the used with the copy of this axis.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    \code{NULL}
+  }
+}
 
-\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
-
-\item{\code{values}}{The values to the used with the copy of this axis.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-\code{NULL}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-subset"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-subset}{}}}
-\subsection{Method \code{subset()}}{
-Return an axis spanning a smaller coordinate range. This
+\subsection{\code{CFAxis$subset()}}{
+  Return an axis spanning a smaller coordinate range. This
 method is "virtual" in the sense that it does not do anything other
 than return \code{self}. This stub is here to make the call to this method
 succeed with no result for the  \code{CFAxis} descendants that do not
 implement this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$subset(name = "", group, rng = NULL)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{The name for the new axis if the \code{rng} argument is provided.}
-
-\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
-
-\item{\code{rng}}{The range of indices whose values from this axis to include in
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$subset(name = "", group, rng = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{The name for the new axis if the \code{rng} argument is provided.}
+      \item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
+      \item{\code{rng}}{The range of indices whose values from this axis to include in
 the returned axis. If the value of the argument is \code{NULL}, return a
 copy of the axis.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    \code{NULL}
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-\code{NULL}
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-indexOf"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-indexOf}{}}}
-\subsection{Method \code{indexOf()}}{
-Find indices in the axis domain. Given a vector of
+\subsection{\code{CFAxis$indexOf()}}{
+  Find indices in the axis domain. Given a vector of
 numerical, timestamp or categorical coordinates \code{x}, find their indices
 in the coordinates of the axis.
 
 This is a virtual method. For more detail, see the corresponding method
 in descendant classes.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$indexOf(x, method = "constant", rightmost.closed = TRUE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{x}}{Vector of numeric, timestamp or categorial coordinates to find
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$indexOf(x, method = "constant", rightmost.closed = TRUE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{x}}{Vector of numeric, timestamp or categorial coordinates to find
 axis indices for. The timestamps can be either character, POSIXct or
 Date vectors. The type of the vector has to correspond to the type of
 the axis values.}
-
-\item{\code{method}}{Single character value of "constant" or "linear".}
-
-\item{\code{rightmost.closed}}{Whether or not to include the upper limit.
+      \item{\code{method}}{Single character value of "constant" or "linear".}
+      \item{\code{rightmost.closed}}{Whether or not to include the upper limit.
 Default is \code{TRUE}.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Numeric vector of the same length as \code{x}.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Numeric vector of the same length as \code{x}.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-attach_to_group"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-attach_to_group}{}}}
-\subsection{Method \code{attach_to_group()}}{
-Attach this axis to a group. If there is another object with
+\subsection{\code{CFAxis$attach_to_group()}}{
+  Attach this axis to a group. If there is another object with
 the same name in this group an error is thrown. For associated objects
 (such as bounds, etc), if another object with the same name is
 otherwise identical to the associated object then that object will be
 linked from the variable, otherwise an error is thrown.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$attach_to_group(grp, locations = list())}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{grp}}{An instance of \link{CFGroup}.}
-
-\item{\code{locations}}{Optional. A \code{list} whose named elements correspond to
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$attach_to_group(grp, locations = list())}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{grp}}{An instance of \link{CFGroup}.}
+      \item{\code{locations}}{Optional. A \code{list} whose named elements correspond to
 the names of objects associated with this axis, possibly including the
 axis itself. Each list element has a single character string indicating
 the group in the hierarchy where the object should be stored. As an
@@ -489,24 +502,27 @@ stored in the parent group of \code{grp}, then specify \code{locations = list(lo
 paths from group \code{grp}. The axis and associated objects that are not in
 the list will be stored in group \code{grp}. If the argument \code{locations} is
 not provided, all associated objects will be stored in this group.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxis-write"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxis-write}{}}}
-\subsection{Method \code{write()}}{
-Write the axis to a netCDF file, including its attributes.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxis$write()}\if{html}{\out{</div>}}
+\subsection{\code{CFAxis$write()}}{
+  Write the axis to a netCDF file, including its attributes.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$write()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 }

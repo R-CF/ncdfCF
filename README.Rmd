@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 
-[![Lifecycle: Experimental](https://img.shields.io/badge/Lifecycle-Experimental-green.svg)](https://lifecycle.r-lib.org/articles/stages.html) [![CRAN Status](https://www.r-pkg.org/badges/version/ncdfCF)](https://cran.r-project.org/package=ncdfCF) [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ncdfCF)](https://cran.r-project.org/package=ncdfCF) [![License: GPL v3](https://img.shields.io/badge/License-MIT-blue.svg)](https://mit-license.org) [![Last commit](https://img.shields.io/github/last-commit/R-CF/ncdfCF)](https://github.com/R-CF/ncdfCF/commits/main)
+[![Lifecycle: Experimental](https://img.shields.io/badge/Lifecycle-Stable-green.svg)](https://lifecycle.r-lib.org/articles/stages.html) [![CRAN Status](https://www.r-pkg.org/badges/version/ncdfCF)](https://cran.r-project.org/package=ncdfCF) [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/ncdfCF)](https://cran.r-project.org/package=ncdfCF) [![License: GPL v3](https://img.shields.io/badge/License-MIT-blue.svg)](https://mit-license.org) [![Last commit](https://img.shields.io/github/last-commit/R-CF/ncdfCF)](https://github.com/R-CF/ncdfCF/commits/main)
 [![R-CMD-check](https://github.com/R-CF/ncdfCF/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/R-CF/ncdfCF/actions/workflows/R-CMD-check.yaml) 
 <!-- badges: end -->
 
@@ -61,7 +61,7 @@ More detailed operations and options are given on the [package web site](https:/
 
 ## Development plan
 
-Package `ncdfCF` is still being developed. It supports reading of all data objects from netCDF resources in "classic" and "netcdf4" formats; and can write data variables back to a netCDF file. From the CF Metadata Conventions it supports identification of axes, interpretation of the "time" axis, name resolution when using groups, cell boundary information, auxiliary coordinate variables, labels, cell measures, attributes and grid mapping information, among others.
+Package `ncdfCF` currently supports reading of all data objects from netCDF resources in "classic" and "netcdf4" formats; and can write data variables back to a netCDF file. From the CF Metadata Conventions it supports identification of axes, interpretation of the "time" axis, name resolution when using groups, cell boundary information, auxiliary coordinate variables, labels, cell measures, attributes and grid mapping information, among others.
 
 Development plans for the near future focus on supporting the below features:
 
@@ -72,13 +72,12 @@ Development plans for the near future focus on supporting the below features:
 ##### CF Metadata Conventions
 
  * Cell methods.
- * Aggregation.
  * Support for discrete sampling geometries.
  * Compliance with CMIP5 / CMIP6 requirements.
 
 ## Installation
 
-Package `ncdfCF` is still being developed. While extensively tested on multiple well-structured data sets, errors may still occur, particularly in data sets that do not adhere to the CF Metadata Conventions. The API may still change and although care is taken not to make breaking changes, sometimes this is unavoidable.
+While package `ncdfCF` is extensively tested on multiple well-structured data sets, errors may still occur, particularly in data sets that do not adhere to the CF Metadata Conventions. The API may still change and although care is taken not to make breaking changes, sometimes this is unavoidable.
 
 Installation from CRAN of the latest release:
 

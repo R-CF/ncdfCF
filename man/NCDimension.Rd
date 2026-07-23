@@ -15,120 +15,122 @@ This class is not very useful for interactive use. Use the \link{CFAxis}
 descendent classes instead.
 }
 \section{Super class}{
-\code{\link[ncdfCF:NCObject]{ncdfCF::NCObject}} -> \code{NCDimension}
+\code{\link[ncdfCF:NCObject]{NCObject}} -> \code{NCDimension}
 }
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{length}}{(read-only) The length of the dimension. If field \code{unlim = TRUE}, this field indicates the length of the data in this dimension
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{length}}{(read-only) The length of the dimension. If field \code{unlim = TRUE}, this field indicates the length of the data in this dimension
 written to file.}
 
-\item{\code{unlim}}{(read-only) Logical flag to indicate if the dimension is
+    \item{\code{unlim}}{(read-only) Logical flag to indicate if the dimension is
 unlimited, i.e. that additional data may be written to file
 incrementing this dimension.}
-}
-\if{html}{\out{</div>}}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-NCDimension-new}{\code{NCDimension$new()}}
-\item \href{#method-NCDimension-print}{\code{NCDimension$print()}}
-\item \href{#method-NCDimension-write}{\code{NCDimension$write()}}
-\item \href{#method-NCDimension-clone}{\code{NCDimension$clone()}}
+  \itemize{
+    \item \href{#method-NCDimension-initialize}{\code{NCDimension$new()}}
+    \item \href{#method-NCDimension-print}{\code{NCDimension$print()}}
+    \item \href{#method-NCDimension-write}{\code{NCDimension$write()}}
+    \item \href{#method-NCDimension-clone}{\code{NCDimension$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details open><summary>Inherited methods</summary>
+\if{html}{\out{<details open><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-attribute'><code>ncdfCF::NCObject$attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="print_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-print_attributes'><code>ncdfCF::NCObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="write_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-write_attributes'><code>ncdfCF::NCObject$write_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-attribute'><code>NCObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="print_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-print_attributes'><code>NCObject$print_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="write_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-write_attributes'><code>NCObject$write_attributes()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-NCDimension-new"></a>}}
-\if{latex}{\out{\hypertarget{method-NCDimension-new}{}}}
-\subsection{Method \code{new()}}{
-Create a new netCDF dimension. This class should not be
+\if{html}{\out{<a id="method-NCDimension-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-NCDimension-initialize}{}}}
+\subsection{\code{NCDimension$new()}}{
+  Create a new netCDF dimension. This class should not be
 instantiated directly, create CF objects instead. This class is
 instantiated when opening a netCDF resource.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCDimension$new(id, name, length = 1L, unlim = FALSE, group)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCDimension$new(id, name, length = 1L, unlim = FALSE, group)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{id}}{Numeric identifier of the netCDF dimension.}
+      \item{\code{name}}{Character string with the name of the netCDF dimension.}
+      \item{\code{length}}{Length of the dimension. Default is 1.}
+      \item{\code{unlim}}{Is the dimension unlimited? Default is \code{FALSE}.}
+      \item{\code{group}}{The NC group where the dimension is located.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A \code{NCDimension} instance.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{id}}{Numeric identifier of the netCDF dimension.}
-
-\item{\code{name}}{Character string with the name of the netCDF dimension.}
-
-\item{\code{length}}{Length of the dimension. Default is 1.}
-
-\item{\code{unlim}}{Is the dimension unlimited? Default is \code{FALSE}.}
-
-\item{\code{group}}{The NC group where the dimension is located.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A \code{NCDimension} instance.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCDimension-print"></a>}}
 \if{latex}{\out{\hypertarget{method-NCDimension-print}{}}}
-\subsection{Method \code{print()}}{
-Summary of the NC dimension printed to the console.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCDimension$print(...)}\if{html}{\out{</div>}}
+\subsection{\code{NCDimension$print()}}{
+  Summary of the NC dimension printed to the console.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCDimension$print(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Passed on to other methods.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{Passed on to other methods.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCDimension-write"></a>}}
 \if{latex}{\out{\hypertarget{method-NCDimension-write}{}}}
-\subsection{Method \code{write()}}{
-Write the dimension to a netCDF file.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCDimension$write(h)}\if{html}{\out{</div>}}
+\subsection{\code{NCDimension$write()}}{
+  Write the dimension to a netCDF file.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCDimension$write(h)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{h}}{The handle to the netCDF file to write.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{h}}{The handle to the netCDF file to write.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCDimension-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-NCDimension-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCDimension$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{NCDimension$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCDimension$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

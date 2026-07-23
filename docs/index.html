@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Easy Access to NetCDF Files with CF Metadata Conventions • ncdfCF</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Easy Access to NetCDF Files with CF Metadata Conventions">
 <meta name="description" content="Network Common Data Form (netCDF) files are widely used for scientific data. Library-level access in R is provided through packages RNetCDF and ncdf4. Package ncdfCF is built on top of RNetCDF and makes the data and its attributes available as a set of R6 classes that are informed by the Climate and Forecasting Metadata Conventions. Access to the data uses standard R subsetting operators and common function forms.">
@@ -74,7 +74,7 @@
 <span><span class="co"># Open the file, all metadata is read</span></span>
 <span><span class="op">(</span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/open_ncdf.html">open_ncdf</a></span><span class="op">(</span><span class="va">fn</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;Dataset&gt; ERA5land_Rwanda_20160101 </span></span>
-<span><span class="co">#&gt; Resource   : /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc </span></span>
+<span><span class="co">#&gt; Resource   : /Library/Frameworks/R.framework/Versions/4.6/Resources/library/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc </span></span>
 <span><span class="co">#&gt; Format     : offset64 </span></span>
 <span><span class="co">#&gt; Collection : Generic netCDF data </span></span>
 <span><span class="co">#&gt; Conventions: CF-1.6 </span></span>
@@ -100,7 +100,7 @@
 <span><span class="op">(</span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/as_CF.html">as_CF</a></span><span class="op">(</span><span class="st">"a_new_CF_object"</span>, <span class="va">arr</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; &lt;Variable&gt; a_new_CF_object </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Values: [-1.737425 ... 2.661584] </span></span>
+<span><span class="co">#&gt; Values: [-2.136078 ... 2.546909] </span></span>
 <span><span class="co">#&gt;     NA: 0 (0.0%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Axes:</span></span>
@@ -111,7 +111,7 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attributes:</span></span>
 <span><span class="co">#&gt;  name         type      length value              </span></span>
-<span><span class="co">#&gt;  actual_range NC_DOUBLE 2      -1.737425, 2.661584</span></span>
+<span><span class="co">#&gt;  actual_range NC_DOUBLE 2      -2.136078, 2.546909</span></span>
 <span></span>
 <span><span class="co"># Axes are of a specific type and have basic attributes set</span></span>
 <span><span class="va">obj</span><span class="op">$</span><span class="va">axes</span><span class="op">[[</span><span class="st">"lat"</span><span class="op">]</span><span class="op">]</span></span>
@@ -149,7 +149,7 @@
 <div class="section level2">
 <h2 id="development-plan">Development plan<a class="anchor" aria-label="anchor" href="#development-plan"></a>
 </h2>
-<p>Package <code>ncdfCF</code> is still being developed. It supports reading of all data objects from netCDF resources in “classic” and “netcdf4” formats; and can write data variables back to a netCDF file. From the CF Metadata Conventions it supports identification of axes, interpretation of the “time” axis, name resolution when using groups, cell boundary information, auxiliary coordinate variables, labels, cell measures, attributes and grid mapping information, among others.</p>
+<p>Package <code>ncdfCF</code> currently supports reading of all data objects from netCDF resources in “classic” and “netcdf4” formats; and can write data variables back to a netCDF file. From the CF Metadata Conventions it supports identification of axes, interpretation of the “time” axis, name resolution when using groups, cell boundary information, auxiliary coordinate variables, labels, cell measures, attributes and grid mapping information, among others.</p>
 <p>Development plans for the near future focus on supporting the below features:</p>
 <div class="section level5">
 <h5 id="netcdf">netCDF<a class="anchor" aria-label="anchor" href="#netcdf"></a>
@@ -163,7 +163,6 @@
 </h5>
 <ul>
 <li>Cell methods.</li>
-<li>Aggregation.</li>
 <li>Support for discrete sampling geometries.</li>
 <li>Compliance with CMIP5 / CMIP6 requirements.</li>
 </ul>
@@ -172,7 +171,7 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Package <code>ncdfCF</code> is still being developed. While extensively tested on multiple well-structured data sets, errors may still occur, particularly in data sets that do not adhere to the CF Metadata Conventions. The API may still change and although care is taken not to make breaking changes, sometimes this is unavoidable.</p>
+<p>While package <code>ncdfCF</code> is extensively tested on multiple well-structured data sets, errors may still occur, particularly in data sets that do not adhere to the CF Metadata Conventions. The API may still change and although care is taken not to make breaking changes, sometimes this is unavoidable.</p>
 <p>Installation from CRAN of the latest release:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"ncdfCF"</span>)</span></code></pre></div>
 <p>You can install the development version of <code>ncdfCF</code> from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
@@ -215,7 +214,7 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/Lifecycle-Experimental-green.svg" alt="Lifecycle: Experimental"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/Lifecycle-Stable-green.svg" alt="Lifecycle: Experimental"></a></li>
 <li><a href="https://cran.r-project.org/package=ncdfCF" class="external-link"><img src="https://www.r-pkg.org/badges/version/ncdfCF" alt="CRAN Status"></a></li>
 <li><a href="https://cran.r-project.org/package=ncdfCF" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/ncdfCF" alt="CRAN Downloads"></a></li>
 <li><a href="https://mit-license.org" class="external-link"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: GPL v3"></a></li>
@@ -233,7 +232,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

@@ -10,161 +10,161 @@ from a netCDF resource, specifically data variables and axes. More useful
 classes use this class as ancestor.
 }
 \section{Super class}{
-\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFData}
+\code{\link[ncdfCF:CFObject]{CFObject}} -> \code{CFData}
 }
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{data_type}}{Set or retrieve the data type of the data in the object.
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{data_type}}{Set or retrieve the data type of the data in the object.
 Setting the data type to a wrong value can have unpredictable and
 mostly catastrophic consequences.}
 
-\item{\code{ndims}}{(read-only) Retrieve the dimensionality of the data in the
+    \item{\code{ndims}}{(read-only) Retrieve the dimensionality of the data in the
 array.}
 
-\item{\code{NC_map}}{Returns a list with columns "start" and "count" giving the
+    \item{\code{NC_map}}{Returns a list with columns "start" and "count" giving the
 indices for reading the data of this object from a netCDF resource. The
 list is empty if this object is not backed by a netCDF resource.}
-}
-\if{html}{\out{</div>}}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-CFData-new}{\code{CFData$new()}}
-\item \href{#method-CFData-detach}{\code{CFData$detach()}}
-\item \href{#method-CFData-dim}{\code{CFData$dim()}}
-\item \href{#method-CFData-read_data}{\code{CFData$read_data()}}
-\item \href{#method-CFData-read_chunk}{\code{CFData$read_chunk()}}
+  \itemize{
+    \item \href{#method-CFData-initialize}{\code{CFData$new()}}
+    \item \href{#method-CFData-detach}{\code{CFData$detach()}}
+    \item \href{#method-CFData-dim}{\code{CFData$dim()}}
+    \item \href{#method-CFData-read_data}{\code{CFData$read_data()}}
+    \item \href{#method-CFData-read_chunk}{\code{CFData$read_chunk()}}
+  }
 }
-}
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
+\if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attach_to_group'><code>ncdfCF::CFObject$attach_to_group()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>ncdfCF::CFObject$attributes_identical()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>CFObject$append_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attach_to_group'><code>CFObject$attach_to_group()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>CFObject$attributes_identical()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>CFObject$delete_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>CFObject$print_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>CFObject$set_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>CFObject$write_attributes()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFData-new"></a>}}
-\if{latex}{\out{\hypertarget{method-CFData-new}{}}}
-\subsection{Method \code{new()}}{
-Create a new \code{CFData} instance. This method is called upon
+\if{html}{\out{<a id="method-CFData-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-CFData-initialize}{}}}
+\subsection{\code{CFData$new()}}{
+  Create a new \code{CFData} instance. This method is called upon
 creating CF objects, such as when opening a netCDF resource or creating
 a new CF object. It is rarely, if ever, useful to call this constructor
 directly. Instead, use the methods from higher-level classes such as
 \link{CFVariable}.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFData$new(
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFData$new(
   obj,
   group,
   values,
   start = 1L,
   count = NA,
   attributes = data.frame()
-)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{obj}}{The \link{NCVariable} instance upon which this CF object is based
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{obj}}{The \link{NCVariable} instance upon which this CF object is based
 when read from a netCDF resource, or the name for the new CF object to
 be created.}
-
-\item{\code{group}}{The \link{CFGroup} that this instance will live in.}
-
-\item{\code{values}}{Optional. The values of the object in an array. Ignored
+      \item{\code{group}}{The \link{CFGroup} that this instance will live in.}
+      \item{\code{values}}{Optional. The values of the object in an array. Ignored
 when argument \code{obj} is an \code{NCVariable} instance.}
-
-\item{\code{start}}{Optional. Vector of indices where to start reading data
+      \item{\code{start}}{Optional. Vector of indices where to start reading data
 along the dimensions of the array on file. The vector must be \code{NA} to
 read all data, otherwise it must have agree with the dimensions of the
 array on file. Default value is \code{1}, i.e. start from the beginning of
 the 1-D NC variable. Ignored when argument \code{obj} is not an \code{NCVariable}
 instance.}
-
-\item{\code{count}}{Optional. Vector of number of elements to read along each
+      \item{\code{count}}{Optional. Vector of number of elements to read along each
 dimension of the array on file. The vector must be \code{NA} to read to the
 end of each dimension, otherwise its value must agree with the
 corresponding \code{start} value and the dimension of the array on file.
 Default is \code{NA}. Ignored when argument \code{obj} is not an \code{NCVariable}
 instance.}
-
-\item{\code{attributes}}{Optional. A \code{data.frame} with the attributes of the
+      \item{\code{attributes}}{Optional. A \code{data.frame} with the attributes of the
 object.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A \code{CFData} instance.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A \code{CFData} instance.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFData-detach"></a>}}
 \if{latex}{\out{\hypertarget{method-CFData-detach}{}}}
-\subsection{Method \code{detach()}}{
-Detach the current object from its underlying netCDF
+\subsection{\code{CFData$detach()}}{
+  Detach the current object from its underlying netCDF
 resource. If necessary, data is read from the resource before
 detaching.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFData$detach()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFData$detach()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFData-dim"></a>}}
 \if{latex}{\out{\hypertarget{method-CFData-dim}{}}}
-\subsection{Method \code{dim()}}{
-Retrieve the dimensions of the data of this object.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFData$dim(dimension)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{dimension}}{Optional. The index of the dimension to retrieve the
+\subsection{\code{CFData$dim()}}{
+  Retrieve the dimensions of the data of this object.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFData$dim(dimension)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{dimension}}{Optional. The index of the dimension to retrieve the
 length for. If omitted, retrieve the lengths of all dimensions.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Integer vector with the length of each requested dimension.
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Integer vector with the length of each requested dimension.
 Read the data of the CF object from the NC file. The data is cached by
 \code{self} so repeated calls do not access the netCDF resource, unless
 argument \code{refresh} is \code{TRUE}. This method will not assess how big the
 data is before reading it so there is a chance that memory will be
 exhausted. The calling code should check for this possibility and break
 up the reading of data into chunks.
+  }
 }
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFData-read_data"></a>}}
 \if{latex}{\out{\hypertarget{method-CFData-read_data}{}}}
-\subsection{Method \code{read_data()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFData$read_data(refresh = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{refresh}}{Should the data be read from file if the object is linked?
+\subsection{\code{CFData$read_data()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFData$read_data(refresh = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{refresh}}{Should the data be read from file if the object is linked?
 This will replace current values, if previously loaded. Default
 \code{FALSE}.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-An array of data, invisibly, as prescribed by the \code{start} and
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    An array of data, invisibly, as prescribed by the \code{start} and
 \code{count} values used to create this object. If the object is not backed
 by a netCDF resource, returns \code{NULL}.
 Read a chunk of raw data of the CF object, as defined by the \code{start} and
@@ -172,33 +172,35 @@ Read a chunk of raw data of the CF object, as defined by the \code{start} and
 the data variable that this CF object refers to. The data read by this
 method will not be stored in \code{self} so the calling code must take a
 reference to it.
+  }
 }
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFData-read_chunk"></a>}}
 \if{latex}{\out{\hypertarget{method-CFData-read_chunk}{}}}
-\subsection{Method \code{read_chunk()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFData$read_chunk(start, count)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{start}}{Vector of indices where to start reading data along the
+\subsection{\code{CFData$read_chunk()}}{
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFData$read_chunk(start, count)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{start}}{Vector of indices where to start reading data along the
 dimensions of the array. The vector must be \code{NA} to read all data,
 otherwise it must agree with the dimensions of the array.}
-
-\item{\code{count}}{Vector of number of elements to read along each dimension of
+      \item{\code{count}}{Vector of number of elements to read along each dimension of
 the array. The vector must be \code{NA} to read to the end of each
 dimension, otherwise its value must agree with the corresponding
 \code{start} value and the dimension of the array.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-An array of data, as prescribed by the \code{start} and \code{count}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    An array of data, as prescribed by the \code{start} and \code{count}
 arguments, or \code{NULL} if there is no data.
+  }
 }
-}
+
 }

@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>2. R and CF Metadata Conventions • ncdfCF</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="2. R and CF Metadata Conventions">
 </head>
@@ -86,7 +86,7 @@ understood by anyone who has worked with matrices and arrays in R.</p>
 The CF elements and their relationship to the building blocks of the
 netCDF file are given in the figure below:</p>
 <div class="float">
-<img src="../datamodel-0.4.svg" width="680" alt="Figure 1: Elements of a netCDF file and the CF constructs built on them. Source: CF Conventions, Appendix I."><div class="figcaption"><em>Figure 1: Elements of a netCDF file and the
+<img src="datamodel-0.4.svg" width="680" alt="Figure 1: Elements of a netCDF file and the CF constructs built on them. Source: CF Conventions, Appendix I."><div class="figcaption"><em>Figure 1: Elements of a netCDF file and the
 CF constructs built on them. Source: CF Conventions, Appendix
 I.</em></div>
 </div>
@@ -156,8 +156,8 @@ calculating the parametric coordinates of a vertical axis).</p>
 <span><span class="co">#&gt; Values: (not loaded)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coordinate reference system:</span></span>
-<span><span class="co">#&gt;  name              grid_mapping           </span></span>
-<span><span class="co">#&gt;  Lambert_Conformal lambert_conformal_conic</span></span>
+<span><span class="co">#&gt;  name               grid_mapping           </span></span>
+<span><span class="co">#&gt;  /Lambert_Conformal lambert_conformal_conic</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Axes:</span></span>
 <span><span class="co">#&gt;  axis name   long_name                 length values               </span></span>
@@ -367,7 +367,7 @@ standard R array.</p>
 This structure enables a full support of the features provided by the
 <code>netcdf</code> library and the CF Conventions.</p>
 <div class="float">
-<img src="../ncdfCF-datamodel-0.7.png" width="680" alt="Figure 2: Core ncdfCF data model"><div class="figcaption">Figure 2: Core ncdfCF data model</div>
+<img src="ncdfCF-datamodel-0.7.png" width="680" alt="Figure 2: Core ncdfCF data model"><div class="figcaption">Figure 2: Core ncdfCF data model</div>
 </div>
 <p>Each of the building blocks may have other objects associated with
 it, such as axes for <code>CFVariable</code>. Package
@@ -380,7 +380,7 @@ level-3 binned data used for MODIS imagery, or
 <code>CFVerticalParametricTerm</code> which you will encounter when
 using <em>formula terms</em> for a parametric vertical axis.</p>
 <div class="float">
-<img src="../ncdfCF-hierarchy-0.7.png" width="680" alt="Figure 3: Condensed ncdfCF axis class hierarchy"><div class="figcaption">Figure 3: Condensed ncdfCF axis class
+<img src="ncdfCF-hierarchy-0.7.png" width="680" alt="Figure 3: Condensed ncdfCF axis class hierarchy"><div class="figcaption">Figure 3: Condensed ncdfCF axis class
 hierarchy</div>
 </div>
 </div>
@@ -750,7 +750,7 @@ supported.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

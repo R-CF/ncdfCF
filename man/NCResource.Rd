@@ -16,136 +16,147 @@ This class should never have to be accessed directly. All access is handled
 by higher-level methods.
 }
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{error}}{Error message, or empty string.}
-}
-\if{html}{\out{</div>}}
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{error}}{Error message, or empty string.}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{handle}}{(read-only) The handle to the netCDF resource.}
+    \item{\code{handle}}{(read-only) The handle to the netCDF resource.}
 
-\item{\code{uri}}{(read-only) The URI of the netCDF resource, either a local
+    \item{\code{uri}}{(read-only) The URI of the netCDF resource, either a local
 filename or the location of an online resource.}
 
-\item{\code{can_write}}{(read-only) Is the resource writable?}
-}
-\if{html}{\out{</div>}}
+    \item{\code{can_write}}{(read-only) Is the resource writable?}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-NCResource-new}{\code{NCResource$new()}}
-\item \href{#method-NCResource-print}{\code{NCResource$print()}}
-\item \href{#method-NCResource-create}{\code{NCResource$create()}}
-\item \href{#method-NCResource-close}{\code{NCResource$close()}}
-\item \href{#method-NCResource-group_handle}{\code{NCResource$group_handle()}}
-\item \href{#method-NCResource-clone}{\code{NCResource$clone()}}
-}
+  \itemize{
+    \item \href{#method-NCResource-initialize}{\code{NCResource$new()}}
+    \item \href{#method-NCResource-print}{\code{NCResource$print()}}
+    \item \href{#method-NCResource-create}{\code{NCResource$create()}}
+    \item \href{#method-NCResource-close}{\code{NCResource$close()}}
+    \item \href{#method-NCResource-group_handle}{\code{NCResource$group_handle()}}
+    \item \href{#method-NCResource-clone}{\code{NCResource$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-NCResource-new"></a>}}
-\if{latex}{\out{\hypertarget{method-NCResource-new}{}}}
-\subsection{Method \code{new()}}{
-Create a connection to a netCDF resource. This is called by
+\if{html}{\out{<a id="method-NCResource-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-NCResource-initialize}{}}}
+\subsection{\code{NCResource$new()}}{
+  Create a connection to a netCDF resource. This is called by
 \code{\link[=open_ncdf]{open_ncdf()}} when opening a netCDF resource or when saving a dataset
 to file. You should never have to call this directly.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCResource$new(uri, write)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{uri}}{The URI to the netCDF resource.}
-
-\item{\code{write}}{Logical flag to indicate if the resource should be
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCResource$new(uri, write)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{uri}}{The URI to the netCDF resource.}
+      \item{\code{write}}{Logical flag to indicate if the resource should be
 read-write.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    An instance of this class.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-An instance of this class.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCResource-print"></a>}}
 \if{latex}{\out{\hypertarget{method-NCResource-print}{}}}
-\subsection{Method \code{print()}}{
-Print a summary of the netCDF resource to the console.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCResource$print()}\if{html}{\out{</div>}}
+\subsection{\code{NCResource$print()}}{
+  Print a summary of the netCDF resource to the console.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCResource$print()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCResource-create"></a>}}
 \if{latex}{\out{\hypertarget{method-NCResource-create}{}}}
-\subsection{Method \code{create()}}{
-Create a new file on disk for the netCDF resource.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCResource$create()}\if{html}{\out{</div>}}
+\subsection{\code{NCResource$create()}}{
+  Create a new file on disk for the netCDF resource.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCResource$create()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCResource-close"></a>}}
 \if{latex}{\out{\hypertarget{method-NCResource-close}{}}}
-\subsection{Method \code{close()}}{
-Closing an open netCDF resource. It should rarely be
+\subsection{\code{NCResource$close()}}{
+  Closing an open netCDF resource. It should rarely be
 necessary to call this method directly.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCResource$close()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCResource$close()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCResource-group_handle"></a>}}
 \if{latex}{\out{\hypertarget{method-NCResource-group_handle}{}}}
-\subsection{Method \code{group_handle()}}{
-Every group in a netCDF file has its own handle, with the
+\subsection{\code{NCResource$group_handle()}}{
+  Every group in a netCDF file has its own handle, with the
 "root" group having the handle for the entire netCDF resource. The
 handle returned by this method is valid only for the named group.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCResource$group_handle(group_name)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCResource$group_handle(group_name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{group_name}}{The absolute path to the group.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The handle to the group.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{group_name}}{The absolute path to the group.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The handle to the group.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCResource-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-NCResource-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCResource$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{NCResource$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCResource$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

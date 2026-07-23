@@ -13,8 +13,8 @@ https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappi
 
 ## Super class
 
-[`ncdfCF::CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md)
--\> `CFGridMapping`
+[`CFObject`](https://r-cf.github.io/ncdfCF/reference/CFObject.md) -\>
+`CFGridMapping`
 
 ## Active bindings
 
@@ -26,7 +26,7 @@ https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappi
 
 ### Public methods
 
-- [`CFGridMapping$new()`](#method-CFGridMapping-new)
+- [`CFGridMapping$new()`](#method-CFGridMapping-initialize)
 
 - [`CFGridMapping$print()`](#method-CFGridMapping-print)
 
@@ -38,19 +38,19 @@ https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappi
 
 Inherited methods
 
-- [`ncdfCF::CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
-- [`ncdfCF::CFObject$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attach_to_group)
-- [`ncdfCF::CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
-- [`ncdfCF::CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
-- [`ncdfCF::CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
-- [`ncdfCF::CFObject$detach()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-detach)
-- [`ncdfCF::CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
-- [`ncdfCF::CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
-- [`ncdfCF::CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
+- [`CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
+- [`CFObject$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attach_to_group)
+- [`CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
+- [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
+- [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
+- [`CFObject$detach()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-detach)
+- [`CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
+- [`CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
+- [`CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `CFGridMapping$new()`
 
 Create a new instance of this class.
 
@@ -85,7 +85,7 @@ respective attributes, following the CF Metadata Conventions.
 
 ------------------------------------------------------------------------
 
-### Method [`print()`](https://rdrr.io/r/base/print.html)
+### `CFGridMapping$print()`
 
 Prints a summary of the grid mapping to the console.
 
@@ -95,7 +95,7 @@ Prints a summary of the grid mapping to the console.
 
 ------------------------------------------------------------------------
 
-### Method `brief()`
+### `CFGridMapping$brief()`
 
 Retrieve a 1-row `data.frame` with some information on this grid
 mapping.
@@ -106,7 +106,7 @@ mapping.
 
 ------------------------------------------------------------------------
 
-### Method `wkt2()`
+### `CFGridMapping$wkt2()`
 
 Retrieve the CRS string for a specific variable.
 
@@ -127,7 +127,7 @@ A character string with the CRS in WKT2 format.
 
 ------------------------------------------------------------------------
 
-### Method [`write()`](https://rdrr.io/r/base/write.html)
+### `CFGridMapping$write()`
 
 Write the CRS object to a netCDF file.
 

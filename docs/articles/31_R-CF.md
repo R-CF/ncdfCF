@@ -76,6 +76,7 @@ Looking at the same netCDF file as above, but now using the `ncdfCF`
 package:
 
 ``` r
+
 library(ncdfCF)
 
 fn <- system.file("extdata", "tasmax_NAM-44_day_20410701-vncdfCF.nc", package = "ncdfCF")
@@ -223,6 +224,7 @@ across the columns to the bottom-right. This is easily seen when
 printing a matrix to the console:
 
 ``` r
+
 matrix(1:12, nrow = 3, ncol = 4)
 #>      [,1] [,2] [,3] [,4]
 #> [1,]    1    4    7   10
@@ -237,6 +239,7 @@ the [`matrix()`](https://rdrr.io/r/base/matrix.html) function, with data
 starting from the top-left:
 
 ``` r
+
 matrix(1:12, nrow = 3, ncol = 4, byrow = TRUE)
 #>      [,1] [,2] [,3] [,4]
 #> [1,]    1    2    3    4
@@ -252,6 +255,7 @@ row are often stored in ascending order from South to North, that is
 from the bottom-left working upwards. That looks like this:
 
 ``` r
+
 matrix(c(9, 5, 1, 10, 6, 2, 11, 7, 3, 12, 8, 4), nrow = 3, ncol = 4)
 #>      [,1] [,2] [,3] [,4]
 #> [1,]    9   10   11   12
@@ -278,6 +282,7 @@ found in the netCDF file, or an oriented array that follows the standard
 R array layout:
 
 ``` r
+
 # The raw data using the ordering in the netCDF file (or as modified by
 # a processing method such as `summarise()`)
 tmax_raw <- tmax$raw()

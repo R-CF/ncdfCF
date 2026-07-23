@@ -135,6 +135,7 @@ Opening and inspecting the contents of a netCDF resource is very
 straightforward:
 
 ``` r
+
 library(ncdfCF)
   
 # Get a netCDF file, here hourly data for 2016-01-01 over Rwanda
@@ -143,7 +144,7 @@ fn <- system.file("extdata", "ERA5land_Rwanda_20160101.nc", package = "ncdfCF")
 # Open the file, all metadata is read
 (ds <- open_ncdf(fn))
 #> <Dataset> ERA5land_Rwanda_20160101 
-#> Resource   : /private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpSivEQU/temp_libpathb5e757bfdfa7/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
+#> Resource   : /private/var/folders/gs/s0mmlczn4l7bjbmwfrrhjlt80000gn/T/RtmpiIL9jk/temp_libpathb3952c8f5b74/ncdfCF/extdata/ERA5land_Rwanda_20160101.nc 
 #> Format     : offset64 
 #> Collection : Generic netCDF data 
 #> Conventions: CF-1.6 
@@ -226,6 +227,7 @@ the data. If you want to get all the data for a variable then neither
 `RNetCDF` nor `ncdf4` are particularly troublesome:
 
 ``` r
+
 library(ncdf4)
 nc <- nc_open(fn)
 vars <- names(nc$var)
@@ -276,6 +278,7 @@ for a variable:
   bottom (so latitude values, for instance, will be decreasing).
 
 ``` r
+
 # Extract a time series for a specific location
 # As can be seen above, the `t2m` data variable has 3 axes
 ts <- t2m[5, 4, ]
@@ -349,6 +352,7 @@ extract, possibly processed:
 ### Subsetting by axis range
 
 ``` r
+
 # Extract a specific region, full time dimension
 (ts <- t2m$subset(X = 29:30, Y = -1:-2))
 #> <Variable> t2m 
@@ -420,6 +424,7 @@ is different from the
 method, which will return data as it is recorded in the netCDF resource.
 
 ``` r
+
 rwa <- t2m$profile(longitude = c(30.07, 30.07, 29.74), latitude = c(-1.94, -1.58, -2.60), 
                    .names = c("Kigali", "Byumba", "Butare"), .as_table = TRUE)
 head(rwa)
@@ -448,6 +453,7 @@ axis coordinates you get progressively higher-order results. To get a
 latitudinal transect, for instance, provide only a longitude coordinate:
 
 ``` r
+
 (trans29_74 <- t2m$profile(longitude = 29.74, .names = "lon_29_74"))
 #> <Variable> lon_29_74 
 #> Long name: 2 metre temperature 
@@ -483,6 +489,7 @@ monthly means. These methods use the specific calendar of the “time”
 axis. The return value is a new `CFVariable` object.
 
 ``` r
+
 # Summarising hourly temperature data to calculate the daily maximum temperature
 t2m$summarise("tmax", max, "day")
 #> <Variable> tmax 
@@ -513,6 +520,7 @@ maximum, you could get the daily maximum, minimum and diurnal range in
 one go:
 
 ``` r
+
 # Function to calculate multiple daily stats
 # It is good practice to include a `na.rm` argument in all your functions
 daily_stats <- function(x, na.rm = TRUE) {
@@ -614,6 +622,7 @@ temperature in units of Kelvin can be converted to degrees Celsius in
 the usual way:
 
 ``` r
+
 tsC <- ts - 273.15
 tsC$set_attribute("units", "NC_CHAR", "degrees_Celsius")
 tsC
@@ -641,6 +650,7 @@ tsC
 You can also apply logical and comparison operators:
 
 ``` r
+
 # This produces a "logical" CFVariable: all values are 0 (FALSE) or 1 (TRUE)
 tsHot <- tsC > 20
 tsHot$set_attribute("units", "NC_CHAR", "1")
@@ -687,6 +697,7 @@ way that R orders its data. That leads to surprising results if you are
 not aware of this issue.
 
 ``` r
+
 # Open a file and read the data from a variable into a CFVariable instance
 fn <- system.file("extdata", "tasmax_NAM-44_day_20410701-vncdfCF.nc", package = "ncdfCF")
 ds <- open_ncdf(fn)
@@ -714,6 +725,7 @@ Metadata Conventions add metadata to interpret the file storage. The
 produce an array in the familiar R storage arrangement:
 
 ``` r
+
 tx_array <- tx$array()
 str(tx_array)
 #>  num [1:140, 1:148, 1, 1] 277 277 277 277 277 ...
@@ -736,6 +748,7 @@ Package `ncdfCF` includes the function
 which can be used to compose maps with `ggplot2`:
 
 ``` r
+
 library(ggplot2)
 ggplot() + geom_ncdf(data = tx) + coord_equal() + scale_fill_viridis_c()
 ```
@@ -758,6 +771,7 @@ file has maximum portability (specifically, data will be stored in
 row-major order with increasing Y values).
 
 ``` r
+
 # Save a CFVariable instance to a netCDF file on disk
 stats[["diurnal_range"]]$save("~/path/file.nc")
 ```
@@ -770,8 +784,14 @@ A `CFVariable` object can also be exported to a `data.table` or to a
 installed to utilise these methods.
 
 ``` r
+
 # install.packages("data.table")
 library(data.table)
+#> 
+#> Attaching package: 'data.table'
+#> The following object is masked from 'package:base':
+#> 
+#>     %notin%
 head(dt <- ts$data.table())
 #>    longitude latitude                time      t2m
 #>        <num>    <num>              <char>    <num>
@@ -785,15 +805,15 @@ head(dt <- ts$data.table())
 #install.packages("terra")
 suppressMessages(library(terra))
 (r <- stats[["diurnal_range"]]$terra())
-#> class       : SpatRaster 
+#> class       : SpatRaster
 #> size        : 21, 31, 1  (nrow, ncol, nlyr)
 #> resolution  : 0.1, 0.1  (x, y)
 #> extent      : 27.95, 31.05, -3.05, -0.95  (xmin, xmax, ymin, ymax)
-#> coord. ref. :  
+#> coord. ref. : 
 #> source(s)   : memory
-#> name        : 2016-01-01T12:00:00 
-#> min value   :            1.819982 
-#> max value   :           11.273690
+#> name        : 2016-01-01T12:00:00
+#> min value   :            1.819982
+#> max value   :            11.27369
 ```
 
 A `stars` object can be created from a `CFVariable` or a `CFDataset`
@@ -801,6 +821,7 @@ with multiple variables with the function
 [`stars::st_as_stars()`](https://r-spatial.github.io/stars/reference/st_as_stars.html).
 
 ``` r
+
 suppressMessages(library(stars))
 (st <- st_as_stars(ts))
 #> stars object with 3 dimensions and 1 attribute

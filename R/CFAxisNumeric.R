@@ -59,8 +59,11 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
         dim <- var$group$find_dim_by_id(var$dimids)
         !is.null(dim) && var$name == dim$name
       } else TRUE
-      if (is_cv && !missing(values) && !(is.numeric(values) && .monotonicity(values)))
-        stop("Numeric axis must have numeric monotonic coordinates.", call. = FALSE) # nocov
+      if (is_cv && !missing(values) && is.numeric(values)) {
+        if (!.monotonicity(values))
+          stop("Numeric axis must have numeric monotonic coordinates", call. = FALSE) # nocov
+        private$.regular <- .is_regular(values)
+      }
 
       super$initialize(var, group, values = values, start = start, count = count, orientation = orientation, attributes = attributes)
     },
@@ -173,44 +176,20 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
       if (private$.active_coords > 1L)
         private$.aux[[private$.active_coords - 1L]]$slice(rng)
       else {
-        # Note that axis coordinates may be monotonically decreasing.
         vals <- self$values
         if (is.null(vals)) return(NULL)
-        len <- length(vals)
         bnds <- self$bounds$values
         rng <- range(rng)
 
-        if (len == 1L) {
-          if (is.null(bnds)) {
-            if (rng[1L] <= vals && vals <= rng[2L]) c(1L, 1L) else NULL
-          } else {
-            if ((rng[1L] <= bnds[2L, 1L] && rng[2L] >= bnds[1L, 1L]) ||
-                (rng[2L] >= bnds[1L, 1L] && rng[1L] <= bnds[2L, 1L]))
-              c(1L, 1L)
-            else NULL
-          }
-        } else { # Axis has multiple coordinates
-          # Are the values in decreasing order?
-          inv <- vals[2L] < vals[1L]
-
-          if (is.null(bnds)) {
-            if (inv)
-              idx <- which(vals <= rng[2L] & vals >= rng[1L])
-            else
-              idx <- which(vals >= rng[1L] & vals <= rng[2L])
-            if (!length(idx)) NULL else range(idx)
-          } else {
-            if (inv) {
-              lo <- which(bnds[2L,] <= rng[2L])
-              hi <- which(bnds[1L,] >= rng[1L])
-            } else {
-              lo <- which(bnds[2L,] >= rng[1L])
-              hi <- which(bnds[1L,] <= rng[2L])
-            }
-            if (!length(lo) || !length(hi)) NULL
-            else as.integer(range(intersect(lo, hi)))
-          }
+        if (is.null(bnds)) {
+          idx <- which(vals >= rng[1L] & vals <= rng[2L])
+        } else {
+          lo <- pmin(bnds[1L, ], bnds[2L, ])
+          hi <- pmax(bnds[1L, ], bnds[2L, ])
+          idx <- which(hi >= rng[1L] & lo <= rng[2L])
         }
+
+        if (!length(idx)) NULL else as.integer(range(idx))
       }
     },
 
@@ -285,7 +264,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
 
         ax
       } else
-        stop("Axis values cannot be appended.", call. = FALSE)
+        stop("Axis values cannot be appended", call. = FALSE)
     },
 
     #' @description Return an axis spanning a smaller coordinate range. This

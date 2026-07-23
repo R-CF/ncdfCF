@@ -10,270 +10,277 @@ coordinate values do not represent a physical property. The coordinate
 values are ordinal values equal to the index into the axis.
 }
 \section{Super classes}{
-\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{\link[ncdfCF:CFData]{ncdfCF::CFData}} -> \code{\link[ncdfCF:CFAxis]{ncdfCF::CFAxis}} -> \code{CFAxisDiscrete}
+\code{\link[ncdfCF:CFObject]{CFObject}} -> \code{\link[ncdfCF:CFData]{CFData}} -> \code{\link[ncdfCF:CFAxis]{CFAxis}} -> \code{CFAxisDiscrete}
 }
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{dimnames}}{(read-only) The coordinates of the axis as an integer
+    \item{\code{dimnames}}{(read-only) The coordinates of the axis as an integer
 vector, or labels for every axis element if they have been set.}
-}
-\if{html}{\out{</div>}}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-CFAxisDiscrete-new}{\code{CFAxisDiscrete$new()}}
-\item \href{#method-CFAxisDiscrete-print}{\code{CFAxisDiscrete$print()}}
-\item \href{#method-CFAxisDiscrete-brief}{\code{CFAxisDiscrete$brief()}}
-\item \href{#method-CFAxisDiscrete-copy}{\code{CFAxisDiscrete$copy()}}
-\item \href{#method-CFAxisDiscrete-indexOf}{\code{CFAxisDiscrete$indexOf()}}
-\item \href{#method-CFAxisDiscrete-slice}{\code{CFAxisDiscrete$slice()}}
-\item \href{#method-CFAxisDiscrete-subset}{\code{CFAxisDiscrete$subset()}}
-\item \href{#method-CFAxisDiscrete-append}{\code{CFAxisDiscrete$append()}}
-\item \href{#method-CFAxisDiscrete-write}{\code{CFAxisDiscrete$write()}}
+  \itemize{
+    \item \href{#method-CFAxisDiscrete-initialize}{\code{CFAxisDiscrete$new()}}
+    \item \href{#method-CFAxisDiscrete-print}{\code{CFAxisDiscrete$print()}}
+    \item \href{#method-CFAxisDiscrete-brief}{\code{CFAxisDiscrete$brief()}}
+    \item \href{#method-CFAxisDiscrete-copy}{\code{CFAxisDiscrete$copy()}}
+    \item \href{#method-CFAxisDiscrete-indexOf}{\code{CFAxisDiscrete$indexOf()}}
+    \item \href{#method-CFAxisDiscrete-slice}{\code{CFAxisDiscrete$slice()}}
+    \item \href{#method-CFAxisDiscrete-subset}{\code{CFAxisDiscrete$subset()}}
+    \item \href{#method-CFAxisDiscrete-append}{\code{CFAxisDiscrete$append()}}
+    \item \href{#method-CFAxisDiscrete-write}{\code{CFAxisDiscrete$write()}}
+  }
 }
-}
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
+\if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>ncdfCF::CFObject$attributes_identical()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href='../../ncdfCF/html/CFData.html#method-CFData-dim'><code>ncdfCF::CFData$dim()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_chunk'><code>ncdfCF::CFData$read_chunk()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_data'><code>ncdfCF::CFData$read_data()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="attach_to_group"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-attach_to_group'><code>ncdfCF::CFAxis$attach_to_group()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="can_append"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-can_append'><code>ncdfCF::CFAxis$can_append()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="configure_terms"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-configure_terms'><code>ncdfCF::CFAxis$configure_terms()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="copy_terms"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-copy_terms'><code>ncdfCF::CFAxis$copy_terms()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="copy_with_values"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-copy_with_values'><code>ncdfCF::CFAxis$copy_with_values()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="detach"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-detach'><code>ncdfCF::CFAxis$detach()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="identical"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-identical'><code>ncdfCF::CFAxis$identical()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-peek'><code>ncdfCF::CFAxis$peek()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>ncdfCF::CFAxis$shard()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>CFObject$append_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>CFObject$attributes_identical()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>CFObject$delete_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>CFObject$print_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>CFObject$set_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>CFObject$write_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href='../../ncdfCF/html/CFData.html#method-CFData-dim'><code>CFData$dim()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_chunk'><code>CFData$read_chunk()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_data'><code>CFData$read_data()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="attach_to_group"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-attach_to_group'><code>CFAxis$attach_to_group()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="can_append"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-can_append'><code>CFAxis$can_append()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="configure_terms"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-configure_terms'><code>CFAxis$configure_terms()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="copy_terms"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-copy_terms'><code>CFAxis$copy_terms()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="copy_with_values"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-copy_with_values'><code>CFAxis$copy_with_values()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="detach"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-detach'><code>CFAxis$detach()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="identical"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-identical'><code>CFAxis$identical()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="peek"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-peek'><code>CFAxis$peek()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="shard"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-shard'><code>CFAxis$shard()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFAxisDiscrete-new"></a>}}
-\if{latex}{\out{\hypertarget{method-CFAxisDiscrete-new}{}}}
-\subsection{Method \code{new()}}{
-Create a new instance of this class. The values of this axis
+\if{html}{\out{<a id="method-CFAxisDiscrete-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisDiscrete-initialize}{}}}
+\subsection{\code{CFAxisDiscrete$new()}}{
+  Create a new instance of this class. The values of this axis
 are always a sequence, but the sequence may start with any positive
 value such that the length of this instance falls within the length of
 the axis on file, if there is one.
 
 Creating a new discrete axis is more easily done with the
 \code{\link[=makeDiscreteAxis]{makeDiscreteAxis()}} function.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$new(var, group, start = 1L, count)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{var}}{The name of the axis when creating a new axis. When reading an
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxisDiscrete$new(var, group, start = 1L, count)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{var}}{The name of the axis when creating a new axis. When reading an
 axis from file, the \link{NCVariable} object that describes this instance.}
-
-\item{\code{group}}{The \link{CFGroup} that this instance will live in.}
-
-\item{\code{start}}{Optional. Integer value that indicates the starting value of
+      \item{\code{group}}{The \link{CFGroup} that this instance will live in.}
+      \item{\code{start}}{Optional. Integer value that indicates the starting value of
 this axis. Defults to \code{1L}.}
+      \item{\code{count}}{Number of elements in the axis.}
+    }
+    \if{html}{\out{</div>}}
+  }
+}
 
-\item{\code{count}}{Number of elements in the axis.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisDiscrete-print"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-print}{}}}
-\subsection{Method \code{print()}}{
-Summary of the axis printed to the console.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$print(...)}\if{html}{\out{</div>}}
+\subsection{\code{CFAxisDiscrete$print()}}{
+  Summary of the axis printed to the console.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxisDiscrete$print(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Arguments passed on to other functions. Of particular interest
+is \verb{width = } to indicate a maximum width of attribute columns.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    \code{self}, invisibly.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{Arguments passed on to other functions. Of particular interest
-is \verb{width = } to indicate a maximum width of attribute columns.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-\code{self}, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisDiscrete-brief"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-brief}{}}}
-\subsection{Method \code{brief()}}{
-Some details of the axis.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$brief()}\if{html}{\out{</div>}}
+\subsection{\code{CFAxisDiscrete$brief()}}{
+  Some details of the axis.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxisDiscrete$brief()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A 1-row \code{data.frame} with some details of the axis.
+  }
 }
 
-\subsection{Returns}{
-A 1-row \code{data.frame} with some details of the axis.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisDiscrete-copy"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-copy}{}}}
-\subsection{Method \code{copy()}}{
-Create a copy of this axis. The copy is completely separate
+\subsection{\code{CFAxisDiscrete$copy()}}{
+  Create a copy of this axis. The copy is completely separate
 from this axis, meaning that both this axis and all of its components
 are made from new instances.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$copy(name = "", group)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{The name for the new axis. If an empty string is passed, will
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxisDiscrete$copy(name = "", group)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{The name for the new axis. If an empty string is passed, will
 use the name of this axis.}
+      \item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The newly created axis.
+  }
+}
 
-\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The newly created axis.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisDiscrete-indexOf"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-indexOf}{}}}
-\subsection{Method \code{indexOf()}}{
-Find indices in the axis domain. Given a vector of numerical
+\subsection{\code{CFAxisDiscrete$indexOf()}}{
+  Find indices in the axis domain. Given a vector of numerical
 values \code{x}, find their indices in the values of the axis. Outside
 values will be dropped.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$indexOf(x, method = "constant", rightmost.closed = TRUE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{x}}{Vector of numeric values to find axis indices for.}
-
-\item{\code{method}}{Ignored.}
-
-\item{\code{rightmost.closed}}{Ignored.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Numeric vector of the same length as \code{x}. Values of \code{x} outside
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxisDiscrete$indexOf(x, method = "constant", rightmost.closed = TRUE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{x}}{Vector of numeric values to find axis indices for.}
+      \item{\code{method}}{Ignored.}
+      \item{\code{rightmost.closed}}{Ignored.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Numeric vector of the same length as \code{x}. Values of \code{x} outside
 of the range of the values in the axis are returned as \code{NA}.
+  }
 }
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisDiscrete-slice"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-slice}{}}}
-\subsection{Method \code{slice()}}{
-Given a range of coordinate values, returns the indices into
+\subsection{\code{CFAxisDiscrete$slice()}}{
+  Given a range of coordinate values, returns the indices into
 the axis that fall within the supplied range. If the axis has auxiliary
 coordinates selected then these will be used for the identification of
 the indices to return.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$slice(rng)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{rng}}{A vector whose extreme values indicate the indices of
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxisDiscrete$slice(rng)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{rng}}{A vector whose extreme values indicate the indices of
 coordinates to return. The mode of the vector has to be integer or
 agree with any auxiliary coordinates selected.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-An integer vector of length 2 with the lower and higher indices
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    An integer vector of length 2 with the lower and higher indices
 into the axis that fall within the range of coordinates in argument
 \code{rng}. Returns \code{NULL} if no (boundary) values of the axis fall within
 the range of coordinates.
+  }
 }
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisDiscrete-subset"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-subset}{}}}
-\subsection{Method \code{subset()}}{
-Return an axis spanning a smaller coordinate range. This
+\subsection{\code{CFAxisDiscrete$subset()}}{
+  Return an axis spanning a smaller coordinate range. This
 method returns an axis which spans the range of indices given by the
 \code{rng} argument.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$subset(name = "", group, rng = NULL)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{The name for the new axis. If an empty string is passed, will
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxisDiscrete$subset(name = "", group, rng = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{The name for the new axis. If an empty string is passed, will
 use the name of this axis.}
-
-\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
-
-\item{\code{rng}}{The range of indices whose values from this axis to include in
+      \item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
+      \item{\code{rng}}{The range of indices whose values from this axis to include in
 the returned axis. If the value of the argument is \code{NULL}, return a
 copy of the axis.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A new \code{CFAxisDiscrete} instance covering the indicated range of
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A new \code{CFAxisDiscrete} instance covering the indicated range of
 indices. If the value of the argument is \code{NULL}, return a copy of
 \code{self} as the new axis.
+  }
 }
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisDiscrete-append"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-append}{}}}
-\subsection{Method \code{append()}}{
-Append a vector of values at the end of the current values
+\subsection{\code{CFAxisDiscrete$append()}}{
+  Append a vector of values at the end of the current values
 of the axis.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$append(from)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{from}}{An instance of \code{CFAxisDiscrete} whose length to add to this
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxisDiscrete$append(from)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{from}}{An instance of \code{CFAxisDiscrete} whose length to add to this
 axis.}
-
-\item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A new \code{CFAxisDiscrete} instance with a length that is the sum of
+      \item{\code{group}}{The \link{CFGroup} where the copy of this axis will live.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A new \code{CFAxisDiscrete} instance with a length that is the sum of
 the lengths of this axis and the \code{from} axis.
+  }
 }
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFAxisDiscrete-write"></a>}}
 \if{latex}{\out{\hypertarget{method-CFAxisDiscrete-write}{}}}
-\subsection{Method \code{write()}}{
-Write the axis to a netCDF file. A discrete axis does not
+\subsection{\code{CFAxisDiscrete$write()}}{
+  Write the axis to a netCDF file. A discrete axis does not
 have any attributes or values to write.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFAxisDiscrete$write()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxisDiscrete$write()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 }

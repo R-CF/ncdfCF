@@ -7,6 +7,7 @@ will create an empty data set (duh!) but it will have a root group and
 some basic attributes:
 
 ``` r
+
 library(ncdfCF)
 
 (my_ds <- create_ncdf())
@@ -20,7 +21,7 @@ library(ncdfCF)
 #> Attributes:
 #>  name        type    length value                                             
 #>  Conventions NC_CHAR  7     CF-1.13                                           
-#>  history     NC_CHAR 67     Created with R package ncdfCF 0.8.2.9000 on 202...
+#>  history     NC_CHAR 68     Created with R package ncdfCF 0.8.2.9000 on 202...
 ```
 
 The data set is created in memory (`Resource : (virtual)`) and you can
@@ -42,6 +43,7 @@ logical, character) can be converted to a `CFVariable` with the
 method.
 
 ``` r
+
 arr <- array(rnorm(120), dim = c(6, 5, 4))
 as_CF("my_first_CF_object", arr)
 #> <Variable> my_first_CF_object 
@@ -72,6 +74,7 @@ the domain of the axis type). For “time” coordinates, these are
 automatically detected irrespective of the name.
 
 ``` r
+
 # Note the use of named dimnames here - these will become the names of the axes
 dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4), 
                       time = c("2025-07-01", "2025-07-02", "2025-07-03", "2025-07-04"))
@@ -145,6 +148,7 @@ arithmetical and mathematical operations on a `CFVariable` which also
 returns a new `CFVariable` to the caller.
 
 ``` r
+
 # Open an existing netCDF resource for reading
 fn <- system.file("extdata", "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20230101-20231231_vncdfCF.nc", package = "ncdfCF")
 ds <- open_ncdf(fn)
@@ -211,13 +215,14 @@ to which new subgroups can be added, etc, etc, etc. As with a
 provides for a very flexible arrangement.
 
 ``` r
+
 complex_ds <- create_ncdf()
 subgroup <- complex_ds$root$create_subgroup("sub1")
 subsubgroup1 <- subgroup$create_subgroup("subsub1")
 subsubgroup2 <- subgroup$create_subgroup("subsub2")
 subsubgroup1$add_variable(pr_mon)
 complex_ds$hierarchy()
-#> <NetCDF objects> CF_dataset 
+#> <CF objects> CF_dataset 
 #> * /
 #>    * sub1
 #>       * subsub1

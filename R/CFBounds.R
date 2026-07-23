@@ -214,6 +214,35 @@ CFBounds <- R6::R6Class("CFBounds",
 
       self$write_attributes()
       private$write_data()
+    },
+
+    #' @description Write the boundary values to a Zarr group, including its
+    #'   attributes, if it does not already exist.
+    #' @param grp An instance of `zarr_group` to write the boundary values to.
+    #'   The data will be written to a new Zarr array with the name of this
+    #'   bounds object.
+    #' @return Self, invisibly.
+    write_geozarr = function(grp) {
+      if (is.null(grp$children[[self$name]])) {
+        # Create a Zarr array for the boundary values
+        len <- self$length
+        ab <- zarr::array_builder$new()
+        ab$shape <- c(self$vertices, len)
+        vals <- self$values
+        ab$data_type <- switch(storage.mode(vals),
+                               "double" = "float64",
+                               "integer" = "int32")
+        ab$chunk_shape <- c(self$vertices, len)
+        if (len * self$vertices > zarr::zarr_options()$min_compress)
+          ab$add_codec("blosc", list(clevel = 6L))
+        new_array <- try(grp$add_array(self$name, ab), silent = TRUE)
+        if (inherits(new_array, "try-error"))
+          stop("Could not create Zarr array with name", self$name, call. = FALSE)
+        new_array$write(vals)
+
+        self$write_geozarr_attributes(new_array)
+      }
+      invisible(self)
     }
   ),
   active = list(

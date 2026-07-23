@@ -16,125 +16,131 @@ https://docs.ogc.org/is/18-010r11/18-010r11.pdf
 https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings
 }
 \section{Super class}{
-\code{\link[ncdfCF:CFObject]{ncdfCF::CFObject}} -> \code{CFGridMapping}
+\code{\link[ncdfCF:CFObject]{CFObject}} -> \code{CFGridMapping}
 }
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
-}
-\if{html}{\out{</div>}}
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-CFGridMapping-new}{\code{CFGridMapping$new()}}
-\item \href{#method-CFGridMapping-print}{\code{CFGridMapping$print()}}
-\item \href{#method-CFGridMapping-brief}{\code{CFGridMapping$brief()}}
-\item \href{#method-CFGridMapping-wkt2}{\code{CFGridMapping$wkt2()}}
-\item \href{#method-CFGridMapping-write}{\code{CFGridMapping$write()}}
+  \itemize{
+    \item \href{#method-CFGridMapping-initialize}{\code{CFGridMapping$new()}}
+    \item \href{#method-CFGridMapping-print}{\code{CFGridMapping$print()}}
+    \item \href{#method-CFGridMapping-brief}{\code{CFGridMapping$brief()}}
+    \item \href{#method-CFGridMapping-wkt2}{\code{CFGridMapping$wkt2()}}
+    \item \href{#method-CFGridMapping-write}{\code{CFGridMapping$write()}}
+  }
 }
-}
-\if{html}{\out{
-<details><summary>Inherited methods</summary>
+\if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>ncdfCF::CFObject$append_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attach_to_group'><code>ncdfCF::CFObject$attach_to_group()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>ncdfCF::CFObject$attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>ncdfCF::CFObject$attributes_identical()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>ncdfCF::CFObject$delete_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-detach'><code>ncdfCF::CFObject$detach()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>ncdfCF::CFObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>ncdfCF::CFObject$set_attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>ncdfCF::CFObject$write_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>CFObject$append_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attach_to_group'><code>CFObject$attach_to_group()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>CFObject$attributes_identical()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>CFObject$delete_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-detach'><code>CFObject$detach()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>CFObject$print_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>CFObject$set_attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>CFObject$write_attributes()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFGridMapping-new"></a>}}
-\if{latex}{\out{\hypertarget{method-CFGridMapping-new}{}}}
-\subsection{Method \code{new()}}{
-Create a new instance of this class.
+\if{html}{\out{<a id="method-CFGridMapping-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-CFGridMapping-initialize}{}}}
+\subsection{\code{CFGridMapping$new()}}{
+  Create a new instance of this class.
 
 Note that when a new grid mapping object is created (as opposed to
 reading from a netCDF resource), only the \code{grid_mapping_name} attribute
 will be set. The caller must set all other parameters through their
 respective attributes, following the CF Metadata Conventions.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$new(var, group, grid_mapping_name)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{var}}{When creating a new grid mapping object, the name of the
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGridMapping$new(var, group, grid_mapping_name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{var}}{When creating a new grid mapping object, the name of the
 object. When reading from a netCDF resource, the netCDF variable that
 describes this instance.}
-
-\item{\code{group}}{The \link{CFGroup} that this instance will live in.}
-
-\item{\code{grid_mapping_name}}{Optional. When creating a new grid mapping
+      \item{\code{group}}{The \link{CFGroup} that this instance will live in.}
+      \item{\code{grid_mapping_name}}{Optional. When creating a new grid mapping
 object, the formal name of the grid mapping, as specified in the CF
 Metadata Conventions. This value is stored in the new object as
 attribute "grid_mapping_name". Ignored when argument \code{var} is a NC
 object.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
-\if{html}{\out{</div>}}
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGridMapping-print"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGridMapping-print}{}}}
-\subsection{Method \code{print()}}{
-Prints a summary of the grid mapping to the console.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$print()}\if{html}{\out{</div>}}
+\subsection{\code{CFGridMapping$print()}}{
+  Prints a summary of the grid mapping to the console.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGridMapping$print()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGridMapping-brief"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGridMapping-brief}{}}}
-\subsection{Method \code{brief()}}{
-Retrieve a 1-row \code{data.frame} with some information on this
+\subsection{\code{CFGridMapping$brief()}}{
+  Retrieve a 1-row \code{data.frame} with some information on this
 grid mapping.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$brief()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGridMapping$brief()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGridMapping-wkt2"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGridMapping-wkt2}{}}}
-\subsection{Method \code{wkt2()}}{
-Retrieve the CRS string for a specific variable.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$wkt2(axis_info)}\if{html}{\out{</div>}}
+\subsection{\code{CFGridMapping$wkt2()}}{
+  Retrieve the CRS string for a specific variable.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGridMapping$wkt2(axis_info)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{axis_info}}{A list with information that describes the axes of the
+\code{CFVariable} instance to describe.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A character string with the CRS in WKT2 format.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{axis_info}}{A list with information that describes the axes of the
-\code{CFVariable} instance to describe.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A character string with the CRS in WKT2 format.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFGridMapping-write"></a>}}
 \if{latex}{\out{\hypertarget{method-CFGridMapping-write}{}}}
-\subsection{Method \code{write()}}{
-Write the CRS object to a netCDF file.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFGridMapping$write()}\if{html}{\out{</div>}}
+\subsection{\code{CFGridMapping$write()}}{
+  Write the CRS object to a netCDF file.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGridMapping$write()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 }

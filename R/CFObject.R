@@ -307,6 +307,27 @@ CFObject <- R6::R6Class("CFObject",
           private$.attributes_dirty <- FALSE
         }
       invisible(self)
+    },
+
+    #' @description Write the attributes of this object to a GeoZarr file.
+    #' @param node The `zarr_node` instance (either a Zarr group or a Zarr
+    #'   array) to write the attributes to.
+    #' @param atts Optional. List of attributes to write. Defaults to `NULL`, in
+    #'   which case all attributes from this object are written. This argument
+    #'   is useful to filter or modify attributes before writing them to a Zarr
+    #'   file.
+    #' @return Self, invisibly.
+    write_geozarr_attributes = function(node, atts = NULL) {
+      if (is.null(atts))
+        atts <- private$.attributes
+      values <- atts$value
+      names(values) <- atts$name
+      if (length(atts)) {
+        for (i in seq_along(atts$name))
+          node$set_attribute(atts$name[i], values[[i]])
+        node$save()
+      }
+      invisible(self)
     }
   ),
   active = list(

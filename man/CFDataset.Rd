@@ -16,379 +16,398 @@ The CF data set instance provides access to all the objects in the netCDF
 resource, organized in groups.
 }
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{name}}{The name of the netCDF resource. This is extracted from the
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{name}}{The name of the netCDF resource. This is extracted from the
 URI (file name or URL).}
 
-\item{\code{root}}{Root of the group hierarchy through which all elements of the
+    \item{\code{root}}{Root of the group hierarchy through which all elements of the
 netCDF resource are accessed. It is \strong{strongly discouraged} to
 manipulate the objects in the group hierarchy directly. Use the provided
 access methods instead.}
 
-\item{\code{file_type}}{The type of data in the netCDF resource, if
+    \item{\code{file_type}}{The type of data in the netCDF resource, if
 identifiable. In terms of the CF Metadata Conventions, this includes
 discrete sampling geometries (DSG). Other file types that can be
 identified include L3b files used by NASA and NOAA for satellite
 imagery (these data sets need special processing), and CMIP5, CMIP6 and
 CORDEX climate projection data.}
-}
-\if{html}{\out{</div>}}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{resource}}{(read-only) The connection details of the netCDF
+    \item{\code{resource}}{(read-only) The connection details of the netCDF
 resource. This is for internal use only.}
 
-\item{\code{uri}}{(read-only) The connection string to the netCDF resource.}
+    \item{\code{uri}}{(read-only) The connection string to the netCDF resource.}
 
-\item{\code{conventions}}{(read-only) Returns the conventions that this netCDF
+    \item{\code{conventions}}{(read-only) Returns the conventions that this netCDF
 resource conforms to.}
 
-\item{\code{var_names}}{(read-only) Vector of names of variables in this data set.}
+    \item{\code{var_names}}{(read-only) Vector of names of variables in this data set.}
 
-\item{\code{axis_names}}{(read-only) Vector of names of axes in this data set.}
-}
-\if{html}{\out{</div>}}
+    \item{\code{axis_names}}{(read-only) Vector of names of axes in this data set.}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-CFDataset-new}{\code{CFDataset$new()}}
-\item \href{#method-CFDataset-print}{\code{CFDataset$print()}}
-\item \href{#method-CFDataset-hierarchy}{\code{CFDataset$hierarchy()}}
-\item \href{#method-CFDataset-objects_by_standard_name}{\code{CFDataset$objects_by_standard_name()}}
-\item \href{#method-CFDataset-has_subgroups}{\code{CFDataset$has_subgroups()}}
-\item \href{#method-CFDataset-find_by_name}{\code{CFDataset$find_by_name()}}
-\item \href{#method-CFDataset-variables}{\code{CFDataset$variables()}}
-\item \href{#method-CFDataset-axes}{\code{CFDataset$axes()}}
-\item \href{#method-CFDataset-attributes}{\code{CFDataset$attributes()}}
-\item \href{#method-CFDataset-attribute}{\code{CFDataset$attribute()}}
-\item \href{#method-CFDataset-set_attribute}{\code{CFDataset$set_attribute()}}
-\item \href{#method-CFDataset-append_attribute}{\code{CFDataset$append_attribute()}}
-\item \href{#method-CFDataset-delete_attribute}{\code{CFDataset$delete_attribute()}}
-\item \href{#method-CFDataset-add_variable}{\code{CFDataset$add_variable()}}
-\item \href{#method-CFDataset-save}{\code{CFDataset$save()}}
-\item \href{#method-CFDataset-clone}{\code{CFDataset$clone()}}
-}
+  \itemize{
+    \item \href{#method-CFDataset-initialize}{\code{CFDataset$new()}}
+    \item \href{#method-CFDataset-print}{\code{CFDataset$print()}}
+    \item \href{#method-CFDataset-hierarchy}{\code{CFDataset$hierarchy()}}
+    \item \href{#method-CFDataset-objects_by_standard_name}{\code{CFDataset$objects_by_standard_name()}}
+    \item \href{#method-CFDataset-has_subgroups}{\code{CFDataset$has_subgroups()}}
+    \item \href{#method-CFDataset-find_by_name}{\code{CFDataset$find_by_name()}}
+    \item \href{#method-CFDataset-variables}{\code{CFDataset$variables()}}
+    \item \href{#method-CFDataset-axes}{\code{CFDataset$axes()}}
+    \item \href{#method-CFDataset-attributes}{\code{CFDataset$attributes()}}
+    \item \href{#method-CFDataset-attribute}{\code{CFDataset$attribute()}}
+    \item \href{#method-CFDataset-set_attribute}{\code{CFDataset$set_attribute()}}
+    \item \href{#method-CFDataset-append_attribute}{\code{CFDataset$append_attribute()}}
+    \item \href{#method-CFDataset-delete_attribute}{\code{CFDataset$delete_attribute()}}
+    \item \href{#method-CFDataset-add_variable}{\code{CFDataset$add_variable()}}
+    \item \href{#method-CFDataset-save}{\code{CFDataset$save()}}
+    \item \href{#method-CFDataset-geozarr}{\code{CFDataset$geozarr()}}
+    \item \href{#method-CFDataset-clone}{\code{CFDataset$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CFDataset-new"></a>}}
-\if{latex}{\out{\hypertarget{method-CFDataset-new}{}}}
-\subsection{Method \code{new()}}{
-Create an instance of this class. Do not instantiate this
+\if{html}{\out{<a id="method-CFDataset-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-initialize}{}}}
+\subsection{\code{CFDataset$new()}}{
+  Create an instance of this class. Do not instantiate this
 class directly; instead, call \code{\link[=open_ncdf]{open_ncdf()}} which will return an
 instance that has all properties read from the netCDF resource, or
 \code{\link[=create_ncdf]{create_ncdf()}} for a new, empty instance.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$new(resource, format)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{resource}}{An instance of \code{NCResource} that links to the netCDF
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$new(resource, format)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{resource}}{An instance of \code{NCResource} that links to the netCDF
 resource, or a character string with the name of a new data set.}
-
-\item{\code{format}}{Character string with the format of the netCDF resource as
+      \item{\code{format}}{Character string with the format of the netCDF resource as
 reported by the call opening the resource. Ignored when argument
 \code{resource} is a character string.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
-\if{html}{\out{</div>}}
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-print"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-print}{}}}
-\subsection{Method \code{print()}}{
-Summary of the data set printed to the console.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$print(...)}\if{html}{\out{</div>}}
+\subsection{\code{CFDataset$print()}}{
+  Summary of the data set printed to the console.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$print(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Arguments passed on to other functions. Of particular interest
+is \verb{width = } to indicate a maximum width of attribute columns.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{Arguments passed on to other functions. Of particular interest
-is \verb{width = } to indicate a maximum width of attribute columns.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-hierarchy"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-hierarchy}{}}}
-\subsection{Method \code{hierarchy()}}{
-Print the group hierarchy to the console.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$hierarchy()}\if{html}{\out{</div>}}
+\subsection{\code{CFDataset$hierarchy()}}{
+  Print the group hierarchy to the console.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$hierarchy()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-objects_by_standard_name"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-objects_by_standard_name}{}}}
-\subsection{Method \code{objects_by_standard_name()}}{
-Get objects by standard_name. Several conventions define
+\subsection{\code{CFDataset$objects_by_standard_name()}}{
+  Get objects by standard_name. Several conventions define
 standard vocabularies for physical properties. The standard names from
 those vocabularies are usually stored as the "standard_name" attribute
 with variables or axes. This method retrieves all variables or axes
 that list the specified "standard_name" in its attributes.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$objects_by_standard_name(standard_name)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{standard_name}}{Optional, a character string to search for a
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$objects_by_standard_name(standard_name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{standard_name}}{Optional, a character string to search for a
 specific "standard_name" value in variables and axes.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-If argument \code{standard_name} is provided, a character vector of
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    If argument \code{standard_name} is provided, a character vector of
 variable or axis names. If argument \code{standard_name} is missing or an
 empty string, a named list with all "standard_name" attribute values in
 the the netCDF resource; each list item is named for the variable or
 axis.
+  }
 }
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-has_subgroups"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-has_subgroups}{}}}
-\subsection{Method \code{has_subgroups()}}{
-Does the netCDF resource have subgroups? Newer versions of
+\subsection{\code{CFDataset$has_subgroups()}}{
+  Does the netCDF resource have subgroups? Newer versions of
 the \code{netcdf} library, specifically \code{netcdf4}, can organize dimensions
 and variables in groups. This method will report if the data set is
 indeed organized with subgroups.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$has_subgroups()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$has_subgroups()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Logical to indicate that the netCDF resource uses subgroups.
+  }
 }
 
-\subsection{Returns}{
-Logical to indicate that the netCDF resource uses subgroups.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-find_by_name"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-find_by_name}{}}}
-\subsection{Method \code{find_by_name()}}{
-Find an object by its name. Given the name of a CF data
+\subsection{\code{CFDataset$find_by_name()}}{
+  Find an object by its name. Given the name of a CF data
 variable or axis, possibly preceded by an absolute group path, return
 the object to the caller.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$find_by_name(name)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$find_by_name(name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{The name of a CF data variable or axis, with an optional
+absolute group path.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The object with the provided name. If the object is not found,
+returns \code{NULL}.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{The name of a CF data variable or axis, with an optional
-absolute group path.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The object with the provided name. If the object is not found,
-returns \code{NULL}.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-variables"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-variables}{}}}
-\subsection{Method \code{variables()}}{
-This method lists the CF data variables located in this
+\subsection{\code{CFDataset$variables()}}{
+  This method lists the CF data variables located in this
 netCDF resource, including those in subgroups.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$variables()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$variables()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A list of \code{CFVariable} instances.
+  }
 }
 
-\subsection{Returns}{
-A list of \code{CFVariable} instances.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-axes"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-axes}{}}}
-\subsection{Method \code{axes()}}{
-This method lists the axes located in this netCDF resource,
+\subsection{\code{CFDataset$axes()}}{
+  This method lists the axes located in this netCDF resource,
 including axes in subgroups.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$axes()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$axes()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A list of \code{CFAxis} descendants.
+  }
 }
 
-\subsection{Returns}{
-A list of \code{CFAxis} descendants.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-attributes"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-attributes}{}}}
-\subsection{Method \code{attributes()}}{
-List all the attributes of a group. This method returns a
+\subsection{\code{CFDataset$attributes()}}{
+  List all the attributes of a group. This method returns a
 \code{data.frame} containing all the attributes of the indicated \code{group}.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$attributes(group)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$attributes(group)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{group}}{The name of the group whose attributes to return. If the
+argument is missing, the global attributes will be returned.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A \code{data.frame} of attributes.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{group}}{The name of the group whose attributes to return. If the
-argument is missing, the global attributes will be returned.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A \code{data.frame} of attributes.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-attribute"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-attribute}{}}}
-\subsection{Method \code{attribute()}}{
-Retrieve global attributes of the data set.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$attribute(att, field = "value")}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{att}}{Vector of character strings of attributes to return.}
-
-\item{\code{field}}{The field of the attribute to return values from. This must
+\subsection{\code{CFDataset$attribute()}}{
+  Retrieve global attributes of the data set.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$attribute(att, field = "value")}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{att}}{Vector of character strings of attributes to return.}
+      \item{\code{field}}{The field of the attribute to return values from. This must
 be "value" (default) or "type".}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-If the \code{field} argument is "type", a character string. If \code{field}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    If the \code{field} argument is "type", a character string. If \code{field}
 is "value", a single value of the type of the attribute, or a vector
 when the attribute has multiple values. If no attribute is named with a
 value of argument \code{att} \code{NA} is returned.
+  }
 }
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-set_attribute"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-set_attribute}{}}}
-\subsection{Method \code{set_attribute()}}{
-Add an attribute to the global attributes. If an attribute
+\subsection{\code{CFDataset$set_attribute()}}{
+  Add an attribute to the global attributes. If an attribute
 \code{name} already exists, it will be overwritten.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$set_attribute(name, type, value)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{The name of the attribute. The name must begin with a letter
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$set_attribute(name, type, value)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{The name of the attribute. The name must begin with a letter
 and be composed of letters, digits, and underscores, with a maximum
 length of 255 characters. UTF-8 characters are not supported in
 attribute names.}
-
-\item{\code{type}}{The type of the attribute, as a string value of a netCDF data
+      \item{\code{type}}{The type of the attribute, as a string value of a netCDF data
 type.}
-
-\item{\code{value}}{The value of the attribute. This can be of any supported
+      \item{\code{value}}{The value of the attribute. This can be of any supported
 type, including a vector or list of values. Matrices, arrays and like
 compound data structures should be stored as a data variable, not as an
 attribute and they are thus not allowed. In general, an attribute
 should be a character value, a numeric value, a logical value, or a
 short vector or list of any of these. Values passed in a list will be
 coerced to their common mode.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-append_attribute"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-append_attribute}{}}}
-\subsection{Method \code{append_attribute()}}{
-Append the text value of a global attribute. If an attribute
+\subsection{\code{CFDataset$append_attribute()}}{
+  Append the text value of a global attribute. If an attribute
 \code{name} already exists, the \code{value} will be appended to the existing
 value of the attribute. If the attribute \code{name} does not exist it will
 be created. The attribute must be of "NC_CHAR" or "NC_STRING" type; in
 the latter case having only a single string value.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$append_attribute(name, value, sep = "; ", prepend = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{The name of the attribute. The name must begin with a letter
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$append_attribute(name, value, sep = "; ", prepend = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{The name of the attribute. The name must begin with a letter
 and be composed of letters, digits, and underscores, with a maximum
 length of 255 characters. UTF-8 characters are not supported in
 attribute names.}
-
-\item{\code{value}}{The character value of the attribute to append. This must be
+      \item{\code{value}}{The character value of the attribute to append. This must be
 a character string.}
-
-\item{\code{sep}}{The separator to use. Default is \code{"; "}.}
-
-\item{\code{prepend}}{Logical to flag if the supplied \code{value} should be placed
+      \item{\code{sep}}{The separator to use. Default is \code{"; "}.}
+      \item{\code{prepend}}{Logical to flag if the supplied \code{value} should be placed
 before the existing value. Default is \code{FALSE}.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-delete_attribute"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-delete_attribute}{}}}
-\subsection{Method \code{delete_attribute()}}{
-Delete attributes. If an attribute \code{name} is not present
+\subsection{\code{CFDataset$delete_attribute()}}{
+  Delete attributes. If an attribute \code{name} is not present
 this method simply returns.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$delete_attribute(name)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$delete_attribute(name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{Vector of names of the attributes to delete.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{Vector of names of the attributes to delete.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-add_variable"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-add_variable}{}}}
-\subsection{Method \code{add_variable()}}{
-Add a \link{CFVariable} object to the data set. If there is
+\subsection{\code{CFDataset$add_variable()}}{
+  Add a \link{CFVariable} object to the data set. If there is
 another object with the same name in the group where the data variable
 should be placed an error is thrown. For objects associated with the
 data variable (such as axes, CRS, boundary variables, etc), if another
 object with the same name is otherwise identical to the associated
 object then that object will be linked from the variable, otherwise an
 error is thrown.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$add_variable(var, group, locations = list())}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{var}}{An instance of \code{CFVariable} or any of its descendants.}
-
-\item{\code{group}}{Optional. An instance of \link{CFGroup} where the data variable
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$add_variable(var, group, locations = list())}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{var}}{An instance of \code{CFVariable} or any of its descendants.}
+      \item{\code{group}}{Optional. An instance of \link{CFGroup} where the data variable
 should be located. If omitted, the data variable will be stored in the
 root group.}
-
-\item{\code{locations}}{Optional. A \code{list} whose named elements correspond to
+      \item{\code{locations}}{Optional. A \code{list} whose named elements correspond to
 the names of objects associated with the data variable in argument
 \code{var}. Each list element has a single character string indicating the
 group in the hierarchy where the object should be stored. As an
@@ -397,59 +416,115 @@ be stored in the parent group of \code{group}, then specify \code{locations = li
 relative paths from the \code{group}. Associated objects that are not in the
 list will be stored in \code{group}. If the argument \code{locations} is not
 provided, all associated objects will be stored in \code{group}.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Argument \code{var}, invisibly.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Argument \code{var}, invisibly.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-save"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-save}{}}}
-\subsection{Method \code{save()}}{
-Save the data set to file, including its subordinate objects
+\subsection{\code{CFDataset$save()}}{
+  Save the data set to file, including its subordinate objects
 such as attributes, data variables, axes, CRS, etc.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$save(fn = NULL, pack = FALSE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{fn}}{Optional. Fully-qualified file name indicating where to save
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$save(fn = NULL, pack = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{fn}}{Optional. Fully-qualified file name indicating where to save
 the data set to. This argument must be provided if the data set is
 virtual. If the argument is provided on a data set that was read from a
 netCDF file and it does not point to that netCDF file, a new netCDF
 file will be written to the indicated location. If the argument is the
 same file name as before, the existing netCDF file will be updated.}
-
-\item{\code{pack}}{Optional. Logical to indicate if the data should be packed;
+      \item{\code{pack}}{Optional. Logical to indicate if the data should be packed;
 default is \code{FALSE}. Packing is only useful for numeric data; packing is
 not performed on integer values. Packing is always to the "NC_SHORT"
 data type, i.e. 16-bits per value.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
-\if{html}{\out{</div>}}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFDataset-geozarr"></a>}}
+\if{latex}{\out{\hypertarget{method-CFDataset-geozarr}{}}}
+\subsection{\code{CFDataset$geozarr()}}{
+  Save the data set to a Zarr store with GeoZarr conventions,
+including its subordinate objects such as attributes, data variables,
+axes, CRS, etc. Every principal \code{CFVariable} will become a
+\code{geozarr_array} and every \code{CFGroup} a \code{zarr_group}. Ancillary data
+variables will typically become a \code{zarr_array}, i.e. an array not
+having GeoZarr convention attributes. Axes with regular coordinate
+values will be stored in the attributes, saving space and reducing the
+number of such ancillary arrays.
+
+The data set will have the same hierarchy in the Zarr store as this
+data set, possibly anchored in some subgroup inside the Zarr store. It
+is highly recommended to use separate empty (or non-existing) groups to
+anchor multiple data sets to avoid the possibility of name collisions.
+
+Supported GeoZarr conventions for supplying coordinates are \code{cs} and
+\code{spatial}. Due to the limited scope of the latter convention (North-up
+Y coordinates, no support for time or vertical coordinates, 3 axes at
+most) most Zarr arrays will use the \code{cs} convention. Supporting
+conventions, like \code{proj} or \code{ref}, will be used as needed.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$geozarr(zarr, dataset_root = "/")}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{zarr}}{Fully-qualified file name or URI indicating where to save the
+data set to, or a \code{zarr} object. If a file name or URI, it must point
+to an existing Zarr store where the data from this dat aset will be
+appended, or a new Zarr store will be created by that name and then it
+can not already exist. By convention, a new Zarr store should have a
+".zarr" file name extension.}
+      \item{\code{dataset_root}}{Optional. Path to a node in the Zarr store where this
+data set will be anchored. If the node does not yet exist, it will be
+created. A path must start from the root node of the Zarr store and be
+specified like "/subgroup/sub/here" with the root of this data set
+starting at the indicated path. Defaults to the root of the Zarr store,
+"/". Alternatively, this may be a \code{zarr_group} to be used as the root
+for this data set, but only if argument \code{zarr} is a \code{zarr} object.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The \code{zarr} object to which the data set was written.
+  }
 }
-\subsection{Returns}{
-Self, invisibly.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CFDataset-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-CFDataset-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CFDataset$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{CFDataset$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFDataset$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

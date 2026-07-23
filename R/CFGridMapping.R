@@ -513,7 +513,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
           dtm_code <- epsg_datum[epsg_datum$datum_name == dtm_name, "datum_code"]
         if (length(dtm_code))
           return(list(source = "EPSG", WKT2 = .wkt2_datum_geo(dtm_code), ANGLEUNIT = private$datum_angleunit(dtm_code)))
-      } else dtm_name <- 'unknown'
+      } else dtm_name <- 'WGS1984'
 
       # Manual
       ellipsoid <- private$ellipsoid()

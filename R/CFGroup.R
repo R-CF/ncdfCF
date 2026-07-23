@@ -194,10 +194,7 @@ CFGroup <- R6::R6Class("CFGroup",
         else if (inherits(o, "CFLabel"))        private$.aux
         else if (inherits(o, "CFCellMeasure"))  private$.measures
         else if (inherits(o, "CFGridMapping"))  private$.crs
-        else {
-          browser()
-          stop("Unknown CF object type.", call. = FALSE)
-        }
+        else stop("Unknown CF object type", call. = FALSE)
       }
       .assign <- function(o) {
         nm <- o$name
@@ -206,7 +203,7 @@ CFGroup <- R6::R6Class("CFGroup",
           if (silent && class(o)[1L] == class(field[[nm]])[1L])
             return(invisible(NULL))
           else
-            stop("Object name already present in group.", call. = FALSE)
+            stop("Object name already present in group", call. = FALSE)
         }
         if (inherits(o, "CFAxis"))                  private$.axes[[nm]]     <- o
         else if (inherits(o, "CFVariable"))         private$.vars[[nm]]     <- o
@@ -420,6 +417,29 @@ CFGroup <- R6::R6Class("CFGroup",
       if (recursive)
         lapply(private$.subgroups, function(g) g$write_variables(pack, recursive))
       invisible(self)
+    },
+
+    #' @description Write this group to a Zarr store. Iterate over contained
+    #' objects and walk through the hierarchy.
+    #' @param grp The `zarr_group` instance to write to.
+    #' @return Self, invisibly.
+    write_geozarr = function(grp) {
+      # Write attributes
+      self$write_geozarr_attributes(grp)
+
+      # Write the data variables in the group - this will also write axes,
+      # auxiliary coordinates and bounds
+      lapply(private$.vars, function(obj) obj$write_geozarr(grp))
+
+      # Recurse over groups - Zarr groups probably do not exist yet
+      lapply(private$.subgroups, function(g) {
+        new_grp <- try(grp$add_group(g$name), silent = TRUE)
+        if (inherits(new_grp, "try-error"))
+          new_grp <- grp$children[[g$name]]
+        g$write_geozarr(new_grp)
+      })
+
+      invisible(self)
     }
   ),
   active = list(
@@ -502,7 +522,7 @@ CFGroup <- R6::R6Class("CFGroup",
       if (missing(value)) private$.vars
     },
 
-    #' @field CFvars (read-only) Retrieve the list of CF boundary variables of the current group.
+    #' @field CFbounds (read-only) Retrieve the list of CF boundary variables of the current group.
     CFbounds = function(value) {
       if (missing(value)) private$.bounds
     },

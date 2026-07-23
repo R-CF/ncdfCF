@@ -10,7 +10,10 @@ CFLabel <- R6::R6Class("CFLabel",
   inherit = CFData,
   cloneable = FALSE,
   private = list(
-    .dimid = -1L     # The NC dimension identifier or -1L when virtual
+    .dimid = -1L,     # The NC dimension identifier or -1L when virtual
+
+    # Always FALSE because not relevant for character strings
+    .regular = FALSE
   ),
   public = list(
     #' @description Create a new instance of this class.
@@ -141,6 +144,39 @@ CFLabel <- R6::R6Class("CFLabel",
       }
 
       self$write_attributes()
+    },
+
+    #' @description Create the GeoZarr coordinates for this label set. If the
+    #'   label set is longer than a set minimum, write the label values to the
+    #'   group as a new Zarr array if it does not yet exist.
+    #' @param grp An instance of `zarr_group` where the label values will be
+    #'   located in the Zarr store. The label values will be written to a new
+    #'   Zarr array with the name based on the name of this label set if it is
+    #'   irregular and long.
+    #' @return An instance of [geozarr::CoordinatesString].
+    geozarr_coordinates = function(grp) {
+      len <- self$length
+      vals <- self$values
+
+      # Labels are always irregular
+      if (self$length > geozarr_options()$max_explicit) {
+        # Create a Zarr array for the axis coordinates if it does not already exist
+        if (is.null(grp$children[[self$name]])) {
+          ab <- zarr::array_builder$new()
+          ab$shape <- len
+          ab$data_type <- "string"
+          ab$chunk_shape <- len
+          if (len > zarr::zarr_options()$min_compress)
+            ab$add_codec("blosc", list(clevel = 6L))
+          new_array <- try(grp$add_array(self$name, ab), silent = TRUE)
+          if (inherits(new_array, "try-error"))
+            stop("Could not create Zarr array with name", self$name, call. = FALSE)
+          new_array$write(vals)
+          self$write_geozarr_attributes(new_array)
+        }
+      }
+
+      geozarr::CoordinatesString$new(self$name, "OTHER", "1", vals)
     }
   ),
   active = list(
@@ -157,8 +193,9 @@ CFLabel <- R6::R6Class("CFLabel",
     values = function(value) {
       if (missing(value)) {
         self$read_data()
-      } else {
+      } else if (length(value) == length(private$.values)) {
         private$set_values(value)
+        private$.regular <- if (is.numeric(value)) .is_regular(value) else FALSE
         self$detach()
       }
     },
@@ -179,7 +216,6 @@ CFLabel <- R6::R6Class("CFLabel",
         else self$dim(1L)
       }
     },
-
 
     #' @field dimid The netCDF dimension id of this label set. Setting this
     #'   value to anything other than the correct value will lead to disaster.

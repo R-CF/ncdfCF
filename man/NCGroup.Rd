@@ -14,341 +14,389 @@ Changing the properties of a netCDF group other than its name may very
 well invalidate the CF objects or even the netCDF file.
 }
 \section{Super class}{
-\code{\link[ncdfCF:NCObject]{ncdfCF::NCObject}} -> \code{NCGroup}
+\code{\link[ncdfCF:NCObject]{NCObject}} -> \code{NCGroup}
 }
 \section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{parent}}{Parent group of this group, the owning \code{CFDataset} for the
+  \if{html}{\out{<div class="r6-fields">}}
+  \describe{
+    \item{\code{parent}}{Parent group of this group, the owning \code{CFDataset} for the
 root group.}
 
-\item{\code{subgroups}}{List of child \code{NCGroup} instances of this group.}
+    \item{\code{subgroups}}{List of child \code{NCGroup} instances of this group.}
 
-\item{\code{NCvars}}{List of netCDF variables that are located in this group.}
+    \item{\code{NCvars}}{List of netCDF variables that are located in this group.}
 
-\item{\code{NCdims}}{List of netCDF dimensions that are located in this group.}
+    \item{\code{NCdims}}{List of netCDF dimensions that are located in this group.}
 
-\item{\code{NCudts}}{List of netCDF user-defined types that are located in this
+    \item{\code{NCudts}}{List of netCDF user-defined types that are located in this
 group.}
-}
-\if{html}{\out{</div>}}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
-\item{\code{resource}}{(read-only) The RNetCDF object to the underlying netCDF
+    \item{\code{resource}}{(read-only) The RNetCDF object to the underlying netCDF
 resource.}
 
-\item{\code{handle}}{(read-only) Get the handle to the netCDF resource for the
+    \item{\code{handle}}{(read-only) Get the handle to the netCDF resource for the
 group}
 
-\item{\code{can_write}}{(read-only) Is the resource writable?}
+    \item{\code{can_write}}{(read-only) Is the resource writable?}
 
-\item{\code{name}}{Set or retrieve the name of the group. Note that the name is
+    \item{\code{name}}{Set or retrieve the name of the group. Note that the name is
 always relative to the location in the hierarchy that the group is in
 and it should thus not be qualified by backslashes. The name has to be
 a valid CF name. The name of the root group cannot be changed.}
 
-\item{\code{fullname}}{(read-only) The fully qualified absolute path of the group.}
+    \item{\code{fullname}}{(read-only) The fully qualified absolute path of the group.}
 
-\item{\code{root}}{(read-only) Retrieve the root group.}
+    \item{\code{root}}{(read-only) Retrieve the root group.}
 
-\item{\code{CF}}{Set or retrieve the \link{CFGroup} that is associated with this
+    \item{\code{CF}}{Set or retrieve the \link{CFGroup} that is associated with this
 NC group.}
-}
-\if{html}{\out{</div>}}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-NCGroup-new}{\code{NCGroup$new()}}
-\item \href{#method-NCGroup-print}{\code{NCGroup$print()}}
-\item \href{#method-NCGroup-find_by_name}{\code{NCGroup$find_by_name()}}
-\item \href{#method-NCGroup-find_dim_by_id}{\code{NCGroup$find_dim_by_id()}}
-\item \href{#method-NCGroup-has_name}{\code{NCGroup$has_name()}}
-\item \href{#method-NCGroup-set_name}{\code{NCGroup$set_name()}}
-\item \href{#method-NCGroup-unused}{\code{NCGroup$unused()}}
-\item \href{#method-NCGroup-create_group}{\code{NCGroup$create_group()}}
-\item \href{#method-NCGroup-append}{\code{NCGroup$append()}}
-\item \href{#method-NCGroup-fullnames}{\code{NCGroup$fullnames()}}
-\item \href{#method-NCGroup-dimensions}{\code{NCGroup$dimensions()}}
-\item \href{#method-NCGroup-clone}{\code{NCGroup$clone()}}
+  \itemize{
+    \item \href{#method-NCGroup-initialize}{\code{NCGroup$new()}}
+    \item \href{#method-NCGroup-print}{\code{NCGroup$print()}}
+    \item \href{#method-NCGroup-find_by_name}{\code{NCGroup$find_by_name()}}
+    \item \href{#method-NCGroup-find_dimvar_by_name}{\code{NCGroup$find_dimvar_by_name()}}
+    \item \href{#method-NCGroup-find_dim_by_id}{\code{NCGroup$find_dim_by_id()}}
+    \item \href{#method-NCGroup-has_name}{\code{NCGroup$has_name()}}
+    \item \href{#method-NCGroup-set_name}{\code{NCGroup$set_name()}}
+    \item \href{#method-NCGroup-unused}{\code{NCGroup$unused()}}
+    \item \href{#method-NCGroup-create_group}{\code{NCGroup$create_group()}}
+    \item \href{#method-NCGroup-append}{\code{NCGroup$append()}}
+    \item \href{#method-NCGroup-fullnames}{\code{NCGroup$fullnames()}}
+    \item \href{#method-NCGroup-dimensions}{\code{NCGroup$dimensions()}}
+    \item \href{#method-NCGroup-clone}{\code{NCGroup$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details open><summary>Inherited methods</summary>
+\if{html}{\out{<details open><summary>Inherited methods</summary>
 <ul>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-attribute'><code>ncdfCF::NCObject$attribute()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="print_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-print_attributes'><code>ncdfCF::NCObject$print_attributes()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="write_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-write_attributes'><code>ncdfCF::NCObject$write_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="attribute"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-attribute'><code>NCObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="print_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-print_attributes'><code>NCObject$print_attributes()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="NCObject" data-id="write_attributes"><a href='../../ncdfCF/html/NCObject.html#method-NCObject-write_attributes'><code>NCObject$write_attributes()</code></a></span></li>
 </ul>
-</details>
-}}
+</details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-NCGroup-new"></a>}}
-\if{latex}{\out{\hypertarget{method-NCGroup-new}{}}}
-\subsection{Method \code{new()}}{
-Create a new instance of this class.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$new(id, name, attributes = data.frame(), parent, resource)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{id}}{The identifier of the group. If \code{NA}, the new group will be
+\if{html}{\out{<a id="method-NCGroup-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-initialize}{}}}
+\subsection{\code{NCGroup$new()}}{
+  Create a new instance of this class.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCGroup$new(id, name, attributes = data.frame(), parent, resource)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{id}}{The identifier of the group. If \code{NA}, the new group will be
 created in the netCDF resource, unless argument \code{parent == NULL}, i.e.
 the root group which already exists.}
-
-\item{\code{name}}{The name of the group.}
-
-\item{\code{attributes}}{Optional, a \code{data.frame} with group attributes.}
-
-\item{\code{parent}}{The parent group of this group. If \code{NULL} then argument
+      \item{\code{name}}{The name of the group.}
+      \item{\code{attributes}}{Optional, a \code{data.frame} with group attributes.}
+      \item{\code{parent}}{The parent group of this group. If \code{NULL} then argument
 \code{resource} must be a valid instance of \code{NCResource}.}
-
-\item{\code{resource}}{Optional. Reference to the \link{NCResource} instance that
+      \item{\code{resource}}{Optional. Reference to the \link{NCResource} instance that
 provides access to the netCDF resource.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    An instance of this class.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-An instance of this class.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCGroup-print"></a>}}
 \if{latex}{\out{\hypertarget{method-NCGroup-print}{}}}
-\subsection{Method \code{print()}}{
-Summary of the group printed to the console.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$print(stand_alone = TRUE, ...)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{stand_alone}}{Logical to indicate if the group should be printed as
+\subsection{\code{NCGroup$print()}}{
+  Summary of the group printed to the console.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCGroup$print(stand_alone = TRUE, ...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{stand_alone}}{Logical to indicate if the group should be printed as
 an object separate from other objects (\code{TRUE}, default), or print as part
 of an enclosing object (\code{FALSE}).}
+      \item{\code{...}}{Passed on to other methods.}
+    }
+    \if{html}{\out{</div>}}
+  }
+}
 
-\item{\code{...}}{Passed on to other methods.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCGroup-find_by_name"></a>}}
 \if{latex}{\out{\hypertarget{method-NCGroup-find_by_name}{}}}
-\subsection{Method \code{find_by_name()}}{
-Find an object by its name. Given the name of an object,
+\subsection{\code{NCGroup$find_by_name()}}{
+  Find an object by its name. Given the name of an object,
 possibly preceded by an absolute or relative group path, return the
 object to the caller. Usually this method is called programmatically.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$find_by_name(name)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCGroup$find_by_name(name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{The name of an object, with an optional absolute or relative
+group path from the calling group. The object must be an NC group,
+dimension or variable. For dimensions, see also the
+\code{find_dimension_by_name()} method.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The object with the provided name. If the object is not found,
+returns \code{NULL}.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{The name of an object, with an optional absolute or relative
-group path from the calling group. The object must be an NC group,
-dimension or variable.}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NCGroup-find_dimvar_by_name"></a>}}
+\if{latex}{\out{\hypertarget{method-NCGroup-find_dimvar_by_name}{}}}
+\subsection{\code{NCGroup$find_dimvar_by_name()}}{
+  Find a dimension variable by its name. Dimensions are scoped
+differently than other out-of-group objects - specifically, dimensions
+are visible in all child groups. Given the name of a dimension
+variable, possibly preceded by an absolute or relative group path,
+return the dimension variable to the caller. Usually this method is
+called programmatically.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCGroup$find_dimvar_by_name(name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{The name of a dimension, with an optional absolute or
+relative group path from the calling group.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The dimension variable with the provided name. If the dimension
+variable is not found, returns \code{NULL}.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The object with the provided name. If the object is not found,
-returns \code{NULL}.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCGroup-find_dim_by_id"></a>}}
 \if{latex}{\out{\hypertarget{method-NCGroup-find_dim_by_id}{}}}
-\subsection{Method \code{find_dim_by_id()}}{
-Find an NC dimension object by its id. Given the id of a
+\subsection{\code{NCGroup$find_dim_by_id()}}{
+  Find an NC dimension object by its id. Given the id of a
 dimension, return the \link{NCDimension} object to the caller. The dimension
 has to be found in the current group or any of its parents.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$find_dim_by_id(id)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCGroup$find_dim_by_id(id)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{id}}{The id of the dimension.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The \link{NCDimension} object with an identifier equal to the \code{id}
+argument. If the object is not found, returns \code{NULL}.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{id}}{The id of the dimension.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The \link{NCDimension} object with an identifier equal to the \code{id}
-argument. If the object is not found, returns \code{NULL}.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCGroup-has_name"></a>}}
 \if{latex}{\out{\hypertarget{method-NCGroup-has_name}{}}}
-\subsection{Method \code{has_name()}}{
-Has a given name been defined in this group already?
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$has_name(name)}\if{html}{\out{</div>}}
+\subsection{\code{NCGroup$has_name()}}{
+  Has a given name been defined in this group already?
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCGroup$has_name(name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{Character string. The name will be searched for, regardless
+of case.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    \code{TRUE} if \code{name} is present in the group, \code{FALSE} otherwise.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{Character string. The name will be searched for, regardless
-of case.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-\code{TRUE} if \code{name} is present in the group, \code{FALSE} otherwise.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCGroup-set_name"></a>}}
 \if{latex}{\out{\hypertarget{method-NCGroup-set_name}{}}}
-\subsection{Method \code{set_name()}}{
-Change the name of the NC group. The new name must be
+\subsection{\code{NCGroup$set_name()}}{
+  Change the name of the NC group. The new name must be
 valid and should not duplicate a sibling group.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$set_name(new_name)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCGroup$set_name(new_name)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{new_name}}{The new name for the NC group.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{new_name}}{The new name for the NC group.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCGroup-unused"></a>}}
 \if{latex}{\out{\hypertarget{method-NCGroup-unused}{}}}
-\subsection{Method \code{unused()}}{
-Find NC variables that are not referenced by CF objects. For
+\subsection{\code{NCGroup$unused()}}{
+  Find NC variables that are not referenced by CF objects. For
 debugging purposes only.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$unused()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCGroup$unused()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    List of \link{NCVariable}.
+  }
 }
 
-\subsection{Returns}{
-List of \link{NCVariable}.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCGroup-create_group"></a>}}
 \if{latex}{\out{\hypertarget{method-NCGroup-create_group}{}}}
-\subsection{Method \code{create_group()}}{
-Create a new group as a sub-group of the current group. This
+\subsection{\code{NCGroup$create_group()}}{
+  Create a new group as a sub-group of the current group. This
 writes the new group to the netCDF resource, but only if it is open for
 writing.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$create_group(CFgroup)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCGroup$create_group(CFgroup)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{CFgroup}}{The \link{CFGroup} associated with this NC group.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    The newly created group as a \code{NCGroup} instance, invisibly.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{CFgroup}}{The \link{CFGroup} associated with this NC group.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-The newly created group as a \code{NCGroup} instance, invisibly.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCGroup-append"></a>}}
 \if{latex}{\out{\hypertarget{method-NCGroup-append}{}}}
-\subsection{Method \code{append()}}{
-Append an object to this group.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$append(obj)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{obj}}{The object to append. This must be an \code{NCVariable} or
+\subsection{\code{NCGroup$append()}}{
+  Append an object to this group.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCGroup$append(obj)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{obj}}{The object to append. This must be an \code{NCVariable} or
 \code{NCDimension} instance. Any other type of object will generate a
 warning.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisible.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-Self, invisible.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCGroup-fullnames"></a>}}
 \if{latex}{\out{\hypertarget{method-NCGroup-fullnames}{}}}
-\subsection{Method \code{fullnames()}}{
-This method lists the fully qualified name of this group,
+\subsection{\code{NCGroup$fullnames()}}{
+  This method lists the fully qualified name of this group,
 optionally including names in subgroups.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$fullnames(recursive = TRUE)}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCGroup$fullnames(recursive = TRUE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{recursive}}{Should subgroups be scanned for names too (default is
+\code{TRUE})?}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A character vector with group names.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{recursive}}{Should subgroups be scanned for names too (default is
-\code{TRUE})?}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A character vector with group names.
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCGroup-dimensions"></a>}}
 \if{latex}{\out{\hypertarget{method-NCGroup-dimensions}{}}}
-\subsection{Method \code{dimensions()}}{
-List all the dimensions that are visible from this group,
+\subsection{\code{NCGroup$dimensions()}}{
+  List all the dimensions that are visible from this group,
 possibly including those that are defined in parent groups (by names
 not defined by any of their child groups in direct lineage to the
 current group).
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$dimensions(scope = "all")}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{scope}}{Character string that indicates if only dimensions in the
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCGroup$dimensions(scope = "all")}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{scope}}{Character string that indicates if only dimensions in the
 current group should be reported (\code{local}) or visible dimensions in
 parent groups as well (\code{all}, default).}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A vector of \link{NCDimension} objects.
+  }
 }
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-A vector of \link{NCDimension} objects.
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NCGroup-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-NCGroup-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{NCGroup$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{NCGroup$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{NCGroup$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }
