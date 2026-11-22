@@ -21,20 +21,25 @@ https://oceancolor.gsfc.nasa.gov/resources/docs/technical/ocean_level-3_binned_d
 
 - [`CFVariableL3b$new()`](#method-CFVariableL3b-initialize)
 
+- [`CFVariableL3b$read_data()`](#method-CFVariableL3b-read_data)
+
+- [`CFVariableL3b$read_chunk()`](#method-CFVariableL3b-read_chunk)
+
+- [`CFVariableL3b$read_window()`](#method-CFVariableL3b-read_window)
+
 - [`CFVariableL3b$subset()`](#method-CFVariableL3b-subset)
 
 Inherited methods
 
 - [`CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
 - [`CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
+- [`CFObject$attributes_as_list()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_as_list)
 - [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
 - [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
 - [`CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
 - [`CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
 - [`CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
 - [`CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
-- [`CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
-- [`CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
 - [`CFVariable$add_ancillary_variable()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-add_ancillary_variable)
 - [`CFVariable$add_auxiliary_coordinate()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-add_auxiliary_coordinate)
 - [`CFVariable$add_cell_measure()`](https://r-cf.github.io/ncdfCF/reference/CFVariable.html#method-add_cell_measure)
@@ -82,6 +87,68 @@ Create an instance of this class.
 #### Returns
 
 An instance of this class.
+
+------------------------------------------------------------------------
+
+### `CFVariableL3b$read_data()`
+
+Read all the data of the variable and cache it.
+
+#### Usage
+
+    CFVariableL3b$read_data(refresh = FALSE)
+
+#### Arguments
+
+- `refresh`:
+
+  Should the data be read from file again? Default `FALSE`.
+
+#### Returns
+
+An array of data, invisibly.
+
+------------------------------------------------------------------------
+
+### `CFVariableL3b$read_chunk()`
+
+Read a window of the data. The data is not cached.
+
+#### Usage
+
+    CFVariableL3b$read_chunk(start, count)
+
+#### Arguments
+
+- `start, count`:
+
+  Vectors of indices to start reading and the number of elements to
+  read, along each axis; `NA` to read everything.
+
+#### Returns
+
+An array of data, or `NULL` if there is no data.
+
+------------------------------------------------------------------------
+
+### `CFVariableL3b$read_window()`
+
+As `read_chunk()`, with a warning if the window exceeds
+`CF.options$memory_cell_limit`. The window is read in one pass.
+
+#### Usage
+
+    CFVariableL3b$read_window(start, count)
+
+#### Arguments
+
+- `start, count`:
+
+  As for `read_chunk()`.
+
+#### Returns
+
+An array of data, or `NULL` if there is no data.
 
 ------------------------------------------------------------------------
 

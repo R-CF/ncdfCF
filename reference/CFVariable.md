@@ -130,6 +130,7 @@ Inherited methods
 
 - [`CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
 - [`CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
+- [`CFObject$attributes_as_list()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_as_list)
 - [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
 - [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
 - [`CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
@@ -138,6 +139,7 @@ Inherited methods
 - [`CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
 - [`CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
 - [`CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
+- [`CFData$read_window()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_window)
 
 ------------------------------------------------------------------------
 
@@ -849,15 +851,24 @@ array, irregular ones have already been stored externally.
 
 #### Usage
 
-    CFVariable$write_geozarr(grp)
+    CFVariable$write_geozarr(grp, external = "..", geolocation = "..")
 
 #### Arguments
 
 - `grp`:
 
   An instance of `zarr_group` to write the data variable to. The data
-  variable will be written to a new Zarr array with the name of the data
-  variable.
+  variable will be written to a new Zarr array in `grp` with the name of
+  the data variable.
+
+- `external, geolocation`:
+
+  Optional. A character string that gives the group in the Zarr store,
+  relative to this array, where to store external coordinate arrays and
+  geolocation arrays, respectively. The default value for the arguments
+  is `".."`, i.e. objects will be stored in the same group as this
+  array. Any locations that do not exist will be created in the Zarr
+  store.
 
 #### Returns
 

@@ -19,13 +19,12 @@ x[i, j, ..., drop = FALSE]
 - i, j, ...:
 
   Expressions, one for each of the two axes of `x`, that select a number
-  of elements along each axis. `i` is for the longitude axis, `j` for
-  the latitude axis, `...` (additional named arguments) is invalid as
-  there are only two axes to subset from. If either expression is
-  missing, the entire axis is extracted. The values for the arguments
-  may be an integer vector or a function that returns an integer vector.
-  The range of the values in the vector will be used. See examples,
-  below.
+  of elements along each axis. `i` is for the latitude axis, `j` for the
+  longitude axis, `...` (additional named arguments) is invalid as there
+  are only two axes to subset from. If either expression is missing, the
+  entire axis is extracted. The values for the arguments should be an
+  integer vector; the range of the values in the vector will be used.
+  See examples, below.
 
 - drop:
 
@@ -62,39 +61,20 @@ represent a dimension into the data array.
 ## Examples
 
 ``` r
-fn <- system.file("extdata",
-  "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20230101-20231231_vncdfCF.nc",
-  package = "ncdfCF")
-ds <- open_ncdf(fn)
-pr <- ds[["pr"]]
+if (FALSE) { # \dontrun{
+# A NASA Ocean Color level-3 binned file
+ds <- open_ncdf("AQUA_MODIS.20030101.L3b.DAY.CHL.nc")
+chl <- ds[["/level-3_binned_data/chlor_a"]]
 
-# How are the dimensions organized?
-dimnames(pr)
-#> [1] "lon"  "lat"  "time"
+# The dimensions of the grid: latitude, longitude
+chl$dim()
 
-# Precipitation data for March for a single location
-x <- pr[5, 12, 61:91]
+# Chlorophyll concentration over part of the tropical Atlantic Ocean
+x <- chl[1712:1752, 4000:4300]
 str(x)
-#>  num [1, 1, 1:31] 2.17e-05 2.68e-06 1.04e-04 8.62e-05 7.09e-05 ...
-#>  - attr(*, "dimnames")=List of 3
-#>   ..$ lon : chr "8.4375"
-#>   ..$ lat : chr "48.07005"
-#>   ..$ time: chr [1:31] "2023-03-02T12:00:00" "2023-03-03T12:00:00" "2023-03-04T12:00:00" "2023-03-05T12:00:00" ...
-#>  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"
-#>   ..- attr(*, "names")= chr [1:3] "lon" "lat" "time"
-#>  - attr(*, "time")=List of 1
-#>   ..$ time:CFTime with origin [days since 1850-01-01] using calendar [proleptic_gregorian] having 31 offset values
 
-# Summer precipitation over the full spatial extent
-summer <- pr[, , 173:263]
-str(summer)
-#>  num [1:14, 1:14, 1:91] -2.21e-25 -2.21e-25 -2.21e-25 -2.21e-25 -2.21e-25 ...
-#>  - attr(*, "dimnames")=List of 3
-#>   ..$ lon : chr [1:14] "5.625" "6.328125" "7.03125" "7.734375" ...
-#>   ..$ lat : chr [1:14] "40.35078" "41.05254" "41.75429" "42.45604" ...
-#>   ..$ time: chr [1:91] "2023-06-22T12:00:00" "2023-06-23T12:00:00" "2023-06-24T12:00:00" "2023-06-25T12:00:00" ...
-#>  - attr(*, "axis")= Named chr [1:3] "X" "Y" "T"
-#>   ..- attr(*, "names")= chr [1:3] "lon" "lat" "time"
-#>  - attr(*, "time")=List of 1
-#>   ..$ time:CFTime with origin [days since 1850-01-01] using calendar [proleptic_gregorian] having 91 offset values
+# A band of latitudes over the full longitude extent
+band <- chl[1712:1752, ]
+str(band)
+} # }
 ```

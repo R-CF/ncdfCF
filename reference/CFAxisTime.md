@@ -49,12 +49,15 @@ This class represents a time axis. The functionality is provided by the
 
 - [`CFAxisTime$subset()`](#method-CFAxisTime-subset)
 
+- [`CFAxisTime$geozarr_attributes()`](#method-CFAxisTime-geozarr_attributes)
+
 - [`CFAxisTime$geozarr_coordinates()`](#method-CFAxisTime-geozarr_coordinates)
 
 Inherited methods
 
 - [`CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
 - [`CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
+- [`CFObject$attributes_as_list()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_as_list)
 - [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
 - [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
 - [`CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
@@ -63,6 +66,7 @@ Inherited methods
 - [`CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
 - [`CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
 - [`CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
+- [`CFData$read_window()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_window)
 - [`CFAxis$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-attach_to_group)
 - [`CFAxis$can_append()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-can_append)
 - [`CFAxis$configure_terms()`](https://r-cf.github.io/ncdfCF/reference/CFAxis.html#method-configure_terms)
@@ -372,6 +376,22 @@ an axis which spans the range of indices given by the `rng` argument.
 A new `CFAxisTime` instance covering the indicated range of indices. If
 the value of the argument `rng` is `NULL`, return a copy of `self` as
 the new axis.
+
+------------------------------------------------------------------------
+
+### `CFAxisTime$geozarr_attributes()`
+
+The attributes of this axis that are written with the GeoZarr
+coordinates of the axis. Attributes that are structural and are managed
+by the GeoZarr convention are left out.
+
+#### Usage
+
+    CFAxisTime$geozarr_attributes()
+
+#### Returns
+
+A named `list` of attributes.
 
 ------------------------------------------------------------------------
 

@@ -45,7 +45,7 @@ most important of these conventions is the [CF Metadata
 Conventions](https://cfconventions.org). These conventions define a
 large number of standards that help interpret netCDF resources.
 
-Other common conventions are related to climate prediction data, such as
+Other common conventions are related to climate projection data, such as
 CMIP-5 and CMIP-6, but these typically extend the CF Metadata
 Conventions.
 
@@ -437,7 +437,7 @@ attr(rwa, "value")
 #> $name
 #> [1] "2 metre temperature"
 #> 
-#> $units
+#> $unit
 #> [1] "K"
 ```
 
@@ -703,12 +703,11 @@ tx <- ds[["tasmax"]]
 # Get the raw data as an R array
 tx_raw <- tx$raw()
 str(tx_raw)
-#>  num [1:148, 1:140, 1, 1] 301 301 301 301 301 ...
-#>  - attr(*, "dimnames")=List of 4
-#>   ..$ x     : chr [1:148] "0" "50000" "1e+05" "150000" ...
-#>   ..$ y     : chr [1:140] "0" "50000" "1e+05" "150000" ...
-#>   ..$ time  : chr "2041-07-01T12:00:00"
-#>   ..$ height: chr "2"
+#>  num [1:148, 1:140, 1] 301 301 301 301 301 ...
+#>  - attr(*, "dimnames")=List of 3
+#>   ..$ x   : chr [1:148] "0" "50000" "1e+05" "150000" ...
+#>   ..$ y   : chr [1:140] "0" "50000" "1e+05" "150000" ...
+#>   ..$ time: chr "2041-07-01T12:00:00"
 ```
 
 The data is stored differently in the netCDF resource than usually in R:
@@ -725,12 +724,11 @@ produce an array in the familiar R storage arrangement:
 
 tx_array <- tx$array()
 str(tx_array)
-#>  num [1:140, 1:148, 1, 1] 277 277 277 277 277 ...
-#>  - attr(*, "dimnames")=List of 4
-#>   ..$ y     : chr [1:140] "6950000" "6900000" "6850000" "6800000" ...
-#>   ..$ x     : chr [1:148] "0" "50000" "1e+05" "150000" ...
-#>   ..$ height: chr "2"
-#>   ..$ time  : chr "2041-07-01T12:00:00"
+#>  num [1:140, 1:148, 1] 277 277 277 277 277 ...
+#>  - attr(*, "dimnames")=List of 3
+#>   ..$ y   : chr [1:140] "6950000" "6900000" "6850000" "6800000" ...
+#>   ..$ x   : chr [1:148] "0" "50000" "1e+05" "150000" ...
+#>   ..$ time: chr "2041-07-01T12:00:00"
 ```
 
 The data has been oriented in the familiar R way: from the top-left down

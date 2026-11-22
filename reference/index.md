@@ -176,4 +176,9 @@ reflect what is in the resource.
 Assorted other functions.
 
 - [`aggregate_geozarr()`](https://r-cf.github.io/ncdfCF/reference/aggregate_geozarr.md)
-  : Aggregate multiple CF files into GeoZarr arrays
+  : Aggregate multiple CF data variables into a single GeoZarr array
+
+- [`copy_to_geozarr()`](https://r-cf.github.io/ncdfCF/reference/copy_to_geozarr.md)
+  :
+
+  Copy data from a `CFVariable` to a `geozarr_array`

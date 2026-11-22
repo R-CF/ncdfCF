@@ -41,11 +41,14 @@ classes use this class as ancestor.
 
 - [`CFData$read_chunk()`](#method-CFData-read_chunk)
 
+- [`CFData$read_window()`](#method-CFData-read_window)
+
 Inherited methods
 
 - [`CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
 - [`CFObject$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attach_to_group)
 - [`CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
+- [`CFObject$attributes_as_list()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_as_list)
 - [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
 - [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
 - [`CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
@@ -153,7 +156,8 @@ repeated calls do not access the netCDF resource, unless argument
 `refresh` is `TRUE`. This method will not assess how big the data is
 before reading it so there is a chance that memory will be exhausted.
 The calling code should check for this possibility and break up the
-reading of data into chunks.
+reading of data into chunks using `read_chunk()` or `read_window()` -
+these methods will not cache the data, however.
 
 ------------------------------------------------------------------------
 
@@ -178,7 +182,9 @@ netCDF resource, returns `NULL`. Read a chunk of raw data of the CF
 object, as defined by the `start` and `count` vectors. Note that these
 vectors are relative to any subset of the data variable that this CF
 object refers to. The data read by this method will not be stored in
-`self` so the calling code must take a reference to it.
+`self` so the calling code must take a reference to it. If the chunk is
+(potentially) large, use `read_window()` for additional safeguards
+against memory exhaustion.
 
 ------------------------------------------------------------------------
 
@@ -207,3 +213,30 @@ object refers to. The data read by this method will not be stored in
 
 An array of data, as prescribed by the `start` and `count` arguments, or
 `NULL` if there is no data.
+
+------------------------------------------------------------------------
+
+### `CFData$read_window()`
+
+Read the array for `(start, count)`, transparently splitting the request
+into budget-bounded, chunk-aligned sub-reads when the window is large,
+and reassembling into one array via indexed assignment. This
+materializes the full `(start, count)` window: it bounds each individual
+read, and warns if the reassembled whole exceeds
+`CF.options$memory_cell_limit`, but does not itself reduce memory below
+the size of that window. Use this in preference to `read_chunk()` for
+any read that might be large.
+
+#### Usage
+
+    CFData$read_window(start, count)
+
+#### Arguments
+
+- `start, count`:
+
+  As for `read_chunk()`.
+
+#### Returns
+
+An array, as `read_chunk()` would return.

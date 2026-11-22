@@ -339,7 +339,12 @@ reflect what is in the resource.
 Assorted other functions.
 
 - [`aggregate_geozarr()`](https://r-cf.github.io/ncdfCF/reference/aggregate_geozarr.md)
-  : Aggregate multiple CF files into GeoZarr arrays
+  : Aggregate multiple CF data variables into a single GeoZarr array
+
+- [`copy_to_geozarr()`](https://r-cf.github.io/ncdfCF/reference/copy_to_geozarr.md)
+  :
+
+  Copy data from a `CFVariable` to a `geozarr_array`
 
 # Articles
 
@@ -349,6 +354,8 @@ Assorted other functions.
   variables](https://r-cf.github.io/ncdfCF/articles/31_Creating.md):
 - [2. R and CF Metadata
   Conventions](https://r-cf.github.io/ncdfCF/articles/32_R-CF.md):
-- [3.
-  Troubleshooting](https://r-cf.github.io/ncdfCF/articles/33_Troubleshooting.md):
+- [3. Exporting
+  data](https://r-cf.github.io/ncdfCF/articles/33_Exporting_data.md):
+- [4.
+  Troubleshooting](https://r-cf.github.io/ncdfCF/articles/34_Troubleshooting.md):
 - [Using ncdfCF](https://r-cf.github.io/ncdfCF/articles/ncdfCF.md):

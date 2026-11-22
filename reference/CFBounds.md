@@ -63,6 +63,7 @@ Inherited methods
 - [`CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
 - [`CFObject$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attach_to_group)
 - [`CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
+- [`CFObject$attributes_as_list()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_as_list)
 - [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
 - [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
 - [`CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
@@ -72,6 +73,7 @@ Inherited methods
 - [`CFData$dim()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-dim)
 - [`CFData$read_chunk()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_chunk)
 - [`CFData$read_data()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_data)
+- [`CFData$read_window()`](https://r-cf.github.io/ncdfCF/reference/CFData.html#method-read_window)
 
 ------------------------------------------------------------------------
 
@@ -298,24 +300,28 @@ automatically.
 
 ### `CFBounds$write_geozarr()`
 
-Write the boundary values to a Zarr group, including its attributes, if
-it does not already exist.
+Write the boundary values to a new Zarr array in a Zarr group, unless a
+node with the indicated name already exists in the group.
 
 #### Usage
 
-    CFBounds$write_geozarr(grp, axis_name)
+    CFBounds$write_geozarr(grp, name, dims)
 
 #### Arguments
 
 - `grp`:
 
-  An instance of `zarr_group` to write the boundary values to. The data
-  will be written to a new Zarr array with the name of
-  `<axis_name>_bounds`.
+  The `zarr_group` to write the array to.
 
-- `axis_name`:
+- `name`:
 
-  The name of the axis owning these boundary values.
+  The name of the Zarr array.
+
+- `dims`:
+
+  Character vector with the dimension names of the object that these
+  boundary values pertain to. The vertex dimension, named `"bnds"` for 2
+  vertices and `"vertices"` otherwise, is prepended.
 
 #### Returns
 
