@@ -104,7 +104,7 @@ open_ncdf <- function(resource, write = FALSE) {
       nm <- names(l3bgrp$NC$NCvars)
       if (all(c("BinList", "BinIndex", units[1L]) %in% nm)) {
         ds$file_type <- "NASA level-3 binned data"
-        #l3bgrp$add_CF_object(CFVariableL3b$new(l3bgrp, units))
+        l3bgrp$add_CF_object(CFVariableL3b$new(l3bgrp, units))
       }
     }
   }
@@ -345,7 +345,6 @@ peek_ncdf <- function(resource) {
         nm <- d$name
         axis <- CFAxisDiscrete$new(nm, grp, count = d$length)
         axis$dimid <- d$id
-        # lx <- list(axis); names(lx) <- nm
         add_dims <- add_dims[-which(add_dims == d$id)]
         axis
       }
@@ -427,7 +426,7 @@ peek_ncdf <- function(resource) {
           }
 
           if (!found_one && !length(aux$CF))
-            warning("Unmatched `coordinates` value '", coords[cid], "' found in variable '", v$name, "'.", call. = FALSE)
+            warning("Unmatched `coordinates` value '", coords[cid], "' found in variable '", v$name, "'", call. = FALSE)
         }
 
         # Make a CFAuxiliaryLongLat if we have found a varLon and a varLat and
@@ -438,7 +437,7 @@ peek_ncdf <- function(resource) {
             is.null(varLon$group$CF$find_by_name(paste(varLon$name, varLat$name, sep = "_")))) {
           ax <- lapply(varLon$dimids, function(did) {
             dname <- varLon$group$find_dim_by_id(did)$name
-            varLon$group$find_by_name(dname)$CF[[1L]]
+            varLon$group$find_by_name(dname)$CF[[1L]] # FIXME: Possibly no underlying NC object
           })
           lon <- CFVariable$new(varLon, NULL, ax) # Don't add the auxiliary grids to the output
           lat <- CFVariable$new(varLat, NULL, ax) # group else they'll be considered data variables
@@ -475,11 +474,10 @@ peek_ncdf <- function(resource) {
         for (aid in seq_along(ancillary)) {
           anc <- grp$NC$find_by_name(ancillary[aid])
           if (is.null(anc))
-            warning("Unmatched `ancillary_variables` value '", ancillary[aid], "' found in variable '", v$name, "'.", call. = FALSE)
+            warning("Unmatched `ancillary_variables` value '", ancillary[aid], "' found in variable '", v$name, "'", call. = FALSE)
           else {
             ax <- lapply(anc$dimids, function(did) {
-              dname <- anc$group$find_dim_by_id(did)$name
-              anc$group$find_by_name(dname)$CF[[1L]]
+              grp$find_by_name(anc$group$find_dim_by_id(did)$name)
             })
             CFVariable$new(anc, anc$group$CF, ax)
           }

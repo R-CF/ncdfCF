@@ -99,6 +99,7 @@ has parametric coordinates. Always \code{FALSE} for all axes except for
     \item \href{#method-CFAxis-attach_to_group}{\code{CFAxis$attach_to_group()}}
     \item \href{#method-CFAxis-write}{\code{CFAxis$write()}}
     \item \href{#method-CFAxis-geozarr_axis}{\code{CFAxis$geozarr_axis()}}
+    \item \href{#method-CFAxis-geozarr_attributes}{\code{CFAxis$geozarr_attributes()}}
     \item \href{#method-CFAxis-geozarr_coordinates}{\code{CFAxis$geozarr_coordinates()}}
   }
 }
@@ -106,6 +107,7 @@ has parametric coordinates. Always \code{FALSE} for all axes except for
 <ul>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>CFObject$append_attribute()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_as_list"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_as_list'><code>CFObject$attributes_as_list()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>CFObject$attributes_identical()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>CFObject$delete_attribute()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>CFObject$print_attributes()</code></a></span></li>
@@ -114,6 +116,7 @@ has parametric coordinates. Always \code{FALSE} for all axes except for
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href='../../ncdfCF/html/CFData.html#method-CFData-dim'><code>CFData$dim()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_chunk'><code>CFData$read_chunk()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_data'><code>CFData$read_data()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_window"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_window'><code>CFData$read_window()</code></a></span></li>
 </ul>
 </details>}}
 \if{html}{\out{<hr>}}
@@ -532,8 +535,7 @@ not provided, all associated objects will be stored in this group.}
 \if{latex}{\out{\hypertarget{method-CFAxis-geozarr_axis}{}}}
 \subsection{\code{CFAxis$geozarr_axis()}}{
   Create the GeoZarr coordinate system axis for this axis,
-inclusive of auxiliary coordinates. This will also include boundary
-values.
+inclusive of auxiliary coordinates. This includes boundary values.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{CFAxis$geozarr_axis(grp)}
@@ -550,6 +552,23 @@ name of the axis if it is irregular and long.}
   }
   \subsection{Returns}{
     An instance of \link[geozarr:CoordinateSystemAxis]{geozarr::CoordinateSystemAxis}.
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxis-geozarr_attributes"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxis-geozarr_attributes}{}}}
+\subsection{\code{CFAxis$geozarr_attributes()}}{
+  The attributes of this axis that are written with the
+GeoZarr coordinates of the axis. Attributes that are structural and are
+managed by the GeoZarr convention are left out.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxis$geozarr_attributes()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A named \code{list} of attributes.
   }
 }
 

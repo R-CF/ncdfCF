@@ -97,6 +97,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
         if (yk$dekad[2L] == 36L) {
           yk$year[2L] <- yk$year[2L] + 1L
           yk$dekad[2L] <- 1L
+          mod[2L] <- 1L
         } else if (mod[2L] == 0L) {
           yk$dekad[2L] <- yk$dekad[2L] + 1L
           mod[2L] <- 1L
@@ -395,6 +396,16 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       }
     },
 
+    #' @description The attributes of this axis that are written with the
+    #'   GeoZarr coordinates of the axis. Attributes that are structural and are
+    #'   managed by the GeoZarr convention are left out.
+    #' @return A named `list` of attributes.
+    geozarr_attributes = function() {
+      atts <- super$geozarr_attributes()
+      atts[c("calendar", "climatology_bounds")] <- NULL
+      atts
+    },
+
     #' @description Create the GeoZarr coordinates for this time axis. If the
     #'   coordinate values are not regular and longer than a set minimum, write
     #'   the coordinates to the group as a new Zarr array if it does not yet
@@ -419,8 +430,8 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
 
       # Attributes that are structural are by the convention being used
       # so filter them out before writing. Add the reworked attributes.
-      atts <- private$zarr_attributes(c("axis", "bounds", "climatology_bounds"))
-      atts$units <- unit
+      atts <- self$geozarr_attributes()
+      atts$unit <- unit
       atts$epoch <- epoch
 
       # Boundary values
@@ -431,7 +442,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
           bnds <- c(bnds[1L,1L] - vals[1L], bnds[2L,1L] - vals[1L])
         else
           # Irregular, write array to the Zarr group
-          private$.bounds$write_geozarr(grp)
+          private$.bounds$write_geozarr(grp, paste0(self$name, "_bounds"), self$name)
       }
 
       # Irregular
@@ -456,7 +467,7 @@ CFAxisTime <- R6::R6Class("CFAxisTime",
       }
 
       # Filter some more attributes that we don't want inlined
-      atts$units <- NULL
+      atts$unit <- NULL
       atts$calendar <- NULL
       atts$epoch <- NULL
 

@@ -89,6 +89,7 @@ description of the variable as a WKT2 string.}
 <ul>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>CFObject$append_attribute()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_as_list"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_as_list'><code>CFObject$attributes_as_list()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>CFObject$attributes_identical()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>CFObject$delete_attribute()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>CFObject$print_attributes()</code></a></span></li>
@@ -97,6 +98,7 @@ description of the variable as a WKT2 string.}
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href='../../ncdfCF/html/CFData.html#method-CFData-dim'><code>CFData$dim()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_chunk'><code>CFData$read_chunk()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_data'><code>CFData$read_data()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_window"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_window'><code>CFData$read_window()</code></a></span></li>
 </ul>
 </details>}}
 \if{html}{\out{<hr>}}
@@ -777,15 +779,21 @@ attributes of the array, irregular ones have already been stored
 externally.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{CFVariable$write_geozarr(grp)}
+    \preformatted{CFVariable$write_geozarr(grp, external = "..", geolocation = "..")}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
     \if{html}{\out{<div class="arguments">}}
     \describe{
       \item{\code{grp}}{An instance of \code{zarr_group} to write the data variable to. The
-data variable will be written to a new Zarr array with the name of the
-data variable.}
+data variable will be written to a new Zarr array in \code{grp} with the
+name of the data variable.}
+      \item{\code{external, geolocation}}{Optional. A character string that gives the
+group in the Zarr store, relative to this array, where to store
+external coordinate arrays and geolocation arrays, respectively. The
+default value for the arguments is \code{".."}, i.e. objects will be stored
+in the same group as this array. Any locations that do not exist will
+be created in the Zarr store.}
     }
     \if{html}{\out{</div>}}
   }

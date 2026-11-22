@@ -83,6 +83,7 @@ current group.}
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>CFObject$append_attribute()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attach_to_group'><code>CFObject$attach_to_group()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_as_list"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_as_list'><code>CFObject$attributes_as_list()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>CFObject$attributes_identical()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>CFObject$delete_attribute()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-detach'><code>CFObject$detach()</code></a></span></li>
@@ -446,13 +447,19 @@ as well.}
 objects and walk through the hierarchy.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{CFGroup$write_geozarr(grp)}
+    \preformatted{CFGroup$write_geozarr(grp, external = "", geolocation = "")}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
     \if{html}{\out{<div class="arguments">}}
     \describe{
       \item{\code{grp}}{The \code{zarr_group} instance to write to.}
+      \item{\code{external, geolocation}}{Optional. A character string that gives the
+group in the Zarr store, relative to the this group, where to store
+external coordinate arrays and geolocation arrays, respectively. The
+default value for the arguments is \code{""}, i.e. objects will be stored
+in the current group. Any locations that do not exist will be created
+in the Zarr store.}
     }
     \if{html}{\out{</div>}}
   }

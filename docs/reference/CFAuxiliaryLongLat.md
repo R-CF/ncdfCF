@@ -83,6 +83,8 @@ has no practical purpose.
 
 - [`CFAuxiliaryLongLat$attach_to_group()`](#method-CFAuxiliaryLongLat-attach_to_group)
 
+- [`CFAuxiliaryLongLat$write_geozarr()`](#method-CFAuxiliaryLongLat-write_geozarr)
+
 - [`CFAuxiliaryLongLat$detach()`](#method-CFAuxiliaryLongLat-detach)
 
 - [`CFAuxiliaryLongLat$clone()`](#method-CFAuxiliaryLongLat-clone)
@@ -229,6 +231,46 @@ is another object with the same name in this group an error is thrown.
 #### Returns
 
 Self, invisibly.
+
+------------------------------------------------------------------------
+
+### `CFAuxiliaryLongLat$write_geozarr()`
+
+Write the longitude and latitude grids, and their boundary values if
+set, to new Zarr arrays in a Zarr group. Arrays that already exist in
+the group, such as when written for another data variable that uses the
+same grids, are not written again.
+
+#### Usage
+
+    CFAuxiliaryLongLat$write_geozarr(grp, from = grp, dims = NULL)
+
+#### Arguments
+
+- `grp`:
+
+  The `zarr_group` to write the arrays to.
+
+- `from`:
+
+  The `zarr_group` holding the Zarr array of the data variable that
+  refers to the grids. The references in the returned value are relative
+  to that array.
+
+- `dims`:
+
+  Character vector of length 2 with the names of the axes of the data
+  variable that the grids are defined over. This is the preferred way to
+  get the names, see `.llgrid_dims()`. If omitted, the names are taken
+  from the axes of the longitude variable, which fails for dimensions
+  without a coordinate variable.
+
+#### Returns
+
+An instance of
+[`geozarr::zarr_convention_geolocation`](https://rdrr.io/pkg/geozarr/man/zarr_convention_geolocation.html)
+with the references to the arrays, to be set on a
+[`geozarr::CoordinateSystem`](https://rdrr.io/pkg/geozarr/man/CoordinateSystem.html).
 
 ------------------------------------------------------------------------
 

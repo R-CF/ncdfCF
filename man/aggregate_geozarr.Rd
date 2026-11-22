@@ -2,71 +2,138 @@
 % Please edit documentation in R/aggregate.R
 \name{aggregate_geozarr}
 \alias{aggregate_geozarr}
-\title{Aggregate multiple CF files into GeoZarr arrays}
+\title{Aggregate multiple CF data variables into a single GeoZarr array}
 \usage{
-aggregate_geozarr(cf, zarr, var_map = NULL, chunking = NULL)
+aggregate_geozarr(
+  x,
+  location,
+  along = NULL,
+  var = NULL,
+  name = NULL,
+  chunking = NULL,
+  external_coordinates = NULL,
+  verbose = interactive()
+)
 }
 \arguments{
-\item{cf}{A \code{list} of fully-qualified URIs to CF files to aggregate. All
-files in the list have to be of the same "type" for the aggregation to make
-sense. The list does not have to be in order.}
+\item{x}{Either a character vector with fully-qualified paths to netCDF
+files, or a \code{list} of \link{CFVariable} instances, to aggregate.}
 
-\item{zarr}{A \code{zarr} object that is writable. It cannot already have arrays
-that are names in argument \code{var_map}.}
+\item{location}{A \code{zarr_group} in which the array is created, or a \code{zarr}
+object whose root node is a \code{zarr_group}. The array must not already
+exist.}
 
-\item{var_map}{Optional. A \code{list} with named elements. The names correspond
-to the variables in the \code{cf} files that will be aggregated. The element
-value is a character string indicating the absolute path to the array in
-\code{zarr} to be created for the variable. If omitted or \code{NULL} (the default),
-all variables are taken from all \code{cf} files and converted to Zarr arrays
-under that name in the root group of the \code{zarr} object.}
+\item{along}{Optional. Character vector with the names of the axes to
+aggregate along. If omitted or \code{NULL} (the default), the time axis of the
+first data variable is used.}
+
+\item{var}{Optional. When \code{x} is a character vector, the name of the data
+variable to read from each file. If omitted or \code{NULL} (the default), each
+file must have a single data variable.}
+
+\item{name}{Optional. The name of the array to create. If omitted or \code{NULL}
+(the default), the name of the first data variable is used.}
 
 \item{chunking}{Optional. Named \code{vector} or \code{list}, with numeric values
 giving the relative weights of each axis in the chunking - higher values
-favour data extraction over that axis. If a \code{vector}, the names correspond
-to the names of the axes of the variables to aggregegate - any non-named
-axes will be assigned a value of 1. If a \code{list}, the names refer to the
-variables and the elements are each a list with names for the axes of that
-variable and values giving the chunking weights for that axis - any
-non-named axes will be assigned a value of 1 for that variable. If omitted
-or \code{NULL} (default), all axes will have equal weight in the chunking.}
+favour data extraction over that axis. The names correspond to the names
+of the axes of the data variables, any non-named axes will be assigned a
+value of 1. If omitted or \code{NULL} (default), all axes will have equal
+weight in the chunking.}
+
+\item{external_coordinates}{Optional. Character string with the path of a
+group, relative to \code{location}, where the arrays with external coordinates
+are stored: coordinate values and boundaries that are not regular and too
+long to be stored in the array metadata, label sets and the arrays of an
+auxiliary longitude-latitude grid. The group is created if it does not
+exist. If omitted or \code{NULL} (the default), these arrays are stored in
+\code{location}, next to the new array. The path may go up the hierarchy with
+\code{..}, e.g. \code{"../shared"} for a group next to \code{location}, but not beyond the
+root group of the Zarr store, which is an error.}
+
+\item{verbose}{Logical. If \code{TRUE}, progress messages are printed to the
+console: the files being opened, the array that is created, and the
+progress of copying the data of each data variable, per chunk written.
+Default is \code{TRUE} in an interactive session, \code{FALSE} otherwise.}
 }
 \value{
-The \code{zarr} object with the variables included.
+The new \code{geozarr_array}, invisibly.
 }
 \description{
 NetCDF files have file size limitations, leading to large data sets being
 split up into multiple files, usually over the temporal dimension. This is
 very typical in climate projection data sets: a typical CMIP6 run over the
-period 2015-2100 at daily resolution is broken into 3 to 7 separate files for
-each parameter, making data extractions across the temporal boundaries
+period 2015-2100 at daily resolution is broken into 3 to 16 separate files
+for each variable, making data extractions across the temporal boundaries
 cumbersome. Zarr does not have that same limitation: large data sets are
 broken up into "chunks", each being stored as a file when the store is on a
 local file system, but this is transparent to the user of the data. A full
-CMIP6 run of any parameter can be stored and manipulated in a single GeoZarr
+CMIP6 run of any variable can be stored and manipulated in a single GeoZarr
 array.
 }
 \details{
-This function will take a set of CF-encoded netCDF files and aggregate the
-variables of interest into corresponding arrays in a Zarr store. The
-aggregation can take place over multiple axes simultaneously. This may
-include length-1 axes that are scalar, i.e. not present in the dimensions of
-the underlying data variable. Any missing data from missing files in the list
-will have uninitialised data that does not affect the functioning of the
-array.
+This function makes a best effort. If the data variables provided are
+sensible, so will be the result. Otherwise, an error is thrown.
 
-Axes of all same-named variables have to be coincident (having the same
-length, class, values and unit) or compatible (same class and unit) and
-non-overlapping, otherwise an error will be thrown. Aggregation will take
-place over the compatible axis/axes.
+The data variables must have the same axes, by name and in the same order.
+Along the axes named in \code{along} the coordinates of the data variables are
+combined, in the direction of the axis; any duplicate coordinates are
+included once. These axes may also be scalar axes of the data variables, such
+as a height or an ensemble member, which then become new dimensions of the
+array. All other axes have to be identical in all data variables, including
+their boundary values. The coordinates of the data variables have to be
+contiguous subsets of the aggregated axis.
 
-This function makes a best effort. If the list of files provided is sensible,
-so will be the result. Otherwise, all bets are off.
+The following conditions throw an error:
+\itemize{
+\item the data variables do not have the same axes, by name and in the same order;
+\item an axis is not of the same type or, for time axes, does not have the same
+calendar, unit and origin in all data variables;
+\item the coordinates of an axis in \code{along} are partly increasing and partly
+decreasing, or have gaps or interleave;
+\item a discrete axis is named in \code{along};
+\item the data variables have different data types, or not all have the same
+CRS;
+\item only some data variables have an auxiliary longitude-latitude grid, the
+grids differ, or, with such a grid, the \code{X} or \code{Y} axes are in \code{along};
+\item label sets of an axis that is not in \code{along} differ among the data
+variables, or labels for the same coordinate differ;
+\item One or more of the data variables has parametric vertical coordinates.
+}
+
+Attributes of the axes are set on the coordinates of the axes, leaving out
+those that are structural in GeoZarr, such as \code{axis}, \code{bounds} and \code{units}.
+Global attributes, those of the group of the data variables, are set on the
+\code{location} group, overwriting attributes with the same name that are already
+there. As no single value describes the aggregate when it differs among the
+files, such as for a creation date or a tracking id, only the global
+attributes that have the same value in all data variables are set. The
+exception is the \code{history} attribute, which is set as an array of entries,
+most recent first: an entry for the aggregation, followed by the entries of
+each distinct history among the data variables.
+
+Attributes of the data variables are set on the array. If they differ among
+the data variables, or are not in all of them, a warning is issued and the
+value from the last data variable is used. This also holds for the attributes
+of an axis. Missing data are translated to the
+GeoZarr conventions, see the "Exporting data" vignette for details.
+
+Label sets of the axes are included. Any axis can be aggregated along,
+including the \code{X} and \code{Y} axes, except when the data variables have an
+auxiliary longitude-latitude grid. That grid is set as the geolocation of the
+array and it is defined over the \code{X} and \code{Y} axes, so these cannot be in
+\code{along}. The grid, and the axes it is defined over, must be identical in all
+data variables. If the axes of the grid have no orientation, as is common for
+curvilinear grids, the first is taken to be the \code{X} axis and the second the
+\code{Y} axis.
+
+Limitations: parametric vertical coordinates (CF formula terms) are not
+supported.
 }
 \examples{
 \dontrun{
 pr <- list.files(pattern = '^pr.*\\\\.nc$', full.names = TRUE)
 z <- zarr::create_zarr()
-z <- aggregate_geozarr(cf = pr, zarr = z)
+gza <- aggregate_geozarr(x = pr, location = z)
 }
 }

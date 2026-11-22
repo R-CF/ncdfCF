@@ -41,6 +41,7 @@ Inherited methods
 - [`CFObject$append_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-append_attribute)
 - [`CFObject$attach_to_group()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attach_to_group)
 - [`CFObject$attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attribute)
+- [`CFObject$attributes_as_list()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_as_list)
 - [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
 - [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
 - [`CFObject$detach()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-detach)

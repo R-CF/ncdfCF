@@ -37,6 +37,7 @@ vector.}
     \item \href{#method-CFAxisTime-indexOf}{\code{CFAxisTime$indexOf()}}
     \item \href{#method-CFAxisTime-slice}{\code{CFAxisTime$slice()}}
     \item \href{#method-CFAxisTime-subset}{\code{CFAxisTime$subset()}}
+    \item \href{#method-CFAxisTime-geozarr_attributes}{\code{CFAxisTime$geozarr_attributes()}}
     \item \href{#method-CFAxisTime-geozarr_coordinates}{\code{CFAxisTime$geozarr_coordinates()}}
   }
 }
@@ -44,6 +45,7 @@ vector.}
 <ul>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>CFObject$append_attribute()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_as_list"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_as_list'><code>CFObject$attributes_as_list()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>CFObject$attributes_identical()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>CFObject$delete_attribute()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>CFObject$print_attributes()</code></a></span></li>
@@ -52,6 +54,7 @@ vector.}
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href='../../ncdfCF/html/CFData.html#method-CFData-dim'><code>CFData$dim()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_chunk'><code>CFData$read_chunk()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_data'><code>CFData$read_data()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_window"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_window'><code>CFData$read_window()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="attach_to_group"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-attach_to_group'><code>CFAxis$attach_to_group()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="can_append"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-can_append'><code>CFAxis$can_append()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="configure_terms"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-configure_terms'><code>CFAxis$configure_terms()</code></a></span></li>
@@ -337,6 +340,23 @@ copy of the axis.}
     A new \code{CFAxisTime} instance covering the indicated range of
 indices. If the value of the argument \code{rng} is \code{NULL}, return a copy of
 \code{self} as the new axis.
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisTime-geozarr_attributes"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisTime-geozarr_attributes}{}}}
+\subsection{\code{CFAxisTime$geozarr_attributes()}}{
+  The attributes of this axis that are written with the
+GeoZarr coordinates of the axis. Attributes that are structural and are
+managed by the GeoZarr convention are left out.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxisTime$geozarr_attributes()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A named \code{list} of attributes.
   }
 }
 

@@ -11,7 +11,7 @@ create_ncdf <- function() {
 
   # Minimal attributes
   root$set_attribute("Conventions", "NC_CHAR", "CF-1.13")
-  root$set_attribute("history", "NC_CHAR", paste("Created with R package ncdfCF", utils::packageVersion("ncdfCF"), "on", format(Sys.time(), usetz = TRUE, digits = 0L)))
+  root$set_attribute("history", "NC_CHAR", .history_entry("Newly created."))
 
   ds$root <- root
   ds

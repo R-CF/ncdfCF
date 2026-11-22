@@ -31,7 +31,7 @@ Both types of metadata are necessary to "understand" the netCDF resource.
 
 The descriptive metadata are not defined by the `netcdf` library. To ensure interoperability, [several "conventions"](https://archive.unidata.ucar.edu/software/netcdf/conventions.html) have been developed over the years such that users of netCDF data can correctly interpret what data developers have put in the resource. The most important of these conventions is the [CF Metadata Conventions](https://cfconventions.org). These conventions define a large number of standards that help interpret netCDF resources.
 
-Other common conventions are related to climate prediction data, such as CMIP-5 and CMIP-6, but these typically extend the CF Metadata Conventions.
+Other common conventions are related to climate projection data, such as CMIP-5 and CMIP-6, but these typically extend the CF Metadata Conventions.
 
 ## Using netCDF resources in R
 

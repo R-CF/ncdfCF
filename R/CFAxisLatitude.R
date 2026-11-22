@@ -34,8 +34,10 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
       self$set_attribute("standard_name", "NC_CHAR", "latitude")
       self$set_attribute("units", "NC_CHAR", "degrees_north")
 
-      if (!missing(values) && !.check_latitude_domain(values))
-        stop("Latitude coordinate values are not in the domain [-90, 90].", call. = FALSE) # nocov
+      if (!missing(values) && !.check_latitude_domain(values)) {
+        name <- if (inherits(var, "NCVariable")) var$name else var
+        warning("Latitude coordinate values for \"", name, "\" are not in the domain [-90, 90]", call. = FALSE)
+      }
     },
 
     #' @description Create a copy of this axis. The copy is completely separate

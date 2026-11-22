@@ -60,6 +60,8 @@ More useful classes use this class as ancestor.
 
 - [`CFObject$attribute()`](#method-CFObject-attribute)
 
+- [`CFObject$attributes_as_list()`](#method-CFObject-attributes_as_list)
+
 - [`CFObject$print_attributes()`](#method-CFObject-print_attributes)
 
 - [`CFObject$set_attribute()`](#method-CFObject-set_attribute)
@@ -184,6 +186,27 @@ If the `field` argument is "type", a character string. If `field` is
 "value", a single value of the type of the attribute, or a vector when
 the attribute has multiple values. If no attribute is named with a value
 of argument `att` `NA` is returned.
+
+------------------------------------------------------------------------
+
+### `CFObject$attributes_as_list()`
+
+Convert CF attributes in a data.frame into a named list, possibly
+deleting some of the attributes.
+
+#### Usage
+
+    CFObject$attributes_as_list(delete = character(0))
+
+#### Arguments
+
+- `delete`:
+
+  Optional, character vector of attributes to exclude from the list.
+
+#### Returns
+
+A `list` of attributes.
 
 ------------------------------------------------------------------------
 

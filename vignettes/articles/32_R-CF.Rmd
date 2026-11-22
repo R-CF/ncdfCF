@@ -52,7 +52,7 @@ So which of these variables is the one that holds your data? And how do you tell
 
 ### Enter the attributes
 
-You may not be as familiar with the attributes in the netCDF file, the "NC::Attribute" object in the above figure, as `ncdf4` does not make these as easily accessible as the other information in the file. That is a shame because attributes are the thing that makes netCDF stand apart from pretty much any other gridded data format. CF is actually all about attributes, with some of them organized in "NC::Variable" objects that do not hold any other data! (Such as the *grid mapping variables* mentioned above.) Put the other way around, you are not really using a CF-compliant netCDF data set unless you read the proper attributes. Even stronger: there are things in netCDF data sets that you cannot do unless you have inspect the attributes (such as determining the coordinate reference system, or calculating the parametric coordinates of a vertical axis).
+You may not be as familiar with the attributes in the netCDF file, the "NC::Attribute" object in the above figure, as `ncdf4` does not make these as easily accessible as the other information in the file. That is a shame because attributes are the thing that makes netCDF stand apart from pretty much any other gridded data format. CF is actually all about attributes, with some of them organized in "NC::Variable" objects that do not hold any other data! (Such as the *grid mapping variables* mentioned above.) Put the other way around, you are not really using a CF-compliant netCDF data set unless you read the proper attributes. Even stronger: there are things in netCDF data sets that you cannot do unless you have inspected the attributes (such as determining the coordinate reference system, or calculating the parametric coordinates of a vertical axis).
 
 Looking at the same netCDF file as above, but now using the `ncdfCF` package:
 
@@ -176,7 +176,7 @@ The attribute `Conventions` is written to file with value "CF-1.13".
 
 The attribute `history` is created in the group of the data variable or prepended with information on any processing that has been applied to the data.
 
-Other global, group or data variable attributes are not written to file automatically; the user has to add to amend these attributes explicitly.
+Other global, group or data variable attributes are not written to file automatically; the user has to add code to amend these attributes explicitly.
 
 ##### 2.7. Groups
 
@@ -205,7 +205,7 @@ Supported for all objects that have this attribute.
 
 ##### 3.3 Standard name
 
-The standard names table can optionally (and automatically) be accessed through the `CF$standard_names` object. Management of the XML is automatic, including periodic checks to see if an update is available.
+The standard names table can optionally (and automatically) be accessed through the `CF$standard_names` object. Management of the XML file is automatic, including periodic checks to see if an update is available.
 
 The `standard_name` attribute is read but not checked against the standard name table. Objects with a `standard_name` attribute can be identified with the `CFDataset$objects_by_standard_name()` method, either for presence of the attribute or using a specific standard name.
 

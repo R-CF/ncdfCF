@@ -64,6 +64,7 @@ grids.}
     \item \href{#method-CFAuxiliaryLongLat-grid_index}{\code{CFAuxiliaryLongLat$grid_index()}}
     \item \href{#method-CFAuxiliaryLongLat-clear_cache}{\code{CFAuxiliaryLongLat$clear_cache()}}
     \item \href{#method-CFAuxiliaryLongLat-attach_to_group}{\code{CFAuxiliaryLongLat$attach_to_group()}}
+    \item \href{#method-CFAuxiliaryLongLat-write_geozarr}{\code{CFAuxiliaryLongLat$write_geozarr()}}
     \item \href{#method-CFAuxiliaryLongLat-detach}{\code{CFAuxiliaryLongLat$detach()}}
     \item \href{#method-CFAuxiliaryLongLat-clone}{\code{CFAuxiliaryLongLat$clone()}}
   }
@@ -213,6 +214,40 @@ objects will be stored in this group.}
   }
   \subsection{Returns}{
     Self, invisibly.
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAuxiliaryLongLat-write_geozarr"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAuxiliaryLongLat-write_geozarr}{}}}
+\subsection{\code{CFAuxiliaryLongLat$write_geozarr()}}{
+  Write the longitude and latitude grids, and their boundary
+values if set, to new Zarr arrays in a Zarr group. Arrays that already
+exist in the group, such as when written for another data variable
+that uses the same grids, are not written again.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAuxiliaryLongLat$write_geozarr(grp, from = grp, dims = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{grp}}{The \code{zarr_group} to write the arrays to.}
+      \item{\code{from}}{The \code{zarr_group} holding the Zarr array of the data variable
+that refers to the grids. The references in the returned value are
+relative to that array.}
+      \item{\code{dims}}{Character vector of length 2 with the names of the axes of
+the data variable that the grids are defined over. This is the
+preferred way to get the names, see \code{.llgrid_dims()}. If omitted, the
+names are taken from the axes of the longitude variable, which fails
+for dimensions without a coordinate variable.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    An instance of \code{geozarr::zarr_convention_geolocation} with the
+references to the arrays, to be set on a \code{geozarr::CoordinateSystem}.
   }
 }
 

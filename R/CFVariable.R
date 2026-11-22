@@ -28,15 +28,26 @@ CFVariable <- R6::R6Class("CFVariable",
     # A list of cell measure objects, if the variable has cell measures.
     .cell_measures = list(),
 
+    # Return axes that correspond to an on-disk array dimension, so excluding any
+    # scalar axis (dimid == NULL). Positions in this list line up 1:1 with
+    # positions in dim(data)/CFData$.dims.
+    dim_axes = function() {
+      n <- self$ndims
+      if (n > length(private$.axes))
+        stop("Fewer axes supplied than the data has dimensions", call. = FALSE)
+      if (n == length(private$.axes)) private$.axes
+      else private$.axes[seq_len(n)]
+    },
+
     # Return the R order of axes that "receive special treatment".
     YXZT = function() {
-      orient <- sapply(private$.axes, function(x) x$orientation)
+      orient <- sapply(private$dim_axes(), function(x) x$orientation)
       match(c("Y", "X", "Z", "T"), orient, nomatch = 0L)
     },
 
     # Return the CF canonical order of axes that "receive special treatment".
     XYZT = function() {
-      orient <- sapply(private$.axes, function(x)  x$orientation)
+      orient <- sapply(private$dim_axes(), function(x) x$orientation)
       match(c("X", "Y", "Z", "T"), orient, nomatch = 0L)
     },
 
@@ -339,7 +350,7 @@ CFVariable <- R6::R6Class("CFVariable",
       if (!is.null(private$.values))
         return(.process.data(self$values, tdim, fac, fun, ...))
       itemsize <- .nc_type_size(self$data_type) %||% 8L
-      if (prod(sapply(private$.axes, function(x) x$length)) * itemsize < CF.options$memory_cell_limit)
+      if (prod(sapply(private$dim_axes(), function(x) x$length)) * itemsize < CF.options$memory_cell_limit)
         # Read the whole data array because size is manageable
         return(.process.data(self$read_data(), tdim, fac, fun, ...))
 
@@ -375,28 +386,42 @@ CFVariable <- R6::R6Class("CFVariable",
       }
       res_dim <- dim(d[[1L]][[1L]])
       tdim_len <- length(d)
-      if (tdim_len > 1L) {
-        dims <- c(res_dim,  tdim_len)
-        perm <- c(num_dims, 1L:(num_dims - 1L))
-      } else
-        dims <- res_dim
+      dims <- c(res_dim, tdim_len)
+      perm <- c(num_dims, 1L:(num_dims - 1L))
+      # if (tdim_len > 1L) {
+      #   dims <- c(res_dim,  tdim_len)
+      #   perm <- c(num_dims, 1L:(num_dims - 1L))
+      # } else
+      #   dims <- res_dim
 
+      # fun_len <- length(d[[1L]])
+      # out <- if (fun_len > 1L) {
+      #   # Multiple function result values so get all arrays for every result
+      #   # value and unlist those
+      #   lapply(1:fun_len, function(r) {
+      #       x <- unlist(lapply(d, function(lvl) lvl[[r]]), recursive = FALSE, use.names = FALSE)
+      #       dim(x) <- dims
+      #       if (tdim_len > 1L)
+      #         aperm(x, perm)
+      #       else x
+      #     })
+      # } else {
+      #   # Single function result so unlist
+      #   d <- unlist(d, recursive = TRUE, use.names = FALSE)
+      #   dim(d) <- dims
+      #   list(if (tdim_len > 1L) aperm(d, perm) else d)
+      # }
       fun_len <- length(d[[1L]])
       out <- if (fun_len > 1L) {
-        # Multiple function result values so get all arrays for every result
-        # value and unlist those
         lapply(1:fun_len, function(r) {
-            x <- unlist(lapply(d, function(lvl) lvl[[r]]), recursive = FALSE, use.names = FALSE)
-            dim(x) <- dims
-            if (tdim_len > 1L)
-              aperm(x, perm)
-            else x
-          })
+          x <- unlist(lapply(d, function(lvl) lvl[[r]]), recursive = FALSE, use.names = FALSE)
+          dim(x) <- dims
+          aperm(x, perm)
+        })
       } else {
-        # Single function result so unlist
         d <- unlist(d, recursive = TRUE, use.names = FALSE)
         dim(d) <- dims
-        list(if (tdim_len > 1L) aperm(d, perm) else d)
+        list(aperm(d, perm))
       }
     }
   ),
@@ -425,16 +450,8 @@ CFVariable <- R6::R6Class("CFVariable",
     #' @return A `CFVariable` instance.
     initialize = function(var, group, axes, values = values, start = NA, count = NA, attributes = data.frame()) {
       super$initialize(var, group, values = values, start = start, count = count, attributes = attributes)
-
-      # Axes - If they do not agree with the .dims parameter (from CFData) then
-      # adjust as appropriate. In general this is only necessary when axes are
-      # modified as part of a data-transformation operation and become length-1.
-      # The below code is simple but should always work - presumably...
       private$.axes <- axes
-      ax_dims <- sapply(axes, function(ax) ax$length)
-      if (length(ax_dims) > self$ndims) {
-        private$set_dims(ax_dims)
-      }
+      ax_dims <- sapply(private$dim_axes(), function(ax) ax$length) #FIXME: Value never used
 
       # Delete useless attributes
       self$delete_attribute(c("_FillValue", "missing_value"))
@@ -747,6 +764,16 @@ CFVariable <- R6::R6Class("CFVariable",
       }
       names(out_axes) <- sapply(out_axes, function(ax) ax$name)
 
+      # Scalar axes (beyond ndims) have no corresponding data dimension to
+      # subset -- carry them through unchanged, keeping them after the real
+      # axes to preserve the ordering invariant.
+      if (length(private$.axes) > num_axes) {
+        scalar_axes <- lapply(private$.axes[(num_axes + 1L):length(private$.axes)],
+                              function(ax) ax$copy(group = grp))
+        out_axes <- c(out_axes, scalar_axes)
+        names(out_axes) <- sapply(out_axes, function(ax) ax$name)
+      }
+
       # Get the data for the result CFVariable
       d <- NULL
       if (is.null(aux)) {
@@ -773,7 +800,7 @@ CFVariable <- R6::R6Class("CFVariable",
       original_axis_names <- names(private$.axes)
       lapply(out_axes, function(ax) {
         if (ax$is_parametric)
-          ax$subset_parametric_terms(original_axis_names, axes, start, count, aux, ZT_dim)
+          ax$subset_parametric_terms(original_axis_names, out_axes, start, count, aux, ZT_dim)
       })
 
       # Sanitize the attributes for the result, as required, and get a CRS
@@ -863,7 +890,8 @@ CFVariable <- R6::R6Class("CFVariable",
         stop("The 'time' axis is too short to summarise on.", call. = FALSE) # nocov
       if (is.factor(f)) f <- list(f)
 
-      tm <- which(names(private$.axes) == tax$name)
+      tm <- which(names(private$.axes) == tax$name)           # In the axis list
+      tm_data <- which(names(private$dim_axes()) == tax$name) # In the data
 
       # Private group for the result
       grp <- CFGroup$new("", NULL)
@@ -895,7 +923,7 @@ CFVariable <- R6::R6Class("CFVariable",
         names(axes) <- c(tax$name, names(other_axes))
 
         # Summarise
-        dt <- private$process_data(tm, fac, fun, ...)
+        dt <- private$process_data(tm_data, fac, fun, ...)
 
         # Create the output
         atts <- self$attributes
@@ -1307,9 +1335,9 @@ CFVariable <- R6::R6Class("CFVariable",
 
       long_name <- self$attribute("long_name")
       if (is.na(long_name)) long_name <- ""
-      units <- self$attribute("units")
-      if (is.na(units)) units <- ""
-      data.table::setattr(dt, "value", list(name = long_name, units = units))
+      unit <- self$attribute("units")
+      if (is.na(unit)) unit <- ""
+      data.table::setattr(dt, "value", list(name = long_name, unit = unit))
       dt
     },
 
@@ -1390,22 +1418,32 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   attributes of the array, irregular ones have already been stored
     #'   externally.
     #' @param grp An instance of `zarr_group` to write the data variable to. The
-    #'   data variable will be written to a new Zarr array with the name of the
-    #'   data variable.
+    #'   data variable will be written to a new Zarr array in `grp` with the
+    #'   name of the data variable.
+    #' @param external,geolocation Optional. A character string that gives the
+    #'   group in the Zarr store, relative to this array, where to store
+    #'   external coordinate arrays and geolocation arrays, respectively. The
+    #'   default value for the arguments is `".."`, i.e. objects will be stored
+    #'   in the same group as this array. Any locations that do not exist will
+    #'   be created in the Zarr store.
     #' @return Self, invisibly.
-    write_geozarr = function(grp) {
+    write_geozarr = function(grp, external = "..", geolocation = "..") {
+      .check_geozarr_package()
+
       # Create Zarr array metadata for the data variable
+      # The data is not read here: it is streamed to the array further down
       ab <- zarr::array_builder$new()
-      vals <- self$values
-      ab$shape <- dim(vals) %||% length(vals)
-      ab$data_type <- switch(storage.mode(vals),
-                             "double" = "float64",
-                             "integer" = "int32",
-                             "character" = "string")
+      ab$shape <- private$.dims
+      nc <- self$NC
+      if (is.null(nc))
+        ab$data_type_from_storage.mode <- storage.mode(private$.values)
+      else {
+        ab$data_type <- netcdf_to_zarr_data_type[[self$data_type]]
+      }
       shp <- ab$shape
-      names(shp) <- names(private$.axes)
+      names(shp) <- names(private$.axes)[1:length(shp)]
       ab$chunk_shape <- zarr::optimal_chunking(shp)
-      if (prod(ab$shape) > zarr::zarr_options()$min_compress)
+      if (prod(ab$shape) > zarr::zarr_options("min_compress"))
         ab$add_codec("blosc", list(clevel = 6L))
       meta <- ab$metadata()
 
@@ -1415,13 +1453,44 @@ CFVariable <- R6::R6Class("CFVariable",
         crs <- crs$wkt2(.wkt2_axis_info(self))
 
       # Compile the coordinate system from the axes
-      axes <- lapply(private$.axes, function(ax) { ax$geozarr_axis(grp) })
+      # External coordinate and boundary arrays go to the group given by
+      # `external`, relative to the data array, so its leading ".." is `grp`.
+      # The group is only resolved, and created if missing, when an axis
+      # first writes an array to it.
+      delayedAssign("crd_grp", .zarr_group(grp, sub("^\\.\\./?", "", external)))
+
+      # The axes of an auxiliary longitude-latitude grid must be the X and Y
+      # axes for geolocation. If they have no orientation, as is common for
+      # curvilinear grids, the first is X and the second Y.
+      if (!is.null(private$.llgrid)) {
+        gd <- .llgrid_dims(self)
+        for (i in 1:2) {
+          ax <- private$.axes[[match(gd[i], vapply(private$.axes, function(a) a$name, character(1L)))]]
+          if (!nzchar(ax$orientation)) ax$orientation <- c("X", "Y")[i]
+        }
+      }
+      axes <- lapply(private$.axes, function(ax) { ax$geozarr_axis(crd_grp) })
       cs <- geozarr::CoordinateSystem$new("coordinate_system", axes, crs)
+
+      # Geolocation arrays from an auxiliary longitude-latitude grid, set
+      # before set_convention() so that the metadata references them. The
+      # `geolocation` path is relative to the data array, so its leading ".."
+      # is `grp`.
+      if (!is.null(ll <- private$.llgrid)) {
+        geo_grp <- .zarr_group(grp, sub("^\\.\\./?", "", geolocation))
+        cs$geolocation <- ll$write_geozarr(geo_grp, grp, .llgrid_dims(self))
+      }
 
       # Attributes that are structural are written inline with the Zarr array
       # so filter them out before writing. Leave a few that are descriptive of
       # the data, such as units.
-      atts <- private$zarr_attributes(c("coords", "grid_mapping"))
+      atts <- self$attributes_as_list(delete = c("coords", "grid_mapping", "valid_min", "valid_max"))
+
+      # The Zarr fill value is the default for the data type. CF missing data
+      # attributes are translated, see `.cf_missing_encoding()`.
+      enc <- if (is.null(nc)) list() else .cf_missing_encoding(nc)
+      if (!is.null(enc$missing_value)) atts$missing_value <- enc$missing_value
+      if (!is.null(enc$valid_range))   atts$valid_range   <- enc$valid_range
       meta$attributes <- atts
 
       # Build the full array metadata, including convention attributes
@@ -1429,17 +1498,15 @@ CFVariable <- R6::R6Class("CFVariable",
         crs <- list(compound = list(wkt2 = crs))
       meta$chunk_key_encoding <- list(name = "default",
                                       configuration = list(separator = "."))
-      meta <- geozarr::set_convention(meta, cs, crs = crs, external_group = "..")
+      meta <- geozarr::set_convention(meta, cs, crs = crs,
+                                      external_group = external, geolocation_group = geolocation)
+
+      # Create the GeoZarr array in the Zarr group
+      new_array <- geozarr::geozarr_array$new(self$name, meta, grp, cs)
+      .write_zarr_slabs(new_array, self, ab$chunk_shape, enc$missing_value)
 
       # Add any auxiliary variables
       # lapply(private$.aux, function(x) {x$write_geozarr(grp)})
-
-      # Create the GeoZarr array and add it to the Zarr group
-      new_array <- geozarr::geozarr_array$new(self$name, meta, grp, grp$store, cs)
-      new_array$write(vals)
-      new_array$dirty <- TRUE
-      new_array$save()
-      grp$set_node(new_array)
 
       invisible(self)
     },

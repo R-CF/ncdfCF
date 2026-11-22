@@ -36,6 +36,7 @@ list is empty if this object is not backed by a netCDF resource.}
     \item \href{#method-CFData-dim}{\code{CFData$dim()}}
     \item \href{#method-CFData-read_data}{\code{CFData$read_data()}}
     \item \href{#method-CFData-read_chunk}{\code{CFData$read_chunk()}}
+    \item \href{#method-CFData-read_window}{\code{CFData$read_window()}}
   }
 }
 \if{html}{\out{<details><summary>Inherited methods</summary>
@@ -43,6 +44,7 @@ list is empty if this object is not backed by a netCDF resource.}
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>CFObject$append_attribute()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attach_to_group'><code>CFObject$attach_to_group()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_as_list"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_as_list'><code>CFObject$attributes_as_list()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>CFObject$attributes_identical()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>CFObject$delete_attribute()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>CFObject$print_attributes()</code></a></span></li>
@@ -141,7 +143,8 @@ Read the data of the CF object from the NC file. The data is cached by
 argument \code{refresh} is \code{TRUE}. This method will not assess how big the
 data is before reading it so there is a chance that memory will be
 exhausted. The calling code should check for this possibility and break
-up the reading of data into chunks.
+up the reading of data into chunks using \code{read_chunk()} or
+\code{read_window()} - these methods will not cache the data, however.
   }
 }
 
@@ -171,7 +174,8 @@ Read a chunk of raw data of the CF object, as defined by the \code{start} and
 \code{count} vectors. Note that these vectors are relative to any subset of
 the data variable that this CF object refers to. The data read by this
 method will not be stored in \code{self} so the calling code must take a
-reference to it.
+reference to it. If the chunk is (potentially) large, use \code{read_window()}
+for additional safeguards against memory exhaustion.
   }
 }
 
@@ -200,6 +204,35 @@ dimension, otherwise its value must agree with the corresponding
   \subsection{Returns}{
     An array of data, as prescribed by the \code{start} and \code{count}
 arguments, or \code{NULL} if there is no data.
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFData-read_window"></a>}}
+\if{latex}{\out{\hypertarget{method-CFData-read_window}{}}}
+\subsection{\code{CFData$read_window()}}{
+  Read the array for \verb{(start, count)}, transparently splitting
+the request into budget-bounded, chunk-aligned sub-reads when the
+window is large, and reassembling into one array via indexed
+assignment. This materializes the full \verb{(start, count)} window: it
+bounds each individual read, and warns if the reassembled whole exceeds
+\code{CF.options$memory_cell_limit}, but does not itself reduce memory below
+the size of that window. Use this in preference to \code{read_chunk()} for
+any read that might be large.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFData$read_window(start, count)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{start, count}}{As for \code{read_chunk()}.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    An array, as \code{read_chunk()} would return.
   }
 }
 

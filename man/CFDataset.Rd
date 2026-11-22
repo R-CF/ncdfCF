@@ -468,20 +468,14 @@ variables will typically become a \code{zarr_array}, i.e. an array not
 having GeoZarr convention attributes. Axes with regular coordinate
 values will be stored in the attributes, saving space and reducing the
 number of such ancillary arrays.
-
-The data set will have the same hierarchy in the Zarr store as this
-data set, possibly anchored in some subgroup inside the Zarr store. It
-is highly recommended to use separate empty (or non-existing) groups to
-anchor multiple data sets to avoid the possibility of name collisions.
-
-Supported GeoZarr conventions for supplying coordinates are \code{cs} and
-\code{spatial}. Due to the limited scope of the latter convention (North-up
-Y coordinates, no support for time or vertical coordinates, 3 axes at
-most) most Zarr arrays will use the \code{cs} convention. Supporting
-conventions, like \code{proj} or \code{ref}, will be used as needed.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{CFDataset$geozarr(zarr, dataset_root = "/")}
+    \preformatted{CFDataset$geozarr(
+  zarr,
+  anchor_group = "/",
+  external = "coordinates",
+  geolocation = "geolocation"
+)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
@@ -489,21 +483,59 @@ conventions, like \code{proj} or \code{ref}, will be used as needed.
     \describe{
       \item{\code{zarr}}{Optional. Fully-qualified file name or URI indicating where
 to save the data set to, or a \code{zarr} object. If a file name or URI, it
-must point to an existing Zarr store where the data from this dat aset
+must point to an existing Zarr store where the data from this data set
 will be appended, or a new Zarr store will be created by that name and
 then it can not already exist. By convention, a new Zarr store should
-have a ".zarr" file name extension. If missing, create a Zarr store in
-memory.}
-      \item{\code{dataset_root}}{Optional. Path to a node in the Zarr store where this
+have a ".zarr" file name extension. If missing, a Zarr store will be
+created in memory.}
+      \item{\code{anchor_group}}{Optional. Path to a node in the Zarr store where this
 data set will be anchored. If the node does not yet exist, it will be
 created. A path must start from the root node of the Zarr store and be
-specified like "/subgroup/sub/here" with the root of this data set
-starting at the indicated path. Defaults to the root of the Zarr store,
-"/". Alternatively, this may be a \code{zarr_group} to be used as the root
-for this data set, but only if argument \code{zarr} is a \code{zarr} object. If
-the \code{zarr} argument is not provided, this argument will be ignored.}
+specified like "/subgroup/sub/here" with the anchor group of this data
+set starting at the indicated path. Defaults to the root of the Zarr
+store, "/". Alternatively, this may be a \code{zarr_group} to be used as the
+anchor group for this data set, in which case argument \code{zarr} must be a
+\code{zarr} object. If the \code{zarr} argument is not provided, this argument
+will be ignored.}
+      \item{\code{external, geolocation}}{Optional. A character string that gives the
+group in the Zarr store, relative to the \code{anchor_group}, where to store
+external coordinate arrays and geolocation arrays, respectively. These
+objects are typically shared between multiple Zarr arrays. The default
+value for the arguments is \code{"coordinates"} and \verb{"geolocation},
+repectively, i.e. groups located under the \code{anchor_group}. Starting the
+path on these arguments with \code{".."} allows one to locate these shared
+resources outside of the data set hierarchy indicated by the
+\code{anchor_group} argument. Any locations that do not exist will be
+created in the Zarr store.}
     }
     \if{html}{\out{</div>}}
+  }
+  \subsection{Details}{
+    The data set will have the same hierarchy in the Zarr store as
+in this data set, possibly anchored in some subgroup inside the Zarr
+store. It is highly recommended to use separate empty (or non-existing)
+groups to anchor multiple data sets in a single Zarr store to avoid the
+possibility of name collisions.
+
+Supported GeoZarr conventions for supplying coordinates are \code{cs} and
+\code{spatial}. Due to the limited scope of the latter convention (North-up
+Y coordinates, no support for time or vertical coordinates, 3 axes at
+most) most Zarr arrays will use the \code{cs} convention. Supporting
+conventions, like \code{geolocation}, \code{proj} or \code{ref}, will be used as
+needed.
+
+Zarr stores are organised differently than netCDF files, particularly
+when the \code{cs} convention is used. Coordinate variables are inlined in
+the attributes of the Zarr array when the coordinate values are
+regular, for instance. A Zarr store may also hold many more arrays than
+the netCDF file holding data variables; it has no inherent size
+limitation like netCDF. As a result, sharing objects between arrays is
+more relevant in Zarr. This can be for coordinate variables that are
+not regular (like monthly data with a time unit of "days") and thus
+stored externally to the array, but also for geolocation arrays,
+ancillary variables, external variables, etc. The \code{external} and
+\code{geolocation} arguments to this method can be used to specify where the
+different objects will be located in the Zarr store.
   }
   \subsection{Returns}{
     The \code{zarr} object to which the data set was written.

@@ -420,28 +420,38 @@ CFGroup <- R6::R6Class("CFGroup",
     },
 
     #' @description Write this group to a Zarr store. Iterate over contained
-    #' objects and walk through the hierarchy.
+    #'   objects and walk through the hierarchy.
     #' @param grp The `zarr_group` instance to write to.
+    #' @param external,geolocation Optional. A character string that gives the
+    #'   group in the Zarr store, relative to the this group, where to store
+    #'   external coordinate arrays and geolocation arrays, respectively. The
+    #'   default value for the arguments is `""`, i.e. objects will be stored
+    #'   in the current group. Any locations that do not exist will be created
+    #'   in the Zarr store.
     #' @return Self, invisibly.
-    write_geozarr = function(grp) {
+    write_geozarr = function(grp, external = "", geolocation = "") {
       # Attributes
-      atts <- private$zarr_attributes()
+      atts <- self$attributes_as_list()
       meta <- grp$metadata
       meta$attributes <- atts
       grp$dirty <- TRUE
       grp$metadata <- meta
       grp$save()
 
+      # Update external references to groups
+      external <- if (nzchar(external)) paste0("../", external) else ".."
+      geolocation <- if (nzchar(geolocation)) paste0("../", geolocation) else ".."
+
       # Write the data variables in the group - this will also write axes,
       # auxiliary coordinates and bounds
-      lapply(private$.vars, function(obj) obj$write_geozarr(grp))
+      lapply(private$.vars, function(obj) obj$write_geozarr(grp, external, geolocation))
 
       # Recurse over groups - Zarr groups probably do not exist yet
       lapply(private$.subgroups, function(g) {
         new_grp <- try(grp$add_group(g$name), silent = TRUE)
         if (inherits(new_grp, "try-error"))
           new_grp <- grp$children[[g$name]]
-        g$write_geozarr(new_grp)
+        g$write_geozarr(new_grp, external, geolocation)
       })
 
       invisible(self)

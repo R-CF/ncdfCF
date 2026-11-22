@@ -12,12 +12,12 @@
 \item{x}{An \code{CFVariableL3b} instance to extract the data of.}
 
 \item{i, j, ...}{Expressions, one for each of the two axes of \code{x}, that select
-a number of elements along each axis. \code{i} is for the longitude axis, \code{j}
-for the latitude axis, \code{...} (additional named arguments) is invalid as
+a number of elements along each axis. \code{i} is for the latitude axis, \code{j}
+for the longitude axis, \code{...} (additional named arguments) is invalid as
 there are only two axes to subset from. If either expression is missing,
-the entire axis is extracted. The values for the arguments may be an
-integer vector or a function that returns an integer vector. The range of
-the values in the vector will be used. See examples, below.}
+the entire axis is extracted. The values for the arguments should be an
+integer vector; the range of the values in the vector will be used. See
+examples, below.}
 
 \item{drop}{Logical, ignored. Axes are never dropped. Any degenerate
 dimensions of the array are returned as such, with dimnames and appropriate
@@ -52,20 +52,20 @@ Scalar axes should not be included in the indexing as they do not represent a
 dimension into the data array.
 }
 \examples{
-fn <- system.file("extdata",
-  "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20230101-20231231_vncdfCF.nc",
-  package = "ncdfCF")
-ds <- open_ncdf(fn)
-pr <- ds[["pr"]]
+\dontrun{
+# A NASA Ocean Color level-3 binned file
+ds <- open_ncdf("AQUA_MODIS.20030101.L3b.DAY.CHL.nc")
+chl <- ds[["/level-3_binned_data/chlor_a"]]
 
-# How are the dimensions organized?
-dimnames(pr)
+# The dimensions of the grid: latitude, longitude
+chl$dim()
 
-# Precipitation data for March for a single location
-x <- pr[5, 12, 61:91]
+# Chlorophyll concentration over part of the tropical Atlantic Ocean
+x <- chl[1712:1752, 4000:4300]
 str(x)
 
-# Summer precipitation over the full spatial extent
-summer <- pr[, , 173:263]
-str(summer)
+# A band of latitudes over the full longitude extent
+band <- chl[1712:1752, ]
+str(band)
+}
 }

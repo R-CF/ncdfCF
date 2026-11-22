@@ -216,38 +216,23 @@ CFBounds <- R6::R6Class("CFBounds",
       private$write_data()
     },
 
-    #' @description Write the boundary values to a Zarr group, including its
-    #'   attributes, if it does not already exist.
-    #' @param grp An instance of `zarr_group` to write the boundary values to.
-    #'   The data will be written to a new Zarr array with the name of
-    #'   `<axis_name>_bounds`.
-    #' @param axis_name The name of the axis owning these boundary values.
+    #' @description Write the boundary values to a new Zarr array in a Zarr
+    #'   group, unless a node with the indicated name already exists in the
+    #'   group.
+    #' @param grp The `zarr_group` to write the array to.
+    #' @param name The name of the Zarr array.
+    #' @param dims Character vector with the dimension names of the object that
+    #'   these boundary values pertain to. The vertex dimension, named
+    #'   `"bnds"` for 2 vertices and `"vertices"` otherwise, is prepended.
     #' @return Self, invisibly.
-    write_geozarr = function(grp, axis_name) {
-      bnds_name <- paste0(axis_name, "_bounds")
-      if (is.null(grp$children[[bnds_name]])) {
-        # Create a Zarr array for the boundary values
-        len <- self$length
-        atts <- private$zarr_attributes()
-        ab <- zarr::array_builder$new()
-        ab$shape <- c(self$vertices, len)
-        vals <- self$values
-        ab$data_type <- switch(storage.mode(vals),
-                               "double" = "float64",
-                               "integer" = "int32")
-        ab$chunk_shape <- c(self$vertices, len)
-        if (len * self$vertices > zarr::zarr_options()$min_compress)
-          ab$add_codec("blosc", list(clevel = 6L))
-        meta <- ab$metadata()
-        if (length(atts))
-          meta$attributes <- atts
-        new_array <- try(grp$add_array(bnds_name, meta), silent = TRUE)
-        if (inherits(new_array, "try-error"))
-          stop("Could not create Zarr array with name", bnds_name, call. = FALSE)
-        new_array$write(vals)
-        new_array$dirty <- TRUE
-        new_array$save()
-      }
+    write_geozarr = function(grp, name, dims) {
+      vtx <- if (self$vertices == 2L) "bnds" else "vertices"
+      atts <- self$attributes_as_list()
+      units <- atts$units
+      if (!is.null(units) && (grepl("^degree(s?)(_?)(east|E)$", units) ||
+                              grepl("^degree(s?)(_?)(north|N)$", units)))
+        atts$units <- "degree"
+      .write_zarr_array(grp, name, self, self$values, c(vtx, dims), atts)
       invisible(self)
     }
   ),

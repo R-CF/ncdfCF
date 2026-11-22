@@ -157,10 +157,10 @@ CFLabel <- R6::R6Class("CFLabel",
     geozarr_coordinates = function(grp) {
       len <- self$length
       vals <- self$values
-      atts <- private$zarr_attributes()
+      atts <- self$attributes_as_list()
 
       # Labels are always irregular
-      if (self$length > geozarr_options()$max_explicit) {
+      if (self$length > geozarr::geozarr_options()$max_explicit) {
         # Create a Zarr array for the axis coordinates if it does not already exist
         if (is.null(grp$children[[self$name]])) {
           ab <- zarr::array_builder$new()

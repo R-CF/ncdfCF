@@ -51,20 +51,6 @@ CFObject <- R6::R6Class("CFObject",
       attributes
     },
 
-    # Convert CF attributes in a data.frame into a Zarr named list, possibly
-    # deleting some of the attributes. Returns the list to the caller.
-    zarr_attributes = function(delete) {
-      atts <- self$attributes # data.frame
-      if (!missing(delete))
-        atts <- atts[!atts$name %in% delete, ]
-      atts <- if (is.list(atts$value)) setNames(atts$value, atts$name)
-      else setNames(list(atts$value), atts$name) # named list
-
-      # Convert atomic vectors of length > 1 into nested unnamed list
-      atts <- lapply(atts, function(att)
-        {if (is.atomic(att) && length(att) > 1L) unname(as.list(att)) else att})
-    },
-
     # Make sure we detach before we poof out.
     finalize = function() {
       if (!is.null(private$.NCobj) && inherits(private$.NCobj, "NCVariable"))
@@ -167,6 +153,17 @@ CFObject <- R6::R6Class("CFObject",
       if (!nrow(val)) return(NA)
 
       val[[field]][[1L]]
+    },
+
+    #' @description Convert CF attributes in a data.frame into a named list, possibly
+    #' deleting some of the attributes.
+    #' @param delete Optional, character vector of attributes to exclude from the list.
+    #' @return A `list` of attributes.
+    attributes_as_list = function(delete = character(0)) {
+      atts <- self$attributes # data.frame
+      atts <- atts[!atts$name %in% delete, ]
+      atts <- setNames(if (is.list(atts$value)) atts$value else as.list(atts$value), atts$name)
+      lapply(atts, function(att) if (is.atomic(att) && length(att) > 1L) unname(as.list(att)) else att)
     },
 
     #' @description Print the attributes of the CF object to the console.

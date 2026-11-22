@@ -471,6 +471,16 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
       invisible(self)
     },
 
+    #' @description The attributes of this axis that are written with the
+    #'   GeoZarr coordinates of the axis. Attributes that are structural and are
+    #'   managed by the GeoZarr convention are left out.
+    #' @return A named `list` of attributes.
+    geozarr_attributes = function() {
+      atts <- super$geozarr_attributes()
+      atts["positive"] <- NULL
+      atts
+    },
+
     #' @description Create the GeoZarr coordinates for this vertical axis. If the
     #'   coordinate values are not regular and longer than a set minimum, write
     #'   the coordinates to the group as a new Zarr array if it does not yet
@@ -492,7 +502,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
       # Attributes that are structural are managed by the convention used
       # so filter them out before writing. Leave a few that are descriptive of
       # the data
-      atts <- private$zarr_attributes(c("axis", "bounds", "positive", "units"))
+      atts <- self$geozarr_attributes()
 
       # Boundary values
       bnds <- private$.bounds$values
@@ -502,7 +512,7 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
           bnds <- c(bnds[1L,1L] - vals[1L], bnds[2L,1L] - vals[1L])
         else
           # Irregular, write array to the Zarr group
-          private$.bounds$write_geozarr(grp)
+          private$.bounds$write_geozarr(grp, paste0(self$name, "_bounds"), self$name)
       }
 
       # Irregular
@@ -517,14 +527,16 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
           ab$chunk_shape <- len
           if (len > zarr::zarr_options()$min_compress)
             ab$add_codec("blosc", list(clevel = 6L))
-          new_array <- try(grp$add_array(self$name, ab), silent = TRUE)
+          meta <- ab$metadata()
+          meta$attributes <- atts
+          new_array <- try(grp$add_array(self$name, meta), silent = TRUE)
           if (inherits(new_array, "try-error"))
             stop("Could not create Zarr array with name", self$name, call. = FALSE)
           new_array$write(vals)
         }
       }
 
-      geozarr::Coordinates$new(self$name, dir, unit, vals, bnds)
+      geozarr::CoordinatesIrregular$new(self$name, dir, unit, vals, bnds)
     }
   ),
   active = list(

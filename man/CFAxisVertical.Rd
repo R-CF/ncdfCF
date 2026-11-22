@@ -58,6 +58,7 @@ will access the standard names table.}
     \item \href{#method-CFAxisVertical-append}{\code{CFAxisVertical$append()}}
     \item \href{#method-CFAxisVertical-subset}{\code{CFAxisVertical$subset()}}
     \item \href{#method-CFAxisVertical-subset_parametric_terms}{\code{CFAxisVertical$subset_parametric_terms()}}
+    \item \href{#method-CFAxisVertical-geozarr_attributes}{\code{CFAxisVertical$geozarr_attributes()}}
     \item \href{#method-CFAxisVertical-geozarr_coordinates}{\code{CFAxisVertical$geozarr_coordinates()}}
   }
 }
@@ -65,6 +66,7 @@ will access the standard names table.}
 <ul>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>CFObject$append_attribute()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_as_list"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_as_list'><code>CFObject$attributes_as_list()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>CFObject$attributes_identical()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>CFObject$delete_attribute()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>CFObject$print_attributes()</code></a></span></li>
@@ -73,6 +75,7 @@ will access the standard names table.}
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href='../../ncdfCF/html/CFData.html#method-CFData-dim'><code>CFData$dim()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_chunk'><code>CFData$read_chunk()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_data'><code>CFData$read_data()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_window"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_window'><code>CFData$read_window()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="can_append"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-can_append'><code>CFAxis$can_append()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="configure_terms"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-configure_terms'><code>CFAxis$configure_terms()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFAxis" data-id="copy_terms"><a href='../../ncdfCF/html/CFAxis.html#method-CFAxis-copy_terms'><code>CFAxis$copy_terms()</code></a></span></li>
@@ -369,6 +372,23 @@ grid transformation is specified.}
   \subsection{Returns}{
     Self, invisibly. The parametric terms will have been subset in
 this axis.
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFAxisVertical-geozarr_attributes"></a>}}
+\if{latex}{\out{\hypertarget{method-CFAxisVertical-geozarr_attributes}{}}}
+\subsection{\code{CFAxisVertical$geozarr_attributes()}}{
+  The attributes of this axis that are written with the
+GeoZarr coordinates of the axis. Attributes that are structural and are
+managed by the GeoZarr convention are left out.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFAxisVertical$geozarr_attributes()}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A named \code{list} of attributes.
   }
 }
 

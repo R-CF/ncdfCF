@@ -23,83 +23,36 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
     # The values from the file after reading.
     .values = NULL,
 
-    # Read all the data from the file and turn the data into a matrix. If an
-    # `aoi` is specified, the data will be subset to that area.
-    #
-    # This method returns a bare-bones matrix without any metadata or other
-    # identifying information. Use method `data()`, `subset()` or the `[`
-    # operator rather than this method to obtain a more informative result.
-    # Params start and count are the vectors to read data from the netCDF file.
-    # Returns a matrix with the data of the variable in raw format.
+    # Read the bins for a window of the grid and expand them to a matrix.
+    # `start` and `count` are validated and relative to the axes. Only the
+    # records of the requested rows are read from file.
     as_matrix = function(start, count) {
-      binList <- RNetCDF::var.get.nc(private$.NCobj$group$handle, "BinList")
-      binData <- RNetCDF::var.get.nc(private$.NCobj$group$handle, self$name)
+      idx  <- private$.index
+      rows <- private$.file_rows[1L] + start[1L] - 2L + seq_len(count[1L])
+      bins <- private$.file_bins[1L] + start[2L] - 2L + seq_len(count[2L])
+      maxBins <- idx$max[length(idx$max) * 0.5]
+      out <- matrix(NA_real_, count[1L], count[2L])
 
-      # Get the binned data in rows
-      data_row <- findInterval(binList$bin_num, private$.index$start_num)
-      data_row_bin <- as.integer(binList$bin_num - private$.index$start_num[data_row]) + 1L
+      ext <- idx$extent[rows]
+      n <- sum(ext)
+      if (!n) return(out)
 
-      numRows <- length(private$.index$start_num)
-      maxBins <- private$.index$max[numRows * 0.5]
+      # Records are ordered by bin number: the rows form one contiguous range
+      offset <- sum(idx$extent[seq_len(rows[1L] - 1L)]) + 1
+      h <- private$.NCobj$group$handle
+      binList <- RNetCDF::var.get.nc(h, "BinList", offset, n)
+      binData <- RNetCDF::var.get.nc(h, self$name, offset, n)
+      d <- binData$sum / binList$weights
+      last <- cumsum(ext)
 
-      if (missing(start)) {
-        startRow <- private$.file_rows[1L]
-        startBin <- private$.file_bins[1L]
-        endRow <- private$.file_rows[2L]
-        endBin <- private$.file_bins[2L]
-      } else {
-        startRow <- private$.file_rows[1L] + start[1L] - 1L
-        startBin <- private$.file_bins[1L] + start[2L] - 1L
-        endRow <- startRow + count[1L] - 1L
-        endBin <- startBin + count[2L] - 1L
+      for (r in which(ext > 0)) {
+        rec <- seq.int(last[r] - ext[r] + 1, last[r])
+        row_max <- idx$max[rows[r]]
+        v <- rep(NA_real_, row_max)
+        v[binList$bin_num[rec] - idx$start_num[rows[r]] + 1] <- d[rec]
+        out[r, ] <- v[ceiling(bins * row_max / maxBins)]   # expand to the grid
       }
-
-      l <- lapply(startRow:endRow, function(r) {
-        out <- rep(NA_real_, maxBins)
-
-        idx <- which(data_row == r)
-        if (!length(idx)) return(out[startBin:endBin])
-
-        d <- binData$sum[idx] / binList$weights[idx]   # The data of the physical property
-        b <- data_row_bin[idx]                         # The bins to put the data in
-
-        # Expand to maxBins grid cells
-        allocate <- ceiling(1:maxBins * private$.index$max[r] / maxBins)
-
-        # Allocate the data to the expanded grid cells
-        for (bin in seq_along(b))
-          out[which(allocate == b[bin])] <- d[bin]
-
-        out[startBin:endBin]
-      })
-      do.call(rbind, l)
-    },
-
-    # Read all the data from the file and turn the data into a matrix.
-    #
-    #   This method returns a bare-bones matrix without any metadata or other
-    #   identifying information. Use method `subset()` or the `[`
-    #   operator rather than this method to obtain a more informative result.
-    # @param refresh Flag to indicate if a fresh read from file should be made.
-    # @return A matrix with the data of the variable in raw format.
-    read_data = function(refresh = FALSE) {
-      if (is.null(private$.values) || refresh) {
-        private$.values <- private$as_matrix()
-        self$set_attribute("actual_range", "NC_FLOAT", range(private$.values, na.rm = TRUE))
-      }
-      private$.values
-    },
-
-    # Read some data from the file and turn the data into a matrix.
-    #
-    #   This method returns a bare-bones matrix without any metadata or other
-    #   identifying information. Use method `subset()` or the `[` operator
-    #   rather than this method to obtain a more informative result.
-    # @param start,count Start and count vectors that delimit the geographic
-    #   area to return data for.
-    # @return A matrix with the data of the variable in raw format.
-    read_chunk = function(start, count) {
-      private$as_matrix(start, count)
+      out
     }
   ),
   public = list(
@@ -165,11 +118,50 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
 
       # Construct the object
       super$initialize(var, grp, axes)
+
+      # The NC variable is a 1-D list of bins; this object presents the gridded view.
+      private$.dims <- c(lat$length, lon$length)
+      private$.data_type <- "NC_DOUBLE"
+
       self$crs <- gm
       self$set_attribute("grid_mapping", "NC_CHAR", "geo")
       self$set_attribute("units", "NC_CHAR", units[2L])
-      # FIXME
       ncv[["BinIndex"]]$CF <- ncv[["BinList"]]$CF <- self
+    },
+
+    #' @description Read all the data of the variable and cache it.
+    #' @param refresh Should the data be read from file again? Default `FALSE`.
+    #' @return An array of data, invisibly.
+    read_data = function(refresh = FALSE) {
+      if (is.null(private$.values) || refresh) {
+        private$.values <- private$as_matrix(c(1L, 1L), private$.dims)
+        self$set_attribute("actual_range", private$.data_type,
+                           range(private$.values, na.rm = TRUE))
+      }
+      invisible(private$.values)
+    },
+
+    #' @description Read a window of the data. The data is not cached.
+    #' @param start,count Vectors of indices to start reading and the number
+    #'   of elements to read, along each axis; `NA` to read everything.
+    #' @return An array of data, or `NULL` if there is no data.
+    read_chunk = function(start, count) {
+      sc <- private$check_start_count(start, count)
+      if (!length(sc)) return(NULL)
+      if (!is.null(private$.values))
+        return(super$read_chunk(sc$start, sc$count))
+      private$as_matrix(sc$start, sc$count)
+    },
+
+    #' @description As `read_chunk()`, with a warning if the window exceeds
+    #'   `CF.options$memory_cell_limit`. The window is read in one pass.
+    #' @param start,count As for `read_chunk()`.
+    #' @return An array of data, or `NULL` if there is no data.
+    read_window = function(start, count) {
+      sc <- private$check_start_count(start, count)
+      if (!length(sc)) return(NULL)
+      private$check_memory_limit(sc$count)
+      self$read_chunk(sc$start, sc$count)
     },
 
     #' @description This method extracts a subset of values from the data of the
@@ -223,43 +215,28 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
       axis_names <- names(self$axes)
       axis_order <- private$check_names(sel_names)
 
-      start <- c(1L, 1L)
-      count <- c(self$axes[[1L]]$length, self$axes[[2L]]$length)
+      nd <- length(private$.dims)
+      start <- rep(1L, nd)
+      count <- private$.dims
+      grp <- CFGroup$new("", NULL)
 
-      out_axes_dim <- list()
-      out_axes_other <- list()
-      for (ax in seq_along(self$axes)) {
+      out_axes <- lapply(seq_along(self$axes), function(ax) {
         axis <- self$axes[[ax]]
-        orient <- axis$orientation
+        rng <- if (ax <= nd) selectors[[ axis_names[ax] ]] %||% selectors[[ axis$orientation ]]
+        if (is.null(rng)) return(axis$copy(group = grp))
+        idx <- axis$slice(rng)
+        if (is.null(idx)) return(NULL)
+        start[ax] <<- idx[1L]
+        count[ax] <<- idx[2L] - idx[1L] + 1L
+        axis$subset(group = grp, rng = idx)
+      })
+      if (any(vapply(out_axes[seq_len(nd)], is.null, TRUE))) return(NULL)
+      names(out_axes) <- sapply(out_axes, function(a) a$name)
 
-        rng <- NULL
-        if (is.null(rng)) rng <- selectors[[ axis_names[ax] ]]
-        if (is.null(rng)) rng <- selectors[[ orient ]]
-        if (is.null(rng)) {
-          out_axis <- axis$copy()
-        } else {
-          idx <- axis$slice(rng)
-          if (is.null(idx)) return(NULL)
-          start[ax] <- idx[1L]
-          count[ax] <- idx[2L] - idx[1L] + 1L
-          out_axis <- axis$subset(rng = idx)
-        }
-
-        # Collect axes for result
-        if (out_axis$length == 1L)
-          out_axes_other <- append(out_axes_other, out_axis)
-        else
-          out_axes_dim <- append(out_axes_dim, out_axis)
-      }
-
-      # Read the data
-      d <- self$read_chunk(start, count)
-      d <- drop(d)
-
-      # Assemble the CFVariable instance
-      axes <- c(out_axes_dim, out_axes_other)
-      names(axes) <- sapply(axes, function(a) a$name)
-      v <- CFVariable$new(self$name, values = d, axes = axes, attributes = self$attributes)
+      # Read the data and assemble the CFVariable instance
+      d <- self$read_window(start, count)
+      v <- CFVariable$new(self$name, group = grp, values = d, axes = out_axes,
+                          attributes = self$attributes)
       v$crs <- self$crs
       v
     }
@@ -295,12 +272,12 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
 #'
 #' @param x An `CFVariableL3b` instance to extract the data of.
 #' @param i,j,... Expressions, one for each of the two axes of `x`, that select
-#'   a number of elements along each axis. `i` is for the longitude axis, `j`
-#'   for the latitude axis, `...` (additional named arguments) is invalid as
+#'   a number of elements along each axis. `i` is for the latitude axis, `j`
+#'   for the longitude axis, `...` (additional named arguments) is invalid as
 #'   there are only two axes to subset from. If either expression is missing,
-#'   the entire axis is extracted. The values for the arguments may be an
-#'   integer vector or a function that returns an integer vector. The range of
-#'   the values in the vector will be used. See examples, below.
+#'   the entire axis is extracted. The values for the arguments should be an
+#'   integer vector; the range of the values in the vector will be used. See
+#'   examples, below.
 #' @param drop Logical, ignored. Axes are never dropped. Any degenerate
 #'   dimensions of the array are returned as such, with dimnames and appropriate
 #'   attributes set.
@@ -310,52 +287,34 @@ CFVariableL3b <- R6::R6Class("CFVariableL3b",
 #' @aliases bracket_select_l3b
 #' @docType methods
 #' @examples
-#' fn <- system.file("extdata",
-#'   "pr_day_EC-Earth3-CC_ssp245_r1i1p1f1_gr_20230101-20231231_vncdfCF.nc",
-#'   package = "ncdfCF")
-#' ds <- open_ncdf(fn)
-#' pr <- ds[["pr"]]
+#' \dontrun{
+#' # A NASA Ocean Color level-3 binned file
+#' ds <- open_ncdf("AQUA_MODIS.20030101.L3b.DAY.CHL.nc")
+#' chl <- ds[["/level-3_binned_data/chlor_a"]]
 #'
-#' # How are the dimensions organized?
-#' dimnames(pr)
+#' # The dimensions of the grid: latitude, longitude
+#' chl$dim()
 #'
-#' # Precipitation data for March for a single location
-#' x <- pr[5, 12, 61:91]
+#' # Chlorophyll concentration over part of the tropical Atlantic Ocean
+#' x <- chl[1712:1752, 4000:4300]
 #' str(x)
 #'
-#' # Summer precipitation over the full spatial extent
-#' summer <- pr[, , 173:263]
-#' str(summer)
+#' # A band of latitudes over the full longitude extent
+#' band <- chl[1712:1752, ]
+#' str(band)
+#' }
 "[.CFVariableL3b" <- function(x, i, j, ..., drop = FALSE) {
-  data <- x$raw()
+  d <- x$dim()
+  lat <- if (missing(i)) c(1L, d[1L]) else as.integer(range(i))
+  lon <- if (missing(j)) c(1L, d[2L]) else as.integer(range(j))
 
-  if (missing(i) && missing(j)) {
-    dnames <- list(longitude = x$axes[[1L]]$dimnames, latitude = x$axes[[2L]]$dimnames)
-  } else {
-    dnames <- vector("list", 2L)
-    names(dnames) <- x$axis_names[1L:2L]
-    if (missing(i)) {
-      dnames[[1L]] <- x$axes[[1L]]$dimnames
-      lon <- 1L:(length(x$axes[[1L]]))
-    } else {
-      ex <- range(i)
-      dnames[[1L]] <- x$axes[[1L]]$dimnames[seq(ex[1L], ex[2L])]
-      lon <- ex[1L]:ex[2L]
-    }
-    if (missing(j)) {
-      dnames[[2L]] <- x$axes[[2L]]$dimnames
-      lat <- 1L:(length(x$axes[[2L]]))
-    } else {
-      ex <- range(j)
-      dnames[[2L]] <- x$axes[[2L]]$dimnames[seq(ex[1L], ex[2L])]
-      lat <- ex[1L]:ex[2L]
-    }
-    data <- data[lon, lat]
-  }
+  data <- x$read_window(c(lat[1L], lon[1L]), c(lat[2L] - lat[1L] + 1L, lon[2L] - lon[1L] + 1L))
 
-  dimnames(data) <- dnames
-  ax <- sapply(x$axes, function(x) if (x$length > 1L) x$orientation)
-  ax <- ax[lengths(ax) > 0L]
-  attr(data, "axis") <- ax
+  dn <- x$dimnames
+  dn[[1L]] <- dn[[1L]][lat[1L]:lat[2L]]
+  dn[[2L]] <- dn[[2L]][lon[1L]:lon[2L]]
+  dimnames(data) <- dn
+
+  attr(data, "axis") <- list(latitude = "Y", longitude = "X")
   data
 }

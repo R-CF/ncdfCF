@@ -80,3 +80,4 @@ reference:
     Assorted other functions.
   contents:
   - aggregate_geozarr
+  - copy_to_geozarr

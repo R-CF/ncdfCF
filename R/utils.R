@@ -4,6 +4,18 @@ netcdf_data_types <- c("NC_BYTE", "NC_UBYTE", "NC_CHAR", "NC_SHORT",
                        "NC_USHORT", "NC_INT", "NC_UINT", "NC_INT64",
                        "NC_UINT64", "NC_FLOAT", "NC_DOUBLE", "NC_STRING")
 
+# NetCDF library default fill values (NUG Appendix B). These are used only to
+# decide if a `_FillValue` attribute denotes missing data or merely repeats the
+# library default. Values are compared as double, which for the 64-bit integer
+# types is approximate - good enough to recognise the default.
+nc_default_fill <- c("NC_BYTE" = -127, "NC_UBYTE" = 255, "NC_SHORT" = -32767,
+                     "NC_USHORT" = 65535, "NC_INT" = -2147483647,
+                     "NC_UINT" = 4294967295,
+                     "NC_INT64" = -9223372036854775806,
+                     "NC_UINT64" = 18446744073709551614,
+                     "NC_FLOAT" = 9.9692099683868690e+36,
+                     "NC_DOUBLE" = 9.9692099683868690e+36)
+
 # This function returns TRUE if argument storage_mode is compatible with the
 # nc_data argument, FALSE otherwise.
 .compatible_type <- function(storage_mode, nc_data) {
@@ -185,7 +197,7 @@ netcdf_data_types <- c("NC_BYTE", "NC_UBYTE", "NC_CHAR", "NC_SHORT",
   # Set dimensions. If FUN returns multiple values, FUN values are in the first
   # dimension.
   res <- unlist(res, recursive = FALSE, use.names = FALSE)
-  dims <- c(if(dimres > 1L) dimres, if (nl > 1L) nl, if (dl > 1L) d[-oper])
+  dims <- c(if(dimres > 1L) dimres, nl, if (dl > 1L) d[-oper])
   if (length(dims) > 1L)
     dim(res) <- dims
 
@@ -304,6 +316,11 @@ netcdf_data_types <- c("NC_BYTE", "NC_UBYTE", "NC_CHAR", "NC_SHORT",
   if (length(x) == 1L) return(FALSE)
   d <- diff(x)
   isTRUE(all.equal(d, rep(d[1L], length(d)), tolerance))
+}
+
+.history_entry <- function(text) {
+  paste0(format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ", tz = "UTC"),
+         " ncdfCF ", utils::packageVersion("ncdfCF"), ": ", text)
 }
 
 unused_imports <- function() {

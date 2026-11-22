@@ -51,6 +51,7 @@ is a linked netCDF resource, this object will be detached from it.}
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="append_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-append_attribute'><code>CFObject$append_attribute()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attach_to_group"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attach_to_group'><code>CFObject$attach_to_group()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attribute'><code>CFObject$attribute()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_as_list"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_as_list'><code>CFObject$attributes_as_list()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>CFObject$attributes_identical()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>CFObject$delete_attribute()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>CFObject$print_attributes()</code></a></span></li>
@@ -60,6 +61,7 @@ is a linked netCDF resource, this object will be detached from it.}
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="dim"><a href='../../ncdfCF/html/CFData.html#method-CFData-dim'><code>CFData$dim()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_chunk"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_chunk'><code>CFData$read_chunk()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_data"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_data'><code>CFData$read_data()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFData" data-id="read_window"><a href='../../ncdfCF/html/CFData.html#method-CFData-read_window'><code>CFData$read_window()</code></a></span></li>
 </ul>
 </details>}}
 \if{html}{\out{<hr>}}
@@ -270,20 +272,22 @@ values, usually an axis but could also be an auxiliary CV.}
 \if{html}{\out{<a id="method-CFBounds-write_geozarr"></a>}}
 \if{latex}{\out{\hypertarget{method-CFBounds-write_geozarr}{}}}
 \subsection{\code{CFBounds$write_geozarr()}}{
-  Write the boundary values to a Zarr group, including its
-attributes, if it does not already exist.
+  Write the boundary values to a new Zarr array in a Zarr
+group, unless a node with the indicated name already exists in the
+group.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{CFBounds$write_geozarr(grp, axis_name)}
+    \preformatted{CFBounds$write_geozarr(grp, name, dims)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
     \if{html}{\out{<div class="arguments">}}
     \describe{
-      \item{\code{grp}}{An instance of \code{zarr_group} to write the boundary values to.
-The data will be written to a new Zarr array with the name of
-\verb{<axis_name>_bounds}.}
-      \item{\code{axis_name}}{The name of the axis owning these boundary values.}
+      \item{\code{grp}}{The \code{zarr_group} to write the array to.}
+      \item{\code{name}}{The name of the Zarr array.}
+      \item{\code{dims}}{Character vector with the dimension names of the object that
+these boundary values pertain to. The vertex dimension, named
+\code{"bnds"} for 2 vertices and \code{"vertices"} otherwise, is prepended.}
     }
     \if{html}{\out{</div>}}
   }

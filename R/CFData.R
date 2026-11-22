@@ -115,7 +115,7 @@ CFData <- R6::R6Class("CFData",
     check_memory_limit = function(count) {
       itemsize <- if (!is.null(private$.NCobj) && private$.NCobj$is_packed) 8L
       else .nc_type_size(private$.data_type)
-      if (is.na(itemsize)) return(invisible(NA_real_))
+      if (is.na(itemsize)) return(invisible(NA_real_)) # nocov
 
       bytes <- prod(count) * itemsize
       if (bytes > CF.options$memory_cell_limit)
@@ -395,11 +395,11 @@ CFData <- R6::R6Class("CFData",
       if (missing(value))
         private$.data_type
       else if (self$has_resource)
-        stop("Cannot set the data type of a variable present on file.", call. = FALSE) # nocov
+        stop("Cannot set the data type of a variable present on file", call. = FALSE) # nocov
       else if (value %in% netcdf_data_types)
         private$.data_type <- value
       else
-        stop("Unrecognized data type for a netCDF variable.", call. = FALSE) # nocov
+        stop("Unrecognized data type for a netCDF variable", call. = FALSE) # nocov
     },
 
     #' @field ndims (read-only) Retrieve the dimensionality of the data in the

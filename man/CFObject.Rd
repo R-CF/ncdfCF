@@ -44,6 +44,7 @@ resource, or \code{NULL} if not linked.}
     \item \href{#method-CFObject-attach_to_group}{\code{CFObject$attach_to_group()}}
     \item \href{#method-CFObject-detach}{\code{CFObject$detach()}}
     \item \href{#method-CFObject-attribute}{\code{CFObject$attribute()}}
+    \item \href{#method-CFObject-attributes_as_list}{\code{CFObject$attributes_as_list()}}
     \item \href{#method-CFObject-print_attributes}{\code{CFObject$print_attributes()}}
     \item \href{#method-CFObject-set_attribute}{\code{CFObject$set_attribute()}}
     \item \href{#method-CFObject-attributes_identical}{\code{CFObject$attributes_identical()}}
@@ -157,6 +158,29 @@ be "value" (default) or "type".}
 is "value", a single value of the type of the attribute, or a vector
 when the attribute has multiple values. If no attribute is named with a
 value of argument \code{att} \code{NA} is returned.
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFObject-attributes_as_list"></a>}}
+\if{latex}{\out{\hypertarget{method-CFObject-attributes_as_list}{}}}
+\subsection{\code{CFObject$attributes_as_list()}}{
+  Convert CF attributes in a data.frame into a named list, possibly
+deleting some of the attributes.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFObject$attributes_as_list(delete = character(0))}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{delete}}{Optional, character vector of attributes to exclude from the list.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A \code{list} of attributes.
   }
 }
 

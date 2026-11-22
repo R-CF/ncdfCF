@@ -68,7 +68,7 @@ do not hold any other data! (Such as the *grid mapping variables*
 mentioned above.) Put the other way around, you are not really using a
 CF-compliant netCDF data set unless you read the proper attributes. Even
 stronger: there are things in netCDF data sets that you cannot do unless
-you have inspect the attributes (such as determining the coordinate
+you have inspected the attributes (such as determining the coordinate
 reference system, or calculating the parametric coordinates of a
 vertical axis).
 
@@ -286,22 +286,20 @@ R array layout:
 # a processing method such as `summarise()`)
 tmax_raw <- tmax$raw()
 str(tmax_raw)
-#>  num [1:148, 1:140, 1, 1] 301 301 301 301 301 ...
-#>  - attr(*, "dimnames")=List of 4
-#>   ..$ x     : chr [1:148] "0" "50000" "1e+05" "150000" ...
-#>   ..$ y     : chr [1:140] "0" "50000" "1e+05" "150000" ...
-#>   ..$ time  : chr "2041-07-01T12:00:00"
-#>   ..$ height: chr "2"
+#>  num [1:148, 1:140, 1] 301 301 301 301 301 ...
+#>  - attr(*, "dimnames")=List of 3
+#>   ..$ x   : chr [1:148] "0" "50000" "1e+05" "150000" ...
+#>   ..$ y   : chr [1:140] "0" "50000" "1e+05" "150000" ...
+#>   ..$ time: chr "2041-07-01T12:00:00"
 
 # The same data but now in standard R ordering
 tmax_R <- tmax$array()
 str(tmax_R)
-#>  num [1:140, 1:148, 1, 1] 277 277 277 277 277 ...
-#>  - attr(*, "dimnames")=List of 4
-#>   ..$ y     : chr [1:140] "6950000" "6900000" "6850000" "6800000" ...
-#>   ..$ x     : chr [1:148] "0" "50000" "1e+05" "150000" ...
-#>   ..$ height: chr "2"
-#>   ..$ time  : chr "2041-07-01T12:00:00"
+#>  num [1:140, 1:148, 1] 277 277 277 277 277 ...
+#>  - attr(*, "dimnames")=List of 3
+#>   ..$ y   : chr [1:140] "6950000" "6900000" "6850000" "6800000" ...
+#>   ..$ x   : chr [1:148] "0" "50000" "1e+05" "150000" ...
+#>   ..$ time: chr "2041-07-01T12:00:00"
 ```
 
 Note how in the [`array()`](https://rdrr.io/r/base/array.html) version
@@ -390,7 +388,8 @@ prepended with information on any processing that has been applied to
 the data.
 
 Other global, group or data variable attributes are not written to file
-automatically; the user has to add to amend these attributes explicitly.
+automatically; the user has to add code to amend these attributes
+explicitly.
 
 ##### 2.7. Groups
 
@@ -429,7 +428,7 @@ Supported for all objects that have this attribute.
 ##### 3.3 Standard name
 
 The standard names table can optionally (and automatically) be accessed
-through the `CF$standard_names` object. Management of the XML is
+through the `CF$standard_names` object. Management of the XML file is
 automatic, including periodic checks to see if an update is available.
 
 The `standard_name` attribute is read but not checked against the

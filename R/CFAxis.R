@@ -414,8 +414,7 @@ CFAxis <- R6::R6Class("CFAxis",
     },
 
     #' @description Create the GeoZarr coordinate system axis for this axis,
-    #'   inclusive of auxiliary coordinates. This will also include boundary
-    #'   values.
+    #'   inclusive of auxiliary coordinates. This includes boundary values.
     #' @param grp An instance of `zarr_group` where the axis will be located in
     #'   the Zarr store. The axis will be written to a new Zarr array with the
     #'   name of the axis if it is irregular and long.
@@ -428,6 +427,14 @@ CFAxis <- R6::R6Class("CFAxis",
       orient <- private$.orient
       if (!nzchar(orient)) orient <- " "
       geozarr::CoordinateSystemAxis$new(self$name, orient, all_crds)
+    },
+
+    #' @description The attributes of this axis that are written with the
+    #'   GeoZarr coordinates of the axis. Attributes that are structural and are
+    #'   managed by the GeoZarr convention are left out.
+    #' @return A named `list` of attributes.
+    geozarr_attributes = function() {
+      self$attributes_as_list(delete = c("axis", "bounds", "units", "actual_range"))
     },
 
     #' @description Create the GeoZarr coordinates for this axis. If the
@@ -462,13 +469,13 @@ CFAxis <- R6::R6Class("CFAxis",
           bnds <- c(bnds[1L,1L] - vals[1L], bnds[2L,1L] - vals[1L])
         else
           # Irregular, write array to the Zarr group
-          private$.bounds$write_geozarr(grp)
+          private$.bounds$write_geozarr(grp, paste0(self$name, "_bounds"), self$name)
       }
 
       # Attributes that are structural are managed by the convention used so
       # filter them out before writing. Leave others that are descriptive of the
       # data.
-      atts <- private$zarr_attributes(c("axis", "bounds", "units", "actual_range"))
+      atts <- self$geozarr_attributes()
 
       # Regular coordinate values
       if (private$.regular)
@@ -481,10 +488,10 @@ CFAxis <- R6::R6Class("CFAxis",
         if (is.null(grp$children[[self$name]])) {
           ab <- zarr::array_builder$new()
           ab$shape <- len
-          ab$data_type <- switch(storage.mode(vals),
-                                 "double" = "float64",
-                                 "integer" = "int32",
-                                 "character" = "string")
+          if (is.null(self$NC))
+            ab$data_type_from_storage.mode <- storage.mode(vals)
+          else
+            ab$data_type <- netcdf_to_zarr_data_type[[self$data_type]]
           ab$chunk_shape <- len
           if (len > zarr::zarr_options()$min_compress)
             ab$add_codec("blosc", list(clevel = 6L))
@@ -499,7 +506,7 @@ CFAxis <- R6::R6Class("CFAxis",
         }
       }
 
-      geozarr::Coordinates$new(self$name, dir, unit, vals, bnds, atts)
+      geozarr::CoordinatesIrregular$new(self$name, dir, unit, vals, bnds, atts)
     }
   ),
   active = list(

@@ -5,7 +5,10 @@
 - Added `makeGroup()` function.
 - `CFAxis$identical()` can optionally assess attributes for equality.
 - `CFVariable$summarise()` returns `NULL` if the `era` argument falls entirely outside of the time axis of the variable.
-- Exporting data sets to GeoZarr using the `geozarr` package (experimental - has known issues and is incomplete).
+- Exporting data sets to GeoZarr using the `geozarr` package.
+- New function `aggregate_geozarr()` aggregates multiple CF data variables, e.g. the files of a CMIP6 or CORDEX run that is split over time, into a single GeoZarr array. It takes file names or `CFVariable` instances and aggregates along any axis, including scalar axes such as an ensemble member, as long as the coordinates are contiguous. Auxiliary label sets, an auxiliary longitude-latitude grid, the CRS, and the attributes of the data variables, axes and global attributes are carried over. Argument `external_coordinates` sets the group for external coordinate arrays and `verbose` reports progress per chunk written. Parametric vertical coordinates are not supported. `copy_to_geozarr()` copies the data of a `CFVariable` into an existing GeoZarr array in chunk-aligned tiles.
+- CF missing data attributes are translated to the GeoZarr conventions when writing a `CFVariable` to Zarr: `_FillValue` is no longer used as the Zarr `fill_value`, and `missing_value` and `valid_range` attributes are set instead.
+- New method `geozarr_attributes()` for the descendants of `CFAxis` returns the attributes that are written with the GeoZarr coordinates of an axis. Attributes `units` and `calendar` of a time axis are no longer written as attributes of its coordinates, because they are recorded as the time definition.
 
 #### Code
 - Code has been added to process data in chunks if a data request is too large for the available memory (as set by `CF.options$memory_cell_limit`). If the data is chunked, as may be the case with netCDF-4 data files, the processing will use chunks to minimize overhead (reading, decompressing) at the storage layer (HDF-5). Memory may still be exhausted if the caller requests too much data in one call but the internal processing functions (like `CFVariable$summarise()`) are now protected.
@@ -17,7 +20,7 @@
 - Fixed retrieving data by index from virtual `CFVariable`.
 - Fixed indexing of numeric axis with one-sided boundary values.
 - Suggests packages `zarr` and `geozarr`.
-- Bumped R version to 4.2.
+- Bumped R version to 4.4.
 - Multiple minor fixes.
 - Documentation update.
 
