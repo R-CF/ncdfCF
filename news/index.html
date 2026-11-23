@@ -67,6 +67,22 @@
 <li>Fixed writing a <code>CFVariable</code> to file having a length-1 axis in X-Y-Z-T.</li>
 <li>Fixed retrieving data by index from virtual <code>CFVariable</code>.</li>
 <li>Fixed indexing of numeric axis with one-sided boundary values.</li>
+<li>Axes are built from the dimension ids of the netCDF variables, following the scoping rules of CF section 2.7 for groups. An axis is created for every dimension that is used by a variable, a discrete axis if there is no coordinate variable for the dimension.</li>
+<li>
+<code>NC_CHAR</code> labels and character axes can be subset, also repeatedly, and are read in chunks like other data.</li>
+<li>
+<code>CFVariable$raw()</code> sets the names of discrete axes as dimnames.</li>
+<li>Fixed saving a data set opened from a netCDF file to a new file.</li>
+<li>Fixed <code><a href="https://rdrr.io/r/base/append.html" class="external-link">append()</a></code> on numeric, latitude, longitude and vertical axes which only kept the coordinates of the appended axis.</li>
+<li>Fixed <code>CFVariable$data.table()</code> when package <code>data.table</code> is not attached.</li>
+<li>Fixed <code>CFVariable$summarise()</code> on data that is processed in chunks.</li>
+<li>Fixed the WKT2 strings generated for several grid mappings, including Albers equal area, Lambert azimuthal equal area, Mercator, oblique Mercator and sinusoidal, as well as the false easting and northing of EPSG methods, and the lookup of ellipsoids and prime meridians.</li>
+<li>Fixed <code>CFDataset$objects_by_standard_name()</code> and <code><a href="../reference/dimnames.html">dimnames()</a></code> of a <code>CFDataset</code>.</li>
+<li>Fixed renaming of groups, variables and data objects on file.</li>
+<li>The extent of an AOI on an auxiliary longitude-latitude grid is aligned to the resolution of the AOI rather than that of the grid.</li>
+<li>Fixed the name of a data set opened from a Windows file path.</li>
+<li>Fixed <code><a href="../reference/as_CF.html">as_CF()</a></code> for a <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRaster</a></code> whose layer names do not start with the variable name, or with variable names that share a prefix.</li>
+<li>Package <code>xml2</code> is now listed in Suggests.</li>
 <li>Suggests packages <code>zarr</code> and <code>geozarr</code>.</li>
 <li>Bumped R version to 4.4.</li>
 <li>Multiple minor fixes.</li>
