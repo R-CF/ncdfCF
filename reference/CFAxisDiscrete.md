@@ -276,7 +276,7 @@ Append a vector of values at the end of the current values of the axis.
 
 #### Usage
 
-    CFAxisDiscrete$append(from)
+    CFAxisDiscrete$append(from, group)
 
 #### Arguments
 

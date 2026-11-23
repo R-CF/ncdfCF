@@ -235,7 +235,7 @@ axis.
 
 #### Usage
 
-    CFAxisLongitude$append(from)
+    CFAxisLongitude$append(from, group)
 
 #### Arguments
 

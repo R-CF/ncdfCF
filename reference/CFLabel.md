@@ -38,7 +38,9 @@ which is an axis with character labels.
 - `dimid`:
 
   The netCDF dimension id of this label set. Setting this value to
-  anything other than the correct value will lead to disaster.
+  anything other than the correct value will lead to disaster. The value
+  is `NA` when there is no netCDF dimension, such as for a label set
+  that has not been written to file.
 
 ## Methods
 
@@ -223,7 +225,7 @@ Retrieve a subset of the labels.
 
 #### Usage
 
-    CFLabel$subset(name, group, rng)
+    CFLabel$subset(name = "", group, rng)
 
 #### Arguments
 

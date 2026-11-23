@@ -155,6 +155,7 @@ current group.</p></dd>
 <li><p><a href="#method-CFGroup-objects"><code>CFGroup$objects()</code></a></p></li>
 <li><p><a href="#method-CFGroup-find_by_name"><code>CFGroup$find_by_name()</code></a></p></li>
 <li><p><a href="#method-CFGroup-add_variable"><code>CFGroup$add_variable()</code></a></p></li>
+<li><p><a href="#method-CFGroup-detach"><code>CFGroup$detach()</code></a></p></li>
 <li><p><a href="#method-CFGroup-write"><code>CFGroup$write()</code></a></p></li>
 <li><p><a href="#method-CFGroup-write_variables"><code>CFGroup$write_variables()</code></a></p></li>
 <li><p><a href="#method-CFGroup-write_geozarr"><code>CFGroup$write_geozarr()</code></a></p></li>
@@ -164,7 +165,6 @@ current group.</p></dd>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_as_list"><a href="CFObject.html#method-attributes_as_list"><code>CFObject$attributes_as_list()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href="CFObject.html#method-attributes_identical"><code>CFObject$attributes_identical()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href="CFObject.html#method-delete_attribute"><code>CFObject$delete_attribute()</code></a></span></li>
-  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href="CFObject.html#method-detach"><code>CFObject$detach()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href="CFObject.html#method-print_attributes"><code>CFObject$print_attributes()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href="CFObject.html#method-set_attribute"><code>CFObject$set_attribute()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href="CFObject.html#method-write_attributes"><code>CFObject$write_attributes()</code></a></span></li>
@@ -441,16 +441,16 @@ associated objects will be stored in this group.</p></dd>
 
 </div>
 
-<p></p><hr><a id="method-CFGroup-write"></a><div class="section">
-<h3 id="cfgroup-write-"><code>CFGroup$write()</code><a class="anchor" aria-label="anchor" href="#cfgroup-write-"></a></h3>
-<p>Write the group to file, including its attributes, if it
-doesn't already exist.</p><div class="section">
+<p></p><hr><a id="method-CFGroup-detach"></a><div class="section">
+<h3 id="cfgroup-detach-"><code>CFGroup$detach()</code><a class="anchor" aria-label="anchor" href="#cfgroup-detach-"></a></h3>
+<p>Detach the group from its netCDF resource, so that it will
+be written to a new resource.</p><div class="section">
 <h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFGroup</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span>recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFGroup</span><span class="op">$</span><span class="kw">detach</span><span class="op">(</span>recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div><p></p><div class="section">
 <h4 id="arguments-11">Arguments<a class="anchor" aria-label="anchor" href="#arguments-11"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>recursive</code></dt>
-<dd><p>If <code>TRUE</code> (default), write sub-groups as well.</p></dd>
+<dd><p>If <code>TRUE</code> (default), detach the subgroups as well.</p></dd>
 
 
 </dl><p></p></div>
@@ -461,14 +461,34 @@ doesn't already exist.</p><div class="section">
 
 </div>
 
+<p></p><hr><a id="method-CFGroup-write"></a><div class="section">
+<h3 id="cfgroup-write-"><code>CFGroup$write()</code><a class="anchor" aria-label="anchor" href="#cfgroup-write-"></a></h3>
+<p>Write the group to file, including its attributes, if it
+doesn't already exist.</p><div class="section">
+<h4 id="usage-12">Usage<a class="anchor" aria-label="anchor" href="#usage-12"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFGroup</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span>recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div><p></p><div class="section">
+<h4 id="arguments-12">Arguments<a class="anchor" aria-label="anchor" href="#arguments-12"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>recursive</code></dt>
+<dd><p>If <code>TRUE</code> (default), write sub-groups as well.</p></dd>
+
+
+</dl><p></p></div>
+</div><p></p><div class="section">
+<h4 id="returns-10">Returns<a class="anchor" aria-label="anchor" href="#returns-10"></a></h4>
+<p>Self, invisibly.</p>
+</div>
+
+</div>
+
 <p></p><hr><a id="method-CFGroup-write_variables"></a><div class="section">
 <h3 id="cfgroup-write-variables-"><code>CFGroup$write_variables()</code><a class="anchor" aria-label="anchor" href="#cfgroup-write-variables-"></a></h3>
 <p>Write data variables in the group to file, including its
 associated objects, if it doesn't already exist.</p><div class="section">
-<h4 id="usage-12">Usage<a class="anchor" aria-label="anchor" href="#usage-12"></a></h4>
+<h4 id="usage-13">Usage<a class="anchor" aria-label="anchor" href="#usage-13"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFGroup</span><span class="op">$</span><span class="fu">write_variables</span><span class="op">(</span>pack <span class="op">=</span> <span class="cn">FALSE</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div><p></p><div class="section">
-<h4 id="arguments-12">Arguments<a class="anchor" aria-label="anchor" href="#arguments-12"></a></h4>
+<h4 id="arguments-13">Arguments<a class="anchor" aria-label="anchor" href="#arguments-13"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>pack</code></dt>
 <dd><p>Logical to indicate if the data should be packed. Packing is
 only useful for numeric data; packing is not performed on integer
@@ -482,7 +502,7 @@ as well.</p></dd>
 
 </dl><p></p></div>
 </div><p></p><div class="section">
-<h4 id="returns-10">Returns<a class="anchor" aria-label="anchor" href="#returns-10"></a></h4>
+<h4 id="returns-11">Returns<a class="anchor" aria-label="anchor" href="#returns-11"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 
@@ -492,10 +512,10 @@ as well.</p></dd>
 <h3 id="cfgroup-write-geozarr-"><code>CFGroup$write_geozarr()</code><a class="anchor" aria-label="anchor" href="#cfgroup-write-geozarr-"></a></h3>
 <p>Write this group to a Zarr store. Iterate over contained
 objects and walk through the hierarchy.</p><div class="section">
-<h4 id="usage-13">Usage<a class="anchor" aria-label="anchor" href="#usage-13"></a></h4>
+<h4 id="usage-14">Usage<a class="anchor" aria-label="anchor" href="#usage-14"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFGroup</span><span class="op">$</span><span class="fu">write_geozarr</span><span class="op">(</span><span class="va">grp</span>, external <span class="op">=</span> <span class="st">""</span>, geolocation <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div><p></p><div class="section">
-<h4 id="arguments-13">Arguments<a class="anchor" aria-label="anchor" href="#arguments-13"></a></h4>
+<h4 id="arguments-14">Arguments<a class="anchor" aria-label="anchor" href="#arguments-14"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>grp</code></dt>
 <dd><p>The <code>zarr_group</code> instance to write to.</p></dd>
 
@@ -510,7 +530,7 @@ in the Zarr store.</p></dd>
 
 </dl><p></p></div>
 </div><p></p><div class="section">
-<h4 id="returns-11">Returns<a class="anchor" aria-label="anchor" href="#returns-11"></a></h4>
+<h4 id="returns-12">Returns<a class="anchor" aria-label="anchor" href="#returns-12"></a></h4>
 <p>Self, invisibly.</p>
 </div>
 

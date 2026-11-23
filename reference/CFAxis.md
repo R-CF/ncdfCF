@@ -26,7 +26,9 @@ selectable through methods and fields in this class.
 - `dimid`:
 
   The netCDF dimension id of this axis. Setting this value to anything
-  other than the correct value will lead to disaster.
+  other than the correct value will lead to disaster. The value is `NA`
+  when there is no netCDF dimension, such as for a scalar axis or an
+  axis that has not been written to file.
 
 - `length`:
 

@@ -327,7 +327,7 @@ setting them back for this axis.
 
 #### Usage
 
-    CFAxisVertical$append(from)
+    CFAxisVertical$append(from, group)
 
 #### Arguments
 

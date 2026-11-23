@@ -115,6 +115,8 @@ very well invalidate the CF objects or even the netCDF file.
 
 - [`CFGroup$add_variable()`](#method-CFGroup-add_variable)
 
+- [`CFGroup$detach()`](#method-CFGroup-detach)
+
 - [`CFGroup$write()`](#method-CFGroup-write)
 
 - [`CFGroup$write_variables()`](#method-CFGroup-write_variables)
@@ -129,7 +131,6 @@ Inherited methods
 - [`CFObject$attributes_as_list()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_as_list)
 - [`CFObject$attributes_identical()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-attributes_identical)
 - [`CFObject$delete_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-delete_attribute)
-- [`CFObject$detach()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-detach)
 - [`CFObject$print_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-print_attributes)
 - [`CFObject$set_attribute()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-set_attribute)
 - [`CFObject$write_attributes()`](https://r-cf.github.io/ncdfCF/reference/CFObject.html#method-write_attributes)
@@ -420,6 +421,27 @@ linked from the variable, otherwise an error is thrown.
 #### Returns
 
 Argument `var`, invisibly.
+
+------------------------------------------------------------------------
+
+### `CFGroup$detach()`
+
+Detach the group from its netCDF resource, so that it will be written to
+a new resource.
+
+#### Usage
+
+    CFGroup$detach(recursive = TRUE)
+
+#### Arguments
+
+- `recursive`:
+
+  If `TRUE` (default), detach the subgroups as well.
+
+#### Returns
+
+Self, invisibly.
 
 ------------------------------------------------------------------------
 

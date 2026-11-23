@@ -76,7 +76,9 @@ processing is selectable through methods and fields in this class.</p>
 
     <dt><code>dimid</code></dt>
 <dd><p>The netCDF dimension id of this axis. Setting this value to
-anything other than the correct value will lead to disaster.</p></dd>
+anything other than the correct value will lead to disaster.
+The value is <code>NA</code> when there is no netCDF dimension, such as for a
+scalar axis or an axis that has not been written to file.</p></dd>
 
 
     <dt><code>length</code></dt>

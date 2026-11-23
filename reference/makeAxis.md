@@ -12,7 +12,7 @@ returned.
 ``` r
 makeAxis(
   name,
-  orientation,
+  orientation = "",
   values,
   bounds = NULL,
   attributes = data.frame(),

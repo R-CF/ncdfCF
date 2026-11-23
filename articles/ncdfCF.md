@@ -796,6 +796,9 @@ head(dt <- ts$data.table())
 #> 4:      29.2       -1 2016-01-01T09:00:00 298.8195
 #> 5:      29.3       -1 2016-01-01T09:00:00 300.1376
 #> 6:      29.4       -1 2016-01-01T09:00:00 300.8583
+```
+
+``` r
 
 #install.packages("terra")
 suppressMessages(library(terra))

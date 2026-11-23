@@ -81,7 +81,9 @@ one, upon first access and cached thereafter.</p></dd>
 
     <dt><code>dimid</code></dt>
 <dd><p>The netCDF dimension id of this label set. Setting this
-value to anything other than the correct value will lead to disaster.</p></dd>
+value to anything other than the correct value will lead to disaster.
+The value is <code>NA</code> when there is no netCDF dimension, such as for a
+label set that has not been written to file.</p></dd>
 
 
 </dl><p></p></div>
@@ -244,7 +246,7 @@ coordinates.</p>
 <h3 id="cflabel-subset-"><code>CFLabel$subset()</code><a class="anchor" aria-label="anchor" href="#cflabel-subset-"></a></h3>
 <p>Retrieve a subset of the labels.</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFLabel</span><span class="op">$</span><span class="fu">subset</span><span class="op">(</span><span class="va">name</span>, <span class="va">group</span>, <span class="va">rng</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">CFLabel</span><span class="op">$</span><span class="fu">subset</span><span class="op">(</span>name <span class="op">=</span> <span class="st">""</span>, <span class="va">group</span>, <span class="va">rng</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div><p></p><div class="section">
 <h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>name</code></dt>

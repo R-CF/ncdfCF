@@ -233,7 +233,7 @@ axis.
 
 #### Usage
 
-    CFAxisLatitude$append(from)
+    CFAxisLatitude$append(from, group)
 
 #### Arguments
 
