@@ -131,6 +131,11 @@ test_that("The name of a data set without .nc extension is the file name", {
   expect_equal(open_ncdf(fn)$name, basename(fn))
 })
 
+test_that("The name of a data set drops the .nc or .ncml extension", {
+  fn <- .write_nc(c(x = 1L), list(list(name = "v", type = "NC_FLOAT", dims = "x", data = 1)))
+  expect_equal(open_ncdf(fn)$name, sub("\\.nc$", "", basename(fn)))
+})
+
 test_that("A data set is written to a Zarr store", {
   skip_if_not_installed("zarr")
   skip_if_not_installed("geozarr")

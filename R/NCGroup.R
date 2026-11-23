@@ -266,21 +266,21 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @description Create a new group as a sub-group of the current group. This
     #' writes the new group to the netCDF resource, but only if it is open for
     #' writing.
+    #' @param name Character string with the name of the sub-group to create.
     #' @param CFgroup The [CFGroup] associated with this NC group.
     #' @return The newly created group as a `NCGroup` instance, invisibly.
-    create_group = function(CFgroup) {
-      # fix this here
-      if (length(nm) != 1L || !.is_valid_name(nm))
-        stop("Argument `nm` must be a single character string with a netCDF-compliant value.", call. = FALSE)
+    create_group = function(name, CFgroup) {
+      if (length(name) != 1L || !.is_valid_name(name))
+        stop("Argument `name` must be a single character string with a netCDF-compliant value", call. = FALSE)
       if (!self$can_write)
-        stop("NetCDF resource is not writeable.", call. = FALSE)
-      if (nm %in% names(self$subgroups))
-        stop("Subgroup with the same name already exists.", call. = FALSE)
+        stop("NetCDF resource is not writeable", call. = FALSE)
+      if (name %in% names(self$subgroups))
+        stop("Subgroup with the same name already exists", call. = FALSE)
 
-      g <- RNetCDF::grp.def.nc(self$handle, nm)
-      grp <- NCGroup$new(id = as.integer(g$self), name = nm, parent = self,
+      g <- RNetCDF::grp.def.nc(self$handle, name)
+      grp <- NCGroup$new(id = as.integer(g$self), name = name, parent = self,
                          resource = private$.resource, CFGroup = CFgroup)
-      self$subgroups <- c(self$subgroups, setNames(list(grp), nm))
+      self$subgroups <- c(self$subgroups, setNames(list(grp), name))
       invisible(grp)
     },
 

@@ -383,11 +383,13 @@ as_CF.SpatRaster <- function(name, obj) {
     axes[["y"]]$set_attribute("standard_name", "NC_CHAR", "projected_y_coordinate")
   }
 
+  # Layers are selected by their source: layer names are unrelated to varnames
+  sid <- rep(seq_len(num_vars), terra::sources(obj, nlyr = TRUE)$nlyr)
   out <- vector("list", num_vars)
   for (v in seq_along(vars)) {
     var <- vars[v]
     # FIXME: Test if name is valid. If not, make it so.
-    rv <- obj[var]
+    rv <- obj[[which(sid == v)]]
     longname <- terra::longnames(rv)
 
     if (terra::has.time(rv)) {

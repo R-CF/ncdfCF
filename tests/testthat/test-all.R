@@ -34,7 +34,7 @@ test_that("sample data", {
   lst <- list(-90:-70, 40:50)
   names(lst) <- aux_names
   sub <- tm$subset(lst)
-  expect_equal(sapply(sub$axes, function (x) x$length), c(lon = 31, lat = 23, time = 1, height = 1))
+  expect_equal(sapply(sub$axes, function (x) x$length), c(lon = 32, lat = 23, time = 1, height = 1))
 })
 
 # Offline data, not available to CRAN or Github

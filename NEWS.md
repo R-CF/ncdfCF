@@ -19,6 +19,20 @@
 - Fixed writing a `CFVariable` to file having a length-1 axis in X-Y-Z-T.
 - Fixed retrieving data by index from virtual `CFVariable`.
 - Fixed indexing of numeric axis with one-sided boundary values.
+- Axes are built from the dimension ids of the netCDF variables, following the scoping rules of CF section 2.7 for groups. An axis is created for every dimension that is used by a variable, a discrete axis if there is no coordinate variable for the dimension.
+- `NC_CHAR` labels and character axes can be subset, also repeatedly, and are read in chunks like other data.
+- `CFVariable$raw()` sets the names of discrete axes as dimnames.
+- Fixed saving a data set opened from a netCDF file to a new file.
+- Fixed `append()` on numeric, latitude, longitude and vertical axes which only kept the coordinates of the appended axis.
+- Fixed `CFVariable$data.table()` when package `data.table` is not attached.
+- Fixed `CFVariable$summarise()` on data that is processed in chunks.
+- Fixed the WKT2 strings generated for several grid mappings, including Albers equal area, Lambert azimuthal equal area, Mercator, oblique Mercator and sinusoidal, as well as the false easting and northing of EPSG methods, and the lookup of ellipsoids and prime meridians.
+- Fixed `CFDataset$objects_by_standard_name()` and `dimnames()` of a `CFDataset`.
+- Fixed renaming of groups, variables and data objects on file.
+- The extent of an AOI on an auxiliary longitude-latitude grid is aligned to the resolution of the AOI rather than that of the grid.
+- Fixed the name of a data set opened from a Windows file path.
+- Fixed `as_CF()` for a `terra::SpatRaster` whose layer names do not start with the variable name, or with variable names that share a prefix.
+- Package `xml2` is now listed in Suggests.
 - Suggests packages `zarr` and `geozarr`.
 - Bumped R version to 4.4.
 - Multiple minor fixes.

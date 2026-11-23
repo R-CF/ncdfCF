@@ -90,12 +90,10 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
           aoi$extent <- self$extent
           expand <- TRUE
         }
-      lonExt <- aoi$lonMax - aoi$lonMin
-      latExt <- aoi$latMax - aoi$latMin
 
       # Resolution, use supplied or calculate from grid
       if (is.null(aoi$resolution)) {
-        center <- self$sample_index(aoi$lonMin + lonExt * 0.5, aoi$latMin + latExt * 0.5)[1L,]
+        center <- self$sample_index((aoi$lonMin + aoi$lonMax) * 0.5, (aoi$latMin + aoi$latMax) * 0.5)[1L,]
         if (is.na(center[1L]))
           stop("Center of AOI contains no data so resolution cannot be derived. Please specify explicitly.", call. = FALSE)
         private$set_resolution(center)
@@ -107,12 +105,11 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
         aoi$extent <- aoi$extent + c(-halfres[1L], halfres[1L], -halfres[2L], halfres[2L])
       }
 
-      # Update upper-left to match resolution
-      aoi$lonMax <- if (self$extent[1L] < 0)
-                      min(aoi$lonMin + private$.res[1L] * ceiling(lonExt / private$.res[1L]), 180)
-                    else
-                      min(aoi$lonMin + private$.res[1L] * ceiling(lonExt / private$.res[1L]), 360)
-      aoi$latMax <- min(aoi$latMin + private$.res[2L] * ceiling(latExt / private$.res[2L]), 90)
+      # Update upper-right to a whole number of AOI grid cells
+      res <- aoi$resolution
+      cells <- ceiling((aoi$extent[c(2L, 4L)] - aoi$extent[c(1L, 3L)]) / res - CF$eps)
+      aoi$lonMax <- min(aoi$lonMin + res[1L] * cells[1L], if (self$extent[1L] < 0) 180 else 360)
+      aoi$latMax <- min(aoi$latMin + res[2L] * cells[2L], 90)
 
       invisible(self)
     }

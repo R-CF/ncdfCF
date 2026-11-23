@@ -164,3 +164,31 @@ test_that("geom_ncdf() checks its data", {
   expect_error(geom_ncdf(data = 1:3), "must be a CFVariable")
   expect_error(geom_ncdf(data = as_CF("v", 1)), "Not enough data to plot")
 })
+
+test_that("The AOI extent is aligned to the resolution of the AOI, not of the grid", {
+  ll <- .nam44()$gridLongLat
+  ll$aoi <- aoi(-90, -70, 40, 50, 0.5)
+  expect_equal(ll$aoi$extent, c(-90, -70, 40, 50))
+  expect_equal(dim(ll$grid_index()), c(40L, 20L))
+  ll$aoi <- aoi(-90, -70.2, 40, 49.9, 0.5)
+  expect_equal(ll$aoi$extent, c(-90, -70, 40, 50))
+})
+
+test_that("An AOI with a derived resolution covers a whole number of grid cells", {
+  ll <- .nam44()$gridLongLat
+  ll$aoi <- aoi(-90, -70, 40, 50)
+  a <- ll$aoi
+  cells <- (a$extent[c(2L, 4L)] - a$extent[c(1L, 3L)]) / a$resolution
+  expect_equal(cells, round(cells))
+})
+
+test_that("A full-extent AOI keeps the expansion by half a cell on all sides", {
+  ll <- .nam44()$gridLongLat
+  ext <- ll$extent
+  ll$aoi <- aoi(resX = 0.5)
+  a <- ll$aoi
+  expect_equal(a$extent[c(1L, 3L)], ext[c(1L, 3L)] - 0.25)
+  expect_true(all(a$extent[c(2L, 4L)] >= ext[c(2L, 4L)] + 0.25 - 1e-9))
+  cells <- (a$extent[c(2L, 4L)] - a$extent[c(1L, 3L)]) / 0.5
+  expect_equal(cells, round(cells))
+})

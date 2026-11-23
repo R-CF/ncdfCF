@@ -48,9 +48,7 @@ CFDataset <- R6::R6Class("CFDataset",
     initialize = function(resource, format) {
       if (inherits(resource, "NCResource")) {
         uri <- resource$uri
-        self$name <- regmatches(uri, regexec("([^/]*)\\.nc(ml)?$", uri))[[1L]][2L]
-        if (is.na(self$name))
-          self$name <- regmatches(uri, regexec("([^/]*)$", uri))[[1L]][2L]
+        self$name <- sub("\\.nc(ml)?$", "", basename(uri))
 
         private$.res <- resource
         private$.format <- format

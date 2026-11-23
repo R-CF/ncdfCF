@@ -141,3 +141,28 @@ test_that("as_CF() of a projected SpatRaster uses projection coordinates", {
   expect_equal(names(v$axes)[1:2], c("x", "y"))
   expect_equal(v$axes[["x"]]$attribute("standard_name"), "projected_x_coordinate")
 })
+
+test_that("as_CF() of a SpatRaster does not depend on the layer names", {
+  skip_if_not_installed("terra")
+  r <- terra::rast(nrows = 2, ncols = 2, nlyrs = 3, crs = "EPSG:4326", vals = 1:12)
+  terra::varnames(r) <- "tas"
+  names(r) <- c("jan", "feb", "mar")
+  v <- as_CF("t", r)
+  expect_equal(v$axes[["layers"]]$values, c("jan", "feb", "mar"))
+  expect_equal(dim(v$raw()), c(2L, 2L, 3L))
+})
+
+test_that("as_CF() of a SpatRaster keeps variables apart whose names share a prefix", {
+  skip_if_not_installed("terra")
+  a <- terra::rast(nrows = 2, ncols = 2, nlyrs = 2, crs = "EPSG:4326", vals = 1:8)
+  names(a) <- paste0("tas_", 1:2)
+  terra::varnames(a) <- "tas"
+  b <- terra::rast(nrows = 2, ncols = 2, nlyrs = 3, crs = "EPSG:4326", vals = 101:112)
+  names(b) <- paste0("tasmax_", 1:3)
+  terra::varnames(b) <- "tasmax"
+  ds <- as_CF("ds", c(a, b))
+  expect_equal(ds[["tas"]]$axes[["layers"]]$length, 2L)
+  expect_equal(ds[["tasmax"]]$axes[["layers"]]$length, 3L)
+  expect_true(all(ds[["tas"]]$raw() <= 8))
+  expect_true(all(ds[["tasmax"]]$raw() > 100))
+})

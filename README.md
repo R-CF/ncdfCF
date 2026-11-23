@@ -16,6 +16,8 @@ v3](https://img.shields.io/badge/License-MIT-blue.svg)](https://mit-license.org)
 [![Last
 commit](https://img.shields.io/github/last-commit/R-CF/ncdfCF)](https://github.com/R-CF/ncdfCF/commits/main)
 [![R-CMD-check](https://github.com/R-CF/ncdfCF/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/R-CF/ncdfCF/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/R-CF/ncdfCF/graph/badge.svg)](https://app.codecov.io/gh/R-CF/ncdfCF)
 <!-- badges: end -->
 
 The `ncdfCF` package provides an easy to use interface to netCDF
@@ -80,7 +82,7 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 (obj <- as_CF("a_new_CF_object", arr))
 #> <Variable> a_new_CF_object 
 #> 
-#> Values: [-2.54328 ... 2.501505] 
+#> Values: [-2.566172 ... 2.779997] 
 #>     NA: 0 (0.0%)
 #> 
 #> Axes:
@@ -90,8 +92,8 @@ dimnames(arr) <- list(lat = c(45, 44, 43, 42, 41, 40), lon = c(0, 1, 2, 3, 4),
 #>  T    time 4      [2025-07-01 ... 2025-07-04] days since 1970-01-01T00:00:00
 #> 
 #> Attributes:
-#>  name         type      length value             
-#>  actual_range NC_DOUBLE 2      -2.54328, 2.501505
+#>  name         type      length value              
+#>  actual_range NC_DOUBLE 2      -2.566172, 2.779997
 
 # Axes are of a specific type and have basic attributes set
 obj$axes[["lat"]]

@@ -18,3 +18,5 @@
 ^design\..*
 ^\.positai$
 ^\.claude$
+^TODO$
+^codecov\.yml$
