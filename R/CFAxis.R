@@ -24,7 +24,7 @@ CFAxis <- R6::R6Class("CFAxis",
     .unlimited = FALSE,
 
     # The dimension id of the axis. This is set upon initialization.
-    .dimid = -1L,
+    .dimid = NA_integer_,
 
     # The CFBounds instance of this axis, if set, NULL otherwise.
     .bounds = NULL,
@@ -117,7 +117,7 @@ CFAxis <- R6::R6Class("CFAxis",
       super$initialize(var, group = group, values = values, start = start, count = count, attributes = attributes)
       if (inherits(var, "NCVariable")) {
         private$.unlimited <- if (private$.NCobj$ndims) private$.NCobj$dimension(1L)$unlim else FALSE
-        private$.dimid <- private$.NCobj$dimids[1L]
+        private$.dimid <- if (private$.NCobj$ndims) private$.NCobj$dimids[1L] else NA_integer_
       }
 
       private$.orient <- orientation
@@ -518,6 +518,8 @@ CFAxis <- R6::R6Class("CFAxis",
 
     #' @field dimid The netCDF dimension id of this axis. Setting this value to
     #' anything other than the correct value will lead to disaster.
+    #' The value is `NA` when there is no netCDF dimension, such as for a
+    #' scalar axis or an axis that has not been written to file.
     dimid = function(value) {
       if (missing(value))
         private$.dimid

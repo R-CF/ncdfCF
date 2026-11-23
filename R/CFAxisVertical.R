@@ -379,25 +379,18 @@ CFAxisVertical <- R6::R6Class("CFAxisVertical",
     #' @param group The [CFGroup] where the copy of this axis will live.
     #' @return A new `CFAxisVertical` instance with values from this axis and
     #'   the `from` axis appended.
-    append = function(from) {
+    append = function(from, group) {
       if (super$can_append(from) && .c_is_monotonic(self$values, from$values)) {
-        ax <- CFAxisVertical$new(self$name, group = group, values = c(private$values, from$values),
-                                 attributes = self$attributes)
+        # The new axis has no parametric terms
+        atts <- self$attributes
+        atts <- atts[atts$name != "formula_terms", ]
+        ax <- CFAxisVertical$new(self$name, group = group, values = c(self$values, from$values),
+                                 attributes = atts)
 
         if (!is.null(private$.bounds)) {
           new_bnds <- private$.bounds$append(from$bounds, group)
           if (!is.null(new_bnds))
             ax$bounds <- new_bnds
-        }
-
-        if (self$is_parametric) {
-          # Delete all references to parametric terms
-          private$.parameter_name <- ""
-          private$.name_computed <- ""
-          private$.units_computed <- ""
-          private$.terms <- NULL
-          private$.computed_values <- NULL
-          self$delete_attribute("formula_terms")
         }
 
         ax

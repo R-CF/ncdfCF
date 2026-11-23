@@ -142,7 +142,7 @@ CFAxisDiscrete <- R6::R6Class("CFAxisDiscrete",
     #' @param group The [CFGroup] where the copy of this axis will live.
     #' @return A new `CFAxisDiscrete` instance with a length that is the sum of
     #'   the lengths of this axis and the `from` axis.
-    append = function(from) {
+    append = function(from, group) {
       if (super$can_append(from)) {
         CFAxisDiscrete$new(self$name, group = group, start = private$.values[1L], count = self$length + from$length)
       } else

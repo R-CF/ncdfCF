@@ -22,9 +22,9 @@
 open_ncdf <- function(resource, write = FALSE) {
   # Parameter check
   if (length(resource) != 1L && !is.character(resource))
-    stop("Argument `resource` must be a single character string pointing to a netCDF resource.", call. = FALSE) # nocov
+    stop("Argument `resource` must be a single character string pointing to a netCDF resource", call. = FALSE) # nocov
   if (length(write) != 1L && !is.logical(write))
-    stop("Argument `write` must be a single logical value.", call. = FALSE) #nocov
+    stop("Argument `write` must be a single logical value", call. = FALSE) #nocov
   write <- write && file.exists(resource)
 
   res <- NCResource$new(resource, write)
@@ -38,42 +38,14 @@ open_ncdf <- function(resource, write = FALSE) {
   # Read all netCDF groups recursively
   root <- .readGroup(ds, h, vector("integer"))
 
-  # Identify axes: NUG coordinate variables
+  # Axes for all domain dimensions, from coordinate variables or discrete
   axes <- .buildAxes(root)
 
-  # Find the id's of any "bounds" variables
-  bnds <- sapply(root$NC$NCvars, function(v) { # FIXME: what about dims in subgroups?
-    nm <- v$attribute("bounds")
-    if (length(nm) > 1L || !is.character(nm) || is.na(nm)) # "bounds" attribute may have other information such as lat/long
-      nm <- v$attribute("climatology_bounds")
-    if (!is.na(nm)) {
-      obj <- v$group$find_by_name(nm)
-      if (is.null(obj)) {
-        warning("Unmatched `bounds` value '", nm, "' found in variable '", v$name, "'.", call. = FALSE)
-        -1L
-      } else obj$dimids[1L]    # By definition, bounds dimid comes first
-    } else -1L # Flag no bounds
-  })
-  if (length(bnds))
-    bnds <- unique(bnds[which(bnds > -1L)])
-
-  # Mop up any non-CV dimensions except bounds - additional to CF Conventions
-  all_axis_dims <- sapply(axes, function(x) x$dimid)
-  all_axis_dims <- all_axis_dims[!is.na(all_axis_dims)]
-  allNCvars <- .listNCvars(root$NC)
-  all_var_dims <- unique(unlist(sapply(allNCvars, function(v) v$dimids)))
-  all_var_dims <- all_var_dims[!is.na(all_var_dims)]
-  add_dims <- all_var_dims[!(all_var_dims %in% c(all_axis_dims, bnds))]
-  if (length(add_dims)) {
-    axes <- append(axes, .addBareDimensions(root, add_dims))
-    axes <- axes[lengths(axes) > 0L]
-  }
-
   # Auxiliary CVs and scalar CVs
-  .makeCoordinates(root)
+  .makeCoordinates(root, axes)
 
   # Ancillary variables
-  .makeAncillary(root)
+  .makeAncillary(root, axes)
 
   # Cell measure variables
   .makeCellMeasures(root, axes)
@@ -226,34 +198,71 @@ peek_ncdf <- function(resource) {
   vars
 }
 
-#' Build the axes defined in this group. The axes are added to the CF group.
-#' @param grp The CF group to build axes for
-#' @return A list with axes built, including from subgroups
+#' Build the axes for all domain dimensions in the resource
+#'
+#' Axes are identified by dimension id, which is unique across the resource.
+#' A coordinate variable (a 1D NC variable with the same name as its dimension)
+#' becomes an axis in the group of the coordinate variable. A domain dimension
+#' without a coordinate variable becomes a [CFAxisDiscrete] in the group where
+#' the dimension is defined. Dimensions that do not index the domain of any
+#' variable - the string-length dimension of `NC_CHAR` variables and the vertex
+#' dimension of boundary variables - do not get an axis.
+#' @param root The root CF group.
+#' @return A list with the axes, in no particular order. Scalar axes are not
+#'   included.
 #' @noRd
-.buildAxes <- function(grp) {
-  nc <- grp$NC
-  if (length(nc$NCvars) > 0L) {
-    dims <- nc$dimensions("all")
-    if (length(dims)) {
-      local_CVs <- Filter(Negate(is.null), lapply(dims, function(d) {
-        # Only accept a variable that is unambiguously the coordinate variable:
-        # 1D and name matches the dimension
-        named <- Filter(function(v) v$ndims == 1L && !is.na(v$dimids[1L]) &&
-                          v$dimids[1L] == d$id && v$name == d$name,
-                        nc$NCvars)
-        if (length(named)) named[[1L]] else NULL
-      }))
-      axes <- lapply(local_CVs, function(v) .makeAxis(grp, v))
-    } else axes <- list()
-  } else axes <- list()
+.buildAxes <- function(root) {
+  ncvars <- .listNCvars(root$NC)
 
-  # Descend into subgroups
-  if (grp$has_subgroups) {
-    ax <- lapply(grp$subgroups, .buildAxes)
-    axes <- append(axes, unlist(ax))
-  }
+  # Coordinate variables
+  cvs <- Filter(function(v) v$ndims == 1L && v$name == v$group$find_dim_by_id(v$dimids)$name, ncvars)
+  axes <- lapply(cvs, function(v) .makeAxis(v$group$CF, v))
+
+  # Discrete axes for domain dimensions without a coordinate variable
+  bnds <- .boundsVariables(ncvars)
+  dom <- lapply(ncvars, function(v) if (!(v$fullname %in% bnds)) .domainDimids(v))
+  need <- setdiff(unlist(dom), sapply(cvs, function(v) v$dimids))
+  if (length(need))
+    axes <- c(axes, .makeDiscreteAxes(root$NC, need))
 
   axes
+}
+
+# The dimension ids of a NC variable that index its domain: all dimensions
+# except the string-length dimension of a NC_CHAR variable, which is the first
+# dimension in R order.
+.domainDimids <- function(v) {
+  d <- v$dimids
+  if (v$vtype == "NC_CHAR" && length(d)) d[-1L] else d
+}
+
+# Full names of the NC variables that are referenced from a "bounds" or
+# "climatology_bounds" attribute of another NC variable.
+.boundsVariables <- function(ncvars) {
+  unlist(lapply(ncvars, function(v) {
+    nm <- v$attribute("bounds")
+    if (length(nm) > 1L || !is.character(nm) || is.na(nm)) # "bounds" attribute may have other information such as lat/long
+      nm <- v$attribute("climatology_bounds")
+    if (is.character(nm) && length(nm) == 1L && !is.na(nm)) {
+      obj <- v$group$find_by_name(nm)
+      if (inherits(obj, "NCVariable")) obj$fullname
+      else warning("Unmatched `bounds` value '", nm, "' found in variable '", v$name, "'", call. = FALSE)
+    }
+  }), use.names = FALSE)
+}
+
+# Create a CFAxisDiscrete for each dimension in `dimids`, in the CF group where
+# the dimension is defined. Argument `nc` is the NC group to start the search
+# from, descending into subgroups.
+.makeDiscreteAxes <- function(nc, dimids) {
+  axes <- lapply(nc$NCdims, function(d) {
+    if (d$id %in% dimids) {
+      ax <- CFAxisDiscrete$new(d$name, nc$CF, count = d$length)
+      ax$dimid <- d$id
+      ax
+    }
+  })
+  c(axes[lengths(axes) > 0L], unlist(lapply(nc$subgroups, .makeDiscreteAxes, dimids = dimids)))
 }
 
 # Create an `CFAxis` from an NC variable and dimension
@@ -278,13 +287,13 @@ peek_ncdf <- function(resource) {
   } else if (length(dim(vals)) == 1L)
     dim(vals) <- NULL
 
+  # Character coordinates, with or without attributes
+  if (var$vtype %in% c("NC_CHAR", "NC_STRING"))
+    return(CFAxisCharacter$new(var, grp, values = vals))
+
   # Does `var` have attributes?
-  if (!nrow(var$attributes)) {
-    # No attributes so nothing left to do
-    if (var$vtype %in% c("NC_CHAR", "NC_STRING"))
-      return(CFAxisCharacter$new(var, grp, values = vals))
-    else return(CFAxisNumeric$new(var, grp, values = vals))
-  }
+  if (!nrow(var$attributes))
+    return(CFAxisNumeric$new(var, grp, values = vals))
 
   # Read some useful attributes
   orient   <- var$attribute("axis")
@@ -328,38 +337,6 @@ peek_ncdf <- function(resource) {
   axis
 }
 
-# Add bare dimensions to the list of axes
-#
-# There are data sets that do not include a CV for identity dimensions, where
-# ancillary CVs define the contents of the axis. This function creates a dummy
-# NCVariable and then builds a bare-bones discrete axis, in the group where the
-# dimension is defined.
-#
-# Argument `grp` is the current CF group to scan, `add_dims` is a vector of
-# dimension ids for which a discrete axis must be created because NC variables
-# refer to the dimension.
-.addBareDimensions <- function(grp, add_dims) {
-  if (length(grp$NC$NCdims) > 0L) {
-    axes <- lapply(grp$NC$NCdims, function(d) {
-      if (d$id %in% add_dims) {
-        nm <- d$name
-        axis <- CFAxisDiscrete$new(nm, grp, count = d$length)
-        axis$dimid <- d$id
-        add_dims <- add_dims[-which(add_dims == d$id)]
-        axis
-      }
-    })
-  } else axes <- list()
-
-  # Descend into subgroups
-  if (length(grp$subgroups) && length(add_dims)) {
-    ax <- lapply(grp$subgroups, function(g) .addBareDimensions(g, add_dims))
-    axes <- append(axes, unlist(ax))
-  }
-
-  axes
-}
-
 #' Make CF constructs for "coordinates" references
 #'
 #' NC variables are scanned for a "coordinates" attribute (which must reference
@@ -372,11 +349,12 @@ peek_ncdf <- function(resource) {
 #' A long-lat auxiliary coordinate variable when both a longitude and latitude
 #' NC variable are found, in the group of the longitude NC variable.
 #' @param grp The CF group to scan.
+#' @param axes List of available CF axes to use with the long-lat grids.
 #' @return Nothing. `CFAxis`, `CFLabel` and `CFAuxiliaryLongLat` instances are
 #'   created in the CF groups corresponding to where the NC variables are found.
 #'   These will later be picked up when `CFVariable` instances are created.
 #' @noRd
-.makeCoordinates <- function(grp) {
+.makeCoordinates <- function(grp, axes) {
   vars <- grp$NC$NCvars
   if (length(vars) > 0L) {
     # Scan each unused NCVariable for the "coordinates" attribute and process.
@@ -435,10 +413,7 @@ peek_ncdf <- function(resource) {
         if ((inherits(varLon, "NCVariable") && inherits(varLat, "NCVariable")) &&
             identical(varLon$dimids, varLat$dimids) &&
             is.null(varLon$group$CF$find_by_name(paste(varLon$name, varLat$name, sep = "_")))) {
-          ax <- lapply(varLon$dimids, function(did) {
-            dname <- varLon$group$find_dim_by_id(did)$name
-            varLon$group$find_by_name(dname)$CF[[1L]] # FIXME: Possibly no underlying NC object
-          })
+          ax <- .buildVariableAxisList(varLon, axes)
           lon <- CFVariable$new(varLon, NULL, ax) # Don't add the auxiliary grids to the output
           lat <- CFVariable$new(varLat, NULL, ax) # group else they'll be considered data variables
           ll <- CFAuxiliaryLongLat$new(lon, lat, bndsLon, bndsLat)
@@ -450,7 +425,7 @@ peek_ncdf <- function(resource) {
 
   # Descend into subgroups
   if (length(grp$subgroups))
-    lapply(grp$subgroups, function(g) .makeCoordinates(g))
+    lapply(grp$subgroups, function(g) .makeCoordinates(g, axes))
 }
 
 #' Make CF constructs for "ancillary_variables" references
@@ -460,11 +435,12 @@ peek_ncdf <- function(resource) {
 #' is converted into a data variable and associated with the referring data
 #' variable (and not separately).
 #' @param grp The group to scan.
+#' @param axes List of available CF axes to use with the ancillary variables.
 #' @return Nothing. `CFVariable` instances are created in the groups where the
 #'   NC variables are found. These will later be picked up when referring
 #'   `CFVariable` instances are created.
 #' @noRd
-.makeAncillary <- function(grp) {
+.makeAncillary <- function(grp, axes) {
   vars <- grp$NC$NCvars
   if (length(vars) > 0L)
     for (refid in seq_along(vars)) {
@@ -475,19 +451,15 @@ peek_ncdf <- function(resource) {
           anc <- grp$NC$find_by_name(ancillary[aid])
           if (is.null(anc))
             warning("Unmatched `ancillary_variables` value '", ancillary[aid], "' found in variable '", v$name, "'", call. = FALSE)
-          else {
-            ax <- lapply(anc$dimids, function(did) {
-              grp$find_by_name(anc$group$find_dim_by_id(did)$name)
-            })
-            CFVariable$new(anc, anc$group$CF, ax)
-          }
+          else if (!length(anc$CF))
+            CFVariable$new(anc, anc$group$CF, .buildVariableAxisList(anc, axes))
         }
       }
     }
 
   # Descend into subgroups
   if (length(grp$subgroups))
-    lapply(grp$subgroups, function(g) .makeAncillary(g))
+    lapply(grp$subgroups, function(g) .makeAncillary(g, axes))
 }
 
 #' @description Configure the formula terms of a parametric vertical axis. If
@@ -513,7 +485,8 @@ peek_ncdf <- function(resource) {
         else {
           ncvar <- ax$NC$group$find_by_name(v)
           if (is.null(ncvar)) {
-            CFVerticalParametricTerm$new(0, ax$group, NULL)
+            # Term not on file: no data, so a value of 0, not added to a group
+            CFVerticalParametricTerm$new(v, NULL, list())
           } else {
             local_axes <- .buildVariableAxisList(ncvar, axes)
             CFVerticalParametricTerm$new(ncvar, ax$group, local_axes)
@@ -724,28 +697,38 @@ peek_ncdf <- function(resource) {
 }
 
 #' Build a list of axes that a NC variable references. These are being
-#' referenced by a dimid from the NC variable
+#' referenced by a dimid from the NC variable. The string-length dimension of a
+#' `NC_CHAR` variable is not included. When a dimension has axes in multiple
+#' groups, the axis nearest to the NC variable is selected: in its own group,
+#' else in the closest ancestor group, else the first one found.
 #'
 #' @param ncvar The NC variable to build the axis list for.
 #' @param axes List of available CF axes to use with the CF variables.
-#' @return List of axes for the NC variable.
+#' @return List of axes for the NC variable, `NULL` with a warning if an axis
+#'   is not found for a dimension.
 #' @noRd
 .buildVariableAxisList <- function(ncvar, axes) {
-  xids <- lapply(axes, function(x) x$dimid)
-  nd <- ncvar$ndims
-  if (nd > 0L) {
-    ax <- vector("list", nd)
-    for (x in 1:nd) {
-      ndx <- which(sapply(xids, function(e) ncvar$dimids[x] %in% e))
-      if (!length(ndx)) {
-        warning(paste0("Possible variable '", ncvar$name, "' cannot be constructed because of unknown axis identifier ", ncvar$dimids[x]))
-        return(NULL)
-      }
-      ax[[x]] <- axes[[ndx]]
+  dids <- .domainDimids(ncvar)
+  if (!length(dids)) return(list())
+
+  xids <- vapply(axes, function(x) as.integer(x$dimid[1L]), integer(1L))
+  ax <- lapply(dids, function(did) {
+    cand <- axes[which(xids == did)]
+    if (length(cand) < 2L) return(cand[1L][[1L]])
+    g <- ncvar$group
+    while (inherits(g, "NCGroup")) {
+      here <- Filter(function(a) a$group$fullname == g$fullname, cand)
+      if (length(here)) return(here[[1L]])
+      g <- g$parent
     }
-    names(ax) <- sapply(ax, function(x) x$name)
-    ax
-  } else list()
+    cand[[1L]]
+  })
+  if (any(miss <- vapply(ax, is.null, logical(1L)))) {
+    warning(paste0("Possible variable '", ncvar$name, "' cannot be constructed because of unknown axis identifier ", dids[miss][1L]))
+    return(NULL)
+  }
+  names(ax) <- sapply(ax, function(x) x$name)
+  ax
 }
 
 # Read the attributes for a group or a variable

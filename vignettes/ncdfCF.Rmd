@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+has <- function(pkg) requireNamespace(pkg, quietly = TRUE)
 ```
 
 ## What is netCDF?
@@ -158,7 +159,7 @@ In all cases, you can profile over any of the axes and over any number of axes.
 
 Note that the `profile()` method returns data for the grid cells closest to the specified location. That is different from the `subset()` method, which will return data as it is recorded in the netCDF resource.
 
-```{r profile}
+```{r profile, eval = has("data.table")}
 rwa <- t2m$profile(longitude = c(30.07, 30.07, 29.74), latitude = c(-1.94, -1.58, -2.60), 
                    .names = c("Kigali", "Byumba", "Butare"), .as_table = TRUE)
 head(rwa)
@@ -259,7 +260,7 @@ The data has been oriented in the familiar R way: from the top-left down and the
 
 Package `ncdfCF` includes the function `geom_ncdf()` which can be used to compose maps with `ggplot2`:
 
-```{r ggplot}
+```{r ggplot, eval = has("ggplot2")}
 library(ggplot2)
 ggplot() + geom_ncdf(data = tx) + coord_equal() + scale_fill_viridis_c()
 ```
@@ -278,11 +279,13 @@ stats[["diurnal_range"]]$save("~/path/file.nc")
 ```
 A `CFVariable` object can also be exported to a `data.table` or to a `terra::SpatRaster` (3D) or `terra::SpatRasterDataset` (4D) for further processing. Obviously, these packages need to be installed to utilise these methods.
 
-```{r export}
+```{r export_dt, eval = has("data.table")}
 # install.packages("data.table")
 library(data.table)
 head(dt <- ts$data.table())
+```
 
+```{r export_terra, eval = has("terra")}
 #install.packages("terra")
 suppressMessages(library(terra))
 (r <- stats[["diurnal_range"]]$terra())
@@ -290,7 +293,7 @@ suppressMessages(library(terra))
 
 A `stars` object can be created from a `CFVariable` or a `CFDataset` with multiple variables with the function `stars::st_as_stars()`.
 
-```{r stars}
+```{r stars, eval = has("stars")}
 suppressMessages(library(stars))
 (st <- st_as_stars(ts))
 ```

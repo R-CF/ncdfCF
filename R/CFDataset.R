@@ -111,10 +111,12 @@ CFDataset <- R6::R6Class("CFDataset",
     #'   the the netCDF resource; each list item is named for the variable or
     #'   axis.
     objects_by_standard_name = function(standard_name) {
-      nm <- c(sapply(self$root$variables(), function(v) v$attribute("standard_name")),
-              sapply(self$root$axes(), function(x) x$attribute("standard_name")))
+      objs <- c(self$variables(), self$axes())
+      nm <- lapply(objs, function(o) o$attribute("standard_name"))
+      names(nm) <- vapply(objs, function(o) o$name, character(1L))
+      nm <- nm[!is.na(nm)]
       if (missing(standard_name) || !nzchar(standard_name))
-        nm[lengths(nm) > 0L]
+        nm
       else
         names(nm[which(nm == standard_name)])
     },
@@ -295,8 +297,9 @@ CFDataset <- R6::R6Class("CFDataset",
         res$create()
         private$.res <- res
 
-        # Detach all data variables from old connection
+        # Detach all data variables and the groups from old connection
         lapply(self$variables(), function(v) v$detach())
+        self$root$detach()
       }
 
       self$root$write(recursive = TRUE)
@@ -488,14 +491,9 @@ names.CFDataset <- function(x) {
 
 #' @export
 dimnames.CFDataset <- function(x) {
-  ax <- x$axes()
-  if (!length(ax))
-    NULL
-  else if (x$has_subgroups()) {
-    grps <- sapply(ax, function(z) z$group$fullname)
-    unique(paste0(ifelse(grps == "/", "/", paste0(grps, "/")), x$axis_names))
-  } else
-    unique(x$axis_names)
+  # Axis names are fully qualified when the data set has groups
+  if (!length(x$axes())) NULL
+  else unique(x$axis_names)
 }
 
 #' List the groups in the CF object, recursively.

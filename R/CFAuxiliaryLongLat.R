@@ -84,8 +84,8 @@ CFAuxiliaryLongLat <- R6::R6Class("CFAuxiliaryLongLat",
       # If there are any NULL values in aoi, use the bounds or extent
       expand <- FALSE
       if (is.null(aoi$latMin))
-        if (inherits(self$.boundsLong, "CFBounds")) {
-          aoi$extent <- c(self$.boundsLong$range(), self$.boundsLat$range())
+        if (inherits(private$.boundsLong, "CFBounds")) {
+          aoi$extent <- c(private$.boundsLong$range(), private$.boundsLat$range())
         } else {
           aoi$extent <- self$extent
           expand <- TRUE

@@ -73,6 +73,7 @@ current group.}
     \item \href{#method-CFGroup-objects}{\code{CFGroup$objects()}}
     \item \href{#method-CFGroup-find_by_name}{\code{CFGroup$find_by_name()}}
     \item \href{#method-CFGroup-add_variable}{\code{CFGroup$add_variable()}}
+    \item \href{#method-CFGroup-detach}{\code{CFGroup$detach()}}
     \item \href{#method-CFGroup-write}{\code{CFGroup$write()}}
     \item \href{#method-CFGroup-write_variables}{\code{CFGroup$write_variables()}}
     \item \href{#method-CFGroup-write_geozarr}{\code{CFGroup$write_geozarr()}}
@@ -86,7 +87,6 @@ current group.}
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_as_list"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_as_list'><code>CFObject$attributes_as_list()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="attributes_identical"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-attributes_identical'><code>CFObject$attributes_identical()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="delete_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-delete_attribute'><code>CFObject$delete_attribute()</code></a></span></li>
-  <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="detach"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-detach'><code>CFObject$detach()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="print_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-print_attributes'><code>CFObject$print_attributes()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="set_attribute"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-set_attribute'><code>CFObject$set_attribute()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="ncdfCF" data-topic="CFObject" data-id="write_attributes"><a href='../../ncdfCF/html/CFObject.html#method-CFObject-write_attributes'><code>CFObject$write_attributes()</code></a></span></li>
@@ -385,6 +385,29 @@ associated objects will be stored in this group.}
   }
   \subsection{Returns}{
     Argument \code{var}, invisibly.
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CFGroup-detach"></a>}}
+\if{latex}{\out{\hypertarget{method-CFGroup-detach}{}}}
+\subsection{\code{CFGroup$detach()}}{
+  Detach the group from its netCDF resource, so that it will
+be written to a new resource.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CFGroup$detach(recursive = TRUE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{recursive}}{If \code{TRUE} (default), detach the subgroups as well.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    Self, invisibly.
   }
 }
 

@@ -254,7 +254,7 @@ indices. If the value of the argument is \code{NULL}, return a copy of
 of the axis.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{CFAxisDiscrete$append(from)}
+    \preformatted{CFAxisDiscrete$append(from, group)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{

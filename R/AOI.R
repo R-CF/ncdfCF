@@ -30,7 +30,7 @@ AOI <- R6::R6Class("AOI",
       private$.minLat <- latMin
       private$.maxLat <- latMax
       if (!is.null(resolution)) {
-        if (length(resolution == 1L))
+        if (length(resolution) == 1L)
           private$.res <- c(resolution, resolution)
         else
           private$.res <- resolution[1L:2L]
@@ -139,6 +139,7 @@ AOI <- R6::R6Class("AOI",
     resolution = function(value) {
       if (missing(value)) private$.res
       else {
+        if (length(value) == 1L) value <- c(value, value)
         .aoi_check_resolution(value)
         private$.res <- value
         if (inherits(private$.aux, "CFAuxiliaryLongLat"))

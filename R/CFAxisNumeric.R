@@ -253,7 +253,7 @@ CFAxisNumeric <- R6::R6Class("CFAxisNumeric",
     #'   `from` axis appended.
     append = function(from, group) {
       if (super$can_append(from) && .c_is_monotonic(self$values, from$values)) {
-        ax <- CFAxisNumeric$new(self$name, group = group, values = c(private$values, from$values),
+        ax <- CFAxisNumeric$new(self$name, group = group, values = c(self$values, from$values),
                                 orientation = self$orientation, attributes = self$attributes)
 
         if (!is.null(private$.bounds)) {

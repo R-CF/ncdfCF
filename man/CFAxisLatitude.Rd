@@ -202,7 +202,7 @@ axis or the \code{from} axis does not have boundary values, neither will the
 resulting axis.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{CFAxisLatitude$append(from)}
+    \preformatted{CFAxisLatitude$append(from, group)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{

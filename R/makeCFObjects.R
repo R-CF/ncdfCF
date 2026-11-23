@@ -65,7 +65,7 @@ makeGroup <- function(name = "", parent_group = NULL) {
 #'   [makeDiscreteAxis()]
 #' @return An instance of a class descending from [CFAxis].
 #' @export
-makeAxis <- function(name, orientation, values, bounds = NULL, attributes = data.frame(), group = NULL) {
+makeAxis <- function(name, orientation = "", values, bounds = NULL, attributes = data.frame(), group = NULL) {
   if (is.null(group))
     group <- CFGroup$new("", NULL)
   # FIXME: There could be an orientation X but with projected coordinates

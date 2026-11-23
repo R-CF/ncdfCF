@@ -23,6 +23,11 @@ CFData <- R6::R6Class("CFData",
     # the vectors must agree with the array on file or be `NA`.
     .NC_map = list(),
 
+    # Flag to indicate that the first dimension in .NC_map is the string-length
+    # dimension of a NC_CHAR variable. It is not a data dimension: it is always
+    # read in full, it is not included in .dims and it is never chunked.
+    .strlen = FALSE,
+
     # The NC data type of the data in the object. Taken from .NCobj if set,
     # otherwise the descending class must set it explicitly when receiving its
     # data values.
@@ -40,11 +45,10 @@ CFData <- R6::R6Class("CFData",
     set_name = function(new_name) {
       if (.is_valid_name(new_name)) {
         if (is.null(private$.group$find_by_name(new_name))) { # FIXME: Make this a FQN?
-          private$.name <- if (!is.null(private$.NCobj)) {
+          # Rename the NC variable too, if the resource is writable
+          if (!is.null(private$.NCobj))
             private$.NCobj$set_name(new_name)
-            private$.NCobj$name # new_name may not have been written
-          } else
-            new_name
+          private$.name <- new_name
         }
       }
       invisible(self)
@@ -100,9 +104,16 @@ CFData <- R6::R6Class("CFData",
     # .NC_map is non-empty; callers with an empty .NC_map are already in
     # NC-space (nothing to translate) and must not call this.
     to_nc_indices = function(local_start, local_count) {
-      len <- length(private$.NC_map$start)
-      list(start = private$.NC_map$start + local_start[seq_len(len)] - 1L,
-           count = local_count[seq_len(len)])
+      m <- private$.NC_map
+      if (private$.strlen) {
+        len <- length(m$start) - 1L
+        list(start = c(m$start[1L], m$start[-1L] + local_start[seq_len(len)] - 1L),
+             count = c(m$count[1L], local_count[seq_len(len)]))
+      } else {
+        len <- length(m$start)
+        list(start = m$start + local_start[seq_len(len)] - 1L,
+             count = local_count[seq_len(len)])
+      }
     },
 
     # Warn if reading `count` elements at the object's current data type
@@ -116,6 +127,7 @@ CFData <- R6::R6Class("CFData",
       itemsize <- if (!is.null(private$.NCobj) && private$.NCobj$is_packed) 8L
       else .nc_type_size(private$.data_type)
       if (is.na(itemsize)) return(invisible(NA_real_)) # nocov
+      if (private$.strlen) itemsize <- itemsize * private$.NC_map$count[1L]
 
       bytes <- prod(count) * itemsize
       if (bytes > CF.options$memory_cell_limit)
@@ -137,9 +149,10 @@ CFData <- R6::R6Class("CFData",
       if (!is.na(bytes) && bytes <= CF.options$memory_cell_limit)
         return(reader(start, count))  # fits outright: skip .chunk_plan() entirely
 
-      chunks <- if (!is.null(private$.NCobj)) private$.NCobj$netcdf4$chunksizes else NULL
+      chunks <- private$chunk_sizes()
       itemsize <- if (!is.null(private$.NCobj) && private$.NCobj$is_packed) 8L
       else (.nc_type_size(private$.data_type) %||% 8L)
+      if (private$.strlen) itemsize <- itemsize * private$.NC_map$count[1L]
 
       plan <- .chunk_plan(count, chunks, start, count, itemsize, CF.options$memory_cell_limit)
       if (length(plan) == 1L)
@@ -156,6 +169,13 @@ CFData <- R6::R6Class("CFData",
         out <- do.call(`[<-`, c(list(out), idx, list(value = block)))
       }
       out
+    },
+
+    # The chunk sizes of the NC variable along the data dimensions, or NULL if
+    # not chunked or not backed by a NC variable.
+    chunk_sizes = function() {
+      ch <- if (!is.null(private$.NCobj)) private$.NCobj$netcdf4$chunksizes
+      if (private$.strlen && length(ch)) ch[-1L] else ch
     },
 
     # Set the values of the object. Perform some basic checks when set programmatically.
@@ -203,12 +223,8 @@ CFData <- R6::R6Class("CFData",
         }
       }
 
-      if (!is.null(values) && self$ndims > 1L) {
-        if (private$.data_type == "NC_CHAR" && inherits(self, c("CFAxis", "CFLabel")))
-          dim(values) <- private$.dims[-1] # First dimension is string length
-        else
-          dim(values) <- private$.dims
-      }
+      if (!is.null(values) && self$ndims > 1L)
+        dim(values) <- private$.dims
       private$.values <- values
     },
 
@@ -275,10 +291,22 @@ CFData <- R6::R6Class("CFData",
         if ((nd <- obj$ndims) > 0L) {
           private$.dims <- obj$dim()
           private$.NC_map <- list(start = rep(1L, nd), count = private$.dims)
+
+          # The string-length dimension of a NC_CHAR variable is not a data
+          # dimension: the data is read as character strings. Arguments `start`
+          # and `count` may be given without that dimension.
+          if (obj$vtype == "NC_CHAR") {
+            private$.strlen <- TRUE
+            if (length(start) == nd - 1L) {
+              start <- c(1L, start)
+              count <- c(NA_integer_, if (length(count) == nd - 1L) count else rep(count, nd - 1L))
+            }
+          }
         }
         # Subset to a smaller dimension space, if needed
         private$.NC_map <- private$check_start_count(start, count)
-        private$.dims <- private$.NC_map$count
+        private$.dims <- private$.NC_map$count %||% integer(0)
+        if (private$.strlen) private$.dims <- private$.dims[-1L]
       } else
         private$.data_dirty <- TRUE
 
@@ -332,7 +360,14 @@ CFData <- R6::R6Class("CFData",
           private$set_values(
             private$read_window_core(rep(1L, length(private$.dims)), private$.dims,
                                      private$.NCobj$get_data))
-        else
+        else if (private$.strlen) {
+          # .NC_map is in NC-space: read via NCobj$get_data(), with the full
+          # string-length dimension prepended to the data dimensions.
+          m <- private$.NC_map
+          private$set_values(
+            private$read_window_core(m$start[-1L], m$count[-1L], function(s, c)
+              private$.NCobj$get_data(c(m$start[1L], s), c(m$count[1L], c))))
+        } else
           # .NC_map is in NC-space: read directly via NCobj$get_data().
           private$set_values(
             private$read_window_core(private$.NC_map$start, private$.NC_map$count,

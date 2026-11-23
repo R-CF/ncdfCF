@@ -124,7 +124,7 @@ CFStandardNames <- R6::R6Class("CFStandardNames",
     #'   table is available.
     is_loaded = function(value) {
       if (missing(value))
-        !is.null(names)
+        !is.null(private$names)
     }
   )
 )

@@ -14,7 +14,7 @@
 #' @param ... Arguments passed on to `geom_raster()`.
 #' @return A `geom_*` object that can be used in `ggplot2` plot composition.
 #' @export
-#' @examples
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' library(ggplot2)
 #' fn <- system.file("extdata", "tasmax_NAM-44_day_20410701-vncdfCF.nc", package = "ncdfCF")
 #' ds <- open_ncdf(fn)

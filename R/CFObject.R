@@ -276,9 +276,9 @@ CFObject <- R6::R6Class("CFObject",
     #'   before the existing value. Default is `FALSE`.
     #' @return Self, invisibly.
     append_attribute = function(name, value, sep = "; ", prepend = FALSE) {
-      if (is.na(name) || !is.character(name) || length(name) != 1L)
+      if (!is.character(name) || length(name) != 1L || is.na(name))
         stop("Must name one attribute to append values for.", call. = FALSE)
-      if (is.na(name) || !is.character(name) || length(name) != 1L)
+      if (!is.character(value) || length(value) != 1L || is.na(value))
         stop("Value to append must be a single character string.", call. = FALSE)
 
       if (nchar(value) > 0L) {

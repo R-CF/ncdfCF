@@ -37,11 +37,10 @@ CFGroup <- R6::R6Class("CFGroup",
     set_name = function(new_name) {
       if (.is_valid_name(new_name)) {
         if (!(!is.null(private$.parent) && !is.null(private$.parent$find_by_name(new_name)))) {
-          private$.name <- if (!is.null(private$.NCobj)) {
+          # Rename the NC group too, if the resource is writable
+          if (!is.null(private$.NCobj))
             private$.NCobj$set_name(new_name)
-            private$.NCobj$name # new_name may not have been written
-          } else
-            new_name
+          private$.name <- new_name
         }
       }
       invisible(self)
@@ -197,8 +196,8 @@ CFGroup <- R6::R6Class("CFGroup",
         else stop("Unknown CF object type", call. = FALSE)
       }
       .assign <- function(o) {
-        nm <- o$name
         field <- .target(o)
+        nm <- o$name
         if (nm %in% names(field)) {
           if (silent && class(o)[1L] == class(field[[nm]])[1L])
             return(invisible(NULL))
@@ -336,20 +335,16 @@ CFGroup <- R6::R6Class("CFGroup",
           if (!is.null(obj)) return(obj)
         }
 
-        # If still not found, try lateral search
-        .traverse_subgroups <- function(g, level) {
-          obj <- .find_here(g)
-          if (is.null(obj))
-            lapply(g$subgroups, .traverse_subgroups, level = level + 1L)
-          else
-            list(level = level, obj = obj)
+        # If still not found, try lateral search, breadth-first so that the
+        # object at the lowest level is found
+        level <- unname(grp$subgroups)
+        while (length(level)) {
+          for (g in level) {
+            obj <- .find_here(g)
+            if (!is.null(obj)) return(obj)
+          }
+          level <- unname(unlist(lapply(level, function(g) g$subgroups)))
         }
-
-        res <- lapply(grp$subgroups, .traverse_subgroups, level = 1L)
-        res <- res[lengths(res) > 0L]
-        # FIXME: The below takes the first occurrence, rather than the one with the lowest level
-        if (length(res))
-          return(res[[1L]]$obj)
       }
 
       # Give up
@@ -377,6 +372,19 @@ CFGroup <- R6::R6Class("CFGroup",
     add_variable = function(var, locations = list()) {
       var$attach_to_group(self, locations)
       invisible(var)
+    },
+
+    #' @description Detach the group from its netCDF resource, so that it will
+    #'   be written to a new resource.
+    #' @param recursive If `TRUE` (default), detach the subgroups as well.
+    #' @return Self, invisibly.
+    detach = function(recursive = TRUE) {
+      private$.NCobj <- NULL
+      private$.dirty <- TRUE
+      private$.attributes_dirty <- TRUE
+      if (recursive)
+        lapply(private$.subgroups, function(g) g$detach(recursive))
+      invisible(self)
     },
 
     #' @description Write the group to file, including its attributes, if it

@@ -251,6 +251,7 @@ test_that("CMEMS example online", {
     # Make a vertical profile of temperature at a single location for the month of July 2024
     tprof <- thetao$profile(longitude = 12.71, latitude = 40.33, time = "2024-07-01", .names = "Tyrrhenian_Sea")
     expect_equal(sapply(tprof$axes, function(ax) ax$length), c(longitude = 1, latitude = 1, depth = 141, time = 1))
+    skip_if_not_installed("data.table")
     Tjuly <- tprof$data.table()
     expect_length(Tjuly, 5)
     expect_equal(nrow(Tjuly), 141)

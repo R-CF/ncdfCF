@@ -120,9 +120,9 @@ CFAxisLatitude <- R6::R6Class("CFAxisLatitude",
     #' @param group The [CFGroup] where the copy of this axis will live.
     #' @return A new `CFAxisLatitude` instance with values from this axis and
     #'   the `from` axis appended.
-    append = function(from) {
+    append = function(from, group) {
       if (super$can_append(from) && .c_is_monotonic(self$values, from$values)) {
-        ax <- CFAxisLatitude$new(self$name, group = group, values = c(private$values, from$values),
+        ax <- CFAxisLatitude$new(self$name, group = group, values = c(self$values, from$values),
                                  attributes = self$attributes)
 
         if (!is.null(private$.bounds)) {

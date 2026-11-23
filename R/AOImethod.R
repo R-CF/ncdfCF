@@ -63,7 +63,7 @@ aoi <- function(lonMin, lonMax, latMin, latMax, resX, resY) {
     .aoi_check_resolution(resolution)
   }
 
-  if (missing(lonMin) && missing(lonMin) && missing(lonMin) && missing(lonMin))
+  if (missing(lonMin) && missing(lonMax) && missing(latMin) && missing(latMax))
     AOI$new(NULL, NULL, NULL, NULL, resolution)
   else {
     .aoi_check_longitude(lonMin, lonMax)

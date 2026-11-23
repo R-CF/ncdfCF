@@ -29,7 +29,9 @@ one, upon first access and cached thereafter.}
     \item{\code{length}}{(read-only) The number of labels in the set.}
 
     \item{\code{dimid}}{The netCDF dimension id of this label set. Setting this
-value to anything other than the correct value will lead to disaster.}
+value to anything other than the correct value will lead to disaster.
+The value is \code{NA} when there is no netCDF dimension, such as for a
+label set that has not been written to file.}
   }
   \if{html}{\out{</div>}}
 }
@@ -203,7 +205,7 @@ coordinates.
   Retrieve a subset of the labels.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{CFLabel$subset(name, group, rng)}
+    \preformatted{CFLabel$subset(name = "", group, rng)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{

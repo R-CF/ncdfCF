@@ -23,7 +23,9 @@ processing is selectable through methods and fields in this class.
     \item{\code{friendlyClassName}}{(read-only) A nice description of the class.}
 
     \item{\code{dimid}}{The netCDF dimension id of this axis. Setting this value to
-anything other than the correct value will lead to disaster.}
+anything other than the correct value will lead to disaster.
+The value is \code{NA} when there is no netCDF dimension, such as for a
+scalar axis or an axis that has not been written to file.}
 
     \item{\code{length}}{(read-only) The declared length of this axis.}
 

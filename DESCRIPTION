@@ -69,6 +69,7 @@ Suggests:
     terra,
     testthat (>= 3.0.0),
     units,
+    xml2,
     zarr (>= 1.0.1)
 VignetteBuilder: knitr
 Depends: 

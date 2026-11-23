@@ -161,20 +161,16 @@ NCGroup <- R6::R6Class("NCGroup",
           if (!is.null(obj)) return(obj)
         }
 
-        # If still not found, try lateral search
-        .traverse_subgroups <- function(g, level) {
-          obj <- .find_here(g)
-          if (is.null(obj))
-            lapply(g$subgroups, .traverse_subgroups, level = level + 1L)
-          else
-            list(level = level, obj = obj)
+        # If still not found, try lateral search, breadth-first so that the
+        # object at the lowest level is found
+        level <- unname(grp$subgroups)
+        while (length(level)) {
+          for (g in level) {
+            obj <- .find_here(g)
+            if (!is.null(obj)) return(obj)
+          }
+          level <- unname(unlist(lapply(level, function(g) g$subgroups)))
         }
-
-        res <- lapply(grp$subgroups, .traverse_subgroups, level = 1L)
-        res <- res[lengths(res) > 0L]
-        # FIXME: The below takes the first occurrence, rather than the one with the lowest level
-        if (length(res))
-          return(res[[1L]]$obj)
       }
 
       # Give up
@@ -222,7 +218,7 @@ NCGroup <- R6::R6Class("NCGroup",
         if (length(idx))
           return(self$NCdims[[idx]])
       }
-      if (!is.null(self$parent))
+      if (inherits(self$parent, "NCGroup"))
         return(self$parent$find_dim_by_id(id))
       else
         return(NULL)
@@ -243,9 +239,9 @@ NCGroup <- R6::R6Class("NCGroup",
     #' @param new_name The new name for the NC group.
     #' @return Self, invisibly.
     set_name = function(new_name) {
-      if (new_name != private$.name && is.null(group$parent$find_by_name(new_name)) &&
-          private$.resource$can_write) {
-        RNetCDF::grp.rename.nc(private$.resource$handle, new_name)
+      if (new_name != private$.name && is.null(self$parent$find_by_name(new_name)) &&
+          self$can_write) {
+        RNetCDF::grp.rename.nc(self$handle, new_name)
         private$.name <- new_name
       }
       invisible(self)
@@ -334,7 +330,7 @@ NCGroup <- R6::R6Class("NCGroup",
         if (length(dims)) {
           local_names <- sapply(dims, function(d) d$name)
           parent_names <- sapply(pdims, function(d) d$name)
-          keep <- pdims[!which(parent_names %in% local_names)]
+          keep <- pdims[!(parent_names %in% local_names)]
           append(dims, keep)
         } else
           pdims

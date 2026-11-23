@@ -283,7 +283,7 @@ and merge them with the parametric terms of the \code{from} axis before
 setting them back for this axis.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{CFAxisVertical$append(from)}
+    \preformatted{CFAxisVertical$append(from, group)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{

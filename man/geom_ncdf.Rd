@@ -29,9 +29,11 @@ well suited for this task. Note that currently only map plotting works, e.g.
 the \code{CFVariable} should have \code{X} and \code{Y} axes.
 }
 \examples{
+\dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 library(ggplot2)
 fn <- system.file("extdata", "tasmax_NAM-44_day_20410701-vncdfCF.nc", package = "ncdfCF")
 ds <- open_ncdf(fn)
 tasmax <- ds[["tasmax"]]
 ggplot() + geom_ncdf(data = tasmax) + coord_equal() + scale_fill_viridis_c()
+\dontshow{\}) # examplesIf}
 }

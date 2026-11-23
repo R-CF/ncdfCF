@@ -212,6 +212,20 @@ nc_default_fill <- c("NC_BYTE" = -127, "NC_UBYTE" = 255, "NC_SHORT" = -32767,
     asplit(res, 1L)
 }
 
+# Drop the leading dimension of length 1 from `x`, the factor level dimension
+# that .process.data() adds when it is called without a factor.
+.drop_level <- function(x) {
+  d <- dim(x)
+  if (length(d) > 1L) dim(x) <- d[-1L]
+  x
+}
+
+# Reduce `X` along dimension `oper` with `FUN`, giving an array with the other
+# dimensions of `X`, or a single value if `X` is a vector.
+.reduce_block <- function(X, oper, FUN, ...) {
+  .drop_level(.process.data(X, oper, FUN = FUN, ...)[[1L]])
+}
+
 #' Make a data.frame slimmer by shortening long strings. List elements are
 #' pasted together.
 #' @param df A data.frame

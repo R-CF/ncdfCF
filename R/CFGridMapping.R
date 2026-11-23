@@ -27,6 +27,17 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
     .grid_mapping_name = "latitude_longitude",
 
     # === CF grid_mapping_name METHOD & PARAMETER rendering ====================
+
+    # WKT2 PARAMETERs for false easting and northing of EPSG methods "variant
+    # A" and alike, or an empty string when neither is given.
+    false_en = function(fe, fn, length) {
+      if (is.na(fe) && is.na(fn)) return('')
+      if (is.na(fe)) fe <- 0
+      if (is.na(fn)) fn <- 0
+      paste0(',PARAMETER["False easting",', fe, ',', length,
+             '],PARAMETER["False northing",', fn, ',', length, ']')
+    },
+
     aea = function(angle, length) {
       # The x (abscissa) and y (ordinate) rectangular coordinates are identified by the standard_name
       # attribute values projection_x_coordinate and projection_y_coordinate respectively.
@@ -36,7 +47,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
         wkt2 <- paste0(wkt2, ',PARAMETER["Latitude of false origin",', lat0, ',', angle, ']')
       if (!is.na(lon0 <- self$attribute("longitude_of_central_meridian")))
         wkt2 <- paste0(wkt2, ',PARAMETER["Longitude of false origin",', lon0, ',', angle, ']')
-      if (!is.na(lat1 <- self$attribute("standard_parallel")) && length(lat1) == 2L)
+      if (length(lat1 <- self$attribute("standard_parallel")) == 2L && !anyNA(lat1))
         wkt2 <- paste0(wkt2, ',PARAMETER["Latitude of 1st standard parallel",', lat1[1L], ',', angle, ']',
                              ',PARAMETER["Latitude of 2nd standard parallel",', lat1[2L], ',', angle, ']')
 
@@ -88,8 +99,8 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
       if (is.na(fe) && is.na(fn))
         fe_fn <- ''
       else {
-        if (is.null(fe)) fe <- 0
-        if (is.null(fn)) fn <- 0
+        if (is.na(fe)) fe <- 0
+        if (is.na(fn)) fn <- 0
         fe_fn <- paste0(' x_0=', fe, ' y_0=', fn)
       }
 
@@ -102,9 +113,9 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
 
       wkt2 <- paste0('METHOD["Lambert Azimuthal Equal Area",', .wkt2_id(9820), ']')
       if (!is.na(lat0 <- self$attribute("latitude_of_projection_origin")))
-        wkt2 <- paste0(wkt2, 'PARAMETER["Latitude of natural origin",', lat0, ',', angle, ']')
+        wkt2 <- paste0(wkt2, ',PARAMETER["Latitude of natural origin",', lat0, ',', angle, ']')
       if (!is.na(lon0 <- self$attribute("longitude_of_projection_origin")))
-        wkt2 <- paste0(wkt2, 'PARAMETER["Longitude of natural origin",', lon0, ',', angle, ']')
+        wkt2 <- paste0(wkt2, ',PARAMETER["Longitude of natural origin",', lon0, ',', angle, ']')
 
       fe <- self$attribute("false_easting")
       fn <- self$attribute("false_northing")
@@ -192,13 +203,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
 
       fe <- self$attribute("false_easting")
       fn <- self$attribute("false_northing")
-      if (is.na(fe) && is.na(fn))
-        fe_fn <- ''
-      else {
-        if (is.null(fe)) fe <- 0
-        if (is.null(fn)) fn <- 0
-        fe_fn <- paste0(' x_0=', fe, ' y_0=', fn)
-      }
+      fe_fn <- private$false_en(fe, fn, length)
 
       if (scl != 1) {
         paste0('METHOD["Mercator (variant A)",', .wkt2_id(9804), ']',
@@ -207,7 +212,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
                ',PARAMETER["Scale factor at natural origin",', scl, ',', .wkt2_uom(9201), ']',
                fe_fn)
       } else {
-        paste0('Mercator (variant B)",', .wkt2_id(9805), ']',
+        paste0('METHOD["Mercator (variant B)",', .wkt2_id(9805), ']',
                ',PARAMETER["Latitude of 1st standard parallel",', lat0, ',', angle, ']',
                ',PARAMETER["Longitude of natural origin",', lon0, ',', angle, ']',
                fe_fn)
@@ -231,8 +236,8 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
       fe <- self$attribute("false_easting")
       fn <- self$attribute("false_northing")
       if (!(is.na(fe) && is.na(fn))) {
-        if (is.null(fe)) fe <- 0
-        if (is.null(fn)) fng <- 0
+        if (is.na(fe)) fe <- 0
+        if (is.na(fn)) fn <- 0
         wkt2 <- paste0(wkt2, ',PARAMETER["Easting at projection center",', fe, ',', length,
                             '],PARAMETER["Northing at projection center",', fn, ',', length, ']')
       }
@@ -248,13 +253,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
 
       fe <- self$attribute("false_easting")
       fn <- self$attribute("false_northing")
-      if (is.na(fe) && is.na(fn))
-        fe_fn <- ''
-      else {
-        if (is.null(fe)) fe <- 0
-        if (is.null(fn)) fn <- 0
-        fe_fn <- paste0(' x_0=', fe, ' y_0=', fn)
-      }
+      fe_fn <- private$false_en(fe, fn, length)
 
       paste0('METHOD["Orthographic",', .wkt2_id(9840), ']',
              ',PARAMETER["Latitude of natural origin",', lat0, ',', angle, ']',
@@ -273,13 +272,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
 
       fe <- self$attribute("false_easting")
       fn <- self$attribute("false_northing")
-      if (is.na(fe) && is.na(fn))
-        fe_fn <- ''
-      else {
-        if (is.null(fe)) fe <- 0
-        if (is.null(fn)) fn <- 0
-        fe_fn <- paste0(' x_0=', fe, ' y_0=', fn)
-      }
+      fe_fn <- private$false_en(fe, fn, length)
 
       if (!is.na(scl <- self$attribute("scale_factor_at_projection_origin"))) {
         paste0('METHOD["Polar Stereographic (variant A)",', .wkt2_id(9810), ']',
@@ -288,7 +281,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
                ',PARAMETER["Scale factor at natural origin",', scl, ',', .wkt2_uom(9201), ']',
                fe_fn)
       } else {
-        if (is.na(latts <- sef$attribute("standard_parallel"))) latts <- 0
+        if (is.na(latts <- self$attribute("standard_parallel"))) latts <- 0
         paste0('METHOD["Polar Stereographic (variant B)",', .wkt2_id(9829), ']',
                ',PARAMETER["Latitude of standard parallel",', latts, ',', angle, ']',
                ',PARAMETER["Longitude of origin",', lon0, ',', angle, ']',
@@ -314,19 +307,19 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
       # attribute values projection_x_coordinate and projection_y_coordinate respectively.
       # Not in the EPSG database
 
-      lon0 <- if (is.na(lon0 <- self$attribute("longitude_of_projection_origin"))) lon0 <- 0
+      if (is.na(lon0 <- self$attribute("longitude_of_projection_origin"))) lon0 <- 0
 
       fe <- self$attribute("false_easting")
       fn <- self$attribute("false_northing")
       if (is.na(fe) && is.na(fn))
         fe_fn <- ''
       else {
-        if (is.null(fe)) fe <- 0
-        if (is.null(fn)) fn <- 0
+        if (is.na(fe)) fe <- 0
+        if (is.na(fn)) fn <- 0
         fe_fn <- paste0(' x_0=', fe, ' y_0=', fn)
       }
 
-      paste0('METHOD["PROJ sinu o_lon=', lon0, fe_fn, '"]')
+      paste0('METHOD["PROJ sinu lon_0=', lon0, fe_fn, '"]')
     },
 
     stereo = function(angle, length) {
@@ -339,13 +332,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
 
       fe <- self$attribute("false_easting")
       fn <- self$attribute("false_northing")
-      if (is.na(fe) && is.na(fn))
-        fe_fn <- ''
-      else {
-        if (is.null(fe)) fe <- 0
-        if (is.null(fn)) fn <- 0
-        fe_fn <- paste0(' x_0=', fe, ' y_0=', fn)
-      }
+      fe_fn <- private$false_en(fe, fn, length)
 
       paste0('METHOD["Oblique Stereographic",', .wkt2_id(9809), ']',
              ',PARAMETER["Latitude of natural origin",', lat0, ',', angle, ']',
@@ -365,13 +352,7 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
 
       fe <- self$attribute("false_easting")
       fn <- self$attribute("false_northing")
-      if (is.na(fe) && is.na(fn))
-        fe_fn <- ''
-      else {
-        if (is.null(fe)) fe <- 0
-        if (is.null(fn)) fn <- 0
-        fe_fn <- paste0(' x_0=', fe, ' y_0=', fn)
-      }
+      fe_fn <- private$false_en(fe, fn, length)
 
       paste0('METHOD["Transverse Mercator",', .wkt2_id(9807), ']',
              ',PARAMETER["Latitude of natural origin",', lat0, ',', angle, ']',
@@ -438,16 +419,18 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
       r <- self$attribute("earth_radius")
 
       # (2) Find an EPSG code by set of attributes
+      near <- function(x, v) !is.na(x) & abs(x - v) <= 1e-10 * max(abs(v), 1)
+      major <- epsg_ell$semi_major_axis
       details <- if (is.na(a)) {
-        if (is.na(r)) data.frame()
-        else epsg_ell[isTRUE(all.equal(epsg_ell$semi_major_axis, r)), ]
+        if (is.na(r)) epsg_ell[0L, ]
+        else epsg_ell[near(major, r), ]
       } else {
         if (!is.na(invf))
-          epsg_ell[isTRUE(all.equal(c(epsg_ell$semi_major_axis, epsg_ell$inv_flattening), c(a, invf))), ]
+          epsg_ell[near(major, a) & near(epsg_ell$inv_flattening, invf), ]
         else if (!is.na(b))
-          epsg_ell[isTRUE(all.equal(c(epsg_ell$semi_major_axis, epsg_ell$semi_minor_axis), c(a, b))), ]
+          epsg_ell[near(major, a) & near(epsg_ell$semi_minor_axis, b), ]
         else
-          epsg_ell[isTRUE(all.equal(c(epsg_ell$semi_major_axis, epsg_ell$semi_minor_axis), c(a, a))), ]
+          epsg_ell[near(major, a) & near(epsg_ell$semi_minor_axis, a), ]
       }
 
       if (nrow(details) == 1L)
@@ -473,8 +456,9 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
       details <- if (!is.na(pm <- self$attribute("prime_meridian_name"))) {
         epsg_pm[epsg_pm$prime_meridian_name == pm, ]
       } else if (!is.na(lon <- self$attribute("longitude_of_prime_meridian"))) {
-        epsg_pm[isTRUE(all.equal(epsg_pm$greenwich_longitude, lon)), ]
-      } else data.frame()
+        # CF gives the longitude in degrees: only match EPSG entries in degrees
+        epsg_pm[epsg_pm$uom_code == 9102L & abs(epsg_pm$greenwich_longitude - lon) < 1e-8, ]
+      } else epsg_pm[0L, ]
       if (nrow(details)) list(WKT2 = .wkt2_pm(details$prime_meridian_code), ANGLEUNIT = details$uom_code)
       else list(WKT2 = '', ANGLEUNIT = 9102)
     },
@@ -780,7 +764,8 @@ CFGridMapping <- R6::R6Class("CFGridMapping",
   vert <- if (length(ndx)) {
     z <- obj$axes[[ndx]]
     if (inherits(z, "CFAxis"))
-      list(VERTINFO = c(z$attribute("standard_name"), z$attribute("positive"), z$attribute("units")))
+      list(VERTINFO = list(standard_name = z$attribute("standard_name"), positive = z$attribute("positive"),
+                           units = z$attribute("units")))
     else list()
   } else list()
   c(horz, vert)

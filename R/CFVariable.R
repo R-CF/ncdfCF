@@ -29,7 +29,7 @@ CFVariable <- R6::R6Class("CFVariable",
     .cell_measures = list(),
 
     # Return axes that correspond to an on-disk array dimension, so excluding any
-    # scalar axis (dimid == NULL). Positions in this list line up 1:1 with
+    # scalar axis (dimid is NA). Positions in this list line up 1:1 with
     # positions in dim(data)/CFData$.dims.
     dim_axes = function() {
       n <- self$ndims
@@ -196,16 +196,16 @@ CFVariable <- R6::R6Class("CFVariable",
     .reducer_sum = list(
       init = function(shape) array(0, dim = shape),
       update = function(acc, block, tdim, na_rm)
-        acc + .process.data(block, tdim, FUN = sum, na.rm = na_rm)[[1L]],
+        acc + .reduce_block(block, tdim, sum, na.rm = na_rm),
       finalize = function(acc, na_rm) list(acc)
     ),
 
     .reducer_mean = list(
       init = function(shape) list(sum = array(0, dim = shape), n = array(0, dim = shape)),
       update = function(acc, block, tdim, na_rm) {
-        list(sum = acc$sum + .process.data(block, tdim, FUN = sum, na.rm = na_rm)[[1L]],
-             n   = acc$n   + .process.data(block, tdim, FUN = function(x, ...)
-               if (na_rm) sum(!is.na(x)) else length(x))[[1L]])
+        list(sum = acc$sum + .reduce_block(block, tdim, sum, na.rm = na_rm),
+             n   = acc$n   + .reduce_block(block, tdim, function(x, ...)
+               if (na_rm) sum(!is.na(x)) else length(x)))
       },
       finalize = function(acc, na_rm) list(acc$sum / acc$n)
     ),
@@ -218,7 +218,7 @@ CFVariable <- R6::R6Class("CFVariable",
     .reducer_min = list(
       init = function(shape) array(Inf, dim = shape),
       update = function(acc, block, tdim, na_rm)
-        pmin(acc, suppressWarnings(.process.data(block, tdim, FUN = min, na.rm = na_rm)[[1L]]), na.rm = na_rm),
+        pmin(acc, suppressWarnings(.reduce_block(block, tdim, min, na.rm = na_rm)), na.rm = na_rm),
       finalize = function(acc, na_rm) {
         if (na_rm && any(is.infinite(acc) & acc > 0))
           warning("no non-missing arguments to min; returning Inf", call. = FALSE)
@@ -229,7 +229,7 @@ CFVariable <- R6::R6Class("CFVariable",
     .reducer_max = list(
       init = function(shape) array(-Inf, dim = shape),
       update = function(acc, block, tdim, na_rm)
-        pmax(acc, suppressWarnings(.process.data(block, tdim, FUN = max, na.rm = na_rm)[[1L]]), na.rm = na_rm),
+        pmax(acc, suppressWarnings(.reduce_block(block, tdim, max, na.rm = na_rm)), na.rm = na_rm),
       finalize = function(acc, na_rm) {
         if (na_rm && any(is.infinite(acc) & acc < 0))
           warning("no non-missing arguments to max; returning -Inf", call. = FALSE)
@@ -240,8 +240,8 @@ CFVariable <- R6::R6Class("CFVariable",
     .reducer_range = list(
       init = function(shape) list(min = array(Inf, dim = shape), max = array(-Inf, dim = shape)),
       update = function(acc, block, tdim, na_rm) {
-        list(min = pmin(acc$min, suppressWarnings(.process.data(block, tdim, FUN = min, na.rm = na_rm)[[1L]]), na.rm = na_rm),
-             max = pmax(acc$max, suppressWarnings(.process.data(block, tdim, FUN = max, na.rm = na_rm)[[1L]]), na.rm = na_rm))
+        list(min = pmin(acc$min, suppressWarnings(.reduce_block(block, tdim, min, na.rm = na_rm)), na.rm = na_rm),
+             max = pmax(acc$max, suppressWarnings(.reduce_block(block, tdim, max, na.rm = na_rm)), na.rm = na_rm))
       },
       finalize = function(acc, na_rm) {
         if (na_rm) {
@@ -312,11 +312,11 @@ CFVariable <- R6::R6Class("CFVariable",
 
       limit <- CF.options$memory_cell_limit
       if (total_elems * itemsize <= limit)
-        return(.process.data(materialize(), tdim, FUN = fun, ...))
+        return(lapply(.process.data(materialize(), tdim, FUN = fun, ...), .drop_level))
 
       dots <- list(...)
       reducer <- private$find_reducer(fun, dots)
-      chunks <- if (!is.null(private$.NCobj)) private$.NCobj$netcdf4$chunksizes else NULL
+      chunks <- private$chunk_sizes()
       tdim_native <- if (!is.null(chunks)) chunks[tdim] else 1L
       feasible <- !is.null(reducer) && all(sapply(runs, function(r)
         prod(as.numeric(r$count[-tdim])) * tdim_native * itemsize <= limit))
@@ -337,7 +337,7 @@ CFVariable <- R6::R6Class("CFVariable",
         return(reducer$finalize(acc, na_rm))
       }
 
-      .process.data(materialize(), tdim, FUN = fun, ...)
+      lapply(.process.data(materialize(), tdim, FUN = fun, ...), .drop_level)
     },
 
     # Internal apply/tapply method for this class. If the size of the data
@@ -387,7 +387,7 @@ CFVariable <- R6::R6Class("CFVariable",
       res_dim <- dim(d[[1L]][[1L]])
       tdim_len <- length(d)
       dims <- c(res_dim, tdim_len)
-      perm <- c(num_dims, 1L:(num_dims - 1L))
+      perm <- c(num_dims, seq_len(num_dims - 1L))
       # if (tdim_len > 1L) {
       #   dims <- c(res_dim,  tdim_len)
       #   perm <- c(num_dims, 1L:(num_dims - 1L))
@@ -592,7 +592,7 @@ CFVariable <- R6::R6Class("CFVariable",
       data <- self$read_data()
       if (is.null(data)) return(NULL)
       if (is.null(dim(data)))
-        names(data) <- self$dimnames
+        names(data) <- self$dimnames[[1L]]
       else
         dimnames(data) <- self$dimnames
       data
@@ -729,14 +729,14 @@ CFVariable <- R6::R6Class("CFVariable",
         ax_dimid <- axis$dimid
 
         # In every section, set start and count values and create a corresponding axis
-        if (!is.null(aux) && !is.null(ax_dimid) && ax_dimid == ll_dimids[1L]) {
+        if (!is.null(aux) && isTRUE(ax_dimid == ll_dimids[1L])) {
           start[ax] <- aux$X[1L]
           count[ax] <- aux$X[2L]
           out_axis <- CFAxisLongitude$new(aux_names[1L], group = grp, values = aux$aoi$dimnames[[2L]],
                                           attributes = axis$attributes)
           out_axis$bounds <- aoi_bounds$lon
           out_axis$delete_attribute("long_name")
-        } else if (!is.null(aux) && !is.null(ax_dimid) && ax_dimid == ll_dimids[2L]) {
+        } else if (!is.null(aux) && isTRUE(ax_dimid == ll_dimids[2L])) {
           start[ax] <- aux$Y[1L]
           count[ax] <- aux$Y[2L]
           out_axis <- CFAxisLatitude$new(aux_names[2L], group = grp, values = aux$aoi$dimnames[[1L]],
@@ -1076,8 +1076,8 @@ CFVariable <- R6::R6Class("CFVariable",
               count[ax] <- 1L
               orient <- axis$orientation
               nm <- if (is.null(xy)) axis$name
-                    else if (orient == "X") private$.llgrid$varLong$name
-                    else private$.llgrid$varLat$name
+                    else if (orient == "X") private$.llgrid$lon$name
+                    else private$.llgrid$lat$name
               axis$copy_with_values(nm, group = grp, values = selectors[[ax_ndx]][e])
             } else
               axis$copy(group = grp)
@@ -1092,7 +1092,7 @@ CFVariable <- R6::R6Class("CFVariable",
             atts <- self$attributes
             crs <- self$crs
           } else {
-            #atts <- private$drop_coordinates_attribute(self$attributes, private$.llgrid$grid_names)
+            atts <- self$attributes
             atts <- atts[!(atts$name == "grid_mapping"), ]  # drop: warped to lat-long
             crs <- NULL
           }
@@ -1230,7 +1230,7 @@ CFVariable <- R6::R6Class("CFVariable",
     #'   is not provided, all associated objects will be stored in this group.
     #' @return Self, invisibly.
     attach_to_group = function(grp, locations = list()) {
-      if (self$name %in% names(grp$objects))
+      if (self$name %in% names(grp$CFvars))
         stop("CF object '", self$name, "' already exists in group ", grp$fullname, ".", call. = FALSE)
 
       # FIXME: All objects that are added must be registered so that they can be
@@ -1322,16 +1322,17 @@ CFVariable <- R6::R6Class("CFVariable",
     data.table = function(var_as_column = FALSE) {
       if (!requireNamespace("data.table", quietly = TRUE))
         stop("Please install package 'data.table' before using this functionality", call. = FALSE)
-      .datatable.aware = TRUE
 
       exp <- expand.grid(lapply(private$.axes, function(ax) ax$coordinates),
                          KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE)
       dt <- data.table::as.data.table(exp)
+      # data.table::set() works without data.table being attached
+      vals <- as.vector(self$values)
       if (var_as_column) {
-        dt[ , .variable := private$.name]
-        suppressWarnings(dt[ , .value := self$values])
+        data.table::set(dt, j = ".variable", value = private$.name)
+        data.table::set(dt, j = ".value", value = vals)
       } else
-        suppressWarnings(dt[ , eval(private$.name) := self$values])
+        data.table::set(dt, j = private$.name, value = vals)
 
       long_name <- self$attribute("long_name")
       if (is.na(long_name)) long_name <- ""
@@ -1366,7 +1367,10 @@ CFVariable <- R6::R6Class("CFVariable",
         lbls <- unlist(sapply(private$.axes, function(ax) {ax$write(); ax$coordinate_names[-1L]}), use.names = FALSE)
 
       if (private$.dirty) {
-        dt <- private$orient(self$read_data(), "CF")
+        dt <- self$read_data()
+        if (is.null(dim(dt)) && self$ndims > 0L)
+          dim(dt) <- private$.dims # A 1D variable may hold a plain vector
+        dt <- private$orient(dt, "CF")
         ord <- private$XYZT()
 
         if (is.null(private$.NCobj)) {
@@ -1393,10 +1397,12 @@ CFVariable <- R6::R6Class("CFVariable",
 
         # Packing attributes
         if (pack) {
-          actual_range <- self$attribute("actual_range")
-          self$.NCobj$set_attribute("add_offset", private$.data_type, (actual_range[1L] + actual_range[2L]) * 0.5)
-          self$.NCobj$set_attribute("scale_factor", private$.data_type, (actual_range[2L] - actual_range[1L]) / 65534)
-          self$.NCobj$set_attribute("missing_value", "NC_SHORT", -32767)
+          rng <- range(dt, na.rm = TRUE)
+          h <- private$.NCobj$handle
+          nm <- private$.NCobj$name
+          RNetCDF::att.put.nc(h, nm, "add_offset", private$.data_type, (rng[1L] + rng[2L]) * 0.5)
+          RNetCDF::att.put.nc(h, nm, "scale_factor", private$.data_type, max(rng[2L] - rng[1L], 1) / 65532) # -32767 is the missing value
+          RNetCDF::att.put.nc(h, nm, "missing_value", "NC_SHORT", -32767L)
         }
 
         # Set "coordinates" attribute for scalar axes and labels
