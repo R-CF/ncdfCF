@@ -21,7 +21,7 @@ library(ncdfCF)
 #> Attributes:
 #>  name        type    length value                                            
 #>  Conventions NC_CHAR  7     CF-1.13                                          
-#>  history     NC_CHAR 49     2026-11-24T10:08:27Z ncdfCF 0.9.0: Newly created.
+#>  history     NC_CHAR 49     2026-11-24T17:22:38Z ncdfCF 0.9.0: Newly created.
 ```
 
 The data set is created in memory (`Resource : (virtual)`) and you can

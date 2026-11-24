@@ -7,7 +7,7 @@ articles:
   articles/33_Exporting_data: 33_Exporting_data.html
   articles/34_Troubleshooting: 34_Troubleshooting.html
   ncdfCF: ncdfCF.html
-last_built: 2026-11-24T10:08Z
+last_built: 2026-11-24T17:22Z
 urls:
   reference: https://r-cf.github.io/ncdfCF/reference
   article: https://r-cf.github.io/ncdfCF/articles

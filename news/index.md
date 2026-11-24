@@ -2,6 +2,8 @@
 
 ## ncdfCF 0.9.0
 
+CRAN release: 2026-11-24
+
 This minor release has some new functionality, such as the ability to
 export to the Zarr format using GeoZarr encoding. Additionally, there
 are multiple stability improvements and bug fixes.
