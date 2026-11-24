@@ -1,4 +1,4 @@
-This is a patch release to fix some bugs. Minor new functionality.
+This is a patch release with some new functionality and stability improvements..
 
 ## R CMD check results
 

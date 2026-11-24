@@ -1,5 +1,7 @@
 # ncdfCF (development version)
 
+This minor release has some new functionality, such as the ability to export to the Zarr format using GeoZarr encoding. Additionally, there are multiple stability improvements and bug fixes.
+
 #### API
 - `CFData$read_data()` and `$read_chunk()` have been made public. New `$read_window()` method.
 - Added `makeGroup()` function.
