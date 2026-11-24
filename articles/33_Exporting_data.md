@@ -91,7 +91,8 @@ A `CFVariable` can be exported to a
 [`terra::SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
 (3D) or
 [`terra::SpatRasterDataset`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
-(4D), depending on the number of axes in the `CFVariable`.
+(4D), with the result type depending on the number of axes in the
+`CFVariable`.
 
 ``` r
 
@@ -153,7 +154,7 @@ z <- ds$geozarr()
 z
 #> ── Zarr ────────────────────────────────────────────────────────────────────────
 #> ── Memory store - version 3 ────────────────────────────────────────────────────
-#> ✔ Listing ✔ Writing ✔ Deleting ✖ Consolidated metadata
+#> Capabilities: ✔ Listing ✔ Writing ✔ Deleting ✖ Consolidated metadata
 #> ── Contents ────────────────────────────────────────────────────────────────────
 #> ℹ Arrays: 4
 #> ── Attributes ──────────────────────────────────────────────────────────────────
@@ -174,10 +175,10 @@ z$hierarchy()
 NetCDF files have size limitations, due to limitations in various file
 system drivers. Most netCDF files that are published for wide-scale
 distribution are therefore limited to about 2GB. For CMIP6 data and
-other large data sets this implies that a single run of data is broken
-up into multiple netCDF files. That leads to problems during analysis:
-separate chunks of data from multiple files have to be stitched together
-again.
+other large data sets this implies that a single run of an experiment is
+broken up into multiple netCDF files. That leads to problems during
+analysis: separate chunks of data from multiple files have to be
+stitched together again.
 
 Zarr stores do not have the same size limitation; stores are effectively
 boundless in size because a single data set is broken up into multiple
@@ -188,10 +189,10 @@ The
 [`aggregate_geozarr()`](https://r-cf.github.io/ncdfCF/reference/aggregate_geozarr.md)
 function of this package allows you to aggregate multiple compatible
 netCDF files into a single Zarr store, such as the 3 to 16 netCDF files
-that make up a single daily run of CMIP6 data. While the aggregation can
-take place over any axes (with the exception of parametric vertical
-axes), aggregating over the temporal dimension is the most common
-pattern.
+that make up a single daily run of a CMIP6 experiment While the
+aggregation can take place over any axes (with the exception of
+parametric vertical axes), aggregating over the temporal dimension is
+the most common pattern.
 
     # Not run dynamically: CMIP6 data used here is 3GB+ in size
 
@@ -251,16 +252,18 @@ constructs. The CF constructs supported by `ncdfCF` can all be exported
 successfully to `geozarr`, with some caveats.
 
 - All coordinate system constructs are exported to `geozarr`, including
-  auxiliary lat-long grids. Support for parametric vertical coordinates
-  will be added in the near future. For regularly-spaced coordinates no
-  separate Zarr arrays (like coordinate variables in netCDF) are
-  created - the values are compressed and stored inline with the
-  attributes of the referring data variable.
+  auxiliary lat-long grids, scalar axes and auxiliary coordinates.
+  Support for parametric vertical coordinates will be added in the near
+  future. For regularly-spaced coordinates no separate Zarr arrays (like
+  coordinate variables in netCDF) are created - the values are
+  compressed and stored inline with the attributes of the Zarr array
+  constructed for the referring data variable.
 - All attributes are exported, including global attributes and group
   attributes. Attributes that contain structural information for netCDF
-  encoding, like “coordinates” or scale/offset, are not copied.
-  Attributes that denote valid data are handled separately - see next
-  section. The “history” attribute is converted to a JSON array.
+  encoding, like “coordinates” or scale/offset, are not copied because
+  they are meaningless in the context of a Zarr array. Attributes that
+  denote valid data are handled separately - see next section. The
+  “history” attribute is converted to a JSON array.
 - Referenced objects, like ancillary variables and external variables
   (when data is linked), must be exported separately. `geozarr`
   currently has no mechanism to establish the linkages between objects,
@@ -273,8 +276,10 @@ Discrete sampling geometries are currently not supported in `geozarr`.
 CF-encoded netCDF files describe missing data with a handful of
 overlapping attributes: `_FillValue`, `missing_value`, `valid_min`,
 `valid_max` and `valid_range`. Zarr has a single, narrowly defined
-concept: the `fill_value` of an array indicates data that has never been
-written. When data are copied from CF variables to GeoZarr arrays, for
+concept: the `fill_value` of an array indicates that data has never been
+written (which is identical to the meaning of the `_FillValue` attribute
+in the `netcdf` library, but CF attached a different semantic meaning to
+it). When data are copied from CF variables to GeoZarr arrays, for
 instance with
 [`copy_to_geozarr()`](https://r-cf.github.io/ncdfCF/reference/copy_to_geozarr.md)
 or `CFVariable$write_geozarr()`, the CF attributes for missing data are
@@ -285,15 +290,14 @@ that translation.
 
 The Zarr `fill_value` is never derived from CF attributes. It always has
 the Zarr default for the data type of the array and it means one thing
-only: the element has never been written. For the numeric types the
+only: the element has not been written. For the numeric types the
 default values are the same as the netCDF library default fill values,
 except for 64-bit integers.
 
-Cells that were written but are missing are encoded separately, with an
-optional `missing_value` attribute on the array. A reader of the Zarr
-store that wants to find all missing data must therefore honour both the
-`fill_value` and the `missing_value` attribute. The `zarr` and `geozarr`
-packages apply the `fill_value` only.
+Cells that were written but which denote missing data are encoded
+separately, with the `missing_value` attribute on the array. A reader of
+the Zarr store that wants to find all missing data must therefore honour
+both the `fill_value` and the `missing_value` attributes.
 
 #### What is read from the CF file
 
@@ -313,10 +317,10 @@ set.
 - The `fill_value` of the Zarr array is the Zarr default for its data
   type.
 - The `missing_value` of the Zarr array is a single value that is
-  determined as follows. A packed variable (with a `scale_factor` or
-  `add_offset`) has none: the sentinel belongs to the packed encoding
-  and CF prescribes that it is not transformed, so missing cells are
-  `NA` in the unpacked data. Otherwise, if the variable has a
+  determined as follows: A packed variable (with `scale_factor` and/or
+  `add_offset` attributes) has none: the sentinel belongs to the packed
+  encoding and CF prescribes that it is not transformed, so missing
+  cells are `NA` in the unpacked data. Otherwise, if the variable has a
   `missing_value` attribute, its first element is used. Otherwise, if
   the variable has a `_FillValue` that is different from the netCDF
   library default for the data type, that value is used. A `_FillValue`

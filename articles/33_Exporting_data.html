@@ -19,7 +19,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ncdfCF</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -151,8 +151,8 @@ multi-dimensional data, which is why the export functions are included
 in this package.</p>
 <p>A <code>CFVariable</code> can be exported to a
 <code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRaster</a></code> (3D) or
-<code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRasterDataset</a></code> (4D), depending on the number of
-axes in the <code>CFVariable</code>.</p>
+<code><a href="https://rspatial.github.io/terra/reference/SpatRaster-class.html" class="external-link">terra::SpatRasterDataset</a></code> (4D), with the result type
+depending on the number of axes in the <code>CFVariable</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#install.packages("terra")</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span><span class="op">)</span></span>
@@ -208,7 +208,7 @@ to save an entire <code>CFDataset</code> or a single
 <span><span class="va">z</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Zarr</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Memory store</span> - version 3 ────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> <span style="color: #000000; font-weight: bold;">Listing</span> <span style="color: #00BB00;">✔</span> <span style="color: #000000; font-weight: bold;">Writing</span> <span style="color: #00BB00;">✔</span> <span style="color: #000000; font-weight: bold;">Deleting</span> <span style="color: #BB0000;">✖</span> <span style="color: #000000; font-weight: bold;">Consolidated metadata</span></span></span>
+<span><span class="co">#&gt; Capabilities: <span style="color: #00BB00;">✔</span> <span style="color: #000000; font-weight: bold;">Listing</span> <span style="color: #00BB00;">✔</span> <span style="color: #000000; font-weight: bold;">Writing</span> <span style="color: #00BB00;">✔</span> <span style="color: #000000; font-weight: bold;">Deleting</span> <span style="color: #BB0000;">✖</span> <span style="color: #000000; font-weight: bold;">Consolidated metadata</span></span></span>
 <span><span class="co">#&gt; ── Contents ────────────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> <span style="color: #000000; font-weight: bold;">Arrays:</span> <span style="color: #0000BB;">4</span></span></span>
 <span><span class="co">#&gt; ── Attributes ──────────────────────────────────────────────────────────────────</span></span>
@@ -228,10 +228,10 @@ to save an entire <code>CFDataset</code> or a single
 <p>NetCDF files have size limitations, due to limitations in various
 file system drivers. Most netCDF files that are published for wide-scale
 distribution are therefore limited to about 2GB. For CMIP6 data and
-other large data sets this implies that a single run of data is broken
-up into multiple netCDF files. That leads to problems during analysis:
-separate chunks of data from multiple files have to be stitched together
-again.</p>
+other large data sets this implies that a single run of an experiment is
+broken up into multiple netCDF files. That leads to problems during
+analysis: separate chunks of data from multiple files have to be
+stitched together again.</p>
 <p>Zarr stores do not have the same size limitation; stores are
 effectively boundless in size because a single data set is broken up
 into multiple chunks and reassembled before presenting it back to the
@@ -239,8 +239,8 @@ user, all behind-the-scenes.</p>
 <p>The <code><a href="../reference/aggregate_geozarr.html">aggregate_geozarr()</a></code> function of this package allows
 you to aggregate multiple compatible netCDF files into a single Zarr
 store, such as the 3 to 16 netCDF files that make up a single daily run
-of CMIP6 data. While the aggregation can take place over any axes (with
-the exception of parametric vertical axes), aggregating over the
+of a CMIP6 experiment While the aggregation can take place over any axes
+(with the exception of parametric vertical axes), aggregating over the
 temporal dimension is the most common pattern.</p>
 <pre><code># Not run dynamically: CMIP6 data used here is 3GB+ in size
 
@@ -302,15 +302,17 @@ support all CF constructs. The CF constructs supported by
 <code>geozarr</code>, with some caveats.</p>
 <ul>
 <li>All coordinate system constructs are exported to
-<code>geozarr</code>, including auxiliary lat-long grids. Support for
-parametric vertical coordinates will be added in the near future. For
-regularly-spaced coordinates no separate Zarr arrays (like coordinate
-variables in netCDF) are created - the values are compressed and stored
-inline with the attributes of the referring data variable.</li>
+<code>geozarr</code>, including auxiliary lat-long grids, scalar axes
+and auxiliary coordinates. Support for parametric vertical coordinates
+will be added in the near future. For regularly-spaced coordinates no
+separate Zarr arrays (like coordinate variables in netCDF) are created -
+the values are compressed and stored inline with the attributes of the
+Zarr array constructed for the referring data variable.</li>
 <li>All attributes are exported, including global attributes and group
 attributes. Attributes that contain structural information for netCDF
-encoding, like “coordinates” or scale/offset, are not copied. Attributes
-that denote valid data are handled separately - see next section. The
+encoding, like “coordinates” or scale/offset, are not copied because
+they are meaningless in the context of a Zarr array. Attributes that
+denote valid data are handled separately - see next section. The
 “history” attribute is converted to a JSON array.</li>
 <li>Referenced objects, like ancillary variables and external variables
 (when data is linked), must be exported separately. <code>geozarr</code>
@@ -328,9 +330,11 @@ overlapping attributes: <code>_FillValue</code>,
 <code>missing_value</code>, <code>valid_min</code>,
 <code>valid_max</code> and <code>valid_range</code>. Zarr has a single,
 narrowly defined concept: the <code>fill_value</code> of an array
-indicates data that has never been written. When data are copied from CF
-variables to GeoZarr arrays, for instance with
-<code><a href="../reference/copy_to_geozarr.html">copy_to_geozarr()</a></code> or
+indicates that data has never been written (which is identical to the
+meaning of the <code>_FillValue</code> attribute in the
+<code>netcdf</code> library, but CF attached a different semantic
+meaning to it). When data are copied from CF variables to GeoZarr
+arrays, for instance with <code><a href="../reference/copy_to_geozarr.html">copy_to_geozarr()</a></code> or
 <code>CFVariable$write_geozarr()</code>, the CF attributes for missing
 data are translated into a small, unambiguous encoding. This section
 describes that translation.</p>
@@ -339,16 +343,14 @@ describes that translation.</p>
 </h4>
 <p>The Zarr <code>fill_value</code> is never derived from CF attributes.
 It always has the Zarr default for the data type of the array and it
-means one thing only: the element has never been written. For the
-numeric types the default values are the same as the netCDF library
-default fill values, except for 64-bit integers.</p>
-<p>Cells that were written but are missing are encoded separately, with
-an optional <code>missing_value</code> attribute on the array. A reader
-of the Zarr store that wants to find all missing data must therefore
-honour both the <code>fill_value</code> and the
-<code>missing_value</code> attribute. The <code>zarr</code> and
-<code>geozarr</code> packages apply the <code>fill_value</code>
-only.</p>
+means one thing only: the element has not been written. For the numeric
+types the default values are the same as the netCDF library default fill
+values, except for 64-bit integers.</p>
+<p>Cells that were written but which denote missing data are encoded
+separately, with the <code>missing_value</code> attribute on the array.
+A reader of the Zarr store that wants to find all missing data must
+therefore honour both the <code>fill_value</code> and the
+<code>missing_value</code> attributes.</p>
 </div>
 <div class="section level4">
 <h4 id="what-is-read-from-the-cf-file">What is read from the CF file<a class="anchor" aria-label="anchor" href="#what-is-read-from-the-cf-file"></a>
@@ -371,17 +373,17 @@ set.</p>
 <li>The <code>fill_value</code> of the Zarr array is the Zarr default
 for its data type.</li>
 <li>The <code>missing_value</code> of the Zarr array is a single value
-that is determined as follows. A packed variable (with a
-<code>scale_factor</code> or <code>add_offset</code>) has none: the
-sentinel belongs to the packed encoding and CF prescribes that it is not
-transformed, so missing cells are <code>NA</code> in the unpacked data.
-Otherwise, if the variable has a <code>missing_value</code> attribute,
-its first element is used. Otherwise, if the variable has a
-<code>_FillValue</code> that is different from the netCDF library
-default for the data type, that value is used. A <code>_FillValue</code>
-that equals the library default does not denote missing data, it merely
-repeats the default. If none of these apply there is no
-<code>missing_value</code>.</li>
+that is determined as follows: A packed variable (with
+<code>scale_factor</code> and/or <code>add_offset</code> attributes) has
+none: the sentinel belongs to the packed encoding and CF prescribes that
+it is not transformed, so missing cells are <code>NA</code> in the
+unpacked data. Otherwise, if the variable has a
+<code>missing_value</code> attribute, its first element is used.
+Otherwise, if the variable has a <code>_FillValue</code> that is
+different from the netCDF library default for the data type, that value
+is used. A <code>_FillValue</code> that equals the library default does
+not denote missing data, it merely repeats the default. If none of these
+apply there is no <code>missing_value</code>.</li>
 <li>If there is a <code>missing_value</code>, then every <code>NA</code>
 in the data is written as that value. Several sentinels in the source,
 such as a vector <code>missing_value</code> or a

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ncdfCF</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,9 +41,10 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="ncdfcf-development-version">ncdfCF (development version)<a class="anchor" aria-label="anchor" href="#ncdfcf-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.0" id="ncdfcf-090">ncdfCF 0.9.0<a class="anchor" aria-label="anchor" href="#ncdfcf-090"></a></h2>
+<p>This minor release has some new functionality, such as the ability to export to the Zarr format using GeoZarr encoding. Additionally, there are multiple stability improvements and bug fixes.</p>
 <div class="section level5">
-<h5 id="api-development-version">API<a class="anchor" aria-label="anchor" href="#api-development-version"></a></h5>
+<h5 id="api-0-9-0">API<a class="anchor" aria-label="anchor" href="#api-0-9-0"></a></h5>
 <ul><li>
 <code>CFData$read_data()</code> and <code>$read_chunk()</code> have been made public. New <code>$read_window()</code> method.</li>
 <li>Added <code><a href="../reference/makeGroup.html">makeGroup()</a></code> function.</li>
@@ -57,7 +58,7 @@
 <li>New method <code>geozarr_attributes()</code> for the descendants of <code>CFAxis</code> returns the attributes that are written with the GeoZarr coordinates of an axis. Attributes <code>units</code> and <code>calendar</code> of a time axis are no longer written as attributes of its coordinates, because they are recorded as the time definition.</li>
 </ul></div>
 <div class="section level5">
-<h5 id="code-development-version">Code<a class="anchor" aria-label="anchor" href="#code-development-version"></a></h5>
+<h5 id="code-0-9-0">Code<a class="anchor" aria-label="anchor" href="#code-0-9-0"></a></h5>
 <ul><li>Code has been added to process data in chunks if a data request is too large for the available memory (as set by <code>CF.options$memory_cell_limit</code>). If the data is chunked, as may be the case with netCDF-4 data files, the processing will use chunks to minimize overhead (reading, decompressing) at the storage layer (HDF-5). Memory may still be exhausted if the caller requests too much data in one call but the internal processing functions (like <code>CFVariable$summarise()</code>) are now protected.</li>
 <li>
 <code>CFAxisTime$append()</code> uses <code>CFtime</code> code for merging <code>CFTime</code> instances, allowing for instances with distinct but compatible definition to be merged.</li>

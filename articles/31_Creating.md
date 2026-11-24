@@ -19,9 +19,9 @@ library(ncdfCF)
 #> Has groups : FALSE 
 #> 
 #> Attributes:
-#>  name        type    length value                                             
-#>  Conventions NC_CHAR  7     CF-1.13                                           
-#>  history     NC_CHAR 54     2026-11-23T18:11:22Z ncdfCF 0.8.2.9000: Newly c...
+#>  name        type    length value                                            
+#>  Conventions NC_CHAR  7     CF-1.13                                          
+#>  history     NC_CHAR 49     2026-11-24T10:08:27Z ncdfCF 0.9.0: Newly created.
 ```
 
 The data set is created in memory (`Resource : (virtual)`) and you can
