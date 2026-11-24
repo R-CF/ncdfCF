@@ -1,4 +1,4 @@
-# ncdfCF (development version)
+# ncdfCF 0.9.0
 
 This minor release has some new functionality, such as the ability to export to the Zarr format using GeoZarr encoding. Additionally, there are multiple stability improvements and bug fixes.
 
